@@ -1,0 +1,37 @@
+.uk-container-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mapControls {
+  bottom: 20px;
+}
+
+.uk-nav-label {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  vertical-align: -1px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.uk-nav-horizontal li {
+  display: inline-block;
+}
+
+.uk-nav > li > a {
+  padding: 5px 15px;
+}
+
+.uk-nav-side > li > a {
+  color: #444;
+}
+
+.mapControls .text {
+  opacity: 0.5;
+}
+
+.mapControls .text.active {
+  opacity: 1;
+}

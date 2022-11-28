@@ -1,0 +1,92 @@
+<div class="uk-section uk-section-default uk-padding-remove uk-preserve-color">
+  <div class="uk-container uk-container-expand">
+
+    <ul class="uk-flex-inline uk-flex-left uk-subnav uk-subnav-pill-alt uk-margin-remove" data-uk-switcher="{connect:'#map-vs-table-view', animation: 'fade'}">
+      <li class="uk-active">
+        <a class="uk-margin-remove-bottom"><span>Graph view</span></a>
+      </li>
+      <li class="">
+        <a class="uk-margin-remove-bottom"><span>Table view</span></a>
+      </li>
+    </ul>
+
+
+    <ul id="map-vs-table-view" class="uk-switcher uk-margin">
+      <li aria-hidden="false" class="uk-active" style="animation-duration: 200ms;">
+        <div class="uk-margin-medium-top">
+
+<!--          <div class="uk-grid uk-grid-match uk-child-width-1-3">-->
+
+<!--            <div class="">-->
+<!--              <div class="uk-card uk-card-default uk-card-body indicator-card">-->
+<!--                <div class="indicator-label">Total volume of financial contributions for 2020 to the EOSC</div>-->
+<!--                <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.totalFundingForEOSC" class="uk-text-lead uk-margin-small-top"><strong>&#45;&#45;</strong></div>-->
+<!--                <div *ngIf="fundingForEOSCSums?.totalFundingForEOSC" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.totalFundingForEOSC}} M</strong></div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="">-->
+<!--              <div class="uk-card uk-card-default uk-card-body indicator-card">-->
+<!--                <div class="indicator-label">Amount of funds allocated to current EOSC Association Members (including Mandated Organisations)</div>-->
+<!--                <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.fundingToOrganisationsInEOSCA" class="uk-text-lead uk-margin-small-top"><strong>&#45;&#45;</strong></div>-->
+<!--                <div *ngIf="fundingForEOSCSums?.fundingToOrganisationsInEOSCA" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.fundingToOrganisationsInEOSCA}} M</strong></div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="">-->
+<!--              <div class="uk-card uk-card-default uk-card-body indicator-card">-->
+<!--                <div class="indicator-label">Amount of funds allocated to organisations which are now not members of the EOSC Association</div>-->
+<!--                <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.fundingToOrganisationsOutsideEOSCA" class="uk-text-lead uk-margin-small-top"><strong>&#45;&#45;</strong></div>-->
+<!--                <div *ngIf="fundingForEOSCSums?.fundingToOrganisationsOutsideEOSCA" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.fundingToOrganisationsOutsideEOSCA}} M</strong></div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--          </div>-->
+
+          <div class="uk-grid uk-grid-match">
+
+            <div class="uk-width-2-3">
+              <!--<app-highcharts-category-map></app-highcharts-category-map>-->
+              <div class="" style="height: 600px">
+                <app-highcharts-category-map [mapData]="mapData" [mapType]="'Categorization'"
+                                             [pointFormat]="'{point.name}: <b>{series.name}</b>'"
+                                             [title]="'National contributions to EOSC linked to policies and actions'">
+                </app-highcharts-category-map>
+              </div>
+            </div>
+
+            <div class="uk-width-1-3">
+              <div class="uk-card uk-card-default">
+                <div class="uk-card-body">
+                  <iframe *ngIf="financialContrToEOSCPieChartURL"
+                    width="100%" height="500" [src]="financialContrToEOSCPieChartURL"></iframe>
+                </div>
+
+              </div>
+            </div>
+
+<!--            Bubble maps-->
+<!--            <div class="uk-width-1-1 uk-margin-top">-->
+<!--              <div class="uk-card uk-card-default uk-card-body" style="height: 600px">-->
+<!--                <app-highcharts-bubble-map [legend]="['Open Science funding in general','EOSC funding only', 'EOSC funding from European Structural and Investment Funds']"-->
+<!--                                           [dataArray]="bubbleMapSeries">-->
+<!--                </app-highcharts-bubble-map>-->
+<!--              </div>-->
+<!--            </div>-->
+
+          </div>
+
+        </div>
+      </li>
+      <li aria-hidden="true" style="animation-duration: 200ms;" class="">
+        <div class="uk-margin-medium-top">
+          <div class="uk-card uk-card-default uk-card-body">
+            <div *ngIf="loadingAbsoluteTable" class="whiteFilm"><i class="fa fa-spinner fa-spin fa-2x loader" aria-hidden="true"></i></div>
+            <app-countries-table *ngIf="tableAbsoluteData" [countries]="tableAbsoluteData" [tableType]="'funding'"></app-countries-table>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+</div>

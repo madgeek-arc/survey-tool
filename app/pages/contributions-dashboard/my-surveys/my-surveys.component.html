@@ -1,0 +1,13 @@
+<div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
+  <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+
+    <div *ngIf="surveys" class="uk-grid uk-grid-match uk-child-width-1-2">
+
+      <div *ngFor="let survey of surveys.results">
+        <app-survey-card [survey]="survey"></app-survey-card>
+      </div>
+
+    </div>
+
+  </div>
+</div>

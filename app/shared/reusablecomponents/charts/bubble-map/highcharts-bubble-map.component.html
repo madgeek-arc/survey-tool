@@ -1,0 +1,23 @@
+<div *ngIf="ready">
+  <highcharts-chart *ngIf="chartOptions"
+    id="container"
+    [Highcharts]="Highcharts"
+    [constructorType]="chartConstructor"
+    [options]="chartOptions"
+    [callbackFunction]="chartCallback"
+    [(update)]="updateFlag"
+    style="display: block; height: 100%; width: 100%">
+  </highcharts-chart>
+
+  <!--Map Controls-->
+  <div class="uk-width-large-1-1 uk-container-center uk-text-center uk-margin-top mapControls">
+    <ul class="uk-nav uk-nav-side uk-nav-horizontal uk-nav-parent-icon" data-uk-nav="{multiple:true}">
+      <li *ngFor="let label of legend; let i=index">
+        <a (click)="changeView(i)">
+          <span class="uk-nav-label" [ngStyle]="{'background-color': colorPallet[i]}"></span>
+          <span class="text {{activeView === i ? 'active' : ''}}">{{label}}</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

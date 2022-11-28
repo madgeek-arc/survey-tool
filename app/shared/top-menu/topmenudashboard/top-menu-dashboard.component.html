@@ -1,0 +1,102 @@
+<div id="header_main">
+  <div class="main-menu tm-header uk-visible@m tm-header-transparent">
+
+    <div class="uk-navbar-container">
+      <div class="uk-container uk-container-expand">
+
+        <nav class="uk-navbar fixed-navbar">
+
+          <div class="uk-navbar-left">
+            <div id="hamburger" class="hamburger change" (click)="change()">
+              <div class="icon-bar1"></div>
+              <div class="icon-bar2"></div>
+              <div class="icon-bar3"></div>
+            </div>
+
+            <a class="logo" [routerLink]="['home']">
+              <img src="observatoryUI/assets/images/eosc-logo-bw.svg" width="220px">
+<!--              <span class="uk-margin-left">EOSC Observatory</span>-->
+            </a>
+          </div>
+
+          <div class="uk-navbar-right">
+<!--            <div *ngIf="userInfo && showNationalContributionsToEOSC" class="uk-width-1-3">-->
+<!--              <a class="uk-icon uk-animation-fade" [routerLink]="['/nationalContributionsToEOSC']" aria-expanded="false">-->
+<!--                <span class="uk-text-small uk-margin-small-right">National Contributions to EOSC</span>-->
+<!--              </a>-->
+<!--            </div>-->
+            <div id="navigation">
+              <ul *ngIf="userInfo" class="uk-navbar-nav user_actions">
+                <li *ngIf="showArchive">
+                  <a class="uk-icon uk-animation-fade" [routerLink]="['/archive']" aria-expanded="false">
+                    <span class="uk-text-small uk-margin-small-right">Archive</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="uk-icon uk-animation-fade" [routerLink]="['/eoscreadiness/policies']" [queryParams]="{chart: '0'}"
+                     aria-expanded="false">
+                    <span class="uk-text-small uk-margin-small-right">EOSC Readiness</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="uk-icon" aria-expanded="false">
+                    <span *ngIf="currentCoordinator || currentStakeholder" class="uk-text-small uk-margin-small-right">
+                      {{currentStakeholder?.name ? currentStakeholder.name : currentCoordinator.name}}
+                    </span>
+                    <svg height="60" width="60">
+                      <circle cx="30" cy="30" r="20" stroke-width="1"></circle>
+                      <text dy=".4em" font-size="16" text-anchor="middle" x="50%" y="50%" class="ng-star-inserted"> {{ parseUsername() }} </text>
+                    </svg>
+                  </a>
+                  <div class="uk-padding-remove-horizontal ng-star-inserted uk-dropdown" uk-dropdown="mode: click; offset: -2; delay-hide: 0; flip: false; pos: bottom-right">
+                    <ul class="uk-nav uk-dropdown-nav">
+                      <li class="user-info">
+                        <div>
+                          <div class="uk-text-bold">{{userInfo.user.fullname}}</div>
+                          <div class="uk-text-meta">{{userInfo.user.email}}</div>
+                        </div>
+                      </li>
+                      <hr>
+                      <li class="groups" *ngFor="let stakeholder of userInfo.stakeholders">
+                        <a (click)="setGroup(stakeholder)"><span class="material-icons uk-margin-right">group</span>
+                          {{stakeholder.name + (stakeholder.type === 'association' ? (', EOSC Association '+ (stakeholder.country ? '(' + stakeholder.country + ')': '')) : '') }}
+                        </a>
+                      </li>
+                      <hr *ngIf="userInfo.stakeholders?.length > 0">
+                      <li class="groups" *ngFor="let coordinator of userInfo.coordinators">
+                        <a (click)="setCoordinator(coordinator)"><span class="material-icons uk-margin-right">group</span>{{coordinator.name}}</a>
+                      </li>
+                      <hr *ngIf="userInfo.coordinators?.length > 0">
+                      <li>
+                        <a id="logout" (click)="logout()">Log out</a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </nav>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Consent modal -->
+<div id="consent-modal" uk-modal="esc-close: false; bg-close: false ">
+  <div class="uk-modal-dialog uk-modal-body">
+    <!--    <h2 class="uk-modal-title">Headline</h2>-->
+    <p>Click the link below and read it carefully. By pressing I agree you acknowledge that you have read and agree to
+      the following terms.</p>
+    <hr>
+    <a *ngIf="acceptedPrivacyPolicy" target="_blank" href="../../../../observatoryUI/assets/pdf/{{acceptedPrivacyPolicy.privacyPolicy.filename}}">EOSC Observatory Privacy Policy</a>
+    <p class="uk-text-right">
+      <button class="uk-button uk-button-secondary" type="button" (click)="closeModal()">Close</button>
+      <button class="uk-button uk-button-primary" type="button" (click)="updateConsent()">I agree</button>
+    </p>
+  </div>
+</div>

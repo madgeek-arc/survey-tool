@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '../assets/css/eosc-observatory-variable-overwrites';
+
+/* UIKit */
+@import "node_modules/uikit/src/scss/variables-theme";
+@import "node_modules/uikit/src/scss/mixins-theme";
+
+@import '../assets/css/eosc-observatory-mixin-overwrites';
+
+/* UIKit */
+@import "node_modules/uikit/src/scss/uikit-theme";
+
+/* Custom SCSS/SASS Files */
+@import '../catalogue-ui/assets/scss/service-catalogue-theme.css';
+
+/* project specific scss */
+@import '../assets/css/eosc-observatory-custom';
+
+.sidebar_main_active #page_content {
+  //background-color: #f5f5f5;
+  background-color: var(--medium-grey);
+}
+
+@media print
+{
+  .no-print, .no-print *
+  {
+    display: none !important;
+  }
+}

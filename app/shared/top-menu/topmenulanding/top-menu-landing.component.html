@@ -1,0 +1,75 @@
+<div id="header_main">
+  <div class="main-menu tm-header uk-visible@m tm-header-transparent">
+
+    <div class="uk-navbar-container">
+      <div class="uk-container uk-container-expand">
+
+        <nav class="uk-navbar fixed-navbar">
+
+          <div class="uk-navbar-left">
+            <a class="logo" [routerLink]="['home']">
+              <img src="observatoryUI/assets/images/eosc-logo-bw.svg" width="220px">
+<!--              <span class="uk-margin-left">EOSC Observatory</span>-->
+            </a>
+          </div>
+
+          <div class="uk-navbar-right" uk-grid>
+
+            <ul class="uk-navbar-nav user_actions">
+              <li *ngIf="ready && userInfo && showArchive">
+                <a class="uk-icon uk-animation-fade" [routerLink]="['/archive']" aria-expanded="false">
+                  <span class="uk-text-small uk-margin-small-right">Archive</span>
+                </a>
+              </li>
+              <li *ngIf="ready">
+                <a class="uk-icon uk-animation-fade" [routerLink]="['/eoscreadiness/policies']" [queryParams]="{chart: '0'}"
+                   aria-expanded="false">
+                  <span class="uk-text-small uk-margin-small-right">EOSC Readiness</span>
+                </a>
+              </li>
+              <li *ngIf="ready && userInfo">
+                <a class="uk-icon uk-animation-fade" aria-expanded="false">
+                  <span class="uk-text-small uk-margin-small-right">{{userInfo.user.fullname}}</span>
+                </a>
+                <div class="uk-padding-remove-horizontal uk-dropdown"
+                     uk-dropdown="mode: click; offset: -2; delay-hide: 0; flip: false; pos: bottom-right">
+                  <ul class="uk-nav uk-dropdown-nav">
+                    <li class="user-info">
+                      <div>
+                        <div class="uk-text-bold">{{userInfo.user.fullname}}</div>
+                        <div class="uk-text-meta">{{userInfo.user.email}}</div>
+                      </div>
+                    </li>
+                    <hr *ngIf="userInfo?.stakeholders.length > 0">
+                    <li class="groups" *ngFor="let stakeholder of userInfo.stakeholders">
+                      <a (click)="setGroup(stakeholder)"><span class="material-icons uk-margin-right">group</span>
+                        {{stakeholder.name + (stakeholder.type === 'association' ? (', EOSC Association '+ (stakeholder.country ? '(' + stakeholder.country + ')': '')) : '') }}
+                      </a>
+                    </li>
+                    <hr *ngIf="userInfo?.coordinators.length > 0">
+                    <li class="groups" *ngFor="let coordinator of userInfo.coordinators">
+                      <a (click)="setCoordinator(coordinator)">
+                        <span class="material-icons uk-margin-right">group</span>{{coordinator.name}}
+                      </a>
+                    </li>
+                    <hr>
+                    <li>
+                      <a id="logout" (click)="logout()">Log out</a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+              <li *ngIf="showLogin" class="uk-animation-fade">
+                <a class="uk-button uk-button-link" (click)="logInButton()">Login</a>
+              </li>
+            </ul>
+
+          </div>
+
+        </nav>
+
+      </div>
+    </div>
+
+  </div>
+</div>

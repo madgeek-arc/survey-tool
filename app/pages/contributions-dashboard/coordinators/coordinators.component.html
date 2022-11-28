@@ -1,0 +1,100 @@
+<div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
+  <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+
+    <ng-template [ngIf]="loading" class="whiteFilm">
+      <i class="loader-big" aria-hidden="true"></i>
+    </ng-template>
+    <div *ngIf="surveyEntries">
+
+      <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
+
+        <div class="uk-width-4-5">
+          <div *ngIf="stakeholder" class="uk-alert uk-alert-info">
+              <p>Please note that for the first survey (2021):</p>
+              <ol>
+                <li>EOSC-SB Members are invited to re-use the Observatory dashboard visualisations.</li>
+                <li>EOSC-SB Members are invited to analyse the survey data to improve their policy development and deployment.</li>
+                <li>Details of individual country surveys, such as country specific financial information, should not be shared outside the EOSC-SB, since the methodology to calculate financial investments is still being developed.</li>
+              </ol>
+          </div>
+        </div>
+
+        <div class="uk-width-1-5">
+          <div *ngIf="stakeholder?.country != 'CH'" class="uk-flex uk-flex-right uk-margin-bottom">
+            <button (click)="exportToCsv()" class="uk-button uk-button-primary">Export to tsv</button>
+          </div>
+        </div>
+
+        <div class="uk-width-1-1 uk-margin-small-top">
+          <div class="uk-flex uk-flex-between uk-flex-middle">
+
+            <p class="big-text uk-margin-remove">
+              <span class="uk-text-bold">{{surveyEntries.total}}</span> Survey answers, Page <span class="uk-text-bold">{{currentPage}}</span> of {{totalPages}}
+            </p>
+
+            <ul class="uk-pagination uk-visible@m">
+              <li *ngIf="currentPage>2 && pageTotal>5"><a (click)="goToPage(1)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a></li>
+              <li *ngIf="currentPage!==1"><a (click)="previousPage()"><span uk-pagination-previous></span></a></li>
+              <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active': ''">
+                <a (click)="goToPage(i)">{{i}}</a>
+              </li>
+              <li *ngIf="currentPage!==pageTotal"><a (click)="nextPage()"><span uk-pagination-next></span></a></li>
+              <li *ngIf="currentPage<pageTotal-1 && pageTotal>5"><a (click)="goToPage(pageTotal)"><span uk-pagination-next></span><span uk-pagination-next></span></a></li>
+            </ul>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="uk-card uk-card-default uk-card-body">
+
+        <div class="uk-overflow-auto">
+          <table class="uk-table uk-table-hover uk-table-middle uk-table-divider" *ngIf="surveyEntriesResults">
+            <thead>
+            <tr>
+              <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>
+              <th class="">EOSC SB member</th>
+              <th class="">Survey</th>
+              <th class="">Validated</th>
+              <th class="">Published</th>
+              <th class="">Progress</th>
+              <th class="">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let surveyEntry of surveyEntriesResults">
+              <td><input class="uk-checkbox" type="checkbox"></td>
+              <td>{{surveyEntry.stakeholder.name}}</td>
+              <td class="">
+                {{surveyEntry.surveyName}}
+              </td>
+              <td class="">
+                <span *ngIf="surveyEntry.validated" class="material-icons">done</span>
+                <span *ngIf="!surveyEntry.validated" class="material-icons">remove</span>
+              </td>
+              <td class="">
+                <span *ngIf="surveyEntry.published" class="material-icons">done</span>
+                <span *ngIf="!surveyEntry.published" class="material-icons">remove</span>
+              </td>
+              <td class="">
+                <!--<progress class="uk-progress uk-progress-secondary" value="83" max="100"></progress>-->
+                <div class="percentageNumber" style="margin-left: 10%;">{{surveyEntry.progressTotal.current}} of {{surveyEntry.progressTotal.total}}</div>
+              </td>
+              <td class="uk-flex">
+                <a [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
+                  <span class="uk-flex uk-flex-middle"><span class="material-icons uk-margin-small-right">visibility</span>View</span>
+                </a>
+<!--                <span class="uk-flex uk-flex-middle uk-margin-left"><span class="material-icons uk-margin-small-right">email</span>Notify</span>-->
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+

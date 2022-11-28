@@ -1,0 +1,229 @@
+<div class="uk-section uk-section-default uk-section-small uk-preserve-color">
+  <div class="uk-container uk-container-expand">
+    <div class="uk-grid">
+      <div class="uk-width-1-1">
+        <ul id="investments-tabs" class="uk-switcher">
+          <!--          National Contributions-->
+          <li class="uk-animation-fade">
+            <div class="uk-grid">
+              <div class="uk-width-2-3" style="height: 800px">
+                <app-highcharts-color-axis [mapData]="questionsDataArray[4]" [title]="'Total Amount of National Contributions to EOSC in 2020'"
+                                           [subtitle]="'(in millions of Euro)'"></app-highcharts-color-axis>
+              </div>
+              <div class="uk-width-1-3">
+
+                <div class="uk-margin-medium-bottom">
+                  <div class="uk-card uk-card-default uk-card-body indicator-card">
+                    <div class="indicator-label">Total amount of national contributions to EOSC in 2020 (in millions of Euro)</div>
+                    <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.totalFundingForEOSC" class="uk-text-lead uk-margin-small-top"><strong>--</strong></div>
+                    <div *ngIf="fundingForEOSCSums?.totalFundingForEOSC" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.totalFundingForEOSC}} M</strong></div>
+                  </div>
+                </div>
+
+                <div class="uk-card uk-card-default uk-card-body" style="height: 550px">
+                  <app-bar-chart [mapData]="questionsDataArrayForBarChart[4]" [title]="'Total amount of national contributions to EOSC in 2020'"></app-bar-chart>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!--          EOSC-A Members-->
+          <li class="uk-animation-fade">
+            <div class="uk-grid">
+              <div class="uk-width-2-3" style="height: 800px">
+                <app-highcharts-color-axis [mapData]="questionsDataArray[5]" [title]="'Amount of Funding Allocated to EOSC Association Organisations in 2020'"
+                                           [subtitle]="'(in millions of Euro)'"></app-highcharts-color-axis>
+              </div>
+              <div class="uk-width-1-3">
+
+                <div class="uk-margin-medium-bottom">
+                  <div class="uk-card uk-card-default uk-card-body indicator-card">
+                    <div class="indicator-label">Amount of funding allocated to EOSC Association organisations in 2020 (in millions of Euro)</div>
+                    <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.fundingToOrganisationsInEOSCA" class="uk-text-lead uk-margin-small-top"><strong>--</strong></div>
+                    <div *ngIf="fundingForEOSCSums?.fundingToOrganisationsInEOSCA" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.fundingToOrganisationsInEOSCA}} M</strong></div>
+                  </div>
+                </div>
+
+                <div class="uk-card uk-card-default uk-card-body" style="height: 550px">
+                  <app-bar-chart [mapData]="questionsDataArrayForBarChart[5]" [title]="'Amount of funding allocated to EOSC Association organisations in 2020'"></app-bar-chart>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!--          Other Contributions-->
+          <li class="uk-animation-fade">
+            <div class="uk-grid">
+              <div class="uk-width-2-3" style="height: 800px">
+                <app-highcharts-color-axis [mapData]="questionsDataArray[6]" [title]="'Amount of Funding Allocated to Non-EOSC Association Organisations in 2020'"
+                                           [subtitle]="'(in millions of Euro)'"></app-highcharts-color-axis>
+              </div>
+              <div class="uk-width-1-3">
+
+                <div class="uk-margin-medium-bottom">
+                  <div class="uk-card uk-card-default uk-card-body indicator-card">
+                    <div class="indicator-label">Amount of funding allocated to non-EOSC Association organisations in 2020 (in millions of Euro)</div>
+                    <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.fundingToOrganisationsOutsideEOSCA" class="uk-text-lead uk-margin-small-top"><strong>--</strong></div>
+                    <div *ngIf="fundingForEOSCSums?.fundingToOrganisationsOutsideEOSCA" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.fundingToOrganisationsOutsideEOSCA}} M</strong></div>
+                  </div>
+                </div>
+
+                <div class="uk-card uk-card-default uk-card-body" style="height: 550px">
+                  <app-bar-chart [mapData]="questionsDataArrayForBarChart[6]" [title]="'Amount of funding allocated to non-EOSC Association organisations in 2020'"></app-bar-chart>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!--          Contributions Sources-->
+          <li class="uk-animation-fade">
+            <ul class="uk-flex-inline uk-flex-left uk-subnav uk-subnav-pill-alt uk-margin-remove"
+                data-uk-switcher="{connect:'#map-vs-table-3', animation: 'fade'}">
+              <li>
+                <a class="uk-margin-remove-bottom"><span>Graph view</span></a>
+              </li>
+              <li>
+                <a class="uk-margin-remove-bottom"><span>Table view</span></a>
+              </li>
+            </ul>
+            <ul id="map-vs-table-3" class="uk-switcher uk-margin">
+              <li>
+                <div class="">
+                  <div class="uk-grid">
+                    <div class="uk-width-1-3 uk-margin-medium-top">
+                      <div class="uk-text-meta uk-margin-bottom uk-text-italic">
+                        Select one of the following to change the view of the map
+                      </div>
+                      <div *ngFor="let mapSubtitle of mapSubtitlesArray[7]; let i=index" class="uk-flex uk-flex-top uk-margin-bottom">
+                        <input id="chart3-{{i}}" type="radio" name="map3" [checked]="i===0" (click)="createMapDataset(i,7)">
+                        <label for="chart3-{{i}}">{{mapSubtitle}}</label>
+                      </div>
+                    </div>
+                    <div class="uk-width-2-3" style="height: 700px">
+                      <app-highcharts-category-map [mapData]="questionsDataArray[7]" [subtitle]="mapSubtitles[7]"
+                                                   [title]="'Sources for Estimates of National Contributions to EOSC in 2020'">
+                      </app-highcharts-category-map>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="uk-card uk-card-default uk-card-body">
+                  <span>Coming soon...</span>
+  <!--                <app-countries-table *ngIf="tableAbsoluteDataArray[7]" [countries]="tableAbsoluteDataArray[7]"-->
+  <!--                                     [tableType]="'policies'">-->
+  <!--                </app-countries-table>-->
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!--          Contribution Level-->
+          <li class="uk-animation-fade">
+            <ul class="uk-flex-inline uk-flex-left uk-subnav uk-subnav-pill-alt uk-margin-remove"
+                data-uk-switcher="{connect:'#map-vs-table-4', animation: 'fade'}">
+              <li>
+                <a class="uk-margin-remove-bottom"><span>Graph view</span></a>
+              </li>
+              <li>
+                <a class="uk-margin-remove-bottom"><span>Table view</span></a>
+              </li>
+            </ul>
+            <ul id="map-vs-table-4" class="uk-switcher uk-margin">
+              <li>
+                <div class="uk-grid">
+                  <div class="uk-width-1-3 uk-margin-medium-top">
+                    <div class="uk-text-meta uk-margin-bottom uk-text-italic">
+                      Select one of the following to change the view of the map
+                    </div>
+                    <div *ngFor="let mapSubtitle of mapSubtitlesArray[8]; let i=index" class="uk-flex uk-flex-top uk-margin-bottom">
+                      <input id="chart8-{{i}}" type="radio" name="map4" [checked]="i===0" (click)="createMapDataset(i,8)">
+                      <label for="chart8-{{i}}">{{mapSubtitle}}</label>
+                    </div>
+                  </div>
+                  <div class="uk-width-2-3" style="height: 700px">
+                    <app-highcharts-category-map [mapData]="questionsDataArray[8]" [subtitle]="mapSubtitles[8]"
+                                                 [title]="'Implementation Level of National Contributions to EOSC in 2020'">
+                    </app-highcharts-category-map>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="uk-card uk-card-default uk-card-body">
+                  <app-countries-table *ngIf="tableAbsoluteDataArray[8]" [countries]="tableAbsoluteDataArray[8]"
+                                       [tableType]="'policies'">
+                  </app-countries-table>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!--          Earmarked Contributions-->
+          <li class="uk-animation-fade">
+            <div class="uk-grid">
+              <div class="uk-width-2-3" style="height: 800px">
+                <app-highcharts-color-axis [mapData]="questionsDataArray[9]" [title]="'Amount of Earmarked Funding for EOSC and Open Science Activities in 2020'"
+                                           [subtitle]="'(in millions of Euro)'"></app-highcharts-color-axis>
+              </div>
+              <div class="uk-width-1-3">
+
+                <div class="uk-margin-medium-bottom">
+                  <div class="uk-card uk-card-default uk-card-body indicator-card">
+                    <div class="indicator-label">Amount of earmarked funding for EOSC and Open Science activities in 2020 (in millions of Euro)</div>
+                    <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.earmarkedContributions" class="uk-text-lead uk-margin-small-top"><strong>--</strong></div>
+                    <div *ngIf="fundingForEOSCSums?.earmarkedContributions" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.earmarkedContributions}} M</strong></div>
+                  </div>
+                </div>
+
+                <div class="uk-card uk-card-default uk-card-body" style="height: 550px">
+                  <app-bar-chart [mapData]="questionsDataArrayForBarChart[9]" [title]="'Amount of Earmarked funding for EOSC and Open Science activities in 2020'"></app-bar-chart>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!--          Non-earmarked Contributions-->
+          <li class="uk-animation-fade">
+            <div class="uk-grid">
+              <div class="uk-width-2-3" style="height: 800px">
+                <app-highcharts-color-axis [mapData]="questionsDataArray[10]" [title]="'Amount of non-earmarked Funding for EOSC and Open Science Activities in 2020'"
+                                           [subtitle]="'(in millions of Euro)'"></app-highcharts-color-axis>
+              </div>
+              <div class="uk-width-1-3">
+
+                <div class="uk-margin-medium-bottom">
+                  <div class="uk-card uk-card-default uk-card-body indicator-card">
+                    <div class="indicator-label">Amount of non-earmarked funding for EOSC and Open Science activities in 2020 (in millions of Euro)</div>
+                    <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.nonEarmarkedContributions" class="uk-text-lead uk-margin-small-top"><strong>--</strong></div>
+                    <div *ngIf="fundingForEOSCSums?.nonEarmarkedContributions" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.nonEarmarkedContributions}} M</strong></div>
+                  </div>
+                </div>
+
+                <div class="uk-card uk-card-default uk-card-body" style="height: 550px">
+                  <app-bar-chart [mapData]="questionsDataArrayForBarChart[10]" [title]="'Amount of non-earmarked funding for EOSC and Open Science activities in 2020'"></app-bar-chart>
+                </div>
+              </div>
+            </div>
+          </li>
+          <!--          Structural/Investment Funds-->
+          <li class="uk-animation-fade">
+            <div class="uk-grid">
+              <div class="uk-width-2-3" style="height: 800px">
+                <app-highcharts-color-axis [mapData]="questionsDataArray[11]" [title]="'Amount of European Structural/Investment Funding Allocated to EOSC in 2020'"
+                                           [subtitle]="'(in millions of Euro)'"></app-highcharts-color-axis>
+              </div>
+              <div class="uk-width-1-3">
+
+                <div class="uk-margin-medium-bottom">
+                  <div class="uk-card uk-card-default uk-card-body indicator-card">
+                    <div class="indicator-label">Amount of European structural/investment funds allocated for EOSC in 2020 (in millions of Euro)</div>
+                    <div *ngIf="!fundingForEOSCSums || !fundingForEOSCSums.structuralInvestmentFunds" class="uk-text-lead uk-margin-small-top"><strong>--</strong></div>
+                    <div *ngIf="fundingForEOSCSums?.structuralInvestmentFunds" class="uk-text-lead uk-margin-small-top"><strong>{{fundingForEOSCSums.structuralInvestmentFunds}} M</strong></div>
+                  </div>
+                </div>
+
+                <div class="uk-card uk-card-default uk-card-body" style="height: 550px">
+                  <app-bar-chart [mapData]="questionsDataArrayForBarChart[11]" [title]="'Amount of European structural/investment funding allocated to EOSC in 2020'"></app-bar-chart>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
