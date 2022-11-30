@@ -15,7 +15,6 @@ import {HttpInterceptorService} from "./services/http-interceptor.service";
 import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/accept-invitation.component";
 import {NationalContributionsToEOSCGuardService} from "./services/nationalContributionsToEOSC-guard.service";
 import {ArchiveGuardService} from "./services/archiveGuard.service";
-import {FooterComponent} from "./shared/footer/footer.component";
 import {ObservatoryUiRoutingModule} from "./observatoryUi-routing.module";
 import {SharedModule} from "../../app/pages/shared/shared.module";
 
@@ -49,7 +48,6 @@ import {SharedModule} from "../../app/pages/shared/shared.module";
   ],
   exports: [
     ContributionsDashboardComponent,
-    FooterComponent,
   ]
 })
 export class ObservatoryUiModule {

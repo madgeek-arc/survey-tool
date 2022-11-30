@@ -6,7 +6,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {ForbiddenPageComponent} from './403-forbidden-page.component';
 import {ReadMoreComponent, ReadMoreTextComponent} from './read-more.component';
 import {SideMenuDashboardComponent} from "../sidemenudashboard/side-menu-dashboard.component";
-import {FooterComponent} from "../footer/footer.component";
 import {HighchartsChartModule} from "highcharts-angular";
 import {HighchartsTilemapComponent} from "./charts/highcharts-tilemap.component";
 import {HighchartsCategoryMapComponent} from "./charts/category-map/highcharts-category-map.component";
@@ -25,7 +24,6 @@ import {HighchartsBarComponent} from "./charts/bar-chart/highcharts-bar.componen
   ],
   declarations: [
     SideMenuDashboardComponent,
-    FooterComponent,
     ForbiddenPageComponent,
     ReadMoreComponent,
     ReadMoreTextComponent,
@@ -37,7 +35,6 @@ import {HighchartsBarComponent} from "./charts/bar-chart/highcharts-bar.componen
   ],
   exports: [
     SideMenuDashboardComponent,
-    FooterComponent,
     ForbiddenPageComponent,
     ReadMoreComponent,
     ReadMoreTextComponent,
