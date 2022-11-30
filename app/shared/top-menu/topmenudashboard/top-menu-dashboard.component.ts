@@ -35,7 +35,7 @@ export class TopMenuDashboardComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.subscriptions.push(
       this.userService.currentStakeholder.subscribe(next => {
-        this.currentStakeholder = next;
+        this.currentStakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
         if (this.currentStakeholder !== null) {
           this.subscriptions.push(
             this.privacyPolicy.hasAcceptedPolicy(this.currentStakeholder.type).subscribe(
@@ -54,7 +54,7 @@ export class TopMenuDashboardComponent implements OnInit, OnChanges, OnDestroy {
     );
     this.subscriptions.push(
       this.userService.currentCoordinator.subscribe(next => {
-        this.currentCoordinator = next;
+        this.currentCoordinator = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
         if (this.currentCoordinator !== null) {
           this.subscriptions.push(
             this.privacyPolicy.hasAcceptedPolicy(this.currentCoordinator.type).subscribe(

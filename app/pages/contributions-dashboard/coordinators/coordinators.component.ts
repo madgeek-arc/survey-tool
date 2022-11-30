@@ -63,7 +63,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     );
     this.subscriptions.push(
       this.userService.currentStakeholder.subscribe(
-        next => this.stakeholder = next
+        next => this.stakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'))
       )
     );
 

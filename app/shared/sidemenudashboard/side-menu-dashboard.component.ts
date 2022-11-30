@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
+import {AfterViewChecked, AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {Coordinator, Stakeholder} from "../../domain/userInfo";
 import {UserService} from "../../services/user.service";
 import {Subscriber} from "rxjs";
@@ -9,7 +9,7 @@ import {Subscriber} from "rxjs";
   styleUrls: ['./side-menu-dashboard.component.css']
 })
 
-export class SideMenuDashboardComponent implements OnInit {
+export class SideMenuDashboardComponent implements OnInit, OnDestroy {
 
   subscriptions = [];
   toggle: number[] = [];
@@ -24,7 +24,7 @@ export class SideMenuDashboardComponent implements OnInit {
   ngOnInit() {
     this.subscriptions.push(
       this.userService.currentStakeholder.subscribe(next => {
-        this.currentStakeholder = next;
+        this.currentStakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
         if (this.currentStakeholder !== null) {
           this.ready = true;
           this.isManager = this.checkIfManager();
@@ -33,7 +33,7 @@ export class SideMenuDashboardComponent implements OnInit {
     );
     this.subscriptions.push(
       this.userService.currentCoordinator.subscribe(next => {
-        this.currentCoordinator = next;
+        this.currentCoordinator = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
         if (this.currentCoordinator !== null) {
           this.ready = true;
         }

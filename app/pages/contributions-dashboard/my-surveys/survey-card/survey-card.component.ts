@@ -29,7 +29,7 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
     this.subscriptions.push(
       this.userService.currentStakeholder.subscribe(
         next => {
-          this.currentGroup = next;
+          this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
           if (this.currentGroup !== null) {
             this.subscriptions.push(
               this.surveyService.getLatestAnswer(this.currentGroup.id, this.survey.id).subscribe(

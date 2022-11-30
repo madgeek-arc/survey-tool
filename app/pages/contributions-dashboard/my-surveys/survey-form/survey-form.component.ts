@@ -52,7 +52,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
               }
 
               if (!this.freeView) {
-
+                console.log('skata');
+                console.log(sessionStorage.getItem('currentStakeholder'))
                 this.subscriptions.push(
                   zip(
                     this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId),

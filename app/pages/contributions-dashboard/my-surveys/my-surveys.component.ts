@@ -25,7 +25,7 @@ export class MySurveysComponent implements OnInit, OnDestroy{
     this.subscriptions.push(
       this.userService.currentStakeholder.subscribe(
         next => {
-          this.currentGroup = next;
+          this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
           if (this.currentGroup !== null) {
             this.subscriptions.push(
               this.surveyService.getSurveys('stakeholderId', this.currentGroup.id).subscribe(next => {

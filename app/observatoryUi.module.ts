@@ -47,7 +47,7 @@ import {ObservatoryUiRoutingModule} from "./observatoryUi-routing.module";
     },
     NationalContributionsToEOSCGuardService,
     ArchiveGuardService,
-    // UserService,
+    UserService,
     SurveyService
   ],
   exports: [
