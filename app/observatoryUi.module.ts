@@ -8,7 +8,6 @@ import {SurveyFormComponent} from "./pages/contributions-dashboard/my-surveys/su
 import {DynamicFormModule} from "../catalogue-ui/pages/dynamic-form/dynamic-form.module";
 import {ContributionsDashboardComponent} from "./pages/contributions-dashboard/contributions-dashboard.component";
 import {ReusableComponentsModule} from "./shared/reusablecomponents/reusable-components.module";
-import {UserService} from "./services/user.service";
 import {AuthenticationService} from "./services/authentication.service";
 import {AuthenticationGuardService} from "./services/authentication-guard.service";
 import {SurveyService} from "./services/survey.service";
@@ -16,18 +15,16 @@ import {HttpInterceptorService} from "./services/http-interceptor.service";
 import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/accept-invitation.component";
 import {NationalContributionsToEOSCGuardService} from "./services/nationalContributionsToEOSC-guard.service";
 import {ArchiveGuardService} from "./services/archiveGuard.service";
-import {TopMenuPublicDashboardComponent} from "./shared/top-menu/topmenupublicdashboard/top-menu-public-dashboard.component";
 import {FooterComponent} from "./shared/footer/footer.component";
-import {TopMenuLandingComponent} from "./shared/top-menu/topmenulanding/top-menu-landing.component";
 import {ObservatoryUiRoutingModule} from "./observatoryUi-routing.module";
+import {SharedModule} from "../../app/pages/shared/shared.module";
 
 @NgModule({
   declarations: [
     HomeComponent,
     SurveyFormComponent,
     ContributionsDashboardComponent,
-    AcceptInvitationComponent,
-    // NationalContributionsToEOSCDashboardComponent
+    AcceptInvitationComponent
   ],
   imports: [
     CommonModule,
@@ -36,6 +33,7 @@ import {ObservatoryUiRoutingModule} from "./observatoryUi-routing.module";
     ReusableComponentsModule,
     FormsModule,
     ObservatoryUiRoutingModule,
+    SharedModule,
   ],
   providers: [
     AuthenticationService,
@@ -47,13 +45,10 @@ import {ObservatoryUiRoutingModule} from "./observatoryUi-routing.module";
     },
     NationalContributionsToEOSCGuardService,
     ArchiveGuardService,
-    UserService,
     SurveyService
   ],
   exports: [
     ContributionsDashboardComponent,
-    TopMenuPublicDashboardComponent,
-    TopMenuLandingComponent,
     FooterComponent,
   ]
 })
