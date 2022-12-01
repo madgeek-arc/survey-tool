@@ -10,7 +10,7 @@ import {AuthenticationService} from "./services/authentication.service";
 import {AuthenticationGuardService} from "./services/authentication-guard.service";
 import {SurveyService} from "./services/survey.service";
 import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/accept-invitation.component";
-import {ObservatoryUiRoutingModule} from "./observatoryUi-routing.module";
+import {SurveyToolRoutingModule} from "./survey-tool-routing.module";
 import {SharedModule} from "../../app/shared/shared.module";
 
 @NgModule({
@@ -25,7 +25,7 @@ import {SharedModule} from "../../app/shared/shared.module";
     CatalogueUiModule,
     ReusableComponentsModule,
     FormsModule,
-    ObservatoryUiRoutingModule,
+    SurveyToolRoutingModule,
     SharedModule,
   ],
   providers: [
@@ -37,5 +37,5 @@ import {SharedModule} from "../../app/shared/shared.module";
     ContributionsDashboardComponent,
   ]
 })
-export class ObservatoryUiModule {
+export class SurveyToolModule {
 }

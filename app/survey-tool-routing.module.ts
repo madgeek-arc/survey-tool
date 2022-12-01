@@ -26,4 +26,4 @@ const observatoryUiRoutes: Routes = [
   exports: [RouterModule]
 })
 
-export class ObservatoryUiRoutingModule { }
+export class SurveyToolRoutingModule { }
