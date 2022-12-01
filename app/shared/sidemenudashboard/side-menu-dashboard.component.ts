@@ -43,8 +43,9 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
 
   checkIfManager(): boolean {
     if (this.currentStakeholder) {
+      let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
       for (const manager of this.currentStakeholder.managers) {
-        if (this.userService.userInfo.user.email === manager){
+        if (userInfo.user.email === manager){
           return true;
         }
       }

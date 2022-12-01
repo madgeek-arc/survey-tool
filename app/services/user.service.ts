@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Coordinator, Stakeholder, StakeholdersMembers, UserInfo} from "../domain/userInfo";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable()
 export class UserService {
@@ -11,7 +11,7 @@ export class UserService {
   base = environment.API_ENDPOINT;
 
   userId = null;
-  userInfo: UserInfo = null;
+  userInfo = new BehaviorSubject<UserInfo>(null);
   currentStakeholder = new BehaviorSubject<Stakeholder>(null);
   currentCoordinator = new BehaviorSubject<Coordinator>(null);
 
@@ -38,7 +38,8 @@ export class UserService {
   }
 
   setUserInfo(userInfo: UserInfo){
-    this.userInfo = userInfo;
+    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+    this.userInfo.next(userInfo);
   }
 
   setUserConsent(id: string) {

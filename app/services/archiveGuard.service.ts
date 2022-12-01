@@ -13,7 +13,8 @@ export class ArchiveGuardService implements CanActivateChild {
     if (!this.userService.userInfo) {
       return this.fail();
     }
-    return this.userService.userInfo.coordinators.filter(c => c.type === 'country').length > 0;
+    let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    return userInfo.coordinators.filter(c => c.type === 'country').length > 0;
 
   }
 

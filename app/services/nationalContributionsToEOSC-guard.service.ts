@@ -11,16 +11,17 @@ export class NationalContributionsToEOSCGuardService implements CanActivate {
   }
 
   canActivate(routeSnapshot: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
     if (!this.userService.userInfo) {
       return this.fail();
     }
-    if (this.userService.userInfo.coordinators.filter(c => c.type === 'country').length > 0) {
+    if (userInfo.coordinators.filter(c => c.type === 'country').length > 0) {
       return true;
     }
-    if (this.userService.userInfo.stakeholders.filter(c => c.type === 'country').length > 0) {
-      let stakeHolders: Stakeholder[] = this.userService.userInfo.stakeholders.filter(c => c.type === 'country');
+    if (userInfo.stakeholders.filter(c => c.type === 'country').length > 0) {
+      let stakeHolders: Stakeholder[] = userInfo.stakeholders.filter(c => c.type === 'country');
       for (const stakeHolder of stakeHolders) {
-        if (stakeHolder.managers.indexOf(this.userService.userInfo.user.email) >= 0)
+        if (stakeHolder.managers.indexOf(userInfo.user.email) >= 0)
           return true;
       }
       return this.fail();
