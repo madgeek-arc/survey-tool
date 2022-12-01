@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
-import {HomeComponent} from "./pages/home.component";
+import {HomeComponent} from "../../app/pages/home/home.component";
 import {CatalogueUiModule} from "../catalogue-ui/catalogue-ui.module";
 import {SurveyFormComponent} from "./pages/contributions-dashboard/my-surveys/survey-form/survey-form.component";
 import {DynamicFormModule} from "../catalogue-ui/pages/dynamic-form/dynamic-form.module";
@@ -16,7 +16,7 @@ import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/
 import {NationalContributionsToEOSCGuardService} from "./services/nationalContributionsToEOSC-guard.service";
 import {ArchiveGuardService} from "./services/archiveGuard.service";
 import {ObservatoryUiRoutingModule} from "./observatoryUi-routing.module";
-import {SharedModule} from "../../app/pages/shared/shared.module";
+import {SharedModule} from "../../app/shared/shared.module";
 
 @NgModule({
   declarations: [
