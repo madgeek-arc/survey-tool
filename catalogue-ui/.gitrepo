@@ -7,10 +7,6 @@
 	remote = git@github.com:madgeek-arc/catalogue-ui.git
 	branch = v4.0
 	commit = 7fa07dd0409f5ed030f7ee3f518ec4018e263e03
-<<<<<<< HEAD
-	parent = 56f572c8185909c2328b4e61f464e33d1e763bbc
-=======
 	parent = f1130828ad12011f8a48de71f9384a2e7c77ccf2
->>>>>>> refs/subrepo/src/survey-tool/fetch
 	method = merge
 	cmdver = 0.4.3
