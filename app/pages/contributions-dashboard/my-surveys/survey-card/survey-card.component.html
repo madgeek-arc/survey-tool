@@ -2,7 +2,7 @@
 
   <div class="uk-card-body">
 
-    <div class="uk-card-badge">
+    <div *ngIf="survey.creationDate" class="uk-card-badge">
       Published on {{survey.creationDate | date}}
     </div>
 
