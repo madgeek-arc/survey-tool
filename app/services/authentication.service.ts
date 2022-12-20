@@ -16,7 +16,7 @@ export class AuthenticationService {
     setInterval( ()=> {
       this.http.head(this.base + '/refreshLogin', {withCredentials: true}).subscribe(
         suc => {console.log('Refreshed login ' + suc)},
-        error => {console.log(error)}
+        error => {console.error(error)}
       );
     }, 1000 * 60 * 10);
   }

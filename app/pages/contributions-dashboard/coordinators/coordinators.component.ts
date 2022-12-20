@@ -52,7 +52,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
           this.surveyService.getSurveyEntries(this.id, this.urlParameters).subscribe(surveyEntries => {
               this.updateSurveyEntriesList(surveyEntries);
             },
-            error => {console.log(error)},
+            error => {console.error(error)},
             () => {
               this.paginationInit();
               this.loading = false;

@@ -28,7 +28,7 @@ export class ContributionsDashboardComponent implements OnDestroy{
           this.userInfo = res;
           this.userService.userId = this.userInfo.user.email;
         }, error => {
-          console.log(error);
+          console.error(error);
         },
         () => {
           this.setGroup();

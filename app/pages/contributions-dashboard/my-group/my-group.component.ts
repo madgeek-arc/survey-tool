@@ -37,7 +37,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
                 this.members = next;
               },
               error => {
-                console.log(error);
+                console.error(error);
               },
               () => {
                 this.userEmail = this.userService.userId;
@@ -69,7 +69,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
             // UIkit.modal('#add-contributor-modal').hide();
           },
           error => {
-            console.log(error);
+            console.error(error);
             this.errorMessage = error.error.error;
           },
           () => {
@@ -134,8 +134,8 @@ export class MyGroupComponent implements OnInit, OnDestroy {
           UIkit.modal('#remove-contributor-modal').hide();
         },
         error => {
-          console.log(error)
-          this.errorMessage = error.error.error;
+          console.error(error)
+          this.errorMessage = error.message;
         },
         () => {
           this.errorMessage = null;
