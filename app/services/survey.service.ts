@@ -66,7 +66,6 @@ export class SurveyService {
     }
     searchQuery.delete('to');
 
-    console.log(urlParameters)
     return this.http.get<Paging<SurveyInfo>>(this.base + `/answers/info`, {params: searchQuery});
   }
 

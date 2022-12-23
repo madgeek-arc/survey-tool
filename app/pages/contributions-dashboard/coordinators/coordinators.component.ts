@@ -52,7 +52,6 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
               this.setUrlParams(qParams);
                 this.id = params['id'];
                 this.updateCoordinatorStakeholderParameter(this.id);
-                console.log(this.urlParameters)
                 this.subscriptions.push(
                 this.surveyService.getSurveyEntries(this.id, this.urlParameters).subscribe(surveyEntries => {
                     this.updateSurveyEntriesList(surveyEntries);
