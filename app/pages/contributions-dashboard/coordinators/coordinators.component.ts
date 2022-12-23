@@ -46,16 +46,24 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     this.loading = true;
     this.subscriptions.push(
       this.route.params.subscribe(params => {
-        this.id = params['id'];
-        this.updateCoordinatorStakeholderParameter(this.id);
         this.subscriptions.push(
-          this.surveyService.getSurveyEntries(this.id, this.urlParameters).subscribe(surveyEntries => {
-              this.updateSurveyEntriesList(surveyEntries);
-            },
-            error => {console.error(error)},
-            () => {
-              this.paginationInit();
-              this.loading = false;
+          this.route.queryParams.subscribe(
+            qParams => {
+              this.setUrlParams(qParams);
+                this.id = params['id'];
+                this.updateCoordinatorStakeholderParameter(this.id);
+                console.log(this.urlParameters)
+                this.subscriptions.push(
+                this.surveyService.getSurveyEntries(this.id, this.urlParameters).subscribe(surveyEntries => {
+                    this.updateSurveyEntriesList(surveyEntries);
+                  },
+                  error => {console.error(error)},
+                  () => {
+                    this.paginationInit();
+                    this.loading = false;
+                  }
+                )
+              );
             }
           )
         );
@@ -224,7 +232,20 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       map[urlParameter.key] = urlParameter.values.join(',');
     }
     // console.log(map);
-    return this.router.navigate([`/contributions/${this.id}/surveys`, map]);
+    return this.router.navigate([`/contributions/${this.id}/surveys`], {queryParams: map});
+  }
+
+  setUrlParams(params) {
+    this.urlParameters.splice(0, this.urlParameters.length);
+    for (const obj in params) {
+      if (params.hasOwnProperty(obj)) {
+        const urlParameter: URLParameter = {
+          key: obj,
+          values: params[obj].split(',')
+        };
+        this.urlParameters.push(urlParameter);
+      }
+    }
   }
 
 }

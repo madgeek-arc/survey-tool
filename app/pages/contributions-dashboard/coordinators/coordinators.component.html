@@ -78,14 +78,12 @@
                 <span *ngIf="!surveyEntry.published" class="material-icons">remove</span>
               </td>
               <td class="">
-                <!--<progress class="uk-progress uk-progress-secondary" value="83" max="100"></progress>-->
                 <div class="percentageNumber" style="margin-left: 10%;">{{surveyEntry.progressTotal.current}} of {{surveyEntry.progressTotal.total}}</div>
               </td>
               <td class="uk-flex">
                 <a [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
                   <span class="uk-flex uk-flex-middle"><span class="material-icons uk-margin-small-right">visibility</span>View</span>
                 </a>
-<!--                <span class="uk-flex uk-flex-middle uk-margin-left"><span class="material-icons uk-margin-small-right">email</span>Notify</span>-->
               </td>
             </tr>
             </tbody>
