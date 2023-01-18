@@ -62,6 +62,4 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
 }
