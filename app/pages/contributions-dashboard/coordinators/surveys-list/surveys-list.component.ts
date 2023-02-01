@@ -22,7 +22,7 @@ export class SurveysListComponent implements OnInit{
     this.subscriptions.push(
       this.surveyService.getSurveys('type', 'country').subscribe(
         next => { this.surveys = next; },
-        error => {console.log(error);}
+        error => {console.error(error);}
       )
     );
   }
