@@ -62,6 +62,33 @@ export class CompositeFieldComponent implements OnInit {
     this.fieldAsFormArray().push(this.formService.createCompositeField(compositeField));
   }
 
+  movedElement(e, ) {
+    let newOrder: number[] = [];
+    e.target.childNodes.forEach(child => {
+      newOrder.push(child.id);
+    });
+    // console.log(newOrder);
+    for (let i = 0; i < newOrder.length-1; i++) {
+      if (newOrder[i] != i) {
+        if (newOrder[i] > i+1) {
+          this.move(newOrder[i], i);
+          break;
+        } else if (newOrder[i] < i) {
+          this.move(i, newOrder[i]);
+          break;
+        }
+      }
+    }
+  }
+
+  move(newIndex: number, currentIndex: number) {
+    const formArray = this.fieldAsFormArray();
+
+    const currentGroup = formArray.at(currentIndex);
+    formArray.removeAt(currentIndex);
+    formArray.insert(newIndex, currentGroup)
+  }
+
   /** <-- Handle Arrays **/
 
   /** check form fields and tabs validity--> **/
@@ -82,22 +109,7 @@ export class CompositeFieldComponent implements OnInit {
 
   /** <-- check form fields and tabs validity **/
 
-  /** Return Vocabulary items for composite fields--> **/
-
-  getCompositeVocabularyItems(fieldData: Field) {
-    // console.log(fieldData.name);
-    // console.log(fieldData.id);
-    // console.log(fieldData.typeInfo.vocabulary);
-    // console.log(this.vocabularies);
-    // if (fieldData.subFields[j].form.dependsOn !== null) {
-    //   return this.subVocabularies[this.oldFieldAsFormArray(fieldData.subFields[j].parent).controls[i].get(fieldData.subFields[j].form.dependsOn.name).value];
-    // } else {
-    // console.log(this.vocabularies[fieldData.typeInfo.vocabulary]);
-      return this.vocabularies[fieldData.typeInfo.vocabulary];
-    // }
-  }
-
-  /** <--Return Vocabulary items for composite fields **/
+  /** Handle Bitsets--> **/
 
   updateBitSet(fieldData: Field) {
     this.timeOut(200).then(() => { // Needed for radio buttons strange behaviour
