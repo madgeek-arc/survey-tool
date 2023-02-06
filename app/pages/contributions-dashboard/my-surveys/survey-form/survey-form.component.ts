@@ -3,8 +3,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {SurveyComponent} from "../../../../../catalogue-ui/pages/dynamic-form/survey.component";
 import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 import {SurveyService} from "../../../../services/survey.service";
-import {UserService} from "../../../../services/user.service";
 import {SurveyAnswer} from "../../../../domain/survey";
+import {Stakeholder, UserInfo} from "../../../../domain/userInfo";
 import {Subscriber} from "rxjs";
 import {zip} from "rxjs/internal/observable/zip";
 
@@ -21,7 +21,9 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
   subscriptions = [];
   survey: Model = null;
+  subType: string;
   surveyAnswers: SurveyAnswer = null
+  userInfo: UserInfo = null;
   tabsHeader: string = null;
   mandatoryFieldsText: string = 'Fields with (*) are mandatory and must be completed in order for the survey to be validated.';
   downloadPDF: boolean = true;
@@ -30,7 +32,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   freeView = false;
   ready = false;
 
-  constructor(private surveyService: SurveyService, private userService: UserService, private route: ActivatedRoute,
+  constructor(private surveyService: SurveyService, private route: ActivatedRoute,
               private router: Router) {}
 
   ngOnInit() {
@@ -50,7 +52,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
               } else {
                 this.stakeholderId = params['id'];
               }
-
+              this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+              this.subType = this.findSubType(this.userInfo.stakeholders, this.stakeholderId);
               if (!this.freeView) {
                 this.subscriptions.push(
                   zip(
@@ -85,6 +88,14 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         subscription.unsubscribe();
       }
     });
+  }
+
+  findSubType(stakeholders: Stakeholder[], stakeholderId: string): string {
+    for (const stakeholder of stakeholders) {
+      if (stakeholder.id === stakeholderId)
+        return stakeholder.subType;
+    }
+    return null;
   }
 
   validateSurveyAnswer(valid: boolean) {
