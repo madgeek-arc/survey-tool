@@ -23,6 +23,9 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   surveyEntriesResults: SurveyInfo[];
   id: string = null;
 
+  selectedStakeholders: string[] = [];
+  selectedSurveys: string[] = [];
+
   pageSize = 10;
   totalPages = 0;
   isPreviousPageDisabled = false;
@@ -39,7 +42,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
 
   loading = false;
 
-  constructor(private userService: UserService, private surveyService: SurveyService, public route: ActivatedRoute, public router: Router) {
+  constructor(private userService: UserService, private surveyService: SurveyService, public route: ActivatedRoute,
+              public router: Router) {
   }
 
   ngOnInit() {
@@ -86,6 +90,10 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
 
   exportToCsv() {
     this.surveyService.exportToCsv(this.surveyEntriesResults[0].surveyId);
+  }
+
+  onSelect(variable) {
+    console.log(variable)
   }
 
   updateSurveyEntriesList(searchResults: Paging<SurveyInfo>) {

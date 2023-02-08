@@ -24,6 +24,23 @@
             <button (click)="exportToCsv()" class="uk-button uk-button-primary">Export to tsv</button>
           </div>
         </div>
+        <div class="uk-width-1-1" uk-grid>
+          <div class="uk-width-1-4">
+            <label for="selectStakeholder">Stakeholder:</label>
+            <ng-select id="selectStakeholder" (change)="onSelect(selectedStakeholders)"
+                       [multiple]="true" [items]="surveyEntries.facets[8].values" [(ngModel)]="selectedStakeholders"
+                       bindLabel="value" bindValue="value" clearAllText="Clear">
+            </ng-select>
+          </div>
+          <div class="uk-width-1-4">
+            <label for="selectSurvey">Survey:</label>
+            <ng-select id="selectSurvey" (change)="onSelect(selectedSurveys)"
+                       [multiple]="true" [items]="surveyEntries.facets[9].values" [(ngModel)]="selectedSurveys"
+                       bindLabel="value" bindValue="value" clearAllText="Clear">
+            </ng-select>
+          </div>
+
+        </div>
 
         <div class="uk-width-1-1 uk-margin-small-top">
           <div class="uk-flex uk-flex-between uk-flex-middle">
@@ -56,6 +73,7 @@
               <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>
               <th class="">EOSC SB member</th>
               <th class="">Survey</th>
+              <th class="">Modified</th>
               <th class="">Validated</th>
               <th class="">Published</th>
               <th class="">Progress</th>
@@ -69,13 +87,20 @@
               <td class="">
                 {{surveyEntry.surveyName}}
               </td>
-              <td class="">
-                <span *ngIf="surveyEntry.validated" class="material-icons">done</span>
-                <span *ngIf="!surveyEntry.validated" class="material-icons">remove</span>
+              <td>
+                {{surveyEntry.lastUpdate | date}}
+              </td>
+              <td>
+                <div class="uk-flex uk-flex-center">
+                  <span *ngIf="surveyEntry.validated" class="material-icons">done</span>
+                  <span *ngIf="!surveyEntry.validated" class="material-icons">remove</span>
+                </div>
               </td>
               <td class="">
-                <span *ngIf="surveyEntry.published" class="material-icons">done</span>
-                <span *ngIf="!surveyEntry.published" class="material-icons">remove</span>
+                <div class="uk-flex uk-flex-center">
+                  <span *ngIf="surveyEntry.published" class="material-icons">done</span>
+                  <span *ngIf="!surveyEntry.published" class="material-icons">remove</span>
+                </div>
               </td>
               <td class="">
                 <div class="percentageNumber" style="margin-left: 10%;">{{surveyEntry.progressTotal.current}} of {{surveyEntry.progressTotal.total}}</div>
