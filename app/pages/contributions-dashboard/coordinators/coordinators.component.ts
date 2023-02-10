@@ -103,7 +103,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     this.surveyEntries = searchResults;
     this.surveyEntriesResults = this.surveyEntries.results;
 
-    this.updatePagingURLParametersQuantity(this.pageSize);
+    // this.updatePagingURLParametersQuantity(this.pageSize);
+    this.updatePagingURLParameters('quantity', this.pageSize.toString())
     this.currentPage = (searchResults.from / this.pageSize) + 1;
     this.totalPages = Math.ceil(searchResults.total / this.pageSize);
     if (this.currentPage === 1) {
@@ -120,64 +121,48 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     let key: string;
     if (id.substring(0,2) === 'co') {
       key = 'coordinator';
-      if (this.urlParameters.find(param => param.key === key)) {
-        this.urlParameters.find(param => param.key === key).values = [id];
-      } else {
-        const parameter: URLParameter = {
-          key: 'coordinator',
-          values: [id]
-        };
-        this.urlParameters.push(parameter);
-      }
-    }
-    else {
+    } else {
       key = 'stakeholder';
-      if (this.urlParameters.find(param => param.key === key)) {
-        this.urlParameters.find(param => param.key === key).values = [id];
-      } else {
-        const parameter: URLParameter = {
-          key: 'stakeholder',
-          values: [id]
-        };
-        this.urlParameters.push(parameter);
-      }
     }
+    if (this.urlParameters.find(param => param.key === key)) {
+      this.urlParameters.find(param => param.key === key).values = [id];
+    } else {
+      const parameter: URLParameter = {
+        key: key,
+        values: [id]
+      };
+      this.urlParameters.push(parameter);
+    }
+    // } else {
+    //   key = 'stakeholder';
+    //   if (this.urlParameters.find(param => param.key === key)) {
+    //     this.urlParameters.find(param => param.key === key).values = [id];
+    //   } else {
+    //     const parameter: URLParameter = {
+    //       key: 'stakeholder',
+    //       values: [id]
+    //     };
+    //     this.urlParameters.push(parameter);
+    //   }
+    // }
   }
 
-  updatePagingURLParameters(from: number) {
+  updatePagingURLParameters(key: string, value: string) {
     let foundFromCategory = false;
     for (const urlParameter of this.urlParameters) {
-      if (urlParameter.key === 'from') {
+      if (urlParameter.key === key) {
         foundFromCategory = true;
         urlParameter.values = [];
-        urlParameter.values.push(from + '');
+        urlParameter.values.push(value);
         break;
       }
     }
     if (!foundFromCategory) {
       const newFromParameter: URLParameter = {
-        key: 'from',
-        values: [from + '']
+        key: key,
+        values: [value]
       };
       this.urlParameters.push(newFromParameter);
-    }
-  }
-
-  updatePagingURLParametersQuantity(quantity: number) {
-    let foundQuantityCategory = false;
-    for (const urlParameter of this.urlParameters) {
-      if (urlParameter.key === 'quantity') {
-        foundQuantityCategory = true;
-        urlParameter.values = [];
-        urlParameter.values.push(quantity + '');
-      }
-    }
-    if (!foundQuantityCategory) {
-      const newQuantityParameter: URLParameter = {
-        key: 'quantity',
-        values: [quantity + '']
-      };
-      this.urlParameters.push(newQuantityParameter);
     }
   }
 
@@ -209,7 +194,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   goToPage(page: number) {
     this.currentPage = page;
     let from: number = (this.currentPage - 1) * this.pageSize
-    this.updatePagingURLParameters(from);
+    this.updatePagingURLParameters('from', from.toString());
     return this.navigateUsingParameters();
   }
 
@@ -218,7 +203,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       this.currentPage--;
       let from: number = this.surveyEntries.from;
       from -= this.pageSize;
-      this.updatePagingURLParameters(from);
+    this.updatePagingURLParameters('from', from.toString());
       return this.navigateUsingParameters();
     // }
   }
@@ -228,7 +213,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       this.currentPage++;
       let from: number = this.surveyEntries.from;
       from += this.pageSize;
-      this.updatePagingURLParameters(from);
+      this.updatePagingURLParameters('from', from.toString());
       return this.navigateUsingParameters();
     // }
   }
