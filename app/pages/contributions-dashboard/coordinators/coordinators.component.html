@@ -24,19 +24,45 @@
             <button (click)="exportToCsv()" class="uk-button uk-button-primary">Export to tsv</button>
           </div>
         </div>
-        <div class="uk-width-1-1" uk-grid>
-          <div class="uk-width-1-4">
+        <div *ngIf="surveyEntries?.facets" class="uk-width-1-1" uk-grid>
+          <div class="uk-width-1-6">
             <label for="selectStakeholder">Stakeholder:</label>
-            <ng-select id="selectStakeholder" (change)="onSelect(selectedStakeholders)"
-                       [multiple]="true" [items]="surveyEntries.facets[8].values" [(ngModel)]="selectedStakeholders"
-                       bindLabel="value" bindValue="value" clearAllText="Clear">
+            <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholders)"
+                       [multiple]="true" [items]="surveyEntries?.facets[8]?.values" [(ngModel)]="selectedStakeholders"
+                       bindLabel="label" bindValue="value" clearAllText="Clear">
             </ng-select>
           </div>
           <div class="uk-width-1-4">
             <label for="selectSurvey">Survey:</label>
-            <ng-select id="selectSurvey" (change)="onSelect(selectedSurveys)"
-                       [multiple]="true" [items]="surveyEntries.facets[9].values" [(ngModel)]="selectedSurveys"
-                       bindLabel="value" bindValue="value" clearAllText="Clear">
+            <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurveys)"
+                       [multiple]="true" [items]="surveyEntries?.facets[9]?.values" [(ngModel)]="selectedSurveys"
+                       bindLabel="label" bindValue="value" clearAllText="Clear">
+            </ng-select>
+          </div>
+          <div class="uk-width-1-6">
+            <label for="selectSurvey">Validation: </label>
+            <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
+                       [multiple]="false" [(ngModel)]="validationStatus" clearAllText="Clear">
+              <ng-option [value]="''">All</ng-option>
+              <ng-option [value]="true">Validated</ng-option>
+              <ng-option [value]="false">Not validated</ng-option>
+            </ng-select>
+          </div>
+          <div class="uk-width-1-6">
+            <label for="selectSurvey">Published: </label>
+            <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
+                       [multiple]="false" [(ngModel)]="publishedStatus" clearAllText="Clear">
+              <ng-option [value]="''">All</ng-option>
+              <ng-option [value]="true">Published</ng-option>
+              <ng-option [value]="false">Not published</ng-option>
+            </ng-select>
+          </div>
+          <div class="uk-width-1-5">
+            <label for="selectSurvey">Order: </label>
+            <ng-select id="order" (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)"
+                       [multiple]="false" [(ngModel)]="order" clearAllText="Clear">
+              <ng-option [value]="'desc'">Descending modification date</ng-option>
+              <ng-option [value]="'asc'">Ascending modification date</ng-option>
             </ng-select>
           </div>
 

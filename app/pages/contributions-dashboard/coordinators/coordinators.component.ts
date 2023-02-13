@@ -25,6 +25,9 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
 
   selectedStakeholders: string[] = [];
   selectedSurveys: string[] = [];
+  validationStatus: string = null;
+  publishedStatus: string = null;
+  order: string = null;
 
   pageSize = 10;
   totalPages = 0;
@@ -92,10 +95,6 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     this.surveyService.exportToCsv(this.surveyEntriesResults[0].surveyId);
   }
 
-  onSelect(variable) {
-    console.log(variable)
-  }
-
   updateSurveyEntriesList(searchResults: Paging<SurveyInfo>) {
 
     // INITIALISATIONS
@@ -104,7 +103,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     this.surveyEntriesResults = this.surveyEntries.results;
 
     // this.updatePagingURLParametersQuantity(this.pageSize);
-    this.updatePagingURLParameters('quantity', this.pageSize.toString())
+    this.updateURLParameters('quantity', this.pageSize.toString());
     this.currentPage = (searchResults.from / this.pageSize) + 1;
     this.totalPages = Math.ceil(searchResults.total / this.pageSize);
     if (this.currentPage === 1) {
@@ -147,20 +146,31 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     // }
   }
 
-  updatePagingURLParameters(key: string, value: string) {
+  updateURLParameters(key: string, value: string | string[]) {
     let foundFromCategory = false;
     for (const urlParameter of this.urlParameters) {
       if (urlParameter.key === key) {
         foundFromCategory = true;
         urlParameter.values = [];
-        urlParameter.values.push(value);
+        if (value instanceof Array) {
+          if (value.length === 0)
+            this.urlParameters.splice(this.urlParameters.indexOf(urlParameter), 1);
+          else
+            urlParameter.values = value;
+        }
+        else {
+          if (value === '')
+            this.urlParameters.splice(this.urlParameters.indexOf(urlParameter), 1);
+          else
+            urlParameter.values.push(value);
+        }
         break;
       }
     }
     if (!foundFromCategory) {
       const newFromParameter: URLParameter = {
         key: key,
-        values: [value]
+        values: value instanceof Array ? value : [value]
       };
       this.urlParameters.push(newFromParameter);
     }
@@ -191,30 +201,36 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     }
   }
 
+  filterSelection(key: string, value: string | string[]) {
+    this.updateURLParameters(key, value);
+    this.updateURLParameters('from', '0');
+    return this.navigateUsingParameters();
+  }
+
   goToPage(page: number) {
     this.currentPage = page;
     let from: number = (this.currentPage - 1) * this.pageSize
-    this.updatePagingURLParameters('from', from.toString());
+    this.updateURLParameters('from', from.toString());
     return this.navigateUsingParameters();
   }
 
   previousPage() {
     // if (this.currentPage > 1) {
-      this.currentPage--;
-      let from: number = this.surveyEntries.from;
-      from -= this.pageSize;
-    this.updatePagingURLParameters('from', from.toString());
-      return this.navigateUsingParameters();
+    this.currentPage--;
+    let from: number = this.surveyEntries.from;
+    from -= this.pageSize;
+    this.updateURLParameters('from', from.toString());
+    return this.navigateUsingParameters();
     // }
   }
 
   nextPage() {
     // if (this.currentPage < this.pageTotal) {
-      this.currentPage++;
-      let from: number = this.surveyEntries.from;
-      from += this.pageSize;
-      this.updatePagingURLParameters('from', from.toString());
-      return this.navigateUsingParameters();
+    this.currentPage++;
+    let from: number = this.surveyEntries.from;
+    from += this.pageSize;
+    this.updateURLParameters('from', from.toString());
+    return this.navigateUsingParameters();
     // }
   }
 
