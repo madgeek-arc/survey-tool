@@ -58,11 +58,11 @@
             </ng-select>
           </div>
           <div class="uk-width-1-5">
-            <label for="selectSurvey">Order: </label>
+            <label for="selectSurvey">Order by modification date: </label>
             <ng-select id="order" (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)"
                        [multiple]="false" [(ngModel)]="order" clearAllText="Clear">
-              <ng-option [value]="'desc'">Descending modification date</ng-option>
-              <ng-option [value]="'asc'">Ascending modification date</ng-option>
+              <ng-option [value]="'desc'">Descending</ng-option>
+              <ng-option [value]="'asc'">Ascending</ng-option>
             </ng-select>
           </div>
 
@@ -76,13 +76,13 @@
             </p>
 
             <ul class="uk-pagination uk-visible@m">
-              <li *ngIf="currentPage>2 && pageTotal>5"><a (click)="goToPage(1)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a></li>
+              <li *ngIf="currentPage>2 && totalPages>5"><a (click)="goToPage(1)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a></li>
               <li *ngIf="currentPage!==1"><a (click)="previousPage()"><span uk-pagination-previous></span></a></li>
               <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active': ''">
                 <a (click)="goToPage(i)">{{i}}</a>
               </li>
-              <li *ngIf="currentPage!==pageTotal"><a (click)="nextPage()"><span uk-pagination-next></span></a></li>
-              <li *ngIf="currentPage<pageTotal-1 && pageTotal>5"><a (click)="goToPage(pageTotal)"><span uk-pagination-next></span><span uk-pagination-next></span></a></li>
+              <li *ngIf="currentPage!==totalPages"><a (click)="nextPage()"><span uk-pagination-next></span></a></li>
+              <li *ngIf="currentPage<totalPages-1 && totalPages>5"><a (click)="goToPage(totalPages)"><span uk-pagination-next></span><span uk-pagination-next></span></a></li>
             </ul>
 
           </div>

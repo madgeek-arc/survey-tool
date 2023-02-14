@@ -22,28 +22,22 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   surveyEntries: Paging<SurveyInfo>;
   surveyEntriesResults: SurveyInfo[];
   id: string = null;
+  loading = false;
 
+  // Filters
   selectedStakeholders: string[] = [];
   selectedSurveys: string[] = [];
   validationStatus: string = null;
   publishedStatus: string = null;
   order: string = null;
 
-  pageSize = 10;
-  totalPages = 0;
-  isPreviousPageDisabled = false;
-  isFirstPageDisabled = false;
-  isNextPageDisabled = false;
-  isLastPageDisabled = false;
-
   //Paging
+  pageSize = 10;
   total: number;
   currentPage = 1;
-  pageTotal: number;
+  totalPages: number = 0;
   pages: number[] = [];
   offset = 2;
-
-  loading = false;
 
   constructor(private userService: UserService, private surveyService: SurveyService, public route: ActivatedRoute,
               public router: Router) {
@@ -95,25 +89,14 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     this.surveyService.exportToCsv(this.surveyEntriesResults[0].surveyId);
   }
 
+  // INITIALISATIONS
   updateSurveyEntriesList(searchResults: Paging<SurveyInfo>) {
-
-    // INITIALISATIONS
-
     this.surveyEntries = searchResults;
     this.surveyEntriesResults = this.surveyEntries.results;
 
-    // this.updatePagingURLParametersQuantity(this.pageSize);
-    this.updateURLParameters('quantity', this.pageSize.toString());
+    // this.updateURLParameters('quantity', this.pageSize.toString());
     this.currentPage = (searchResults.from / this.pageSize) + 1;
-    this.totalPages = Math.ceil(searchResults.total / this.pageSize);
-    if (this.currentPage === 1) {
-      this.isFirstPageDisabled = true;
-      this.isPreviousPageDisabled = true;
-    }
-    if (this.currentPage === this.totalPages) {
-      this.isLastPageDisabled = true;
-      this.isNextPageDisabled = true;
-    }
+    // this.totalPages = Math.ceil(searchResults.total / this.pageSize);
   }
 
   updateCoordinatorStakeholderParameter(id: string) {
@@ -132,18 +115,6 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       };
       this.urlParameters.push(parameter);
     }
-    // } else {
-    //   key = 'stakeholder';
-    //   if (this.urlParameters.find(param => param.key === key)) {
-    //     this.urlParameters.find(param => param.key === key).values = [id];
-    //   } else {
-    //     const parameter: URLParameter = {
-    //       key: 'stakeholder',
-    //       values: [id]
-    //     };
-    //     this.urlParameters.push(parameter);
-    //   }
-    // }
   }
 
   updateURLParameters(key: string, value: string | string[]) {
@@ -159,7 +130,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
             urlParameter.values = value;
         }
         else {
-          if (value === '')
+          if (value === '' || value === null)
             this.urlParameters.splice(this.urlParameters.indexOf(urlParameter), 1);
           else
             urlParameter.values.push(value);
@@ -181,16 +152,16 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     let addToStartCounter = 0;
     this.pages = [];
     this.currentPage = (this.surveyEntries.from / this.pageSize) + 1;
-    this.pageTotal = Math.ceil(this.surveyEntries.total / this.pageSize);
+    this.totalPages = Math.ceil(this.surveyEntries.total / this.pageSize);
     for ( let i = (+this.currentPage - this.offset); i < (+this.currentPage + 1 + this.offset); ++i ) {
       if ( i < 1 ) { addToEndCounter++; }
-      if ( i > this.pageTotal ) { addToStartCounter++; }
-      if ((i >= 1) && (i <= this.pageTotal)) {
+      if ( i > this.totalPages ) { addToStartCounter++; }
+      if ((i >= 1) && (i <= this.totalPages)) {
         this.pages.push(i);
       }
     }
     for ( let i = 0; i < addToEndCounter; ++i ) {
-      if (this.pages.length < this.pageTotal) {
+      if (this.pages.length < this.totalPages) {
         this.pages.push(this.pages.length + 1);
       }
     }
@@ -254,6 +225,10 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
         this.urlParameters.push(urlParameter);
       }
     }
+  }
+
+  setFilters() {
+
   }
 
 }
