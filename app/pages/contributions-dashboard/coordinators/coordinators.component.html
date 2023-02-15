@@ -25,54 +25,49 @@
           </div>
         </div>
         <div *ngIf="surveyEntries?.facets" class="uk-width-1-1" uk-grid>
-          <div class="uk-width-1-6">
-            <label for="selectStakeholder">Stakeholder:</label>
+          <div class="uk-width-1-6 uk-padding-remove uk-margin-medium-left">
             <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholders)"
-                       [multiple]="true" [items]="surveyEntries?.facets[8]?.values" [(ngModel)]="selectedStakeholders"
-                       bindLabel="label" bindValue="value" clearAllText="Clear">
+                       [items]="surveyEntries?.facets[8]?.values" [(ngModel)]="selectedStakeholders"
+                       placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
             </ng-select>
           </div>
-          <div class="uk-width-1-4">
-            <label for="selectSurvey">Survey:</label>
+          <div class="uk-width-1-6 uk-padding-remove">
             <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurveys)"
-                       [multiple]="true" [items]="surveyEntries?.facets[9]?.values" [(ngModel)]="selectedSurveys"
-                       bindLabel="label" bindValue="value" clearAllText="Clear">
+                       [items]="surveyEntries?.facets[9]?.values" [(ngModel)]="selectedSurveys"
+                       placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
             </ng-select>
           </div>
-          <div class="uk-width-1-6">
-            <label for="selectSurvey">Validation: </label>
+          <div class="uk-width-1-6 uk-padding-remove">
             <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
-                       [multiple]="false" [(ngModel)]="validationStatus" clearAllText="Clear">
+                       placeholder="Validation Status" [(ngModel)]="validationStatus" clearAllText="Clear">
               <ng-option [value]="''">All</ng-option>
               <ng-option [value]="true">Validated</ng-option>
               <ng-option [value]="false">Not validated</ng-option>
             </ng-select>
           </div>
-          <div class="uk-width-1-6">
-            <label for="selectSurvey">Published: </label>
+          <div class="uk-width-1-6 uk-padding-remove">
             <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
-                       [multiple]="false" [(ngModel)]="publishedStatus" clearAllText="Clear">
+                       placeholder="Publication Status" [(ngModel)]="publishedStatus" clearAllText="Clear">
               <ng-option [value]="''">All</ng-option>
               <ng-option [value]="true">Published</ng-option>
               <ng-option [value]="false">Not published</ng-option>
             </ng-select>
           </div>
-          <div class="uk-width-1-5">
-            <label for="selectSurvey">Order by modification date: </label>
-            <ng-select id="order" (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)"
-                       [multiple]="false" [(ngModel)]="order" clearAllText="Clear">
-              <ng-option [value]="'desc'">Descending</ng-option>
-              <ng-option [value]="'asc'">Ascending</ng-option>
+          <div class="uk-width-1-6 uk-padding-remove">
+            <ng-select id="order" [(ngModel)]="order" clearAllText="Clear"
+                       (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)">
+              <ng-option [value]="'desc'">Most recently modified</ng-option>
+              <ng-option [value]="'asc'">Least recently modified</ng-option>
             </ng-select>
           </div>
 
         </div>
 
         <div class="uk-width-1-1 uk-margin-small-top">
-          <div class="uk-flex uk-flex-between uk-flex-middle">
+          <div class="uk-flex uk-flex-middle uk-flex-right">
 
-            <p class="big-text uk-margin-remove">
-              <span class="uk-text-bold">{{surveyEntries.total}}</span> Survey answers, Page <span class="uk-text-bold">{{currentPage}}</span> of {{totalPages}}
+            <p class="uk-margin-remove uk-padding-small">
+              Results <span class="uk-text-bold">{{surveyEntries.from + 1}}-</span><span class="uk-text-bold">{{(currentPage-1) * pageSize + surveyEntries.results.length}}</span> of <span class="uk-text-bold">{{surveyEntries.total}}</span>
             </p>
 
             <ul class="uk-pagination uk-visible@m">
@@ -90,13 +85,13 @@
 
       </div>
 
-      <div class="uk-card uk-card-default uk-card-body">
+      <div class="">
 
         <div class="uk-overflow-auto">
-          <table class="uk-table uk-table-hover uk-table-middle uk-table-divider" *ngIf="surveyEntriesResults">
+          <table class="uk-table uk-table-striped uk-table-middle uk-table-divider" *ngIf="surveyEntriesResults">
             <thead>
             <tr>
-              <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>
+<!--              <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>-->
               <th class="">EOSC SB member</th>
               <th class="">Survey</th>
               <th class="">Modified</th>
@@ -108,7 +103,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let surveyEntry of surveyEntriesResults">
-              <td><input class="uk-checkbox" type="checkbox"></td>
+<!--              <td><input class="uk-checkbox" type="checkbox"></td>-->
               <td>{{surveyEntry.stakeholder.name}}</td>
               <td class="">
                 {{surveyEntry.surveyName}}

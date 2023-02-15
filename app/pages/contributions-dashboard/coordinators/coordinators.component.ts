@@ -10,7 +10,8 @@ import {Subscriber} from "rxjs";
 
 @Component({
   selector: 'app-coordinator-dashboard',
-  templateUrl: './coordinators.component.html'
+  templateUrl: './coordinators.component.html',
+  styles: ['.ng-dropdown-panel {width: auto !important; min-width: 100%;}']
 })
 
 export class CoordinatorsComponent implements OnInit, OnDestroy{
