@@ -10,8 +10,7 @@ import {Subscriber} from "rxjs";
 
 @Component({
   selector: 'app-coordinator-dashboard',
-  templateUrl: './coordinators.component.html',
-  styles: ['.ng-dropdown-panel {width: auto !important; min-width: 100%;}']
+  templateUrl: './coordinators.component.html'
 })
 
 export class CoordinatorsComponent implements OnInit, OnDestroy{
@@ -26,10 +25,10 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   loading = false;
 
   // Filters
-  selectedStakeholders: string[] = [];
-  selectedSurveys: string[] = [];
-  validationStatus: string = null;
-  publishedStatus: string = null;
+  selectedStakeholder: string = null;
+  selectedSurvey: string = null;
+  validationStatus: string = '';
+  publishedStatus: string = '';
   order: string = null;
 
   //Paging
@@ -46,17 +45,20 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     this.loading = true;
+    this.updateURLParameters('orderField', 'modificationDate');
+    this.updateURLParameters('order', 'desc');
     this.subscriptions.push(
       this.route.params.subscribe(params => {
         this.subscriptions.push(
           this.route.queryParams.subscribe(
             qParams => {
               this.setUrlParams(qParams);
-                this.id = params['id'];
-                this.updateCoordinatorStakeholderParameter(this.id);
-                this.subscriptions.push(
+              this.id = params['id'];
+              this.updateCoordinatorStakeholderParameter(this.id);
+              this.subscriptions.push(
                 this.surveyService.getSurveyEntries(this.id, this.urlParameters).subscribe(surveyEntries => {
-                    this.updateSurveyEntriesList(surveyEntries);
+                    this.surveyEntries = surveyEntries;
+                    this.surveyEntriesResults = this.surveyEntries.results;
                   },
                   error => {console.error(error)},
                   () => {
@@ -90,16 +92,6 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     this.surveyService.exportToCsv(this.surveyEntriesResults[0].surveyId);
   }
 
-  // INITIALISATIONS
-  updateSurveyEntriesList(searchResults: Paging<SurveyInfo>) {
-    this.surveyEntries = searchResults;
-    this.surveyEntriesResults = this.surveyEntries.results;
-
-    // this.updateURLParameters('quantity', this.pageSize.toString());
-    this.currentPage = (searchResults.from / this.pageSize) + 1;
-    // this.totalPages = Math.ceil(searchResults.total / this.pageSize);
-  }
-
   updateCoordinatorStakeholderParameter(id: string) {
     let key: string;
     if (id.substring(0,2) === 'co') {
@@ -119,6 +111,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   }
 
   updateURLParameters(key: string, value: string | string[]) {
+    console.log('key: '+key);
+    console.log('value: '+value);
     let foundFromCategory = false;
     for (const urlParameter of this.urlParameters) {
       if (urlParameter.key === key) {
@@ -129,8 +123,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
             this.urlParameters.splice(this.urlParameters.indexOf(urlParameter), 1);
           else
             urlParameter.values = value;
-        }
-        else {
+        } else {
           if (value === '' || value === null)
             this.urlParameters.splice(this.urlParameters.indexOf(urlParameter), 1);
           else
@@ -140,12 +133,17 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       }
     }
     if (!foundFromCategory) {
+      if (value === null || value === '' || value?.length === 0) {
+        return;
+      }
+      console.log('adding new url param');
       const newFromParameter: URLParameter = {
         key: key,
         values: value instanceof Array ? value : [value]
       };
       this.urlParameters.push(newFromParameter);
     }
+    console.log(this.urlParameters)
   }
 
   paginationInit() {
@@ -226,10 +224,46 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
         this.urlParameters.push(urlParameter);
       }
     }
+    this.setFilters();
   }
 
   setFilters() {
-
+    let ordered: boolean = false;
+    for (let i = 0; i < this.urlParameters.length; i++) {
+      if (this.urlParameters[i].key === 'stakeholderId') {
+        this.selectedStakeholder = this.urlParameters[i].values[0];
+        continue;
+      }
+      if (this.urlParameters[i].key === 'surveyId') {
+        this.selectedSurvey = this.urlParameters[i].values[0];
+        continue;
+      }
+      if (this.urlParameters[i].key === 'validated') {
+        this.validationStatus = this.urlParameters[i].values[0];
+        continue;
+      }
+      if (this.urlParameters[i].key === 'published') {
+        this.publishedStatus = this.urlParameters[i].values[0];
+        continue;
+      }
+      if (this.urlParameters[i].key === 'order') {
+        ordered = true;
+        this.order = this.urlParameters[i].values[0];
+      }
+    }
+    // if (!ordered) {
+    //   console.log(this.urlParameters);
+    //   let urlParameter: URLParameter = {
+    //     key: 'orderField',
+    //     values: ['modificationDate']
+    //   };
+    //   this.urlParameters.push(urlParameter);
+    //   console.log(this.urlParameters);
+    //   urlParameter.key = 'order'
+    //   urlParameter.values = ['desc']
+    //   this.urlParameters.push(urlParameter);
+    //   console.log(this.urlParameters);
+    // }
   }
 
 }

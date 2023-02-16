@@ -22,3 +22,8 @@
   //background-color: #f5f5f5;
   background-color: var(--medium-grey);
 }
+
+.ng-dropdown-panel {
+  width: auto !important;
+  min-width: 100%;
+}
