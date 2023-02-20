@@ -57,7 +57,7 @@ export class SurveyService {
     return this.http.delete<StakeholdersMembers>(this.base + `/stakeholders/${stakeholderId}/contributors/${email}`, this.options);
   }
 
-  getSurveyEntries(id: string, urlParameters: URLParameter[]) {
+  getSurveyEntries(urlParameters: URLParameter[]) {
     let searchQuery = new HttpParams();
     for (const urlParameter of urlParameters) {
       for (const value of urlParameter.values) {

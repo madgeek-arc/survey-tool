@@ -45,18 +45,17 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     this.loading = true;
-    this.updateURLParameters('orderField', 'modificationDate');
-    this.updateURLParameters('order', 'desc');
     this.subscriptions.push(
       this.route.params.subscribe(params => {
         this.subscriptions.push(
           this.route.queryParams.subscribe(
             qParams => {
-              this.setUrlParams(qParams);
               this.id = params['id'];
+              this.setUrlParams(qParams);
               this.updateCoordinatorStakeholderParameter(this.id);
+              this.setFilters();
               this.subscriptions.push(
-                this.surveyService.getSurveyEntries(this.id, this.urlParameters).subscribe(surveyEntries => {
+                this.surveyService.getSurveyEntries(this.urlParameters).subscribe(surveyEntries => {
                     this.surveyEntries = surveyEntries;
                     this.surveyEntriesResults = this.surveyEntries.results;
                   },
@@ -111,8 +110,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   }
 
   updateURLParameters(key: string, value: string | string[]) {
-    console.log('key: '+key);
-    console.log('value: '+value);
+    // console.log('key: '+key);
+    // console.log('value: '+value);
     let foundFromCategory = false;
     for (const urlParameter of this.urlParameters) {
       if (urlParameter.key === key) {
@@ -136,14 +135,12 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       if (value === null || value === '' || value?.length === 0) {
         return;
       }
-      console.log('adding new url param');
       const newFromParameter: URLParameter = {
         key: key,
         values: value instanceof Array ? value : [value]
       };
       this.urlParameters.push(newFromParameter);
     }
-    console.log(this.urlParameters)
   }
 
   paginationInit() {
@@ -214,9 +211,12 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   }
 
   setUrlParams(params) {
+    let foundOrder = false;
     this.urlParameters.splice(0, this.urlParameters.length);
     for (const obj in params) {
       if (params.hasOwnProperty(obj)) {
+        if (obj === 'order')
+          foundOrder = true;
         const urlParameter: URLParameter = {
           key: obj,
           values: params[obj].split(',')
@@ -224,6 +224,11 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
         this.urlParameters.push(urlParameter);
       }
     }
+    if (!foundOrder) {
+      this.updateURLParameters('orderField', 'modificationDate');
+      this.updateURLParameters('order', 'desc');
+    }
+
     this.setFilters();
   }
 

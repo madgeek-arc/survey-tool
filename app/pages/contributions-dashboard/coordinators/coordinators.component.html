@@ -24,47 +24,47 @@
             <button (click)="exportToCsv()" class="uk-button uk-button-primary">Export to tsv</button>
           </div>
         </div>
-<!--        <div *ngIf="surveyEntries?.facets" class="uk-width-1-1 uk-child-width-1-2" uk-grid>-->
-<!--          <div class="uk-margin-medium-left uk-padding-remove" uk-grid>-->
-<!--            <div class="uk-width-1-4 uk-padding-remove">-->
-<!--              <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"-->
-<!--                         [items]="surveyEntries?.facets[9]?.values" [(ngModel)]="selectedSurvey"-->
-<!--                         placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">-->
-<!--              </ng-select>-->
-<!--            </div>-->
-<!--            <div class="uk-width-1-4 uk-padding-remove">-->
-<!--              <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"-->
-<!--                         [items]="surveyEntries?.facets[8]?.values" [(ngModel)]="selectedStakeholder"-->
-<!--                         placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">-->
-<!--              </ng-select>-->
-<!--            </div>-->
-<!--            <div class="uk-width-1-4 uk-padding-remove">-->
-<!--            <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"-->
-<!--                       placeholder="Validation Status" [(ngModel)]="validationStatus" clearAllText="Clear">-->
-<!--              <ng-option [value]="''">All validation statuses</ng-option>-->
-<!--              <ng-option [value]="'true'">Validated</ng-option>-->
-<!--              <ng-option [value]="'false'">Not validated</ng-option>-->
-<!--            </ng-select>-->
-<!--            </div>-->
-<!--            <div class="uk-width-1-4 uk-padding-remove">-->
-<!--              <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"-->
-<!--                         placeholder="Publication Status" [(ngModel)]="publishedStatus" clearAllText="Clear">-->
-<!--                <ng-option [value]="''">All published statuses</ng-option>-->
-<!--                <ng-option [value]="'true'">Published</ng-option>-->
-<!--                <ng-option [value]="'false'">Not published</ng-option>-->
-<!--              </ng-select>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="uk-margin-remove-top " uk-grid>-->
-<!--            <div class="uk-width-1-4 uk-padding-remove">-->
-<!--              <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"-->
-<!--                         (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)">-->
-<!--                <ng-option [value]="'desc'">Most recently modified</ng-option>-->
-<!--                <ng-option [value]="'asc'">Least recently modified</ng-option>-->
-<!--              </ng-select>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div *ngIf="surveyEntries?.facets" class="uk-width-1-1 uk-child-width-1-2" uk-grid>
+          <div class="uk-margin-medium-left uk-padding-remove" uk-grid>
+            <div class="uk-width-1-4 uk-padding-remove">
+              <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
+                         [items]="surveyEntries?.facets[9]?.values" [(ngModel)]="selectedSurvey"
+                         placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
+              </ng-select>
+            </div>
+            <div class="uk-width-1-4 uk-padding-remove">
+              <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
+                         [items]="surveyEntries?.facets[8]?.values" [(ngModel)]="selectedStakeholder"
+                         placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
+              </ng-select>
+            </div>
+            <div class="uk-width-1-4 uk-padding-remove">
+            <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
+                       placeholder="Validation Status" [(ngModel)]="validationStatus" clearAllText="Clear">
+              <ng-option [value]="''">All validation statuses</ng-option>
+              <ng-option [value]="'true'">Validated</ng-option>
+              <ng-option [value]="'false'">Not validated</ng-option>
+            </ng-select>
+            </div>
+            <div class="uk-width-1-4 uk-padding-remove">
+              <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
+                         placeholder="Publication Status" [(ngModel)]="publishedStatus" clearAllText="Clear">
+                <ng-option [value]="''">All published statuses</ng-option>
+                <ng-option [value]="'true'">Published</ng-option>
+                <ng-option [value]="'false'">Not published</ng-option>
+              </ng-select>
+            </div>
+          </div>
+          <div class="uk-margin-remove-top " uk-grid>
+            <div class="uk-width-1-4 uk-padding-remove">
+              <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"
+                         (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)">
+                <ng-option [value]="'desc'">Most recently modified</ng-option>
+                <ng-option [value]="'asc'">Least recently modified</ng-option>
+              </ng-select>
+            </div>
+          </div>
+        </div>
 
         <div class="uk-width-1-1 uk-margin-small-top">
           <div class="uk-flex uk-flex-middle uk-flex-right">
@@ -90,7 +90,7 @@
 
       <div class="">
 
-        <div class="uk-overflow-auto">
+        <div class="uk-overflow-auto uk-margin-bottom">
           <table class="uk-table uk-table-striped uk-table-middle uk-table-divider" *ngIf="surveyEntriesResults">
             <thead>
             <tr>
