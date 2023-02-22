@@ -25,7 +25,7 @@
           </div>
         </div>
         <div *ngIf="surveyEntries?.facets" class="uk-width-1-1 uk-child-width-1-2" uk-grid>
-          <div class="uk-margin-medium-left uk-padding-remove" uk-grid>
+          <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" uk-grid>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
                          [items]="surveyEntries?.facets[9]?.values" [(ngModel)]="selectedSurvey"
@@ -55,7 +55,7 @@
               </ng-select>
             </div>
           </div>
-          <div class="uk-margin-remove-top " uk-grid>
+          <div class="uk-margin-remove-top uk-flex uk-flex-middle" uk-grid>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"
                          (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)">
@@ -63,26 +63,25 @@
                 <ng-option [value]="'asc'">Least recently modified</ng-option>
               </ng-select>
             </div>
-          </div>
-        </div>
+            <div class="uk-width-expand">
+              <div class="uk-flex uk-flex-middle uk-flex-right">
 
-        <div class="uk-width-1-1 uk-margin-small-top">
-          <div class="uk-flex uk-flex-middle uk-flex-right">
+                <p class="uk-margin-remove uk-padding-small">
+                  Results <span class="uk-text-bold">{{surveyEntries.from + 1}}-</span><span class="uk-text-bold">{{(currentPage-1) * pageSize + surveyEntries.results.length}}</span> of <span class="uk-text-bold">{{surveyEntries.total}}</span>
+                </p>
 
-            <p class="uk-margin-remove uk-padding-small">
-              Results <span class="uk-text-bold">{{surveyEntries.from + 1}}-</span><span class="uk-text-bold">{{(currentPage-1) * pageSize + surveyEntries.results.length}}</span> of <span class="uk-text-bold">{{surveyEntries.total}}</span>
-            </p>
+                <ul class="uk-pagination uk-visible@m">
+                  <li *ngIf="currentPage>2 && totalPages>5"><a (click)="goToPage(1)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a></li>
+                  <li *ngIf="currentPage!==1"><a (click)="previousPage()"><span uk-pagination-previous></span></a></li>
+                  <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active': ''">
+                    <a (click)="goToPage(i)">{{i}}</a>
+                  </li>
+                  <li *ngIf="currentPage!==totalPages"><a (click)="nextPage()"><span uk-pagination-next></span></a></li>
+                  <li *ngIf="currentPage<totalPages-1 && totalPages>5"><a (click)="goToPage(totalPages)"><span uk-pagination-next></span><span uk-pagination-next></span></a></li>
+                </ul>
 
-            <ul class="uk-pagination uk-visible@m">
-              <li *ngIf="currentPage>2 && totalPages>5"><a (click)="goToPage(1)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a></li>
-              <li *ngIf="currentPage!==1"><a (click)="previousPage()"><span uk-pagination-previous></span></a></li>
-              <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active': ''">
-                <a (click)="goToPage(i)">{{i}}</a>
-              </li>
-              <li *ngIf="currentPage!==totalPages"><a (click)="nextPage()"><span uk-pagination-next></span></a></li>
-              <li *ngIf="currentPage<totalPages-1 && totalPages>5"><a (click)="goToPage(totalPages)"><span uk-pagination-next></span><span uk-pagination-next></span></a></li>
-            </ul>
-
+              </div>
+            </div>
           </div>
         </div>
 
