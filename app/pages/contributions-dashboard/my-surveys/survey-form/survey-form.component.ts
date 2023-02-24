@@ -1,13 +1,13 @@
 import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
-import {zip} from "rxjs/internal/observable/zip";
 import {SurveyComponent} from "../../../../../catalogue-ui/pages/dynamic-form/survey.component";
 import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 import {SurveyService} from "../../../../services/survey.service";
 import {SurveyAnswer} from "../../../../domain/survey";
 import {Stakeholder, UserInfo} from "../../../../domain/userInfo";
-import {WebsocketService} from "../../../../services/websocket.service";
 import {Subscriber} from "rxjs";
+import {zip} from "rxjs/internal/observable/zip";
+
 import UIkit from "uikit";
 
 @Component({
@@ -33,7 +33,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   ready = false;
 
   constructor(private surveyService: SurveyService, private route: ActivatedRoute,
-              private router: Router, private wsService: WebsocketService) {}
+              private router: Router) {}
 
   ngOnInit() {
     this.ready = false;
@@ -74,7 +74,6 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
                   () => { this.ready = true; }
                 );
               }
-              this.wsService.sendMessage('?active');
             })
           );
         }
