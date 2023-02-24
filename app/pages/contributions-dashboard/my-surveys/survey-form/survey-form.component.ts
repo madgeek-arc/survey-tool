@@ -13,7 +13,7 @@ import UIkit from "uikit";
 @Component({
   selector: 'app-survey-form',
   templateUrl: 'survey-form.component.html',
-  providers: [SurveyService]
+  providers: [SurveyService, WebsocketService]
 })
 
 export class SurveyFormComponent implements OnInit, OnDestroy {
@@ -23,6 +23,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   survey: Model = null;
   subType: string;
   surveyAnswers: SurveyAnswer = null
+  activeUsers: string[] = [];
   userInfo: UserInfo = null;
   tabsHeader: string = null;
   mandatoryFieldsText: string = 'Fields with (*) are mandatory and must be completed in order for the survey to be validated.';
@@ -64,7 +65,13 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
                       this.survey = next[1];
                     },
                     error => {console.log(error)},
-                    () => { this.ready = true; }
+                    () => {
+                      this.ready = true;
+
+                      if (!this.router.url.includes('/view')) {
+                        this.wsService.initializeWebSocketConnection(this.surveyAnswers.id);
+                      }
+                    }
                   )
                 );
               } else {
@@ -74,13 +81,22 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
                   () => { this.ready = true; }
                 );
               }
-              this.wsService.sendMessage('?active');
             })
           );
         }
       )
     );
 
+    this.subscriptions.push(
+      this.wsService.msg.subscribe(
+        next => {
+          if (next) {
+            this.activeUsers = JSON.parse(next)
+            console.log(this.activeUsers);
+          }
+        }
+      )
+    );
   }
 
   ngOnDestroy() {

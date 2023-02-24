@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {environment} from "../../environments/environment";
+import {BehaviorSubject} from "rxjs";
 
 declare var SockJS;
 declare var Stomp;
@@ -10,30 +11,30 @@ const URL = environment.WS_ENDPOINT + '/websocket';
 export class WebsocketService {
 
   stompClient;
-  msg = [];
+  msg: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   constructor() {
-    this.initializeWebSocketConnection();
+    // this.initializeWebSocketConnection();
   }
 
-  initializeWebSocketConnection() {
+  initializeWebSocketConnection(id) {
     const ws = new SockJS(URL);
     this.stompClient = Stomp.over(ws);
     const that = this;
 
     this.stompClient.connect({}, function(frame) {
-      that.stompClient.subscribe('/topic/test', (message) => {
+      console.log('Connected: ' + frame);
+      that.stompClient.subscribe(`/topic/test/${id}`, (message) => {
         if (message.body) {
-          that.msg = message.body;
+          that.msg.next(message.body);
         }
       });
+
+      that.stompClient.send(`/app/test/${id}` , {}, 'test');
     });
   }
 
-  sendMessage(message) {
-    setTimeout(next => {
-      this.stompClient.send('/app/test' , {}, message);
-    }, 2000);
-
+  sendMessage(id, message) {
+    this.stompClient.send(`/app/test/${id}` , {}, message);
   }
 }

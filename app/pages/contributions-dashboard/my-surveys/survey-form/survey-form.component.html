@@ -2,7 +2,7 @@
   <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
     <app-survey [payload]="surveyAnswers" [model]="survey" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"
                 (submit)="submitForm($event)" [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType"
-                (valid)="validateSurveyAnswer($event)">
+                [activeUsers]="activeUsers" (valid)="validateSurveyAnswer($event)">
     </app-survey>
   </div>
 </div>
