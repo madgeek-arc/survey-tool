@@ -4,7 +4,7 @@ import {environment} from "../../environments/environment";
 declare var SockJS;
 declare var Stomp;
 
-const URL = environment.WS_ENDPOINT + '/gs-guide-websocket';
+const URL = environment.WS_ENDPOINT + '/websocket';
 
 @Injectable()
 export class WebsocketService {
