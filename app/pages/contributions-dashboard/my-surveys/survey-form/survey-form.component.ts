@@ -55,6 +55,16 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
               }
               this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
               this.subType = this.findSubType(this.userInfo.stakeholders, this.stakeholderId);
+              this.subscriptions.push(
+                this.wsService.msg.subscribe(
+                  next => {
+                    if (next) {
+                      this.activeUsers = JSON.parse(next)
+                      this.activeUsers.splice(this.activeUsers.indexOf(this.userInfo.user.fullname), 1);
+                    }
+                  }
+                )
+              );
               if (!this.freeView) {
                 this.subscriptions.push(
                   zip(
@@ -83,17 +93,6 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
               }
             })
           );
-        }
-      )
-    );
-
-    this.subscriptions.push(
-      this.wsService.msg.subscribe(
-        next => {
-          if (next) {
-            this.activeUsers = JSON.parse(next)
-            console.log(this.activeUsers);
-          }
         }
       )
     );
