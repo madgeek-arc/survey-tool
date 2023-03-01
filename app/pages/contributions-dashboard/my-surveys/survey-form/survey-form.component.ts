@@ -77,7 +77,6 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
                     error => {console.log(error)},
                     () => {
                       this.ready = true;
-
                       if (!this.router.url.includes('/view')) {
                         this.wsService.initializeWebSocketConnection(this.surveyAnswers.id);
                       }
