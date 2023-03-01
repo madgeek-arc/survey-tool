@@ -1,0 +1,19 @@
+<div class="uk-container">
+  <h5 class="uk-margin-top">Survey History</h5>
+  <table class="uk-margin-top uk-table uk-table-striped uk-table-divider">
+    <thead>
+    <tr>
+      <th>User</th>
+      <th>Action</th>
+      <th>At</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let entry of surveyAnswer?.history?.entries">
+      <td>{{entry.userId}}</td>
+      <td>{{entry.action}}</td>
+      <td>{{entry.time | date}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

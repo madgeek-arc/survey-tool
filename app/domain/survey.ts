@@ -7,9 +7,13 @@ export class SurveyAnswer {
   type: string;
   answer: Object;
   metadata: Metadata;
-  history: Object;
+  history: History;
   validated: boolean;
   published: boolean;
+}
+
+export class History {
+  entries: Entries[];
 }
 
 export class ChapterAnswer {
@@ -47,4 +51,10 @@ export class SurveyInfo {
 export class Progress {
   current: number;
   total: number;
+}
+
+export class Entries {
+  userId: string;
+  time: number;
+  action: string;
 }

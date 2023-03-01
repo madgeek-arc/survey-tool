@@ -37,8 +37,8 @@ export class SurveyService {
     return this.http.get<ResourcePermission[]>(this.base + `/permissions?resourceIds=${resourceIds}`);
   }
 
-  getAnswerValues(answerId: string) {
-    return this.http.get<Object>(this.base + `/answers/${answerId}/answer`, this.options);
+  getAnswer(answerId: string) {
+    return this.http.get<SurveyAnswer>(this.base + `/answers/${answerId}`, this.options);
   }
 
   addContributor(stakeholderId: string, email: string) {
