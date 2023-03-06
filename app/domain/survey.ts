@@ -30,9 +30,9 @@ export class ResourcePermission {
 
 export class Metadata {
   creationDate: string;
-  createdDy: User;
+  createdBy: string;
   modificationDate: string;
-  modifiedBy: User;
+  modifiedBy: string;
 }
 
 export class SurveyInfo {

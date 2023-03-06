@@ -1,0 +1,11 @@
+<div *ngIf="ready" class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
+  <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+<!--    <app-survey [payload]="surveyAnswers" [model]="model" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"-->
+<!--                (submit)="submitForm($event)" [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType"-->
+<!--                [activeUsers]="activeUsers" (valid)="validateSurveyAnswer($event)">-->
+<!--    </app-survey>-->
+    <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB"
+                         [tabsHeader]="tabsHeader">
+    </app-compare-surveys>
+  </div>
+</div>

@@ -11,6 +11,8 @@ import {CoordinatorsComponent} from "./coordinators/coordinators.component";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {SurveysListComponent} from "./coordinators/surveys-list/surveys-list.component";
 import {HistoryComponent} from "./survey-history/history.component";
+import {SurveyCompareComponent} from "./compare/survey-compare.component";
+import {CompareModule} from "../../../catalogue-ui/pages/dynamic-form/compare-versions/compare.module";
 
 @NgModule ({
   imports: [
@@ -19,6 +21,7 @@ import {HistoryComponent} from "./survey-history/history.component";
     ReusableComponentsModule,
     FormsModule,
     NgSelectModule,
+    CompareModule,
   ],
   declarations: [
     ContributionsHomeComponent,
@@ -27,7 +30,8 @@ import {HistoryComponent} from "./survey-history/history.component";
     SurveyCardComponent,
     CoordinatorsComponent,
     SurveysListComponent,
-    HistoryComponent
+    HistoryComponent,
+    SurveyCompareComponent
   ],
   providers: [],
 })
