@@ -4,13 +4,15 @@
     <thead>
     <tr>
       <th>User</th>
+      <th>Email</th>
       <th>Action</th>
       <th>Date</th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let entry of surveyAnswer?.history?.entries">
-      <td>{{entry.userId}}</td>
+    <tr *ngFor="let entry of surveyAnswerHistory?.entries">
+      <td>{{entry.fullname}}</td>
+      <td>{{entry.email}}</td>
       <td>{{entry.action}}</td>
       <td>{{entry.time | date}}</td>
     </tr>

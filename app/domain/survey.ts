@@ -16,6 +16,10 @@ export class History {
   entries: Entries[];
 }
 
+export class DisplayHistory {
+  entries: DisplayEntries[];
+}
+
 export class ChapterAnswer {
   chapterId: string;
   answer: Object;
@@ -55,6 +59,13 @@ export class Progress {
 
 export class Entries {
   userId: string;
+  time: number;
+  action: string;
+}
+
+export class DisplayEntries {
+  email: string;
+  fullname: string;
   time: number;
   action: string;
 }

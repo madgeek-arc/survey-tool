@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {ResourcePermission, SurveyAnswer, SurveyInfo} from "../domain/survey";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {DisplayHistory, ResourcePermission, SurveyAnswer, SurveyInfo} from "../domain/survey";
 import {Paging} from "../../catalogue-ui/domain/paging";
 import {StakeholdersMembers} from "../domain/userInfo";
 import {URLParameter} from "../../catalogue-ui/domain/url-parameter";
@@ -39,6 +39,10 @@ export class SurveyService {
 
   getAnswer(answerId: string) {
     return this.http.get<SurveyAnswer>(this.base + `/answers/${answerId}`, this.options);
+  }
+
+  getAnswerHistory(answerId: string) {
+    return this.http.get<DisplayHistory>(this.base + `/answers/${answerId}/history`, this.options);
   }
 
   addContributor(stakeholderId: string, email: string) {
