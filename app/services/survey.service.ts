@@ -19,6 +19,10 @@ export class SurveyService {
     return this.http.get<SurveyAnswer>(this.base + `/answers/latest?stakeholderId=${stakeHolderId}&surveyId=${surveyId}`, this.options);
   }
 
+  getAnswerWithVersion(surveyAnswerId: string, version: string) {
+    return this.http.get<SurveyAnswer>(this.base + `/answers/${surveyAnswerId}/versions/${version}`, this.options);
+  }
+
   changeAnswerValidStatus(answerId: string, valid: boolean) {
     return this.http.patch<SurveyAnswer>(this.base + `/answers/${answerId}/validation?validated=${valid}`, null, this.options);
   }

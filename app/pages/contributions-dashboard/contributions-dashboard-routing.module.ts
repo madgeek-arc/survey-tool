@@ -54,7 +54,7 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthenticationGuardService]
       },
       {
-        path: 'mySurveys/:answerId/history',
+        path: 'mySurveys/:surveyId/:answerId/history',
         component: HistoryComponent,
         canActivate: [AuthenticationGuardService]
       },

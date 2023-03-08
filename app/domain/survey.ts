@@ -68,4 +68,6 @@ export class DisplayEntries {
   fullname: string;
   time: number;
   action: string;
+  resourceId: string;
+  version: string;
 }
