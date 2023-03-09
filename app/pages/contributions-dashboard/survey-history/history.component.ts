@@ -51,6 +51,8 @@ export class HistoryComponent implements OnInit {
   }
 
   showComparison() {
+    this.surveyAnswerA = null;
+    this.surveyAnswerB = null;
     zip(
       this.surveyService.getSurvey(this.surveyId),
       this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.versionIdArray[0]),
@@ -65,8 +67,6 @@ export class HistoryComponent implements OnInit {
       },
       error => {console.log(error)},
       () => {}
-    )
-
-    // UIkit.modal('#modal-full').show();
+    );
   }
 }
