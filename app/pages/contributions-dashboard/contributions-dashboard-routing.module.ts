@@ -8,7 +8,6 @@ import {AuthenticationGuardService} from "../../services/authentication-guard.se
 import {CoordinatorsComponent} from "./coordinators/coordinators.component";
 import {SurveysListComponent} from "./coordinators/surveys-list/surveys-list.component";
 import {HistoryComponent} from "./survey-history/history.component";
-import {SurveyCompareComponent} from "./compare/survey-compare.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -72,12 +71,7 @@ const contributionsDashboardRoutes: Routes = [
         path: 'surveyList',
         component: SurveysListComponent,
         canActivate: [AuthenticationGuardService]
-      },
-      {
-        path: 'compare',
-        component: SurveyCompareComponent,
-        canActivate: [AuthenticationGuardService]
-      },
+      }
     ]
   }
 ];

@@ -4,44 +4,49 @@
       <div class="uk-width-2-3">
         <h5 class="uk-margin-top">Survey History</h5>
       </div>
-<!--      <div class="uk-width-1-3 uk-flex uk-flex-right">-->
-<!--        <button class="uk-button uk-button-primary" [disabled]="versionIdArray.length !== 2" (click)="showComparison()"-->
-<!--                title="Two versions must be selected">Compare versions-->
-<!--        </button>-->
-<!--      </div>-->
+      <div class="uk-width-1-3 uk-flex uk-flex-right">
+        <button class="uk-button uk-button-primary" [disabled]="selectedEntries.length !== 2" (click)="showComparison()"
+                title="Two versions must be selected">Compare versions
+        </button>
+      </div>
     </div>
     <table class="uk-margin-top uk-table uk-table-striped uk-table-divider">
       <thead>
       <tr>
-<!--        <th></th>-->
+        <th></th>
         <th>User</th>
-        <th>Email</th>
+        <th>Version</th>
         <th>Action</th>
         <th>Date</th>
       </tr>
       </thead>
       <tbody>
       <tr *ngFor="let entry of surveyAnswerHistory?.entries">
-<!--        <td>-->
-<!--          <input type="checkbox" class="uk-checkbox" (change)="selectVersion($event, entry.version)"-->
-<!--                 [ngClass]="{'uk-disabled': (versionIdArray.length === 2 && !versionIdArray.includes(entry.version))}">-->
-<!--        </td>-->
-        <td>{{entry.fullname}}</td>
-        <td>{{entry.email}}</td>
+        <td>
+          <input type="checkbox" class="uk-checkbox" (change)="selectVersion($event, entry)"
+                 [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
+        </td>
+        <td>{{entry.fullname}} ({{entry.email}})</td>
+        <td>{{entry.version}}</td>
         <td>{{entry.action}}</td>
-        <td>{{entry.time | date}}</td>
+        <td title="{{entry.time | date:'h:mm a z'}}">{{entry.time | date}}</td>
       </tr>
       </tbody>
     </table>
   </div>
 </div>
+<div *ngIf="loading" class="whiteFilm">
+  <i class="loader-big" aria-hidden="true"></i>
+</div>
 
 <!--Compare Modal-->
 <div id="modal-full" class="uk-modal-full" uk-modal>
   <div class="uk-modal-dialog uk-modal-body">
-    <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
-    <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB"
-                         [tabsHeader]="tabsHeader">
-    </app-compare-surveys>
+    <button class="uk-modal-close-full uk-close-large uk-padding-small" type="button" uk-close></button>
+    <div class="uk-margin-top">
+      <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB" [tabsHeader]="tabsHeader"
+                           [entryA]="selectedEntries[0]" [entryB]="selectedEntries[1]">
+      </app-compare-surveys>
+    </div>
   </div>
 </div>
