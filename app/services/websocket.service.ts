@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {environment} from "../../environments/environment";
 import {BehaviorSubject} from "rxjs";
+import {UserActivity} from "../domain/userInfo";
 
 declare var SockJS;
 declare var Stomp;
@@ -11,30 +12,37 @@ const URL = environment.WS_ENDPOINT + '/websocket';
 export class WebsocketService {
 
   stompClient;
-  msg: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  msg: BehaviorSubject<UserActivity[]> = new BehaviorSubject<UserActivity[]>(null);
 
   constructor() {
     // this.initializeWebSocketConnection();
   }
 
-  initializeWebSocketConnection(id) {
+  initializeWebSocketConnection(id: string, resourceType: string, action: string) {
     const ws = new SockJS(URL);
     this.stompClient = Stomp.over(ws);
     const that = this;
 
     this.stompClient.connect({}, function(frame) {
       console.log('Connected: ' + frame);
-      that.stompClient.subscribe(`/topic/test/${id}`, (message) => {
+      that.stompClient.subscribe(`/topic/active-users/${resourceType}/${id}`, (message) => {
         if (message.body) {
-          that.msg.next(message.body);
+          that.msg.next(JSON.parse(message.body));
         }
       });
 
-      that.stompClient.send(`/app/test/${id}` , {}, 'test');
+      that.stompClient.subscribe(`/topic/listening`, (message) => {
+        console.log(message);
+        if (message.body) {
+          that.stompClient.send(`/app/listening` , {}, 'ok');
+        }
+      });
+
+      that.stompClient.send(`/app/active-users/${resourceType}/${id}` , {}, action);
     });
   }
 
   sendMessage(id, message) {
-    this.stompClient.send(`/app/test/${id}` , {}, message);
+    this.stompClient.send(`/app/active-users/${id}` , {}, message);
   }
 }

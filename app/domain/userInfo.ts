@@ -34,3 +34,9 @@ export class StakeholdersMembers {
   contributors: User[];
   managers: User[];
 }
+
+export class UserActivity {
+ fullname: string;
+ action: string;
+ date: Date;
+}
