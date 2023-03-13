@@ -32,6 +32,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   stakeholderId: string = null;
   freeView = false;
   ready = false;
+  action: string = null;
 
   constructor(private surveyService: SurveyService, private route: ActivatedRoute,
               private router: Router, private wsService: WebsocketService) {}
@@ -80,10 +81,13 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
                       this.ready = true;
                       if (this.router.url.includes('/view')) {
                         this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer', 'view');
+                        this.action = 'view';
                       } else if (this.router.url.includes('/validate')) {
                         this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer', 'validate');
+                        this.action = 'validate';
                       } else {
                         this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer', 'edit');
+                        this.action = 'edit';
                       }
                     }
                   )
@@ -108,6 +112,12 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         subscription.unsubscribe();
       }
     });
+    console.log(this.surveyAnswers);
+    if (this.surveyAnswers?.id) {
+      console.log('destroy');
+
+      this.wsService.WsUnsubscribe(this.surveyAnswers.id, 'surveyAnswer', this.action);
+    }
   }
 
   findSubType(stakeholders: Stakeholder[], stakeholderId: string): string {
