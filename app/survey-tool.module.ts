@@ -35,6 +35,7 @@ import {SharedModule} from "../../app/shared/shared.module";
   ],
   exports: [
     ContributionsDashboardComponent,
+    SurveyFormComponent,
   ]
 })
 export class SurveyToolModule {

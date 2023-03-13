@@ -9,30 +9,34 @@
                 title="Two versions must be selected">Compare versions
         </button>
       </div>
+
+<!--      <app-survey-form class="uk-width-4-5"></app-survey-form>-->
+<!--      <div class="uk-width-1-5">-->
+        <table class="uk-margin-top uk-table uk-table-striped uk-table-divider">
+          <thead>
+          <tr>
+            <th></th>
+            <th>User</th>
+            <th>Version</th>
+            <th>Action</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let entry of surveyAnswerHistory?.entries">
+            <td>
+              <input type="checkbox" class="uk-checkbox" (change)="selectVersion($event, entry)"
+                     [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
+            </td>
+            <td>{{entry.fullname}} ({{entry.email}})</td>
+            <td>{{entry.version}}</td>
+            <td>{{entry.action}}</td>
+            <td title="{{entry.time | date:'h:mm a z'}}">{{entry.time | date}}</td>
+          </tr>
+          </tbody>
+        </table>
+<!--      </div>-->
     </div>
-    <table class="uk-margin-top uk-table uk-table-striped uk-table-divider">
-      <thead>
-      <tr>
-        <th></th>
-        <th>User</th>
-        <th>Version</th>
-        <th>Action</th>
-        <th>Date</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let entry of surveyAnswerHistory?.entries">
-        <td>
-          <input type="checkbox" class="uk-checkbox" (change)="selectVersion($event, entry)"
-                 [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
-        </td>
-        <td>{{entry.fullname}} ({{entry.email}})</td>
-        <td>{{entry.version}}</td>
-        <td>{{entry.action}}</td>
-        <td title="{{entry.time | date:'h:mm a z'}}">{{entry.time | date}}</td>
-      </tr>
-      </tbody>
-    </table>
   </div>
 </div>
 <div *ngIf="loading" class="whiteFilm">

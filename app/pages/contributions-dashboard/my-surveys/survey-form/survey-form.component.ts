@@ -59,11 +59,10 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
               this.subscriptions.push(
                 this.wsService.msg.subscribe(
                   next => {
-                    if (next) {
+                    // if (next) {
                       this.activeUsers = next;
-                      console.log(this.activeUsers);
-                      // this.activeUsers.splice(this.activeUsers.indexOf(this.userInfo.user.fullname), 1);
-                    }
+                      // console.log(this.activeUsers);
+                    // }
                   }
                 )
               );
@@ -79,14 +78,15 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
                     error => {console.log(error)},
                     () => {
                       this.ready = true;
+                      this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer');
                       if (this.router.url.includes('/view')) {
-                        this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer', 'view');
+                        this.wsService.WsJoin(this.surveyAnswers.id, 'surveyAnswer', 'view');
                         this.action = 'view';
                       } else if (this.router.url.includes('/validate')) {
-                        this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer', 'validate');
+                        this.wsService.WsJoin(this.surveyAnswers.id, 'surveyAnswer', 'validate');
                         this.action = 'validate';
                       } else {
-                        this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer', 'edit');
+                        this.wsService.WsJoin(this.surveyAnswers.id, 'surveyAnswer', 'edit');
                         this.action = 'edit';
                       }
                     }
@@ -112,11 +112,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         subscription.unsubscribe();
       }
     });
-    console.log(this.surveyAnswers);
     if (this.surveyAnswers?.id) {
-      console.log('destroy');
-
-      this.wsService.WsUnsubscribe(this.surveyAnswers.id, 'surveyAnswer', this.action);
+      this.wsService.WsLeave(this.surveyAnswers.id, 'surveyAnswer', this.action);
     }
   }
 
