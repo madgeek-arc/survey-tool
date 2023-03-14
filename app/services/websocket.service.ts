@@ -34,12 +34,13 @@ export class WebsocketService {
                 that.msg.next(JSON.parse(message.body));
               }
             });
+            // that.WsJoin(id, resourceType, action);
             resolve(stomp);
           }
         }, 500);
       }, function (error) {
-        setTimeout( () => {that.initializeWebSocketConnection(id, resourceType)}, 10000);
-        console.log('STOMP: Reconecting in 10 seconds');
+        setTimeout( () => {that.initializeWebSocketConnection(id, resourceType)}, 1000);
+        console.log('STOMP: Reconecting...');
       });
     });
 
