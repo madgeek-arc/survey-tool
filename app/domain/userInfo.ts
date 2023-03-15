@@ -36,7 +36,8 @@ export class StakeholdersMembers {
 }
 
 export class UserActivity {
- fullname: string;
- action: string;
- date: Date;
+  sessionId: string;
+  fullname: string;
+  action: string;
+  date: Date;
 }
