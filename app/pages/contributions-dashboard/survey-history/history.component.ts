@@ -18,6 +18,7 @@ export class HistoryComponent implements OnInit {
   surveyId: string = null;
   surveyAnswerHistory: DisplayHistory = null;
   selectedEntries: DisplayEntries[] = [];
+  selectedVersion: string = null;
 
   model: Model = null;
   surveyAnswerA: SurveyAnswer = null;
@@ -39,14 +40,45 @@ export class HistoryComponent implements OnInit {
         res => {
           this.surveyAnswerHistory = res;
           this.surveyAnswerHistory.entries.sort((a, b) => b.time - a.time);
-          this.loading = false;
+          // this.loading = false;
         },
-        error => {console.error(error)}
+        error => {console.error(error)},
+        () => {
+          zip(
+            this.surveyService.getSurvey(this.surveyId),
+            this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.surveyAnswerHistory.entries[0].version),
+          ).subscribe(
+            next => {
+              this.model = next[0];
+              this.surveyAnswerA = next[1];
+              this.loading = false;
+            },
+            error => {console.log(error)},
+            () => {this.selectedVersion = this.surveyAnswerHistory.entries[0].version;}
+          );
+        }
       )
     });
   }
 
-  selectVersion(event, version) {
+  selectVersionToShow(version: string) {
+    this.loading = true;
+    let tmpModel: Model = this.model;
+    this.model = null
+    this.surveyService.getAnswerWithVersion(this.surveyAnswerId, version).subscribe(
+      next => {this.surveyAnswerA = next;},
+      error => {console.log(error)},
+      () => {
+        this.selectedVersion = version;
+        this.model = tmpModel;
+        this.loading = false;
+        UIkit.scroll('#scrollTop').scrollTo('#title');
+      }
+
+    );
+  }
+
+  selectVersionsToCompare(event, version) {
     if (event.target.checked) {
       this.selectedEntries.push(version);
     } else {
@@ -60,14 +92,14 @@ export class HistoryComponent implements OnInit {
     this.surveyAnswerB = null;
     this.selectedEntries.sort((a, b) => a.time - b.time);
     zip(
-      this.surveyService.getSurvey(this.surveyId),
       this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.selectedEntries[0].version),
-      this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.selectedEntries[1].version)
+      this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.selectedEntries[1].version),
+      // this.surveyService.getSurvey(this.surveyId)
     ).subscribe(
       next => {
-        this.model = next[0];
-        this.surveyAnswerA = next[1];
-        this.surveyAnswerB = next[2];
+        this.surveyAnswerA = next[0];
+        this.surveyAnswerB = next[1];
+        // this.model = next[2];
 
         UIkit.modal('#modal-full').show();
         this.loading = false;
