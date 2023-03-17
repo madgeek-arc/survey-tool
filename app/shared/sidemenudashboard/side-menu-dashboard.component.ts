@@ -12,7 +12,7 @@ import {Subscriber} from "rxjs";
 export class SideMenuDashboardComponent implements OnInit, OnDestroy {
 
   subscriptions = [];
-  toggle: number[] = [];
+  // toggle: number[] = [];
   currentStakeholder: Stakeholder = null;
   currentCoordinator: Coordinator = null;
   ready = false;
@@ -52,6 +52,21 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
       return false;
     }
     return false;
+  }
+
+  toggleSidebar() {
+    const el: HTMLElement = document.getElementById('sidebar_toggle');
+    if(!el.classList.contains('closed')) {
+      el.classList.add('closed');
+      const el1: HTMLElement = document.getElementById('sidebar_main_content');
+      el1.classList.remove('sidebar_main_active');
+      el1.classList.add('sidebar_main_inactive');
+    } else {
+      el.classList.remove('closed');
+      const el1: HTMLElement = document.getElementById('sidebar_main_content');
+      el1.classList.add('sidebar_main_active');
+      el1.classList.remove('sidebar_main_inactive');
+    }
   }
 
   ngOnDestroy() {

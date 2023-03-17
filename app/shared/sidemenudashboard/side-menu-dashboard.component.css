@@ -1,5 +1,5 @@
 #sidebar_main {
-  overflow: auto;
+  /*overflow: auto;*/
   top: var(--header-height) !important;
   box-shadow: 0 0 16px 2px #00000029;
   background: #fff;
@@ -88,6 +88,70 @@
 #sidebar_main .menu_section > ul > li > a {
   font-weight: 400;
 }
+
+#sidebar_main #sidebar_toggle {
+  position: fixed;
+  z-index: 9800;
+  top: 50%;
+  left: 280px;
+  left: var(--sidebar-width);
+  width: 35px;
+  height: 35px;
+  transition: left 0.25s linear;
+  transition: left var(--dashboard-transition-delay) linear;
+  -webkit-transition: left 0.25s linear;
+  -webkit-transition: left var(--dashboard-transition-delay) linear;
+  -moz-transition: left 0.25s linear;
+  -moz-transition: left var(--dashboard-transition-delay) linear;
+  -o-transition: left 0.25s linear;
+  -o-transition: left var(--dashboard-transition-delay) linear;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 500px;
+  border: 1px solid #EAEAEA;
+  background: #FFFFFF;
+  color: #2C2C2C;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#sidebar_main #sidebar_toggle.closed {
+  left: var(--toggle-sidebar-closed);
+}
+
+#sidebar_main #sidebar_toggle::before {
+  content: '\e5cb';
+  font-family: 'Material Icons';
+  font-size: 25px;
+  transition: transform 0.25s linear;
+  transition: transform var(--dashboard-transition-delay) linear;
+  -webkit-transition: transform 0.25s linear;
+  -webkit-transition: transform var(--dashboard-transition-delay) linear;
+  -moz-transition: transform 0.25s linear;
+  -moz-transition: transform var(--dashboard-transition-delay) linear;
+  -o-transition: transform 0.25s linear;
+  -o-transition: transform var(--dashboard-transition-delay) linear;
+}
+
+#sidebar_main #sidebar_toggle.closed::before {
+  transform: rotate(180deg);
+}
+
+#sidebar_main #sidebar_toggle:hover {
+  background-color: var(--eosc-observatory-secondary-color) !important;
+  color: var(--white);
+  /*border-color: @dashboard-sidebar-toggle-border-hover;*/
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -186,12 +250,12 @@ ul.uk-nav-sub {
   left: 0;
   /*padding-top: 65px;*/
   /*padding-top: var(--header-height);*/
-  z-index: 979;
+  z-index: 60;
   background: #FFFFFF;
   /*border-right: 1px solid #EAEAEA;*/
   transition: 0.5s;
   transition-property: width;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
 }
 .sidebar_main_swipe #sidebar_main .menu_section {
   margin-left: 10px;
@@ -323,7 +387,7 @@ ul.uk-nav-sub {
   min-height: calc(100vh - var(--header-height));
   /*background-color: #F9F9F9;*/
   position: relative;
-  z-index: 978;
+  z-index: 70;
 }
 .sidebar_main_swipe:not(.sidebar_main_active):not(.sidebar_mini) #page_content,
 .sidebar_main_swipe:not(.sidebar_main_active):not(.sidebar_mini) openaire-user > user > div,
@@ -361,3 +425,6 @@ ul.uk-nav-sub {
     padding-right: 0;
   }
 }
+
+
+
