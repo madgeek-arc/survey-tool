@@ -1,7 +1,7 @@
 <div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active" [class.sidebar_main_active]="open">
   <app-top-menu-dashboard [userInfo]="userInfo"></app-top-menu-dashboard>
   <div style="margin-top: 83px"></div>
-  <app-side-menu-dashboard></app-side-menu-dashboard>
+  <app-side-menu-dashboard *ngIf="open"></app-side-menu-dashboard>
 
   <div id="page_content">
     <router-outlet></router-outlet>

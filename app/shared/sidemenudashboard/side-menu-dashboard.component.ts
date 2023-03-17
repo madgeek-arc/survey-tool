@@ -1,4 +1,4 @@
-import {AfterViewChecked, AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Coordinator, Stakeholder} from "../../domain/userInfo";
 import {UserService} from "../../services/user.service";
 import {Subscriber} from "rxjs";
