@@ -57,7 +57,8 @@ const contributionsDashboardRoutes: Routes = [
         component: HistoryComponent,
         canActivate: [AuthenticationGuardService],
         data: {
-          showSideMenu: false
+          showSideMenu: false,
+          showFooter: false
         }
       },
       {

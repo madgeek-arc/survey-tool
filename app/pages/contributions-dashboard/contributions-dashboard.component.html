@@ -1,13 +1,13 @@
-<div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active" [class.sidebar_main_active]="open">
+<div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active" [class.sidebar_main_active]="openSideBar">
   <app-top-menu-dashboard [userInfo]="userInfo"></app-top-menu-dashboard>
   <div style="margin-top: 83px"></div>
-  <app-side-menu-dashboard *ngIf="open"></app-side-menu-dashboard>
+  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>
 
   <div id="page_content">
     <router-outlet></router-outlet>
   </div>
 
-  <div style="margin-left: 320px">
+  <div *ngIf="showFooter" style="margin-left: 320px">
     <app-footer></app-footer>
   </div>
 

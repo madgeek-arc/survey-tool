@@ -14,7 +14,8 @@ import {Subscriber} from "rxjs";
 export class ContributionsDashboardComponent implements OnInit, OnDestroy{
 
   subscriptions = [];
-  open: boolean = true;
+  openSideBar: boolean = true;
+  showFooter: boolean = true;
   userInfo: UserInfo;
 
   constructor(public userService: UserService,
@@ -84,12 +85,19 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   }
 
   findChildRouteData() {
+
+    this.openSideBar = true;
+    this.showFooter = true;
+
     let child = this.route.firstChild;
     while (child) {
       if (child.firstChild) {
         child = child.firstChild;
-      } else if (child.snapshot.data && child.snapshot.data['showSideMenu'] !== undefined) {
-        this.open = child.snapshot.data['showSideMenu'];
+      } else if (child.snapshot.data) {
+        if (child.snapshot.data['showSideMenu'] !== undefined)
+          this.openSideBar = child.snapshot.data['showSideMenu'];
+        if (child.snapshot.data['showFooter'] !== undefined)
+          this.showFooter = child.snapshot.data['showFooter'];
         return null;
       } else {
         return null;

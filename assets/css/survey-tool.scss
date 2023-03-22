@@ -334,6 +334,10 @@ hr {
   border: 1px solid var(--default-element-bg);
 }
 
+hr.muted {
+  border: 1px solid var(--light-grey);
+}
+
 .browse-dropdown-menu hr {
   border: 2px solid var(--default-element-bg);
 }
@@ -407,6 +411,7 @@ a.footerLink:hover {
 .uk-button-primary:hover {
   background-color: #1e95b0;
   //background-color: #0c2bd5;
+  color: var(--white);
   border-color: #fff;
   background-image: unset;
 }

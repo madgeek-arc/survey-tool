@@ -9,7 +9,8 @@ import {zip} from "rxjs/internal/observable/zip";
 
 @Component({
   selector: 'app-survey-history',
-  templateUrl: 'history.component.html'
+  templateUrl: 'history.component.html',
+  styleUrls: ['./history.component.css']
 })
 
 export class HistoryComponent implements OnInit {
@@ -18,12 +19,14 @@ export class HistoryComponent implements OnInit {
   surveyId: string = null;
   surveyAnswerHistory: DisplayHistory = null;
   selectedEntries: DisplayEntries[] = [];
-  selectedVersion: string = null;
+  selectedVersion: DisplayEntries = null;
 
   model: Model = null;
   surveyAnswerA: SurveyAnswer = null;
   surveyAnswerB: SurveyAnswer = null;
   tabsHeader = 'Sections';
+
+  currentStakeholderId = null;
 
   loading: boolean = false;
 
@@ -35,6 +38,7 @@ export class HistoryComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.surveyAnswerId = params['answerId'];
       this.surveyId = params['surveyId'];
+      this.currentStakeholderId = params['id'];
       // console.log(this.surveyAnswerId);
       this.surveyService.getAnswerHistory(this.surveyAnswerId).subscribe(
         res => {
@@ -54,25 +58,26 @@ export class HistoryComponent implements OnInit {
               this.loading = false;
             },
             error => {console.log(error)},
-            () => {this.selectedVersion = this.surveyAnswerHistory.entries[0].version;}
+            () => {this.selectedVersion = this.surveyAnswerHistory.entries[0];}
           );
         }
       )
     });
   }
 
-  selectVersionToShow(version: string) {
+  selectVersionToShow(versionEntry: DisplayEntries) {
     this.loading = true;
     let tmpModel: Model = this.model;
     this.model = null
-    this.surveyService.getAnswerWithVersion(this.surveyAnswerId, version).subscribe(
+    this.surveyService.getAnswerWithVersion(this.surveyAnswerId, versionEntry.version).subscribe(
       next => {this.surveyAnswerA = next;},
       error => {console.log(error)},
       () => {
-        this.selectedVersion = version;
+        this.selectedVersion = versionEntry;
         this.model = tmpModel;
         this.loading = false;
-        UIkit.scroll('#scrollTop').scrollTo('#title');
+        // UIkit.scroll('#scrollTop').scrollTo('#title');
+        window.scroll(0,0)
       }
 
     );

@@ -1,0 +1,26 @@
+.history-sidebar {
+  /*overflow: auto;*/
+  top: var(--header-height) !important;
+  box-shadow: 0 0 16px 2px #00000029;
+  background: #fff;
+  /*width: 280px;*/
+  width: var(--sidebar-width);
+  border-left: 1px solid rgba(0,0,0,.12);
+  position: fixed;
+  height: 100%;
+  bottom: 0;
+  right: 0;
+  /*transform: translate(-320px);*/
+  z-index: 800;
+  transition: all .28s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto;
+  padding-bottom: 75px;
+}
+
+.history-table td {
+  padding: 20px;
+}
+
+.history-table td .uk-text-emphasis {
+  font-weight: 500;
+}
