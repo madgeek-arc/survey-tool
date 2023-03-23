@@ -45,7 +45,7 @@
   </div>
 
 </div>
-<div class="history-content">
+<div *ngIf="!hide" class="history-content">
   <div class="uk-section-default uk-section uk-section-small" style="min-height: 90vh;">
     <div class="uk-container uk-container-expand">
       <div class="uk-width-4-5">
@@ -74,7 +74,7 @@
 <!--Compare Modal-->
 <div id="modal-full" class="uk-modal-full" uk-modal>
   <div class="uk-modal-dialog uk-modal-body" style="min-height: 100vh">
-    <button class="uk-modal-close-full uk-close-large uk-padding-small" type="button" uk-close></button>
+    <button class="uk-modal-close-full uk-close-large uk-padding-small" type="button" (click)="showHistoryContent()" uk-close></button>
     <div class="uk-margin-top">
       <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB" [tabsHeader]="tabsHeader"
                            [entryA]="selectedEntries[0]" [entryB]="selectedEntries[1]">

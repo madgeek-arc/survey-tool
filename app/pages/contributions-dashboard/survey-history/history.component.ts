@@ -29,6 +29,7 @@ export class HistoryComponent implements OnInit {
   currentStakeholderId = null;
 
   loading: boolean = false;
+  hide = false;
 
   constructor(private route: ActivatedRoute, private surveyService: SurveyService) {
   }
@@ -107,10 +108,15 @@ export class HistoryComponent implements OnInit {
         // this.model = next[2];
 
         UIkit.modal('#modal-full').show();
+        this.hide = true;
         this.loading = false;
       },
       error => {console.log(error)},
       () => {}
     );
+  }
+
+  showHistoryContent() {
+    this.hide = false;
   }
 }
