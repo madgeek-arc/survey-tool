@@ -53,8 +53,7 @@
           <a [routerLink]="['/contributions/'+ currentStakeholderId +'/mySurveys']" class="uk-margin-small-right" title="Back">
             <span class="material-icons">keyboard_backspace</span>
           </a>
-          <!--          <a [routerLink]="['./..']" class="uk-margin-small-right"><span class="material-icons">arrow_back</span></a>-->
-          <span>{{selectedVersion.time | date:'medium'}}</span>
+          <span>{{selectedVersion?.time | date:'medium'}}</span>
         </h5>
         <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="null" [tabsHeader]="tabsHeader"
                              [entryA]="selectedEntries[0]" [entryB]="null">
