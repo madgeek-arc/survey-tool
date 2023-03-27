@@ -93,6 +93,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
                   )
                 );
               } else {
+                this.activeUsers = [];
                 this.surveyService.getSurvey(this.surveyId).subscribe(
                   next => {this.survey = next;},
                   error => {console.log(error)},
