@@ -87,8 +87,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     });
   }
 
-  exportToCsv() {
-    this.surveyService.exportToCsv(this.surveyEntriesResults[0].surveyId);
+  exportToCsv(surveyId: string) {
+    this.surveyService.exportToCsv(surveyId);
   }
 
   updateCoordinatorStakeholderParameter(id: string) {
@@ -256,19 +256,15 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
         this.order = this.urlParameters[i].values[0];
       }
     }
-    // if (!ordered) {
-    //   console.log(this.urlParameters);
-    //   let urlParameter: URLParameter = {
-    //     key: 'orderField',
-    //     values: ['modificationDate']
-    //   };
-    //   this.urlParameters.push(urlParameter);
-    //   console.log(this.urlParameters);
-    //   urlParameter.key = 'order'
-    //   urlParameter.values = ['desc']
-    //   this.urlParameters.push(urlParameter);
-    //   console.log(this.urlParameters);
-    // }
+  }
+
+  getFacet(field: string) {
+    for (let i = 0; i < this.surveyEntries.facets.length; i++) {
+      if (this.surveyEntries.facets[i].field === field) {
+        return this.surveyEntries.facets[i].values;
+      }
+    }
+    return null
   }
 
 }

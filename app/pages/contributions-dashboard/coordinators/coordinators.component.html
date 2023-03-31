@@ -20,15 +20,23 @@
         </div>
 
         <div class="uk-width-1-5">
-          <div *ngIf="stakeholder?.country != 'CH'" class="uk-flex uk-flex-right uk-margin-bottom">
-            <button (click)="exportToCsv()" class="uk-button uk-button-primary">Export to tsv</button>
+          <div *ngIf="stakeholder?.country != 'CH'" class="uk-flex uk-flex-right uk-margin-bottom uk-inline">
+            <button class="uk-button uk-button-primary">Export to tsv</button>
+            <ul class="uk-card uk-card-body uk-card-default uk-list uk-padding-small uk-margin-remove"
+                uk-drop="mode: hover; animation: reveal-top; animate-out: true; pos: left-top; offset: 0; duration: 500">
+              <li *ngFor="let survey of getFacet('surveyId')" class="uk-margin-bottom">
+                <a class="uk-flex uk-flex-middle" (click)="exportToCsv(survey.value)">
+                  <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
         <div *ngIf="surveyEntries?.facets" class="uk-width-1-1 uk-child-width-1-2" uk-grid>
           <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" uk-grid>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
-                         [items]="surveyEntries?.facets[9]?.values" [(ngModel)]="selectedSurvey"
+                         [items]="getFacet('surveyId')" [(ngModel)]="selectedSurvey"
                          placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
               </ng-select>
             </div>
@@ -114,13 +122,13 @@
                 {{surveyEntry.lastUpdate | date}}
               </td>
               <td>
-                <div class="uk-flex uk-flex-center">
+                <div class="uk-margin-left">
                   <span *ngIf="surveyEntry.validated" class="material-icons">done</span>
                   <span *ngIf="!surveyEntry.validated" class="material-icons">remove</span>
                 </div>
               </td>
               <td class="">
-                <div class="uk-flex uk-flex-center">
+                <div class="uk-margin-left">
                   <span *ngIf="surveyEntry.published" class="material-icons">done</span>
                   <span *ngIf="!surveyEntry.published" class="material-icons">remove</span>
                 </div>
@@ -128,10 +136,22 @@
               <td class="">
                 <div class="percentageNumber" style="margin-left: 10%;">{{surveyEntry.progressTotal.current}} of {{surveyEntry.progressTotal.total}}</div>
               </td>
-              <td class="uk-flex">
-                <a [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
-                  <span class="uk-flex uk-flex-middle"><span class="material-icons uk-margin-small-right">visibility</span>View</span>
-                </a>
+              <td class="">
+                <div class="uk-inline uk-margin-left">
+                  <a><span class="material-icons">more_vert</span></a>
+                  <ul class="uk-card uk-card-body uk-card-default uk-list uk-dropdown-nav" uk-drop="mode: hover">
+                    <li class="uk-margin-small-bottom">
+                      <a class="uk-flex uk-flex-middle" [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
+                        <span class="material-icons uk-margin-right">visibility</span> View Survey
+                      </a>
+                    </li>
+                    <li class="uk-margin-small-bottom">
+                      <a class="uk-flex uk-flex-middle" [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
+                        <span class="material-icons uk-margin-right">manage_history</span> View Survey History
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </td>
             </tr>
             </tbody>

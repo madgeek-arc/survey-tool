@@ -62,6 +62,15 @@ const contributionsDashboardRoutes: Routes = [
         }
       },
       {
+        path: 'surveys/:surveyId/:answerId/history',
+        component: HistoryComponent,
+        canActivate: [AuthenticationGuardService],
+        data: {
+          showSideMenu: false,
+          showFooter: false
+        }
+      },
+      {
         path: 'group',
         component: MyGroupComponent,
         canActivate: [AuthenticationGuardService]
