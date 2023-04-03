@@ -623,24 +623,24 @@ a.sub-menu-item:hover {
   //background: rgba(0, 68, 148, 0.9) 0% 0% no-repeat padding-box;
 }
 
-.uk-tab-left > li {
-  margin-bottom: 15px;
-}
-
-.uk-tab-left > * > a {
-  text-decoration: none;
-  padding: 10px 15px;
-}
-
-.uk-tab > .uk-active > a {
-  //background-color: rgba(255, 205, 0, 0.7);
-  background-color: var(--eosc-observatory-primary-color);
-  //background-color: rgba(0, 68, 148, 0.9);
-  //color: var(--black) !important;
-  color: var(--white) !important;
-  border-color: transparent;
-  font-weight: normal;
-}
+//.uk-tab-left > li {
+//  margin-bottom: 15px;
+//}
+//
+//.uk-tab-left > * > a {
+//  text-decoration: none;
+//  padding: 10px 15px;
+//}
+//
+//.uk-tab > .uk-active > a {
+//  //background-color: rgba(255, 205, 0, 0.7);
+//  background-color: var(--eosc-observatory-primary-color);
+//  //background-color: rgba(0, 68, 148, 0.9);
+//  //color: var(--black) !important;
+//  color: var(--white) !important;
+//  border-color: transparent;
+//  font-weight: normal;
+//}
 
 .uk-input:not([class*="menuSearch"]):not([class*="uk-form-danger"]) {
   background-color: #fff;
