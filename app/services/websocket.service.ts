@@ -6,7 +6,7 @@ import {UserActivity} from "../domain/userInfo";
 declare var SockJS;
 declare var Stomp;
 
-const URL = environment.WS_ENDPOINT + '/websocket';
+const URL = environment.WS_ENDPOINT;
 
 @Injectable()
 export class WebsocketService {
