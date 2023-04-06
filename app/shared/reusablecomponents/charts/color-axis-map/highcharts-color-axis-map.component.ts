@@ -2,15 +2,15 @@ import * as Highcharts from "highcharts/highmaps";
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_ExportingOffline from 'highcharts/modules/offline-exporting';
 import {Component, Input, SimpleChanges} from "@angular/core";
-import {CategorizedAreaData, colorAxisDataWithZeroValue} from "../../../../domain/categorizedAreaData";
-import {SeriesMapDataOptions, SeriesOptionsType} from "highcharts/highmaps";
+import {colorAxisDataWithZeroValue} from "../../../../domain/categorizedAreaData";
+import {SeriesMapDataOptions} from "highcharts/highmaps";
 
 HC_exporting(Highcharts);
 HC_ExportingOffline(Highcharts);
 
 declare var require: any;
 const worldMap = require('@highcharts/map-collection/custom/world-highres3.topo.json');
-
+let componentContext;
 
 @Component({
   selector: 'app-highcharts-color-axis',
@@ -22,6 +22,7 @@ export class HighchartsColorAxisMapComponent {
   @Input() mapData: (number | SeriesMapDataOptions | [string, number])[] = [];
   @Input() title: string = null;
   @Input() subtitle: string = null;
+  @Input() dataSeriesSuffix: string = null;
 
   chart;
   chartCallback;
@@ -34,24 +35,24 @@ export class HighchartsColorAxisMapComponent {
   ready: boolean = false;
 
   constructor() {
-    const self = this;
+    componentContext = this;
 
     this.createMap();
     this.chartCallback = chart => {
       // saving chart reference
-      self.chart = chart;
-      // console.log(self.chart);
+      componentContext.chart = chart;
+      // console.log(componentContext.chart);
     };
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.ready = false;
-    const self = this, chart = this.chart;
+    const componentContext = this, chart = this.chart;
 
     if (this.mapData?.length > 0) {
       setTimeout(() => {
-        self.chartOptions.title.text = this.title;
-        self.chartOptions.subtitle.text = this.subtitle;
+        componentContext.chartOptions.title.text = this.title;
+        componentContext.chartOptions.subtitle.text = this.subtitle;
         let tmpArray: (number | SeriesMapDataOptions | [string, number])[] = [];
         let found = false;
         for (let i = 0; i < this.dataForInitialization.length; i++) {
@@ -68,11 +69,11 @@ export class HighchartsColorAxisMapComponent {
           }
         }
         this.mapData = tmpArray;
-        self.chartOptions.series[0]['data'] = this.mapData;
-        // console.log(self.chartOptions.series)
+        componentContext.chartOptions.series[0]['data'] = this.mapData;
+        // console.log(componentContext.chartOptions.series)
         // chart.hideLoading();
         this.ready = true;
-        self.updateFlag = true;
+        componentContext.updateFlag = true;
       }, 0);
     }
   }
@@ -103,15 +104,15 @@ export class HighchartsColorAxisMapComponent {
     legend: {
       enabled: true
     },
-      colorAxis: {
-        min: 0,
-        max: 25,
-        // tickInterval: 3,
-        stops: [[0, '#F1EEF6'], [1, '#008792']],
-        // labels: {
-        //   format: '{value}%'
-        // }
-      },
+    colorAxis: {
+      min: 0,
+      max: 25,
+      // tickInterval: 3,
+      stops: [[0, '#F1EEF6'], [1, '#008792']],
+      // labels: {
+      //   format: '{value}%'
+      // }
+    },
     plotOptions: {
       series: {
         point: {
@@ -121,6 +122,11 @@ export class HighchartsColorAxisMapComponent {
             },
           }
         }
+      }
+    },
+    tooltip: {
+      formatter: function () {
+        return '<b>' + this.point.name + '</b>: ' + this.point.value + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
       }
     },
     series: [
@@ -135,9 +141,9 @@ export class HighchartsColorAxisMapComponent {
         dataLabels: {
           enabled: true,
           // format: "{point.value}",
-          formatter: function () {
+          formatter:  function () {
             if (this.point.value > 0)
-              return this.point.value + ' M';
+              return this.point.value + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
             else
               return '';
           }
@@ -145,11 +151,11 @@ export class HighchartsColorAxisMapComponent {
         allAreas: false,
         data: [],
         // tooltip: {
-        //   pointFormat: '{point.code}: {point.value} M'
+        //   headerFormat: '<span style="font-size:10px">{series.name}</span><br/>',
+        //   pointFormat: '{point.name}: <b>{point.value} </b><br/>',
+        //   valueSuffix: ' M',
+        //   footerFormat: ''
         // }
-        tooltip: {
-          valueSuffix: ' M'
-        },
       }
     ]
   }

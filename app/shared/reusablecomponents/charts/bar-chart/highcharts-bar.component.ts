@@ -17,6 +17,7 @@ export class HighchartsBarComponent implements OnChanges{
 
   @Input() mapData: (number | SeriesMapDataOptions | [string, number])[] = [];
   @Input() title: string = null;
+  @Input() subTitle: string = null;
 
   @ViewChild('chart') componentRef;
   Highcharts: typeof Highcharts = Highcharts;
@@ -46,7 +47,7 @@ export class HighchartsBarComponent implements OnChanges{
         text: this.title,
       },
       subtitle: {
-        text: '(in millions of Euro)',
+        text: this.subTitle !== null ? this.subTitle : '(in millions of Euro)',
       },
       credits: {
         enabled: false,
