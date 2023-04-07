@@ -2,26 +2,22 @@
   <div id="">
     <div class="uk-padding-small uk-margin-top">Version History</div>
     <div class="uk-padding-small">
-      <button class="uk-button uk-button-small uk-button-primary" [disabled]="selectedEntries.length !== 2" (click)="showComparison()"
-              title="Two versions must be selected">Compare versions
+      <button class="uk-button uk-button-small uk-button-primary" [disabled]="selectedEntries.length !== 2"
+              (click)="showComparison()" title="Two versions must be selected">Compare versions
+      </button>
+
+      <button class="uk-button uk-button-small uk-button-primary uk-margin-small-top" [disabled]="selectedEntries.length !== 1"
+              (click)="restoreVersion()" title="Click the checkbox of the version you want to restore to">Restore to selected version
       </button>
     </div>
     <hr>
     <table class="uk-margin-top uk-table uk-table-striped uk-table-divider uk-table-small uk-table-middle history-table">
-      <thead>
-      <!--          <tr>-->
-      <!--            <th></th>-->
-      <!--            <th>User</th>-->
-      <!--            <th>Version</th>-->
-      <!--            <th>Action</th>-->
-      <!--            <th>Date</th>-->
-      <!--          </tr>-->
-      </thead>
+<!--      <thead>-->
+<!--      </thead>-->
       <tbody>
       <tr *ngFor="let entry of surveyAnswerHistory?.entries; let i = index"
           [ngClass]="{'uk-active': selectedVersion === entry}">
-        <td title="{{entry.time | date:'dd/MM/yyyy, h:mm a z'}}"
-            (click)="selectVersionToShow(entry)" style="cursor: pointer">
+        <td title="{{entry.time | date:'dd/MM/yyyy, h:mm a z'}}" (click)="selectVersionToShow(entry)" style="cursor: pointer">
 
           <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
             {{entry.time | date:'medium'}}

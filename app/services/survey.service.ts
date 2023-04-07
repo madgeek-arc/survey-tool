@@ -23,6 +23,10 @@ export class SurveyService {
     return this.http.get<SurveyAnswer>(this.base + `/answers/${surveyAnswerId}/versions/${version}`, this.options);
   }
 
+  restoreToVersion(surveyAnswerId: string, versionId: string) {
+    return this.http.put<SurveyAnswer>(this.base + `/answers/${surveyAnswerId}/versions/${versionId}/restore`, this.options);
+  }
+
   changeAnswerValidStatus(answerId: string, valid: boolean) {
     return this.http.patch<SurveyAnswer>(this.base + `/answers/${answerId}/validation?validated=${valid}`, null, this.options);
   }

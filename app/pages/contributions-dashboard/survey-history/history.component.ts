@@ -41,29 +41,33 @@ export class HistoryComponent implements OnInit {
       this.surveyId = params['surveyId'];
       this.currentStakeholderId = params['id'];
       // console.log(this.surveyAnswerId);
-      this.surveyService.getAnswerHistory(this.surveyAnswerId).subscribe(
-        res => {
-          this.surveyAnswerHistory = res;
-          this.surveyAnswerHistory.entries.sort((a, b) => b.time - a.time);
-          // this.loading = false;
-        },
-        error => {console.error(error)},
-        () => {
-          zip(
-            this.surveyService.getSurvey(this.surveyId),
-            this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.surveyAnswerHistory.entries[0].version),
-          ).subscribe(
-            next => {
-              this.model = next[0];
-              this.surveyAnswerA = next[1];
-              this.loading = false;
-            },
-            error => {console.log(error)},
-            () => {this.selectedVersion = this.surveyAnswerHistory.entries[0];}
-          );
-        }
-      )
+      this.getSurveyAnswerHistory();
     });
+  }
+
+  getSurveyAnswerHistory() {
+    this.surveyService.getAnswerHistory(this.surveyAnswerId).subscribe(
+      res => {
+        this.surveyAnswerHistory = res;
+        this.surveyAnswerHistory.entries.sort((a, b) => b.time - a.time);
+        // this.loading = false;
+      },
+      error => {console.error(error)},
+      () => {
+        zip(
+          this.surveyService.getSurvey(this.surveyId),
+          this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.surveyAnswerHistory.entries[0].version),
+        ).subscribe(
+          next => {
+            this.model = next[0];
+            this.surveyAnswerA = next[1];
+            this.loading = false;
+          },
+          error => {console.log(error)},
+          () => {this.selectedVersion = this.surveyAnswerHistory.entries[0];}
+        );
+      }
+    )
   }
 
   selectVersionToShow(versionEntry: DisplayEntries) {
@@ -114,6 +118,16 @@ export class HistoryComponent implements OnInit {
       error => {console.log(error)},
       () => {}
     );
+  }
+
+  restoreVersion() {
+    this.surveyService.restoreToVersion(this.surveyAnswerId, this.selectedEntries[0].version).subscribe(
+      res => {
+        this.selectedEntries = [];
+        this.getSurveyAnswerHistory();
+      },
+      error => {console.log(error)}
+    )
   }
 
   showHistoryContent() {
