@@ -19,6 +19,7 @@ export class SurveysListComponent implements OnInit{
   }
 
   ngOnInit() {
+
     this.subscriptions.push(
       this.surveyService.getSurveys('type', 'country').subscribe(
         next => { this.surveys = next; },

@@ -8,6 +8,7 @@ import {AuthenticationGuardService} from "../../services/authentication-guard.se
 import {CoordinatorsComponent} from "./coordinators/coordinators.component";
 import {SurveysListComponent} from "./coordinators/surveys-list/surveys-list.component";
 import {HistoryComponent} from "./survey-history/history.component";
+import {StakeholdersComponent} from "./coordinators/stakeholders/stakeholders.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -33,7 +34,7 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthenticationGuardService]
       },
       {
-        path: 'surveyList/:surveyId/freeView',
+        path: 'surveyTemplates/:surveyId/freeView',
         component: SurveyFormComponent,
         canActivate: [AuthenticationGuardService]
       },
@@ -81,8 +82,13 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthenticationGuardService]
       },
       {
-        path: 'surveyList',
+        path: 'surveyTemplates',
         component: SurveysListComponent,
+        canActivate: [AuthenticationGuardService]
+      },
+      {
+        path: 'stakeholders',
+        component: StakeholdersComponent,
         canActivate: [AuthenticationGuardService]
       }
     ]

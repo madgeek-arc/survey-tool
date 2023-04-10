@@ -13,6 +13,7 @@ import {SurveysListComponent} from "./coordinators/surveys-list/surveys-list.com
 import {HistoryComponent} from "./survey-history/history.component";
 import {CompareModule} from "../../../catalogue-ui/pages/dynamic-form/compare-versions/compare.module";
 import {SurveyToolModule} from "../../survey-tool.module";
+import {StakeholdersComponent} from "./coordinators/stakeholders/stakeholders.component";
 
 @NgModule ({
   imports: [
@@ -32,6 +33,7 @@ import {SurveyToolModule} from "../../survey-tool.module";
     CoordinatorsComponent,
     SurveysListComponent,
     HistoryComponent,
+    StakeholdersComponent
   ],
   providers: [],
 })
