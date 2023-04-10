@@ -3,9 +3,9 @@ import {ActivatedRoute} from "@angular/router";
 import {SurveyService} from "../../../services/survey.service";
 import {DisplayEntries, DisplayHistory, SurveyAnswer} from "../../../domain/survey";
 import {Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
+import {zip} from "rxjs/internal/observable/zip";
 
 import UIkit from "uikit";
-import {zip} from "rxjs/internal/observable/zip";
 
 @Component({
   selector: 'app-survey-history',
@@ -54,6 +54,7 @@ export class HistoryComponent implements OnInit {
       },
       error => {console.error(error)},
       () => {
+        this.surveyAnswerA = null;
         zip(
           this.surveyService.getSurvey(this.surveyId),
           this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.surveyAnswerHistory.entries[0].version),
@@ -109,7 +110,6 @@ export class HistoryComponent implements OnInit {
       next => {
         this.surveyAnswerA = next[0];
         this.surveyAnswerB = next[1];
-        // this.model = next[2];
 
         UIkit.modal('#modal-full').show();
         this.hide = true;
