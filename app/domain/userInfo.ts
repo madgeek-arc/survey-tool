@@ -13,6 +13,20 @@ export class Stakeholder {
   name: string;
   subType: string;
   type: string;
+  madated: boolean;
+
+
+  constructor() {
+    this.associationMember = null;
+    // this.contributors = null;
+    this.country = null;
+    this.id = null;
+    // this.managers = null;
+    this.name = null;
+    this.subType = null;
+    this.type = null;
+    this.madated = null;
+  }
 }
 
 export class Coordinator {

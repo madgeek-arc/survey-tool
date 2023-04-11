@@ -1,1 +1,103 @@
-<pre>{{stakeholders | json}}</pre>
+<div class="uk-section uk-section-default uk-section-small">
+  <div class="uk-container uk-container-expand">
+
+    <div class="uk-flex uk-flex-right">
+      <button class="uk-button uk-button-primary" href="#modal-center" uk-toggle>Add Stakeholder</button>
+    </div>
+
+    <div class="uk-grid uk-margin-medium-bottom uk-margin-medium-top">
+      <div class="uk-width-1-1">
+        <div class="uk-flex uk-flex-center">
+          <div class="uk-inline">
+            <span class="uk-form-icon" uk-icon="icon: search"></span>
+            <input type="text" #searchInput class="uk-input menuSearch" placeholder="Search..."
+                   [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="ready" class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
+      <div class="uk-width-1-1">
+
+        <div class="uk-flex uk-flex-between uk-flex-middle">
+
+          <p class="big-text uk-margin-remove">
+            <span class="uk-text-bold">{{stakeholders.total}}</span> Stakeholders, Page
+            <span class="uk-text-bold">{{this.currentPage}}</span> of {{this.totalPages}}
+          </p>
+
+          <ul class="uk-pagination uk-visible@m">
+            <li *ngIf="currentPage > 2 && totalPages > 5">
+              <a (click)="goToPage(0)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a>
+            </li>
+            <li *ngIf="currentPage > 1">
+              <a (click)="previousPage()"><span uk-pagination-previous></span></a>
+            </li>
+            <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active uk-animation-fade': ''">
+              <a (click)="goToPage(i - 1)">{{i}}</a>
+            </li>
+            <li *ngIf="currentPage !== totalPages">
+              <a (click)="nextPage()"><span uk-pagination-next></span></a>
+            </li>
+            <li *ngIf="currentPage < totalPages && totalPages > 5">
+              <a (click)="goToPage(totalPages-1)"><span uk-pagination-next></span><span uk-pagination-next></span></a>
+            </li>
+          </ul>
+
+        </div>
+
+      </div>
+    </div>
+
+
+    <div *ngFor="let stakeholder of stakeholders?.results"
+         class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
+      <div class="uk-card-body">{{stakeholder.name}}</div>
+    </div>
+
+
+  </div>
+</div>
+
+<div id="modal-center" class="uk-flex-top" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+
+<!--    <div class="uk-modal-header">-->
+    <div class="uk-text-center">
+      <h2 class="uk-modal-title">Modal Title</h2>
+    </div>
+<!--    </div>-->
+    <div class="uk-modal-body">
+      <form class="uk-margin-large" [formGroup]="newStakeHolder">
+
+        <div class="uk-margin" uk-grid>
+          <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Name</label>
+          <div class="uk-form-controls uk-width-4-5">
+            <input class="uk-input" formControlName="name" id="name" type="text" placeholder="Stakeholder name">
+          </div>
+        </div>
+
+        <div class="uk-margin" uk-grid>
+          <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Country</label>
+          <div class="uk-form-controls uk-width-4-5">
+            <input class="uk-input" id="country" formControlName="country" type="text" placeholder="Use alpha-2 code">
+          </div>
+          <div class="uk-margin-small uk-width-1-1 uk-text-italic uk-flex uk-flex-right">
+            <a href="https://www.iso.org/obp/ui/#search/code/" target="_blank">Alpha-2 code list</a>
+          </div>
+        </div>
+
+      </form>
+
+<!--      <pre>{{newStakeHolder.value | json}}</pre>-->
+    </div>
+    <div class="uk-text-right">
+<!--      <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>-->
+      <button class="uk-button uk-button-primary" type="button" [disabled]="newStakeHolder.invalid" (click)="addStakeholder()">Add</button>
+    </div>
+
+  </div>
+</div>
