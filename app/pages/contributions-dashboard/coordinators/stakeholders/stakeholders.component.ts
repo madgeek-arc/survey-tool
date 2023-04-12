@@ -8,6 +8,8 @@ import {fromEvent} from "rxjs";
 import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
+declare var UIkit;
+
 @Component({
   selector: 'app-stakeholders',
   templateUrl: 'stakeholders.component.html',
@@ -23,12 +25,13 @@ export class StakeholdersComponent implements OnInit {
   urlParameters: URLParameter[] = [];
   searchQuery: string = null;
   ready: boolean = false;
-  newStakeHolder: FormGroup = this.fb.group(new Stakeholder());
+  edit: boolean = false;
+  stakeholderForm: FormGroup = this.fb.group(new Stakeholder());
 
   // Paging
   pages: number[] = [];
   offset = 2;
-  pageSize = 10;
+  pageSize = 12;
   totalPages = 0;
   currentPage = 0;
 
@@ -56,6 +59,8 @@ export class StakeholdersComponent implements OnInit {
         }
       }
 
+      this.updateURLParameters('quantity',this.pageSize);
+
       this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).subscribe(
         res => {this.stakeholders = res;},
         error => {console.error(error)},
@@ -79,13 +84,15 @@ export class StakeholdersComponent implements OnInit {
         this.navigateUsingParameters();
       }
     );
+
   }
 
   addStakeholder() {
-    this.stakeholdersService.postStakeholder(this.newStakeHolder.value).subscribe(
+    this.stakeholdersService.postStakeholder(this.stakeholderForm.value).subscribe(
       res => {},
       error => {},
       () => {
+        UIkit.modal('#modal-center').hide();
         this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).subscribe(
         res => {this.stakeholders = res;},
         error => {console.error(error);}
@@ -94,12 +101,36 @@ export class StakeholdersComponent implements OnInit {
     )
   }
 
+  updateStakeholder() {
+    this.stakeholdersService.putStakeholder(this.stakeholderForm.value).subscribe(
+      res => {},
+      error => {
+      },
+      () => {
+        UIkit.modal('#modal-center').hide();
+        this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).subscribe(
+          res => {this.stakeholders = res;},
+          error => {console.error(error);}
+        );
+      }
+    )
+  }
+
+  openForEdit(stakeholder: Stakeholder) {
+    this.edit = true;
+    this.stakeholderForm.patchValue(stakeholder);
+  }
+
+  openForAdd() {
+    this.edit = false;
+    this.stakeholderForm.reset();
+  }
+
   formInitialization() {
-    this.newStakeHolder.get('name').setValidators(Validators.required);
-    this.newStakeHolder.get('country').setValidators(Validators.required);
-    this.newStakeHolder.get('type').setValidators(Validators.required);
-    console.log(this.coordinator.type)
-    this.newStakeHolder.get('type').setValue(this.coordinator.type);
+    this.stakeholderForm.get('name').setValidators(Validators.required);
+    this.stakeholderForm.get('country').setValidators(Validators.required);
+    this.stakeholderForm.get('type').setValidators(Validators.required);
+    this.stakeholderForm.get('type').setValue(this.coordinator.type);
   }
 
 

@@ -1,0 +1,83 @@
+<div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
+  <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+
+    <h5 class="uk-margin-medium-bottom">
+      <span>{{stakeholder?.name}}</span>
+    </h5>
+
+    <div *ngIf="stakeholder?.managers" class="uk-card uk-card-default uk-card-body">
+
+      <div class="uk-flex uk-flex-right">
+        <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #add-manager-modal">Add new manager</button>
+      </div>
+
+      <div class="uk-overflow-auto uk-margin-medium-top">
+        <table class="uk-table uk-table-striped uk-table-middle uk-table-divider">
+          <thead>
+          <tr>
+            <th class="">Name</th>
+            <th class="">Email</th>
+            <th class="">Role</th>
+            <th class="">Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let member of members.managers">
+              <td>{{member.fullname}}</td>
+              <td class="">{{member.email}}</td>
+              <td class="">Manager</td>
+              <td class="uk-text-nowrap">
+                <a (click)="showRemoveModal(member.email)"><span class="material-icons uk-margin-left">delete</span></a>
+              </td>
+            </tr>
+<!--            <tr *ngFor="let member of members.contributors">-->
+<!--              <td>{{member.fullname}}</td>-->
+<!--              <td class="">{{member.email}}</td>-->
+<!--              <td class="">Contributor</td>-->
+<!--              <td *ngIf="members" class="uk-text-nowrap">-->
+<!--                <a *ngIf="isManager" (click)="showRemoveModal(member.email)"><span class="material-icons">delete</span></a>-->
+<!--              </td>-->
+<!--            </tr>-->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- add manager modal -->
+<div id="add-manager-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4 class="uk-modal-title">Add manager</h4>
+    <p>By giving the email you consent for storing the data</p>
+    <p *ngIf="errorMessage" class="uk-text-warning">{{errorMessage}}</p>
+    <input *ngIf="!invitationToken; else showToken;" [(ngModel)]="email" class="uk-input" type="email" placeholder="New contributor email">
+    <ng-template #showToken>
+      <textarea class="uk-form-controls uk-textarea" type="textarea" [(ngModel)]="invitationToken" disabled></textarea>
+    </ng-template>
+    <p class="uk-text-right">
+      <button class="uk-button uk-button-primary uk-modal-close" (click)="closeModal()" type="button">Close</button>
+      <button *ngIf="!invitationToken; else copyToCb;" class="uk-button uk-button-primary" (click)="addManager()" type="button">Get invitation token</button>
+      <ng-template #copyToCb>
+        <a class="" (click)="copyToClipboard()" [title]="title" type="button">
+          <span class="material-icons">content_copy</span>
+        </a>
+      </ng-template>
+    </p>
+  </div>
+</div>
+
+<!-- remove manager modal -->
+<div id="remove-manager-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4 class="uk-modal-title">Remove manager</h4>
+    <p>The manager with email {{email}} will be removed.</p>
+    <p *ngIf="errorMessage" class="uk-text-warning">{{errorMessage}}</p>
+    <p class="uk-text-right">
+      <button class="uk-button uk-button-primary uk-modal-close" (click)="closeModal()" type="button">Cancel</button>
+      <button class="uk-button uk-button-primary" (click)="removeManager()" type="button">Remove</button>
+    </p>
+  </div>
+</div>

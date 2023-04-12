@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { RawData } from "../domain/raw-data";
-import {Stakeholder} from "../domain/userInfo";
+import {Stakeholder, StakeholdersMembers} from "../domain/userInfo";
 import {Paging} from "../../catalogue-ui/domain/paging";
 import {URLParameter} from "../../catalogue-ui/domain/url-parameter";
 
@@ -24,6 +24,10 @@ export class StakeholdersService {
     return this.httpClient.get<string[]>(this.base + `/stakeholders/countries?type=country`, headerOptions);
   }
 
+  getStakeholder(id: string) {
+    return this.httpClient.get<Stakeholder>(this.base + `/stakeholders/${id}`);
+  }
+
   getStakeholdersByType(type: string, urlParameters: URLParameter[]) {
     let searchQuery = new HttpParams();
     searchQuery = searchQuery.append('type', type);
@@ -39,6 +43,15 @@ export class StakeholdersService {
   }
 
   postStakeholder(stakeholder: Stakeholder) {
-    return this.httpClient.post(this.base + '/stakeholders', {stakeholder});
+    return this.httpClient.post(this.base + '/stakeholders', stakeholder, {withCredentials: true});
   }
+
+  putStakeholder(stakeholder: Stakeholder) {
+    return this.httpClient.put(this.base + `/stakeholders/${stakeholder.id}`, stakeholder, {withCredentials: true});
+  }
+
+  getStakeholderMembers(id: string) {
+    return this.httpClient.get<StakeholdersMembers>(this.base + `/stakeholders/${id}/members`);
+  }
+
 }

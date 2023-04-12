@@ -2,7 +2,7 @@
   <div class="uk-container uk-container-expand">
 
     <div class="uk-flex uk-flex-right">
-      <button class="uk-button uk-button-primary" href="#modal-center" uk-toggle>Add Stakeholder</button>
+      <button class="uk-button uk-button-primary" href="#modal-center" uk-toggle (click)="openForAdd()">Add Stakeholder</button>
     </div>
 
     <div class="uk-grid uk-margin-medium-bottom uk-margin-medium-top">
@@ -51,11 +51,25 @@
     </div>
 
 
-    <div *ngFor="let stakeholder of stakeholders?.results"
-         class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
-      <div class="uk-card-body">{{stakeholder.name}}</div>
+    <div class="uk-child-width-1-4@l uk-child-width-1-3@m uk-child-width-1-1@s" uk-grid>
+    <div *ngFor="let stakeholder of stakeholders?.results">
+      <div class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
+        <div class="uk-card-body">
+          <div>Name: {{stakeholder.name}}</div>
+          <div>Id: {{stakeholder.id}}</div>
+          <div>Country: {{stakeholder.country}}</div>
+        </div>
+        <div class="uk-card-footer uk-flex uk-flex-right">
+          <a class="uk-flex uk-flex-middle uk-margin-right" [routerLink]="[stakeholder.id]">
+            <span class="material-icons md-18 uk-margin-small-right">update</span>Update Managers
+          </a>
+          <a class="uk-flex uk-flex-middle" href="#modal-center" uk-toggle (click)="openForEdit(stakeholder)">
+            <span class="material-icons md-18 uk-margin-small-right">mode_edit</span>Edit
+          </a>
+        </div>
+      </div>
     </div>
-
+    </div>
 
   </div>
 </div>
@@ -71,7 +85,7 @@
     </div>
 <!--    </div>-->
     <div class="uk-modal-body">
-      <form class="uk-margin-large" [formGroup]="newStakeHolder">
+      <form class="uk-margin-large" [formGroup]="stakeholderForm">
 
         <div class="uk-margin" uk-grid>
           <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Name</label>
@@ -90,13 +104,20 @@
           </div>
         </div>
 
+        <div class="uk-margin" uk-grid>
+          <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Type</label>
+          <div class="uk-form-controls uk-width-4-5">
+            <input class="uk-input" id="subtype" formControlName="subType" type="text" placeholder="">
+          </div>
+        </div>
+
       </form>
 
-<!--      <pre>{{newStakeHolder.value | json}}</pre>-->
+<!--      <pre>{{stakeholderForm.value | json}}</pre>-->
     </div>
     <div class="uk-text-right">
-<!--      <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>-->
-      <button class="uk-button uk-button-primary" type="button" [disabled]="newStakeHolder.invalid" (click)="addStakeholder()">Add</button>
+      <button *ngIf="!edit" class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="addStakeholder()">Add</button>
+      <button *ngIf="edit" class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="updateStakeholder()">Update</button>
     </div>
 
   </div>

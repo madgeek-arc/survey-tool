@@ -14,6 +14,7 @@ import {HistoryComponent} from "./survey-history/history.component";
 import {CompareModule} from "../../../catalogue-ui/pages/dynamic-form/compare-versions/compare.module";
 import {SurveyToolModule} from "../../survey-tool.module";
 import {StakeholdersComponent} from "./coordinators/stakeholders/stakeholders.component";
+import {EditManagerComponent} from "./coordinators/stakeholders/edit-managers/edit-manager.component";
 
 @NgModule ({
   imports: [
@@ -34,7 +35,8 @@ import {StakeholdersComponent} from "./coordinators/stakeholders/stakeholders.co
     CoordinatorsComponent,
     SurveysListComponent,
     HistoryComponent,
-    StakeholdersComponent
+    StakeholdersComponent,
+    EditManagerComponent
   ],
   providers: [],
 })

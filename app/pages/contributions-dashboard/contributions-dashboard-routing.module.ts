@@ -9,6 +9,7 @@ import {CoordinatorsComponent} from "./coordinators/coordinators.component";
 import {SurveysListComponent} from "./coordinators/surveys-list/surveys-list.component";
 import {HistoryComponent} from "./survey-history/history.component";
 import {StakeholdersComponent} from "./coordinators/stakeholders/stakeholders.component";
+import {EditManagerComponent} from "./coordinators/stakeholders/edit-managers/edit-manager.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -89,6 +90,11 @@ const contributionsDashboardRoutes: Routes = [
       {
         path: 'stakeholders',
         component: StakeholdersComponent,
+        canActivate: [AuthenticationGuardService]
+      },
+      {
+        path: 'stakeholders/:id',
+        component: EditManagerComponent,
         canActivate: [AuthenticationGuardService]
       }
     ]
