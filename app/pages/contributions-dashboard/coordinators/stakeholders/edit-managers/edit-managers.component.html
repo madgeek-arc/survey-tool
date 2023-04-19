@@ -5,13 +5,13 @@
       <span>{{stakeholder?.name}}</span>
     </h5>
 
-    <div *ngIf="stakeholder?.managers" class="uk-card uk-card-default uk-card-body">
+    <div class="uk-card uk-card-default uk-card-body">
 
       <div class="uk-flex uk-flex-right">
         <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #add-manager-modal">Add new manager</button>
       </div>
 
-      <div class="uk-overflow-auto uk-margin-medium-top">
+      <div *ngIf="members?.managers.length || members?.contributors.length" class="uk-overflow-auto uk-margin-medium-top">
         <table class="uk-table uk-table-striped uk-table-middle uk-table-divider">
           <thead>
           <tr>
@@ -27,17 +27,21 @@
               <td class="">{{member.email}}</td>
               <td class="">Manager</td>
               <td class="uk-text-nowrap">
-                <a (click)="showRemoveModal(member.email)"><span class="material-icons uk-margin-left">delete</span></a>
+                <a (click)="showRemoveModal(member.email, '#remove-manager-modal')">
+                  <span class="material-icons uk-margin-left">delete</span>
+                </a>
               </td>
             </tr>
-<!--            <tr *ngFor="let member of members.contributors">-->
-<!--              <td>{{member.fullname}}</td>-->
-<!--              <td class="">{{member.email}}</td>-->
-<!--              <td class="">Contributor</td>-->
-<!--              <td *ngIf="members" class="uk-text-nowrap">-->
-<!--                <a *ngIf="isManager" (click)="showRemoveModal(member.email)"><span class="material-icons">delete</span></a>-->
-<!--              </td>-->
-<!--            </tr>-->
+            <tr *ngFor="let member of members.contributors">
+              <td>{{member.fullname}}</td>
+              <td class="">{{member.email}}</td>
+              <td class="">Contributor</td>
+              <td *ngIf="members" class="uk-text-nowrap">
+                <a (click)="showRemoveModal(member.email, '#remove-contributors-modal')">
+                  <span class="material-icons uk-margin-left">delete</span>
+                </a>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -53,7 +57,7 @@
     <h4 class="uk-modal-title">Add manager</h4>
     <p>By giving the email you consent for storing the data</p>
     <p *ngIf="errorMessage" class="uk-text-warning">{{errorMessage}}</p>
-    <input *ngIf="!invitationToken; else showToken;" [(ngModel)]="email" class="uk-input" type="email" placeholder="New contributor email">
+    <input *ngIf="!invitationToken; else showToken;" [(ngModel)]="email" class="uk-input" type="email" placeholder="New manager email">
     <ng-template #showToken>
       <textarea class="uk-form-controls uk-textarea" type="textarea" [(ngModel)]="invitationToken" disabled></textarea>
     </ng-template>
@@ -78,6 +82,19 @@
     <p class="uk-text-right">
       <button class="uk-button uk-button-primary uk-modal-close" (click)="closeModal()" type="button">Cancel</button>
       <button class="uk-button uk-button-primary" (click)="removeManager()" type="button">Remove</button>
+    </p>
+  </div>
+</div>
+
+<!-- remove contributors modal -->
+<div id="remove-contributors-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4 class="uk-modal-title">Remove contributor</h4>
+    <p>The contributor with email {{email}} will be removed.</p>
+    <p *ngIf="errorMessage" class="uk-text-warning">{{errorMessage}}</p>
+    <p class="uk-text-right">
+      <button class="uk-button uk-button-primary uk-modal-close" (click)="closeModal()" type="button">Cancel</button>
+      <button class="uk-button uk-button-primary" (click)="removeContributors()" type="button">Remove</button>
     </p>
   </div>
 </div>

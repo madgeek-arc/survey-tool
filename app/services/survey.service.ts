@@ -65,6 +65,10 @@ export class SurveyService {
     return this.http.get(this.base + `/invitation/accept?invitationToken=${token}`);
   }
 
+  removeManager(stakeholderId: string, email: string) {
+    return this.http.delete<StakeholdersMembers>(this.base + `/stakeholders/${stakeholderId}/managers/${email}`, this.options);
+  }
+
   removeContributor(stakeholderId: string, email: string) {
     return this.http.delete<StakeholdersMembers>(this.base + `/stakeholders/${stakeholderId}/contributors/${email}`, this.options);
   }

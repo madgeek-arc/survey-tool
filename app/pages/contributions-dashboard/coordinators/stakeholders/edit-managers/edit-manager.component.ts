@@ -147,7 +147,7 @@ export class EditManagerComponent implements OnInit, OnDestroy {
 
   removeManager() { // TODO fix me to remove manager
     this.subscriptions.push(
-      this.surveyService.removeContributor(this.stakeholder.id, this.email).subscribe(
+      this.surveyService.removeManager(this.stakeholder.id, this.email).subscribe(
         next => {
           this.members = next;
           this.errorMessage = null;
@@ -167,9 +167,31 @@ export class EditManagerComponent implements OnInit, OnDestroy {
     );
   }
 
-  showRemoveModal(email: string) {
+  removeContributors() {
+    this.subscriptions.push(
+      this.surveyService.removeContributor(this.stakeholder.id, this.email).subscribe(
+        next => {
+          this.members = next;
+          this.errorMessage = null;
+          this.email = null;
+          UIkit.modal('#remove-contributors-modal').hide();
+        },
+        error => {
+          console.error(error)
+          this.errorMessage = error.message;
+        },
+        () => {
+          this.errorMessage = null;
+          this.email = null;
+          UIkit.modal('#remove-contributors-modal').hide();
+        }
+      )
+    );
+  }
+
+  showRemoveModal(email: string, modalId: string) {
     this.email = email
-    UIkit.modal('#remove-manager-modal').show();
+    UIkit.modal(modalId).show();
   }
 
   checkIfManager(email: string): boolean {
