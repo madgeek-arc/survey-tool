@@ -24,6 +24,7 @@
 #sidebar_main .menu_section.sidebar-footer {
   border-bottom: none;
   margin-bottom: 100px;
+  width: 100%;
   position: absolute;
   bottom: 0;
 }

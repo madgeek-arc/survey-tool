@@ -64,15 +64,15 @@
     <ng-template #showToken>
       <textarea class="uk-form-controls uk-textarea" type="textarea" [(ngModel)]="invitationToken" disabled></textarea>
     </ng-template>
-    <p class="uk-text-right">
+    <div class="uk-flex uk-flex-right uk-flex-middle uk-margin-top">
       <button class="uk-button uk-button-secondary uk-modal-close" (click)="closeModal()" type="button">Close</button>
       <button *ngIf="!invitationToken; else copyToCb;" class="uk-button uk-button-primary" (click)="addContributor()" type="button">Get invitation token</button>
       <ng-template #copyToCb>
-        <a class="" (click)="copyToClipboard()" [title]="title" type="button">
+        <a class="uk-margin-left" (click)="copyToClipboard()" [title]="title" type="button">
           <span class="material-icons">content_copy</span>
         </a>
       </ng-template>
-    </p>
+    </div>
   </div>
 </div>
 

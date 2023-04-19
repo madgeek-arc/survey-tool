@@ -145,7 +145,7 @@ export class EditManagerComponent implements OnInit, OnDestroy {
     document.body.removeChild(textArea);
   }
 
-  removeManager() { // TODO fix me to remove manager
+  removeManager() {
     this.subscriptions.push(
       this.surveyService.removeManager(this.stakeholder.id, this.email).subscribe(
         next => {
