@@ -74,7 +74,7 @@
   </div>
 </div>
 
-<div id="modal-center" class="uk-flex-top" uk-modal>
+<div *ngIf="ready" id="modal-center" class="uk-flex-top" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
 
     <button class="uk-modal-close-default" type="button" uk-close></button>
@@ -90,7 +90,7 @@
         <div class="uk-margin" uk-grid>
           <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Name</label>
           <div class="uk-form-controls uk-width-4-5">
-            <input class="uk-input" formControlName="name" id="name" type="text" placeholder="Stakeholder name">
+            <input class="uk-input" [formControlName]="'name'" id="name" type="text" placeholder="Stakeholder name">
           </div>
         </div>
 

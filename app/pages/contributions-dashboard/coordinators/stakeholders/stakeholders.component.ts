@@ -87,6 +87,12 @@ export class StakeholdersComponent implements OnInit {
 
   }
 
+  formInitialization() {
+    this.stakeholderForm.get('name').setValidators(Validators.required);
+    this.stakeholderForm.get('country').setValidators(Validators.required);
+    this.stakeholderForm.get('type').setValidators(Validators.required);
+  }
+
   addStakeholder() {
     this.stakeholdersService.postStakeholder(this.stakeholderForm.value).subscribe(
       res => {},
@@ -116,6 +122,7 @@ export class StakeholdersComponent implements OnInit {
     )
   }
 
+  /** Modal ---------------------------------------------------------------------------------> **/
   openForEdit(stakeholder: Stakeholder) {
     this.edit = true;
     this.stakeholderForm.patchValue(stakeholder);
@@ -124,14 +131,9 @@ export class StakeholdersComponent implements OnInit {
   openForAdd() {
     this.edit = false;
     this.stakeholderForm.reset();
-  }
-
-  formInitialization() {
-    this.stakeholderForm.get('name').setValidators(Validators.required);
-    this.stakeholderForm.get('country').setValidators(Validators.required);
-    this.stakeholderForm.get('type').setValidators(Validators.required);
     this.stakeholderForm.get('type').setValue(this.coordinator.type);
   }
+  /** <--------------------------------------------------------------------------------- Modal **/
 
 
   /** Paging ---------------------------------------------------------------------------------> **/

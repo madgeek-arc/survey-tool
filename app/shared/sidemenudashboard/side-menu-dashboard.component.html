@@ -57,7 +57,18 @@
           </a>
         </li>
 
-        <li [routerLinkActive]="['current_section']" class="menu_section border_top uk-margin-top">
+<!--        <li [routerLinkActive]="['current_section']" class="menu_section border_top">-->
+<!--          <a [routerLink]="['contributions/'+currentCoordinator.id+'/stakeholders']" class="uk-flex uk-flex-middle">-->
+<!--            <span class="material-icons uk-margin-right">manage_accounts</span>-->
+<!--            <span class="menu_title">Stakeholders</span>-->
+<!--          </a>-->
+<!--        </li>-->
+
+      </ul>
+    </div>
+    <div class="menu_section border_top">
+      <ul *ngIf="currentCoordinator" >
+        <li [routerLinkActive]="['current_section']">
           <a [routerLink]="['contributions/'+currentCoordinator.id+'/stakeholders']" class="uk-flex uk-flex-middle">
             <span class="material-icons uk-margin-right">manage_accounts</span>
             <span class="menu_title">Stakeholders</span>
