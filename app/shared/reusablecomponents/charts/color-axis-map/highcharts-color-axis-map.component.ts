@@ -142,8 +142,9 @@ export class HighchartsColorAxisMapComponent {
           enabled: true,
           // format: "{point.value}",
           formatter:  function () {
-            if (this.point.value > 0)
+            if (this.point.value > 0) {
               return this.point.value + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
+            }
             else
               return '';
           }

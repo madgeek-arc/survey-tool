@@ -66,8 +66,8 @@
 
       </ul>
     </div>
-    <div class="menu_section border_top">
-      <ul *ngIf="currentCoordinator" >
+    <div *ngIf="currentCoordinator" class="menu_section border_top">
+      <ul>
         <li [routerLinkActive]="['current_section']">
           <a [routerLink]="['contributions/'+currentCoordinator.id+'/stakeholders']" class="uk-flex uk-flex-middle">
             <span class="material-icons uk-margin-right">manage_accounts</span>
