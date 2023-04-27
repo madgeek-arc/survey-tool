@@ -54,7 +54,7 @@
             <span class="material-icons">keyboard_backspace</span>
           </a>
           <span>{{selectedVersion?.time | date:'medium'}}</span>
-          <button *ngIf="selectedVersion.version != surveyAnswerHistory?.entries[0]?.version"
+          <button *ngIf="selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version"
             class="uk-button uk-button-small uk-button-primary uk-margin-left" (click)="restoreVersion()">Restore this version
           </button>
         </h5>
