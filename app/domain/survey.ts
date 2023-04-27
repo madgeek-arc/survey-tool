@@ -66,8 +66,16 @@ export class Entries {
 export class DisplayEntries {
   email: string;
   fullname: string;
+  role: string;
+  comment: string;
   time: number;
-  action: string;
+  action: Action;
   resourceId: string;
   version: string;
+}
+
+export class Action {
+  type: string;
+  registryVersion: string;
+  pointsTo: string;
 }
