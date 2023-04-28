@@ -60,7 +60,8 @@
       </ul>
       <ul>
         <li [routerLinkActive]="['current_section']" class="">
-          <a [routerLink]="['messages']" class="uk-flex uk-flex-middle">
+          <a [routerLink]="['contributions/'+(currentStakeholder ? currentStakeholder.id : currentCoordinator.id)+'/messages']"
+             class="uk-flex uk-flex-middle">
             <span class="material-icons uk-margin-right">mail</span>
             <span class="menu_title">Messages</span>
           </a>
