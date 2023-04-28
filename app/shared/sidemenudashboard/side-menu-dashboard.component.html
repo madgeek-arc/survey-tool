@@ -36,7 +36,7 @@
         <li *ngIf="isManager" [routerLinkActive]="['current_section']">
           <a [routerLink]="['contributions/'+currentStakeholder.id+'/surveys']" class="uk-flex uk-flex-middle">
             <span class="material-icons uk-margin-right">assignment</span>
-            <span class="menu_title">{{currentStakeholder.name.split('(')[0]}} surveys</span>
+            <span class="menu_title">{{currentStakeholder.type | uppercase}} Surveys</span>
           </a>
         </li>
 

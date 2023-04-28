@@ -121,7 +121,7 @@ export class HistoryComponent implements OnInit {
   }
 
   restoreVersion() {
-    this.surveyService.restoreToVersion(this.surveyAnswerId, this.selectedEntries[0].version).subscribe(
+    this.surveyService.restoreToVersion(this.surveyAnswerId, this.selectedVersion.version).subscribe(
       res => {
         this.selectedEntries = [];
         this.getSurveyAnswerHistory();

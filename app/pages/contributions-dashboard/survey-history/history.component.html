@@ -5,37 +5,40 @@
       <button class="uk-button uk-button-small uk-button-primary" [disabled]="selectedEntries.length !== 2"
               (click)="showComparison()" title="Two versions must be selected">Compare versions
       </button>
-
-      <button class="uk-button uk-button-small uk-button-primary uk-margin-small-top" [disabled]="selectedEntries.length !== 1"
-              (click)="restoreVersion()" title="Click the checkbox of the version you want to restore to">Restore to selected version
-      </button>
     </div>
     <hr>
     <table class="uk-margin-top uk-table uk-table-striped uk-table-divider uk-table-small uk-table-middle history-table">
 <!--      <thead>-->
 <!--      </thead>-->
       <tbody>
-      <tr *ngFor="let entry of surveyAnswerHistory?.entries; let i = index"
-          [ngClass]="{'uk-active': selectedVersion === entry}">
-        <td title="{{entry.time | date:'dd/MM/yyyy, h:mm a z'}}" (click)="selectVersionToShow(entry)" style="cursor: pointer">
-
-          <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
-            {{entry.time | date:'medium'}}
+        <tr *ngFor="let entry of surveyAnswerHistory?.entries; let i = index"
+            [ngClass]="{'uk-active': selectedVersion === entry}">
+          <div class="uk-flex uk-flex-between">
+            <div (click)="selectVersionToShow(entry)" style="cursor: pointer">
+              <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
+                {{entry.action.type | titlecase}} on
+              </div>
+              <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
+                {{entry.time | date:'medium'}}
+              </div>
+              <div *ngIf="i==0" class="uk-text-italic uk-text-small uk-text-margin-small-top">
+                Current version
+              </div>
+              <div class="uk-margin-small-top uk-text-meta">
+                <div>{{entry.fullname}}</div>
+                <div>{{entry.email}}</div>
+                <div *ngIf="entry.role" class="">({{entry.role}})</div>
+              </div>
+            </div>
+            <div class="">
+              <input type="checkbox" class="uk-checkbox" (change)="selectVersionsToCompare($event, entry)"
+                     [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
+            </div>
           </div>
-          <div *ngIf="i==0" class="uk-text-italic uk-text-small uk-text-margin-small-top">
-            Current version
+          <div *ngIf="entry.comment" class="uk-text-small uk-text-right uk-text-italic history-entry-comment">
+            "{{entry.comment}}"
           </div>
-          <div class="uk-margin-small-top uk-text-meta">
-            {{entry.fullname}} ({{entry.email}})
-          </div>
-<!--          {{entry.fullname}} ({{entry.email}})<br>{{entry.time | date:'dd/MM/yyyy, h:mm a z'}}-->
-          <!--            {{entry.version}}-->
-        </td>
-        <td>
-          <input type="checkbox" class="uk-checkbox" (change)="selectVersionsToCompare($event, entry)"
-                 [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
-        </td>
-      </tr>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -51,6 +54,9 @@
             <span class="material-icons">keyboard_backspace</span>
           </a>
           <span>{{selectedVersion?.time | date:'medium'}}</span>
+          <button *ngIf="selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version"
+            class="uk-button uk-button-small uk-button-primary uk-margin-left" (click)="restoreVersion()">Restore this version
+          </button>
         </h5>
         <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="null" [tabsHeader]="tabsHeader"
                              [entryA]="selectedEntries[0]" [entryB]="null">

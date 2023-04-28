@@ -17,8 +17,12 @@
   padding-bottom: 75px;
 }
 
-.history-table td {
+.history-table tr > div {
   padding: 20px;
+}
+
+.history-entry-comment {
+  padding: 0px 20px 10px !important;
 }
 
 .history-table td .uk-text-emphasis {

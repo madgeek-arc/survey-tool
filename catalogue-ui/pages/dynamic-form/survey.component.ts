@@ -1,4 +1,15 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
+import {
+  AfterContentChecked,
+  AfterContentInit, AfterViewChecked,
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges
+} from "@angular/core";
 import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormControlService} from "../../services/form-control.service";
@@ -109,6 +120,12 @@ export class SurveyComponent implements OnInit, OnChanges {
       } else if (this.validate) {
         UIkit.modal('#validation-modal').show();
       }
+      if (this.readonly) {
+        this.form.disable();
+        this.form.markAsUntouched();
+      }
+      this.ready = true;
+
       if (this.activeUsers?.length > 0) {
         setTimeout(()=> {
           let users = [];
@@ -119,13 +136,6 @@ export class SurveyComponent implements OnInit, OnChanges {
           }, 0);
       }
 
-      setTimeout(() => {
-        if (this.readonly) {
-          this.form.disable();
-          this.form.markAsUntouched();
-        }
-      }, 0);
-      this.ready = true;
     }
   }
 
@@ -245,7 +255,6 @@ export class SurveyComponent implements OnInit, OnChanges {
   pushToFormArray(name: string, length: number, arrayIndex?: number) {
     let field = this.getModelData(this.model.sections, name);
     while (this.getFormControl(this.form, name, arrayIndex).length < length) {
-    // for (let i = 0; i < length-1; i++) {
       this.getFormControl(this.form, name, arrayIndex).push(this.formControlService.createField(field));
     }
   }
@@ -291,10 +300,12 @@ export class SurveyComponent implements OnInit, OnChanges {
           return abstractControl as FormArray;
         } else if (key !== name) {
           if (abstractControl instanceof FormArray) {
-            if (abstractControl.value.length > position) {
+            if (abstractControl.controls.length > position) {
               abstractControl = this.getFormControl(abstractControl.controls[position] as FormGroup | FormArray, name, position);
               if (abstractControl !== null)
                 return abstractControl;
+            } else {
+              abstractControl = null;
             }
           } else {
             abstractControl = this.getFormControl(abstractControl, name, position);
