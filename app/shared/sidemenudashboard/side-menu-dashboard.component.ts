@@ -6,7 +6,6 @@ import {Subscriber} from "rxjs";
 @Component({
   selector: 'app-side-menu-dashboard',
   templateUrl: 'side-menu-dashboard.component.html',
-  styleUrls: ['./side-menu-dashboard.component.css']
 })
 
 export class SideMenuDashboardComponent implements OnInit, OnDestroy {
