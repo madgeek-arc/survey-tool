@@ -2,6 +2,7 @@ export class UserInfo {
   stakeholders: Stakeholder[];
   coordinators: Coordinator[];
   user: User;
+  admin: boolean;
 }
 
 export class Stakeholder {
@@ -37,11 +38,26 @@ export class Coordinator {
 }
 
 export class User {
-  email: string;
-  fullname: string;
-  name: string;
   sub: string;
+  email: string;
+  name: string;
   surname: string;
+  fullname: string;
+  policiesAccepted: PolicyAccepted[];
+  profile: Profile;
+  id: string
+}
+
+export class PolicyAccepted {
+  id: string;
+  time: number;
+  acceptedDate: number;
+}
+
+export class Profile {
+  picture: string | ArrayBuffer;
+  position: string;
+  affiliation: string;
 }
 
 export class StakeholdersMembers {

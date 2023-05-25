@@ -12,13 +12,15 @@ import {SurveyService} from "./services/survey.service";
 import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/accept-invitation.component";
 import {SurveyToolRoutingModule} from "./survey-tool-routing.module";
 import {SharedModule} from "../../app/shared/shared.module";
+import {UserProfileComponent} from "./pages/user-profile/user-profile.component";
 
 @NgModule({
   declarations: [
     HomeComponent,
     SurveyFormComponent,
     ContributionsDashboardComponent,
-    AcceptInvitationComponent
+    AcceptInvitationComponent,
+    UserProfileComponent,
   ],
   imports: [
     CommonModule,
