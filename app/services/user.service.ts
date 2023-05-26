@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
-import {Coordinator, Stakeholder, StakeholdersMembers, UserInfo} from "../domain/userInfo";
+import {Coordinator, Profile, Stakeholder, StakeholdersMembers, UserInfo} from "../domain/userInfo";
 import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable()
@@ -50,4 +50,11 @@ export class UserService {
     return this.http.get<StakeholdersMembers>(this.base + `/stakeholders/${id}/members`, this.options);
   }
 
+  updateProfile(profile: Profile, id: string) {
+    return this.http.put<UserInfo>(this.base + `/users/${id}/profile`, profile);
+  }
+
+  updateProfilePicture(picture: string | ArrayBuffer, id: string) {
+    return this.http.post(this.base + `/users/${id}/profile/picture`, {picture});
+  }
 }

@@ -13,6 +13,7 @@ import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/
 import {SurveyToolRoutingModule} from "./survey-tool-routing.module";
 import {SharedModule} from "../../app/shared/shared.module";
 import {UserProfileComponent} from "./pages/user-profile/user-profile.component";
+import {CatalogueUiSharedModule} from "../catalogue-ui/shared/catalogue-ui-shared.module";
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import {UserProfileComponent} from "./pages/user-profile/user-profile.component"
     FormsModule,
     SurveyToolRoutingModule,
     SharedModule,
+    CatalogueUiSharedModule,
   ],
   providers: [
     AuthenticationService,
