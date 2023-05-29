@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
-import {Coordinator, Profile, Stakeholder, StakeholdersMembers, UserInfo} from "../domain/userInfo";
+import {Coordinator, Profile, Stakeholder, StakeholdersMembers, User, UserInfo} from "../domain/userInfo";
 import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable()
@@ -51,7 +51,7 @@ export class UserService {
   }
 
   updateProfile(profile: Profile, id: string) {
-    return this.http.put<UserInfo>(this.base + `/users/${id}/profile`, profile);
+    return this.http.put<User>(this.base + `/users/${id}/profile`, profile);
   }
 
   updateProfilePicture(picture: string | ArrayBuffer, id: string) {

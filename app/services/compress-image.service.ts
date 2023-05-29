@@ -28,13 +28,15 @@ export class CompressImageService {
           const imgWH = img.width > img.height ? img.width : img.height;
 
           // Determines the ratios to compress the image
-          let withHeightRatio = (imgWH > widthHeightMax) ? widthHeightMax/imgWH : defaultWidthHeightRatio;
+          // let withHeightRatio = (imgWH > widthHeightMax) ? widthHeightMax/imgWH : defaultWidthHeightRatio;
           let qualityRatio = (file.size > fileSizeMax) ? fileSizeMax/file.size : defaultQualityRatio;
 
           const elem = document.createElement('canvas');
           // resize width, height
-          elem.width = img.width * withHeightRatio;
-          elem.height = img.height * withHeightRatio;
+          elem.width = widthHeightMax;
+          // elem.width = img.width * withHeightRatio;
+          elem.height = widthHeightMax;
+          // elem.height = img.height * withHeightRatio;
 
           const ctx = <CanvasRenderingContext2D>elem.getContext('2d');
           ctx.drawImage(img, 0, 0, elem.width, elem.height);

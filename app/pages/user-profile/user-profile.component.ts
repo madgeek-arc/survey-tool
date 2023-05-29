@@ -45,7 +45,8 @@ export class UserProfileComponent implements OnInit {
   updateProfile() {
     this.userService.updateProfile(this.userInfo.user.profile, this.userInfo.user.id).subscribe(
       res => {
-        this.userService.setUserInfo(res);
+        this.userInfo.user = res;
+        this.userService.setUserInfo(this.userInfo);
         this.edit = false;
       }
     );
