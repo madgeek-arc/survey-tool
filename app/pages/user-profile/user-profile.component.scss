@@ -1,3 +1,40 @@
 .match-height {
   height: 40px;
 }
+
+.circular-square {
+  border-radius: 50%;
+}
+
+.circular-landscape {
+  display: inline-block;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.circular-landscape img {
+  width: auto;
+  height: 100%;
+  margin-left: -50px;
+}
+
+.circular-portrait {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.circular-portrait img {
+  width: 100%;
+  height: auto;
+}
+
+.uk-form-blank {
+  border-color: transparent !important;
+  border-bottom: 1px solid #ddd !important;
+}

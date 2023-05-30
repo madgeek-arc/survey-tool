@@ -28,11 +28,11 @@ export class CompressImageService {
           const imgWH = img.width > img.height ? img.width : img.height;
 
           // Determines the ratios to compress the image
-          // let withHeightRatio = (imgWH > widthHeightMax) ? widthHeightMax/imgWH : defaultWidthHeightRatio;
+          let withHeightRatio = (imgWH > widthHeightMax) ? widthHeightMax/imgWH : defaultWidthHeightRatio;
           let qualityRatio = (file.size > fileSizeMax) ? fileSizeMax/file.size : defaultQualityRatio;
 
           const elem = document.createElement('canvas');
-          // resize width, height
+          // resize width, height make square
           elem.width = widthHeightMax;
           // elem.width = img.width * withHeightRatio;
           elem.height = widthHeightMax;
