@@ -31,14 +31,14 @@
               <span class="uk-text-muted uk-flex uk-flex-bottom">Affiliation </span>
               <div *ngIf="!edit">{{userInfo.user.profile.affiliation ? userInfo.user.profile.affiliation : '--'}}</div>
               <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
-                     name="affiliation" id="affiliation" type="text" placeholder="Affiliation"
+                     name="affiliation" id="affiliation" type="text"
                      [(ngModel)]="userInfo.user.profile.affiliation">
             </div>
             <div class="uk-width-1-2">
               <span class="uk-text-muted uk-flex uk-flex-bottom">Position </span>
               <div *ngIf="!edit">{{userInfo.user.profile.position ? userInfo.user.profile.position : '--'}}</div>
               <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
-                     name="position" id="position" type="text" placeholder="Position"
+                     name="position" id="position" type="text"
                      [(ngModel)]="userInfo.user.profile.position">
             </div>
           </div>
