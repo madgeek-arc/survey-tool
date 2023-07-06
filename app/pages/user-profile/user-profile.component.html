@@ -5,6 +5,9 @@
       <h5 class="uk-flex uk-flex-middle">My profile
         <a *ngIf="!edit" class="material-icons uk-margin-small-left" title="Edit details" (click)="edit = true;">mode_edit</a>
         <a *ngIf="edit" class="material-icons uk-margin-small-left" title="Save changes" (click)="updateProfile()">save</a>
+        <div class="uk-width-expand uk-flex uk-flex-right ">
+          <a *ngIf="edit" class="material-icons uk-margin-small-left" title="Save changes" (click)="edit = false;">close</a>
+        </div>
       </h5>
       <div class="uk-animation-scale-up" uk-grid>
         <div class="uk-width-1-4">
@@ -31,87 +34,27 @@
               <span class="uk-text-muted uk-flex uk-flex-bottom">Affiliation </span>
               <div *ngIf="!edit">{{userInfo.user.profile.affiliation ? userInfo.user.profile.affiliation : '--'}}</div>
               <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
-                     name="affiliation" id="affiliation" type="text"
-                     [(ngModel)]="userInfo.user.profile.affiliation">
+                     name="affiliation" id="affiliation" type="text" [(ngModel)]="userInfo.user.profile.affiliation">
             </div>
             <div class="uk-width-1-2">
               <span class="uk-text-muted uk-flex uk-flex-bottom">Position </span>
               <div *ngIf="!edit">{{userInfo.user.profile.position ? userInfo.user.profile.position : '--'}}</div>
               <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
-                     name="position" id="position" type="text"
-                     [(ngModel)]="userInfo.user.profile.position">
+                     name="position" id="position" type="text" [(ngModel)]="userInfo.user.profile.position">
+            </div>
+            <div class="uk-width-1-1">
+              <span class="uk-text-muted uk-flex uk-flex-bottom">Webpage </span>
+              <a *ngIf="!edit" [href]="userInfo.user.profile.webpage" [ngClass]="{'uk-disabled': !userInfo.user.profile.webpage}" target="_blank">
+                {{userInfo.user.profile.webpage ? userInfo.user.profile.webpage : '--'}}
+              </a>
+              <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small"
+                     name="position" id="webpage" type="text" [(ngModel)]="userInfo.user.profile.webpage">
             </div>
           </div>
 
         </div>
 
       </div>
-
-<!--      <ng-template #editMode >-->
-<!--        <div class="uk-animation-scale-up">-->
-<!--          <form class="uk-form-horizontal uk-margin-medium">-->
-
-<!--            <div class="uk-margin">-->
-<!--              <label class="uk-form-label">Name</label>-->
-<!--              <div class="uk-form-controls match-height uk-flex uk-flex-middle">-->
-<!--                <span class="uk-margin-small-left">{{userInfo.user.name}}</span>-->
-<!--              </div>-->
-<!--            </div>-->
-
-<!--            <div class="uk-margin">-->
-<!--              <label class="uk-form-label">Surname</label>-->
-<!--              <div class="uk-form-controls match-height uk-flex uk-flex-middle">-->
-<!--                <span class="uk-margin-small-left">{{userInfo.user.surname}}</span>-->
-<!--              </div>-->
-<!--            </div>-->
-
-<!--            <div class="uk-margin">-->
-<!--              <label class="uk-form-label">Email</label>-->
-<!--              <div class="uk-form-controls match-height uk-flex uk-flex-middle">-->
-<!--                <span class="uk-margin-small-left">{{userInfo.user.email}}</span>-->
-<!--              </div>-->
-<!--            </div>-->
-
-<!--            <div class="uk-margin">-->
-<!--              <label class="uk-form-label" for="position">Position</label>-->
-<!--              <div class="uk-form-controls">-->
-<!--                <input class="uk-input" name="position" id="position" type="text" placeholder="Position"-->
-<!--                       [(ngModel)]="userInfo.user.profile.position">-->
-<!--              </div>-->
-<!--            </div>-->
-
-<!--            <div class="uk-margin">-->
-<!--              <label class="uk-form-label" for="affiliation">Affiliation</label>-->
-<!--              <div class="uk-form-controls">-->
-<!--                <input class="uk-input" name="affiliation" id="affiliation" type="text" placeholder="Affiliation"-->
-<!--                       [(ngModel)]="userInfo.user.profile.affiliation">-->
-<!--              </div>-->
-<!--            </div>-->
-
-<!--            <div class="uk-margin uk-flex uk-flex-middle" >-->
-<!--              <label class="uk-form-label" for="avatar">Choose a profile picture:</label>-->
-<!--              <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" #fileSelect-->
-<!--                     (change)="onFileSelect($event)" style="display: none">-->
-<!--              <div class="uk-margin-small-left uk-flex uk-flex-middle">-->
-<!--                <a class="material-icons md-36" (click)="fileSelect.click()">upload_file</a>-->
-<!--                <span>{{image?.name ? image.name : 'No file selected.'}}</span>-->
-<!--              </div>-->
-<!--            </div>-->
-
-<!--&lt;!&ndash;            <div class="uk-flex uk-flex-around">&ndash;&gt;-->
-<!--&lt;!&ndash;              <div class="uk-width-1-3">&ndash;&gt;-->
-<!--&lt;!&ndash;                <img *ngIf="imageSrc" [src]="imageSrc" alt="uploaded image" style='height: 100%; width: 100%; object-fit: contain'>&ndash;&gt;-->
-<!--&lt;!&ndash;              </div>&ndash;&gt;-->
-<!--&lt;!&ndash;            </div>&ndash;&gt;-->
-
-<!--            <div class="uk-margin uk-flex uk-flex-right">-->
-<!--              <button type="button" class="uk-button uk-button-primary" (click)="updateProfile()">Save</button>-->
-<!--            </div>-->
-
-<!--          </form>-->
-<!--        </div>-->
-<!--      </ng-template>-->
-
     </div>
 <!--    <pre>{{userInfo.user | json}}</pre>-->
 

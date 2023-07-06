@@ -58,6 +58,7 @@ export class Profile {
   picture: string | ArrayBuffer;
   position: string;
   affiliation: string;
+  webpage: string;
 }
 
 export class StakeholdersMembers {
