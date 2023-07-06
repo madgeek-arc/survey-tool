@@ -21,10 +21,6 @@ const observatoryUiRoutes: Routes = [
     loadChildren: () => import('./pages/contributions-dashboard/contributions-dashboard.module').then(m => m.ContributionsDashboardModule),
   },
   {
-    path: 'contributions/:id',
-    loadChildren: () => import('../../messaging-system-ui/app/messaging-system.module').then(m => m.MessagingSystemModule),
-  },
-  {
     path: 'profile',
     component: UserProfileComponent
   }

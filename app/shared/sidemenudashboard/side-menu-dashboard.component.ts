@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Coordinator, Stakeholder} from "../../domain/userInfo";
 import {UserService} from "../../services/user.service";
 import {Subscriber} from "rxjs";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-side-menu-dashboard',
@@ -11,7 +12,7 @@ import {Subscriber} from "rxjs";
 export class SideMenuDashboardComponent implements OnInit, OnDestroy {
 
   subscriptions = [];
-  // toggle: number[] = [];
+  projectName: string = environment.projectName;
   currentStakeholder: Stakeholder = null;
   currentCoordinator: Coordinator = null;
   ready = false;
