@@ -21,7 +21,7 @@ export class StakeholdersService {
   constructor(private httpClient: HttpClient) {}
 
   public getEOSCSBCountries() {
-    return this.httpClient.get<string[]>(this.base + `/stakeholders/countries?type=eosc-sbgit `, headerOptions);
+    return this.httpClient.get<string[]>(this.base + `/stakeholders/countries?type=eosc-sb`, headerOptions);
   }
 
   getStakeholder(id: string) {
