@@ -79,6 +79,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       setTimeout(() => {
         self.chartOptions.title.text = this.title;
         self.chartOptions.series = this.mapData.series as SeriesOptionsType[];
+        console.log(this.mapData.series);
         // console.log(self.chartOptions.series)
         // chart.hideLoading();
         this.ready = true;
