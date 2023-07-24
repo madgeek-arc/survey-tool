@@ -79,3 +79,8 @@ export class Action {
   registryVersion: string;
   pointsTo: string;
 }
+
+export class SurveyAnswerPublicMetadata {
+  lastUpdate: Date;
+  editors: User[];
+}

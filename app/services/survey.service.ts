@@ -1,7 +1,13 @@
 import {Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {DisplayHistory, ResourcePermission, SurveyAnswer, SurveyInfo} from "../domain/survey";
+import {
+  DisplayHistory,
+  ResourcePermission,
+  SurveyAnswer,
+  SurveyAnswerPublicMetadata,
+  SurveyInfo
+} from "../domain/survey";
 import {Paging} from "../../catalogue-ui/domain/paging";
 import {StakeholdersMembers} from "../domain/userInfo";
 import {URLParameter} from "../../catalogue-ui/domain/url-parameter";
@@ -88,6 +94,14 @@ export class SurveyService {
   exportToCsv(surveyId: string) {
     // return this.http.get(this.base + `/csv/export/answers/${surveyId}`, { responseType: 'text'});
     window.open(this.base + `/csv/export/answers/${surveyId}`, '_blank');
+  }
+
+  getPublicAnswer(stakeHolderId: string, surveyId: string) {
+    return this.http.get<Object>(this.base + `/answers/public?stakeholderId=${stakeHolderId}&surveyId=${surveyId}`, this.options);
+  }
+
+  getPublicAnswerMetadata(stakeHolderId: string, surveyId: string) {
+    return this.http.get<SurveyAnswerPublicMetadata>(this.base + `/answers/public/metadata?stakeholderId=${stakeHolderId}&surveyId=${surveyId}`, this.options);
   }
 
 }
