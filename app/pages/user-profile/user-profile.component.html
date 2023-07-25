@@ -12,7 +12,7 @@
       <div class="uk-animation-scale-up" uk-grid>
         <div class="uk-width-1-4">
           <img *ngIf="!edit" class="uk-align-right circular-square"
-               [src]="'data:image;base64,' + userInfo.user.profile.picture | safeUrl:'resourceUrl'">
+               [src]="'data:image;base64,' + userInfo.user?.profile?.picture | safeUrl:'resourceUrl'">
 
           <div *ngIf="edit" class="uk-margin-top">
             <span class="">Upload a profile picture</span>
@@ -32,20 +32,20 @@
           <div class="uk-margin-top" uk-grid>
             <div class="uk-width-1-2">
               <span class="uk-text-muted uk-flex uk-flex-bottom">Affiliation </span>
-              <div *ngIf="!edit">{{userInfo.user.profile.affiliation ? userInfo.user.profile.affiliation : '--'}}</div>
+              <div *ngIf="!edit">{{userInfo.user?.profile?.affiliation ? userInfo.user?.profile?.affiliation : '--'}}</div>
               <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
                      name="affiliation" id="affiliation" type="text" [(ngModel)]="userInfo.user.profile.affiliation">
             </div>
             <div class="uk-width-1-2">
               <span class="uk-text-muted uk-flex uk-flex-bottom">Position </span>
-              <div *ngIf="!edit">{{userInfo.user.profile.position ? userInfo.user.profile.position : '--'}}</div>
+              <div *ngIf="!edit">{{userInfo.user?.profile?.position ? userInfo.user?.profile?.position : '--'}}</div>
               <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
                      name="position" id="position" type="text" [(ngModel)]="userInfo.user.profile.position">
             </div>
             <div class="uk-width-1-1">
               <span class="uk-text-muted uk-flex uk-flex-bottom">Webpage </span>
-              <a *ngIf="!edit" [href]="userInfo.user.profile.webpage" [ngClass]="{'uk-disabled': !userInfo.user.profile.webpage}" target="_blank">
-                {{userInfo.user.profile.webpage ? userInfo.user.profile.webpage : '--'}}
+              <a *ngIf="!edit" [href]="userInfo.user?.profile?.webpage" [ngClass]="{'uk-disabled': !userInfo.user?.profile?.webpage}" target="_blank">
+                {{userInfo.user?.profile?.webpage ? userInfo.user?.profile?.webpage : '--'}}
               </a>
               <input *ngIf="edit" class="uk-input uk-form-blank uk-animation-slide-left-small"
                      name="position" id="webpage" type="text" [(ngModel)]="userInfo.user.profile.webpage">

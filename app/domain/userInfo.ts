@@ -3,6 +3,10 @@ export class UserInfo {
   coordinators: Coordinator[];
   user: User;
   admin: boolean;
+
+  constructor() {
+    this.user = new User();
+  }
 }
 
 export class Stakeholder {
@@ -46,6 +50,10 @@ export class User {
   policiesAccepted: PolicyAccepted[];
   profile: Profile;
   id: string
+
+  constructor() {
+    this.profile = new Profile();
+  }
 }
 
 export class PolicyAccepted {
@@ -59,6 +67,13 @@ export class Profile {
   position: string;
   affiliation: string;
   webpage: string;
+
+  constructor() {
+    this.picture = null
+    this.position = null
+    this.affiliation = null
+    this.webpage = null
+  }
 }
 
 export class StakeholdersMembers {

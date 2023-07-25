@@ -1,5 +1,5 @@
-import {Component, OnInit} from "@angular/core";
-import {UserInfo} from "../../domain/userInfo";
+  import {Component, OnInit} from "@angular/core";
+import {Profile, UserInfo} from "../../domain/userInfo";
 import {UserService} from "../../services/user.service";
 import {CompressImageService} from "../../services/compress-image.service";
 import {take} from "rxjs/operators";
@@ -21,6 +21,8 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit() {
     this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    if (this.userInfo.user.profile === null)
+      this.userInfo.user.profile = new Profile();
   }
 
   onFileSelect(event) {
