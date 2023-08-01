@@ -26,6 +26,8 @@
   --eosc-observatory-primary-color: #008792;
   --eosc-observatory-secondary-color: #EB5C80;
 
+  --section-secondary-background-color: #005D65;
+
   --sidebar-width: 320px;
   --sidebar-width-invert: -320px;
   --toggle-sidebar-closed: 338px;
@@ -99,9 +101,12 @@ body {
   background-color: var(--medium-grey) !important;
 }
 
+//TODO check that I don't use it in intelcomp survey tool somewhere
 .uk-section-secondary {
-  background-color: var(--intelcomp-dark-color);
-  color: var(--light-grey);
+  //background-color: var(--intelcomp-dark-color);
+  //color: var(--light-grey);
+  background-color: var(--section-secondary-background-color);
+  color: var(--white);
   /*background-color: #fafafa;*/
   /*color: #424242 !important;*/
 }
@@ -249,7 +254,7 @@ p.x-large-text {
 p.big-text {
   /*color: var(--black);*/
   /*text-align: left;*/
-  font: normal normal normal 22px/29px var(--main-font-family);
+  font: normal normal normal 20px/30px var(--main-font-family);
   letter-spacing: 0px;
   opacity: 1;
 }
