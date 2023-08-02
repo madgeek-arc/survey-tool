@@ -23,9 +23,9 @@ export class HighchartsColorAxisMapComponent {
   @Input() title: string = null;
   @Input() subtitle: string = null;
   @Input() dataSeriesSuffix: string = null;
+  @Input() toolTipData: Map<string, string>;
 
-  chart;
-  chartCallback;
+  chart: any;
   updateFlag = false;
   Highcharts: typeof Highcharts = Highcharts;
   chartConstructor = "mapChart";
@@ -36,13 +36,7 @@ export class HighchartsColorAxisMapComponent {
 
   constructor() {
     componentContext = this;
-
     this.createMap();
-    this.chartCallback = chart => {
-      // saving chart reference
-      componentContext.chart = chart;
-      // console.log(componentContext.chart);
-    };
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -78,11 +72,37 @@ export class HighchartsColorAxisMapComponent {
     }
   }
 
+  chartCallback: Highcharts.ChartCallbackFunction = chart => {
+    this.chart = chart;
+  };
+
   createMap() {
     this.chartOptions = {
     chart: {
       map: worldMap,
-      backgroundColor: 'rgba(0,0,0,0)'
+      backgroundColor: 'rgba(0,0,0,0)',
+      events: {
+        load: function () {
+          let chart = this;
+          var countryNames = ['de', 'it', 'cy']; // Specify the country names here
+          let color = '#a9a9a9'; // Specify the color here
+
+          // Loop through the country names
+          countryNames.forEach(function(countryName) {
+            // Find the country point
+            let countryPoint = chart.series[0].points.find(function(point) {
+              return point.properties["iso-a2"].toLowerCase() === countryName;
+            });
+
+            // Change the color of the country
+            if (countryPoint) {
+              countryPoint.update({
+                color: color
+              });
+            }
+          });
+        }
+      }
     },
     mapView: {
       center: [30, 50],
@@ -126,7 +146,11 @@ export class HighchartsColorAxisMapComponent {
     },
     tooltip: {
       formatter: function () {
-        return '<b>' + this.point.name + '</b>: ' + this.point.value + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
+        let comment = componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
+        if (this.point.value === 0)
+          return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + '<br>' + '<p>'+comment+'</p>';
+
+        return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M') +'<br>'+ '<p>'+comment+'</p>';
       }
     },
     series: [
