@@ -147,10 +147,11 @@ export class HighchartsColorAxisMapComponent {
     tooltip: {
       formatter: function () {
         let comment = componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
+        comment = comment.replaceAll('\\n','<br>');
         if (this.point.value === 0)
-          return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + '<br>' + '<p>'+comment+'</p>';
+          return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + '<br><br>' + '<p>'+comment+'</p>';
 
-        return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M') +'<br>'+ '<p>'+comment+'</p>';
+        return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M') +'<br><br>'+ '<p>'+comment+'</p>';
       }
     },
     series: [
