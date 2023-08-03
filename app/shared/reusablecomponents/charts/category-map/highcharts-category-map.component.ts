@@ -1,7 +1,7 @@
 import * as Highcharts from "highcharts/highmaps";
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_ExportingOffline from 'highcharts/modules/offline-exporting';
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from "@angular/core";
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
 import {CategorizedAreaData} from "../../../../domain/categorizedAreaData";
 import {SeriesOptionsType} from "highcharts/highmaps";
 import {PremiumSortPipe} from "../../../../../catalogue-ui/shared/pipes/premium-sort.pipe";
@@ -24,6 +24,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   @Input() subtitle: string = null;
   @Input() pointFormat: string = null;
   @Input() mapType: string = null;
+  @Output() mapClick = new EventEmitter<any>();
 
   chart;
   chartCallback;
@@ -90,6 +91,8 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   }
 
   createMap() {
+    const that = this;
+
     this.chartOptions = {
 
       chart: {
@@ -148,7 +151,8 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
           point: {
             events: {
               click: function () {
-                console.log(this);
+                // console.log(this);
+                that.mapClick.emit(this);
               },
             }
           }
