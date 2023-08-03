@@ -23,7 +23,8 @@ export class HighchartsColorAxisMapComponent {
   @Input() title: string = null;
   @Input() subtitle: string = null;
   @Input() dataSeriesSuffix: string = null;
-  @Input() toolTipData: Map<string, string>;
+  @Input() toolTipData: Map<string, string> = new Map;
+  @Input() participatingCountries: string[] = [];
 
   chart: any;
   updateFlag = false;
@@ -58,6 +59,13 @@ export class HighchartsColorAxisMapComponent {
               break;
             }
           }
+          // for (let j = 0; j < this.participatingCountries.length; j++) {
+          //   if (this.dataForInitialization[i][0] === this.participatingCountries[j]) {
+          //     tmpArray.push([this.participatingCountries[j], -1]);
+          //     found = true;
+          //     break;
+          //   }
+          // }
           if (!found) {
             tmpArray.push(this.dataForInitialization[i]);
           }
@@ -83,24 +91,29 @@ export class HighchartsColorAxisMapComponent {
       backgroundColor: 'rgba(0,0,0,0)',
       events: {
         load: function () {
+          const start = new Date().getTime();
           let chart = this;
-          var countryNames = ['de', 'it', 'cy']; // Specify the country names here
           let color = '#a9a9a9'; // Specify the color here
+          //
+          // chart.series[0].points.forEach(point=> {
+          //   if (point.value === -1)
+          //     point.update({color: color});
+          // });
 
           // Loop through the country names
-          countryNames.forEach(function(countryName) {
+          componentContext.participatingCountries.forEach(function(countryName: string) {
             // Find the country point
             let countryPoint = chart.series[0].points.find(function(point) {
-              return point.properties["iso-a2"].toLowerCase() === countryName;
+              return point.properties["iso-a2"]?.toLowerCase() === countryName;
             });
 
             // Change the color of the country
             if (countryPoint) {
-              countryPoint.update({
-                color: color
-              });
+              countryPoint.update({color: color});
             }
           });
+          let elapsed = new Date().getTime() - start;
+          console.log(elapsed);
         }
       }
     },

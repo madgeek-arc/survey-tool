@@ -47,7 +47,7 @@ export const colorAxisDataWithZeroValue: (number | SeriesMapDataOptions | [strin
   ["fm", 0],
   ["cn", 0],
   ["pt", 0],
-  ["sw", 1],
+  ["sw", 0],
   ["sh", 0],
   ["br", 0],
   ["ki", 0],
