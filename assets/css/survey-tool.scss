@@ -52,6 +52,7 @@
   --default-element-bg: #DEDEDE;
   --white: #fff;
 
+  --gray-200-background-muted-hr-input-borders: #EAEAEA;
 
   --grey-900: #2C2C2C;
   --grey-700: #6E6E6E;
@@ -343,6 +344,10 @@ hr {
 
 hr.muted {
   border: 1px solid var(--light-grey);
+}
+
+hr.hr-light {
+  border: 1px solid var(--gray-200-background-muted-hr-input-borders);
 }
 
 .browse-dropdown-menu hr {
