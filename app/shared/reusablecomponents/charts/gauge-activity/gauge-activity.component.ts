@@ -23,7 +23,8 @@ export class GaugeActivityComponent implements OnChanges {
   series: Array<SeriesOptionsType> = new Array<SeriesOptionsType>();
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.data.length) {
+    if (this.data.length > 0) {
+      this.chartOptions = null;
       this.createPane(this.data.length);
       this.generateSeries(this.data);
       this.createGauge();
@@ -92,7 +93,8 @@ export class GaugeActivityComponent implements OnChanges {
 
   createPane(size: number) {
     let radius = 113;
-    const step = 12;
+    const step = 10;
+    this.paneBackground = [];
     for (let i = 0; i < size; i++) {
       let paneBackGround = {
         outerRadius: (radius = radius-1)+'%',
@@ -102,13 +104,14 @@ export class GaugeActivityComponent implements OnChanges {
           .get(),
         borderWidth: 0
       }
-      this.paneBackground.push(paneBackGround)
+      this.paneBackground.push(paneBackGround);
     }
   }
 
   generateSeries(data: ActivityGauge[]) {
     let radius = 113;
-    const step = 12;
+    const step = 10;
+    this.series = [];
     for (let i = 0; i < data.length; i++) {
       let data: SeriesOptionsType = {
         type: 'solidgauge',
