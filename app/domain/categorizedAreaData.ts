@@ -36,6 +36,11 @@ export class Series {
   }
 }
 
+export class ActivityGauge {
+  name: string;
+  y: number;
+}
+
 export const colorAxisDataWithZeroValue: (number | SeriesMapDataOptions | [string, number])[] = [
   ["fo", 0],
   ["um", 0],

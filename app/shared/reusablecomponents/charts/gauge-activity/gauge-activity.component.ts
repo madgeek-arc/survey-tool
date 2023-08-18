@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Chart, PaneBackgroundOptions, SeriesOptionsType} from 'highcharts';
 import * as Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 import SolidGauge from 'highcharts/modules/solid-gauge';
+import {ActivityGauge} from "../../../../domain/categorizedAreaData";
 
 HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
@@ -11,17 +12,23 @@ SolidGauge(Highcharts);
   templateUrl: 'gauge-activity.component.html'
 })
 
-export class GaugeActivityComponent implements OnInit {
+export class GaugeActivityComponent implements OnChanges {
+
+  @Input() data: ActivityGauge[] = [];
+
+  ready = false;
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options;
   paneBackground: Array<PaneBackgroundOptions> = new Array<PaneBackgroundOptions>();
   series: Array<SeriesOptionsType> = new Array<SeriesOptionsType>();
 
-  ngOnInit() {
-    let length = 7;
-    this.createPane(length);
-    this.generateSeries(length);
-    this.createGauge();
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.data.length) {
+      this.createPane(this.data.length);
+      this.generateSeries(this.data);
+      this.createGauge();
+      this.ready = true;
+    }
   }
 
   createGauge() {
@@ -99,18 +106,18 @@ export class GaugeActivityComponent implements OnInit {
     }
   }
 
-  generateSeries(size: number) {
+  generateSeries(data: ActivityGauge[]) {
     let radius = 113;
     const step = 12;
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < data.length; i++) {
       let data: SeriesOptionsType = {
         type: 'solidgauge',
-        name: 'test '+i,
+        name: this.data[i].name,
         data: [{
           color: Highcharts.getOptions().colors[i],
           radius: (radius = radius-1)+'%',
           innerRadius: (radius = radius-step)+'%',
-          y: (i+5)*7
+          y: this.data[i].y
         }]
       }
       this.series.push(data);
