@@ -99,9 +99,7 @@ export class GaugeActivityComponent implements OnChanges {
       let paneBackGround = {
         outerRadius: (radius = radius-1)+'%',
         innerRadius: (radius = radius-step)+'%',
-        backgroundColor: Highcharts.color(Highcharts.getOptions().colors[i])
-          .setOpacity(0.3)
-          .get(),
+        backgroundColor: Highcharts.color(Highcharts.getOptions().colors[i]).setOpacity(0.3).get(),
         borderWidth: 0
       }
       this.paneBackground.push(paneBackGround);
