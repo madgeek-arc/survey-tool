@@ -14,6 +14,7 @@ SolidGauge(Highcharts);
 
 export class GaugeActivityComponent implements OnChanges {
 
+  @Input() title: string = null;
   @Input() data: ActivityGauge[] = [];
 
   ready = false;
@@ -39,7 +40,7 @@ export class GaugeActivityComponent implements OnChanges {
       },
 
       title: {
-        text: 'Activity',
+        text: this.title,
         style: {
           fontSize: '24px'
         }
