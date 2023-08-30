@@ -24,6 +24,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   @Input() subtitle: string = null;
   @Input() pointFormat: string = null;
   @Input() mapType: string = null;
+  @Input() toolTipData: Map<string, string> = new Map;
   @Output() mapClick = new EventEmitter<any>();
 
   chart;
@@ -129,8 +130,13 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       },
 
       tooltip: {
-        headerFormat: '',
-        pointFormat: '<b>{point.name}</b>'
+        formatter: function () {
+          let comment = that.toolTipData.get(this?.point?.properties?.['iso-a2'].toLowerCase()) ? that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
+          comment = comment.replace(/\\n/g,'<br>');
+          comment = comment.replace(/\\t/g,' ');
+
+          return '<b>'+this.point.name+'</b>' + (comment ?  '<br><br>' + '<p>'+comment+'</p>' : '');
+        },
       },
 
       plotOptions: {

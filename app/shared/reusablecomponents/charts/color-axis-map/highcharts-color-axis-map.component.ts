@@ -161,6 +161,7 @@ export class HighchartsColorAxisMapComponent {
       formatter: function () {
         let comment = componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
         comment = comment.replaceAll('\\n','<br>');
+        comment = comment.replaceAll('\\t',' ');
         if (this.point.value === 0)
           return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + '<br><br>' + '<p>'+comment+'</p>';
 
