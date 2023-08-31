@@ -85,6 +85,7 @@ export class HighchartsColorAxisMapComponent {
   };
 
   createMap() {
+    let that = this;
     this.chartOptions = {
     chart: {
       map: worldMap,
@@ -159,13 +160,13 @@ export class HighchartsColorAxisMapComponent {
     },
     tooltip: {
       formatter: function () {
-        let comment = componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? componentContext.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
-        comment = comment.replaceAll('\\n','<br>');
-        comment = comment.replaceAll('\\t',' ');
+        let comment = that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
+        comment = comment.replace(/\\n/g,'<br>');
+        comment = comment.replace(/\\t/g,' ');
         if (this.point.value === 0)
           return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + '<br><br>' + '<p>'+comment+'</p>';
 
-        return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M') +'<br><br>'+ '<p>'+comment+'</p>';
+        return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (that.dataSeriesSuffix !== null ? that.dataSeriesSuffix : ' M') +'<br><br>'+ '<p>'+comment+'</p>';
       }
     },
     series: [
