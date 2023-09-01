@@ -44,7 +44,7 @@ export class HighchartsColorAxisMapComponent {
     this.ready = false;
     const componentContext = this, chart = this.chart;
 
-    if (this.mapData?.length > 0) {
+    if (this.mapData?.length >= 0) {
       setTimeout(() => {
         componentContext.chartOptions.title.text = this.title;
         componentContext.chartOptions.subtitle.text = this.subtitle;
@@ -52,7 +52,7 @@ export class HighchartsColorAxisMapComponent {
         let found = false;
         for (let i = 0; i < this.dataForInitialization.length; i++) {
           found = false;
-          for (let j = 0; j < this.mapData.length; j++) {
+          for (let j = 0; j < this.mapData?.length; j++) {
             if (this.dataForInitialization[i][0] === this.mapData[j][0]) {
               tmpArray.push(this.mapData[j]);
               found = true;
