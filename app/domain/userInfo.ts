@@ -9,37 +9,24 @@ export class UserInfo {
   }
 }
 
-export class Stakeholder {
-  associationMember: string;
-  contributors: string[];
-  country: string;
-  id: string;
-  managers: string[];
-  name: string;
-  subType: string;
-  type: string;
-  madated: boolean;
-
-
-  constructor() {
-    this.associationMember = null;
-    // this.contributors = null;
-    this.country = null;
-    this.id = null;
-    // this.managers = null;
-    this.name = null;
-    this.subType = null;
-    this.type = null;
-    this.madated = null;
-  }
-}
-
-export class Coordinator {
+export class UserGroup {
   id: string;
   name: string;
   type: string;
   members: string[];
+  admins: string[];
 }
+
+export class Stakeholder extends UserGroup {
+  associationMember: string;
+  country: string;
+  subType: string;
+  mandated: boolean;
+
+}
+
+export class Coordinator extends UserGroup{}
+
 
 export class User {
   sub: string;
@@ -76,9 +63,9 @@ export class Profile {
   }
 }
 
-export class StakeholdersMembers {
-  contributors: User[];
-  managers: User[];
+export class GroupMembers {
+  members: User[];
+  admins: User[];
 }
 
 export class UserActivity {

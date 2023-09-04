@@ -17,7 +17,7 @@
           </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let member of members.managers">
+            <tr *ngFor="let member of members.admins">
               <td>
                 {{member.fullname}}
               </td>
@@ -31,7 +31,7 @@
                 <!--<span class="material-icons">delete</span>-->
               </td>
             </tr>
-            <tr *ngFor="let member of members.contributors">
+            <tr *ngFor="let member of members.members">
               <td>
                 {{member.fullname}}
               </td>

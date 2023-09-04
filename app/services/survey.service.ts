@@ -9,7 +9,7 @@ import {
   SurveyInfo
 } from "../domain/survey";
 import {Paging} from "../../catalogue-ui/domain/paging";
-import {StakeholdersMembers} from "../domain/userInfo";
+import {GroupMembers} from "../domain/userInfo";
 import {URLParameter} from "../../catalogue-ui/domain/url-parameter";
 import {Model} from "../../catalogue-ui/domain/dynamic-form-model";
 
@@ -59,10 +59,6 @@ export class SurveyService {
     return this.http.get<DisplayHistory>(this.base + `/answers/${answerId}/history`, this.options);
   }
 
-  addContributor(stakeholderId: string, email: string) {
-    return this.http.post<StakeholdersMembers>(this.base + `/stakeholders/${stakeholderId}/contributors`, email, this.options);
-  }
-
   getInvitationToken(inviteeEmail: string, inviteeRole: string, stakeholder: string) {
     return this.http.get(this.base + `/invitation?inviteeEmail=${inviteeEmail}&inviteeRole=${inviteeRole}&stakeholder=${stakeholder}`, { responseType: 'text'});
   }
@@ -72,11 +68,11 @@ export class SurveyService {
   }
 
   removeManager(stakeholderId: string, email: string) {
-    return this.http.delete<StakeholdersMembers>(this.base + `/stakeholders/${stakeholderId}/managers/${email}`, this.options);
+    return this.http.delete<GroupMembers>(this.base + `/stakeholders/${stakeholderId}/managers/${email}`, this.options);
   }
 
   removeContributor(stakeholderId: string, email: string) {
-    return this.http.delete<StakeholdersMembers>(this.base + `/stakeholders/${stakeholderId}/contributors/${email}`, this.options);
+    return this.http.delete<GroupMembers>(this.base + `/stakeholders/${stakeholderId}/contributors/${email}`, this.options);
   }
 
   getSurveyEntries(urlParameters: URLParameter[]) {

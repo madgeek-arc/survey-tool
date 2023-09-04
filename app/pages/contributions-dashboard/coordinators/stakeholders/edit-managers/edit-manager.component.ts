@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {UserService} from "../../../../../services/user.service";
-import {Stakeholder, StakeholdersMembers} from "../../../../../domain/userInfo";
+import {Stakeholder, GroupMembers} from "../../../../../domain/userInfo";
 import {SurveyService} from "../../../../../services/survey.service";
 
 import UIkit from 'uikit';
@@ -19,7 +19,7 @@ export class EditManagerComponent implements OnInit, OnDestroy {
   subscriptions = [];
   stakeholderId: string = null;
   stakeholder: Stakeholder = null;
-  members: StakeholdersMembers = null
+  members: GroupMembers = null
   email: string = null;
 
 
@@ -195,8 +195,8 @@ export class EditManagerComponent implements OnInit, OnDestroy {
   }
 
   checkIfManager(email: string): boolean {
-    for (let i = 0; i < this.members.managers.length; i++) {
-      if (this.members.managers[i].email === email) {
+    for (let i = 0; i < this.members.admins.length; i++) {
+      if (this.members.admins[i].email === email) {
         return true;
       }
     }

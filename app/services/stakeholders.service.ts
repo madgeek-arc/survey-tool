@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { RawData } from "../domain/raw-data";
-import {Stakeholder, StakeholdersMembers} from "../domain/userInfo";
+import {Stakeholder, GroupMembers} from "../domain/userInfo";
 import {Paging} from "../../catalogue-ui/domain/paging";
 import {URLParameter} from "../../catalogue-ui/domain/url-parameter";
 
@@ -51,7 +51,7 @@ export class StakeholdersService {
   }
 
   getStakeholderMembers(id: string) {
-    return this.httpClient.get<StakeholdersMembers>(this.base + `/stakeholders/${id}/members`);
+    return this.httpClient.get<GroupMembers>(this.base + `/stakeholders/${id}/members`);
   }
 
 }
