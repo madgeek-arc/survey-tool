@@ -4,6 +4,7 @@ import HC_ExportingOffline from 'highcharts/modules/offline-exporting';
 import {Component, Input, SimpleChanges} from "@angular/core";
 import {colorAxisDataWithZeroValue} from "../../../../domain/categorizedAreaData";
 import {SeriesMapDataOptions} from "highcharts/highmaps";
+import {Point} from "highcharts/highcharts.src";
 
 HC_exporting(Highcharts);
 HC_ExportingOffline(Highcharts);
@@ -95,11 +96,6 @@ export class HighchartsColorAxisMapComponent {
           const start = new Date().getTime();
           let chart = this;
           let color = '#a9a9a9'; // Specify the color here
-          //
-          // chart.series[0].points.forEach(point=> {
-          //   if (point.value === -1)
-          //     point.update({color: color});
-          // });
 
           // Loop through the country names
           componentContext.participatingCountries.forEach(function(countryName: string) {
@@ -108,13 +104,16 @@ export class HighchartsColorAxisMapComponent {
               return point.properties["iso-a2"]?.toLowerCase() === countryName;
             });
 
-            // Change the color of the country
+            // (1) Change the color of the country
             if (countryPoint) {
-              countryPoint.update({color: color});
+              // update point colors without redrawing the map every time.
+              countryPoint.update({color: color}, false);
             }
           });
           let elapsed = new Date().getTime() - start;
-          console.log(elapsed);
+          // Redraw the chart for changes (1) to take effect
+          chart.update({}, true);
+          console.info(elapsed);
         }
       }
     },
