@@ -88,6 +88,7 @@ export class StakeholdersComponent implements OnInit {
   }
 
   formInitialization() {
+    console.log(this.stakeholderForm);
     this.stakeholderForm.get('name').setValidators(Validators.required);
     this.stakeholderForm.get('country').setValidators(Validators.required);
     this.stakeholderForm.get('type').setValidators(Validators.required);

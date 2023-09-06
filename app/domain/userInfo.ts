@@ -15,6 +15,11 @@ export class UserGroup {
   type: string;
   members: string[];
   admins: string[];
+
+  constructor() {
+    this.name = null;
+    this.type = null;
+  }
 }
 
 export class Stakeholder extends UserGroup {
@@ -22,6 +27,11 @@ export class Stakeholder extends UserGroup {
   country: string;
   subType: string;
   mandated: boolean;
+
+  constructor() {
+    super();
+    this.country = null;
+  }
 
 }
 
