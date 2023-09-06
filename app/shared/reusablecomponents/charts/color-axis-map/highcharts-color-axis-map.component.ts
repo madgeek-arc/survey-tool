@@ -93,7 +93,6 @@ export class HighchartsColorAxisMapComponent {
       backgroundColor: 'rgba(0,0,0,0)',
       events: {
         load: function () {
-          const start = new Date().getTime();
           let chart = this;
           let color = '#a9a9a9'; // Specify the color here
 
@@ -110,10 +109,8 @@ export class HighchartsColorAxisMapComponent {
               countryPoint.update({color: color}, false);
             }
           });
-          let elapsed = new Date().getTime() - start;
           // Redraw the chart for changes (1) to take effect
           chart.update({}, true);
-          console.info(elapsed);
         }
       }
     },
