@@ -1,5 +1,5 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Chart, PaneBackgroundOptions, SeriesOptionsType} from 'highcharts';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {PaneBackgroundOptions, SeriesOptionsType} from 'highcharts';
 import * as Highcharts from 'highcharts';
 import HighchartsMore from 'highcharts/highcharts-more';
 import SolidGauge from 'highcharts/modules/solid-gauge';
