@@ -7,16 +7,17 @@ HighchartsMore(Highcharts);
 SolidGauge(Highcharts);
 @Component({
   selector: 'simple-gauge',
-  templateUrl: 'gauge-simple.component.html'
+  template: '<div [id]="chartId"></div>',
+  // templateUrl: 'gauge-simple.component.html'
 })
 
 export class GaugeSimpleComponent implements AfterViewInit, OnChanges {
 
+  @Input() chartId: string;
   @Input() title: string = null;
   @Input() data: number = 0;
 
   gaugeChart: Highcharts.Chart;
-
 
   ngAfterViewInit() {
     this.createGauge();
@@ -28,7 +29,7 @@ export class GaugeSimpleComponent implements AfterViewInit, OnChanges {
   }
 
   createGauge() {
-    this.gaugeChart = Highcharts.chart('chart-gauge', {
+    this.gaugeChart = Highcharts.chart(this.chartId, {
       chart: {
         type: 'solidgauge'
       },
@@ -91,7 +92,7 @@ export class GaugeSimpleComponent implements AfterViewInit, OnChanges {
           tooltip: null
         }
       ]
-    } as any);
+    });
   }
 
 }
