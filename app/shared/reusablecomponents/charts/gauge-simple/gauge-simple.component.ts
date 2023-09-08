@@ -38,7 +38,7 @@ export class GaugeSimpleComponent implements AfterViewInit, OnChanges {
       },
       pane: {
         center: ['50%', '85%'],
-        size: '110%',
+        size: '95%',
         startAngle: -90,
         endAngle: 90,
         background: [
