@@ -4,7 +4,6 @@ import HC_ExportingOffline from 'highcharts/modules/offline-exporting';
 import {Component, Input, SimpleChanges} from "@angular/core";
 import {colorAxisDataWithZeroValue} from "../../../../domain/categorizedAreaData";
 import {SeriesMapDataOptions} from "highcharts/highmaps";
-import {Point} from "highcharts/highcharts.src";
 
 HC_exporting(Highcharts);
 HC_ExportingOffline(Highcharts);
@@ -97,7 +96,7 @@ export class HighchartsColorAxisMapComponent {
           let color = '#a9a9a9'; // Specify the color here
 
           // Loop through the country names
-          componentContext.participatingCountries.forEach(function(countryName: string) {
+          that.participatingCountries.forEach(function(countryName: string) {
             // Find the country point
             let countryPoint = chart.series[0].points.find(function(point) {
               return point.properties["iso-a2"]?.toLowerCase() === countryName;
@@ -159,8 +158,8 @@ export class HighchartsColorAxisMapComponent {
         let comment = that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
         comment = comment.replace(/\\n/g,'<br>');
         comment = comment.replace(/\\t/g,' ');
-        if (this.point.value === 0)
-          return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + '<br><br>' + '<p>'+comment+'</p>';
+        if (this.point.value < 0)
+          return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + (comment ? ('<br><br>' + '<p>'+comment+'</p>') : '');
 
         return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (that.dataSeriesSuffix !== null ? that.dataSeriesSuffix : ' M') +'<br><br>'+ '<p>'+comment+'</p>';
       }
@@ -178,7 +177,7 @@ export class HighchartsColorAxisMapComponent {
           enabled: true,
           // format: "{point.value}",
           formatter:  function () {
-            if (this.point.value > 0) {
+            if (this.point.value >= 0) {
               return this.point.value + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
             }
             else

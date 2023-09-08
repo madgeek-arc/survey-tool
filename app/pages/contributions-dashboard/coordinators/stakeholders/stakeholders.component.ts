@@ -97,7 +97,7 @@ export class StakeholdersComponent implements OnInit {
   addStakeholder() {
     this.stakeholdersService.postStakeholder(this.stakeholderForm.value).subscribe(
       res => {},
-      error => {},
+      error => {console.error(error)},
       () => {
         UIkit.modal('#modal-center').hide();
         this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).subscribe(
