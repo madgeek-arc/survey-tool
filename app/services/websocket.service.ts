@@ -25,6 +25,7 @@ export class WebsocketService {
     this.stompClient = new Promise((resolve, reject) => {
       let stomp = Stomp.over(ws);
 
+      stomp.debug = null;
       stomp.connect({}, function(frame) {
         const timer = setInterval(() => {
           if (stomp.connected) {
