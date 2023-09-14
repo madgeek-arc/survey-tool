@@ -54,11 +54,21 @@ export class GaugeActivityComponent implements OnChanges {
           fontSize: '12px'
         },
         valueSuffix: '%',
-        pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}</span>',
+        pointFormat:
+          '<div style="text-align: center;">' +
+          '<span>{series.name}</span><br>' +
+          '<span style="display: block; margin: 0 auto; font-size: 1.75em; color: {point.color}; font-weight: bold; text-align: center">{point.y}</span>' +
+          '</div>',
+
+        // '<div style="text-align: center">' +
+        //   '{series.name}<br>' +
+        //   '<span style="font-size:1.75em; color: {point.color}; font-weight: bold;">{point.y}</span>'
+        //   +'</div>'
+        // ,
         positioner: function (labelWidth) {
           return {
             x: (this.chart.chartWidth - labelWidth) / 2,
-            y: (this.chart.plotHeight / 2) + 15
+            y: (this.chart.plotHeight / 2) + 50
           };
         }
       },
