@@ -31,6 +31,7 @@ export class Stakeholder extends UserGroup {
   constructor() {
     super();
     this.country = null;
+    this.subType = null;
   }
 
 }
