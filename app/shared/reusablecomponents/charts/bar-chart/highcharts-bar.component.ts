@@ -22,6 +22,7 @@ export class HighchartsBarComponent implements OnChanges{
   @Input() subTitle: string = null;
   @Input() dataSeriesSuffix: string = null;
 
+  backgroundColor: string = '#ffffff';
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options = {}
   chartRef: Highcharts.Chart;
@@ -30,6 +31,7 @@ export class HighchartsBarComponent implements OnChanges{
 
   ngOnChanges(changes: SimpleChanges) {
     componentContext = this;
+    // this.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--medium-grey');
     if (this.mapData?.length > 0) {
       this.mapData = this.mapData.filter((element) => {
         return element[1] > 0;
@@ -44,7 +46,7 @@ export class HighchartsBarComponent implements OnChanges{
     this.chartOptions =  {
       chart: {
         type: 'bar',
-        backgroundColor: 'rgba(0,0,0,0)'
+        backgroundColor: this.backgroundColor
       },
       title: {
         text: this.title,

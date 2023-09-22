@@ -32,6 +32,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   updateFlag = false;
   Highcharts: typeof Highcharts = Highcharts;
   colorPallet = ['#2A9D8F', '#E9C46A', '#F4A261', '#E76F51', '#A9A9A9'];
+  backgroundColor: string = '#ffffff';
   datasetOrder = [ 'Yes', 'Partly', 'In planning', 'No', 'Awaiting data' ];
   premiumSort = new PremiumSortPipe();
   chartConstructor = "mapChart";
@@ -50,6 +51,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--medium-grey');
     this.createMap();
   }
 
@@ -81,7 +83,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       setTimeout(() => {
         self.chartOptions.title.text = this.title;
         self.chartOptions.series = this.mapData.series as SeriesOptionsType[];
-        console.log(this.mapData.series);
+        // console.log(this.mapData.series);
         // console.log(self.chartOptions.series)
         // chart.hideLoading();
         this.ready = true;
@@ -99,7 +101,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       chart: {
         map: worldMap,
         spacingBottom: 20,
-        backgroundColor: 'rgba(0,0,0,0)'
+        backgroundColor: this.backgroundColor
       },
       mapView: {
         center: [15, 50],
@@ -166,6 +168,11 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       },
 
       series: [] as SeriesOptionsType[],
+      exporting: {
+        sourceWidth: 1200,
+        sourceHeight: 800
+        // scale: 1,
+      }
     }
   }
 
