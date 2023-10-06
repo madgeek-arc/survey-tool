@@ -88,6 +88,7 @@ export class StakeholdersComponent implements OnInit {
   }
 
   formInitialization() {
+    console.log(this.stakeholderForm);
     this.stakeholderForm.get('name').setValidators(Validators.required);
     this.stakeholderForm.get('country').setValidators(Validators.required);
     this.stakeholderForm.get('type').setValidators(Validators.required);
@@ -96,7 +97,7 @@ export class StakeholdersComponent implements OnInit {
   addStakeholder() {
     this.stakeholdersService.postStakeholder(this.stakeholderForm.value).subscribe(
       res => {},
-      error => {},
+      error => {console.error(error)},
       () => {
         UIkit.modal('#modal-center').hide();
         this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).subscribe(

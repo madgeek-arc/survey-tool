@@ -1,9 +1,8 @@
-import {AfterViewInit, Component, Input, OnChanges, SimpleChanges, ViewChild} from "@angular/core";
+import {Component, Input, OnChanges, SimpleChanges, ViewChild} from "@angular/core";
 import * as Highcharts from "highcharts";
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_ExportingOffline from 'highcharts/modules/offline-exporting';
-import {SeriesMapDataOptions, SeriesOptionsType} from "highcharts/highmaps";
-import {Options, XrangePointOptionsObject} from "highcharts";
+import {SeriesMapDataOptions} from "highcharts/highmaps";
 
 HC_exporting(Highcharts);
 HC_ExportingOffline(Highcharts);
@@ -16,20 +15,23 @@ let componentContext;
 
 export class HighchartsBarComponent implements OnChanges{
 
+  @ViewChild('chart') componentRef;
+
   @Input() mapData: (number | SeriesMapDataOptions | [string, number])[] = [];
   @Input() title: string = null;
   @Input() subTitle: string = null;
   @Input() dataSeriesSuffix: string = null;
 
-  @ViewChild('chart') componentRef;
+  backgroundColor: string = '#ffffff';
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options = {}
-  chartRef;
-  updateFlag;
+  chartRef: Highcharts.Chart;
+  updateFlag: any;
   ready = false;
 
   ngOnChanges(changes: SimpleChanges) {
     componentContext = this;
+    // this.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--medium-grey');
     if (this.mapData?.length > 0) {
       this.mapData = this.mapData.filter((element) => {
         return element[1] > 0;
@@ -44,7 +46,7 @@ export class HighchartsBarComponent implements OnChanges{
     this.chartOptions =  {
       chart: {
         type: 'bar',
-        backgroundColor: 'rgba(0,0,0,0)'
+        backgroundColor: this.backgroundColor
       },
       title: {
         text: this.title,

@@ -23,10 +23,12 @@ export class HighchartsColorAxisMapComponent {
   @Input() title: string = null;
   @Input() subtitle: string = null;
   @Input() dataSeriesSuffix: string = null;
+  @Input() toolTipData: Map<string, string> = new Map;
+  @Input() participatingCountries: string[] = [];
 
-  chart;
-  chartCallback;
+  chart: any;
   updateFlag = false;
+  backgroundColor: string = '#ffffff';
   Highcharts: typeof Highcharts = Highcharts;
   chartConstructor = "mapChart";
   chartOptions: Highcharts.Options;
@@ -36,20 +38,15 @@ export class HighchartsColorAxisMapComponent {
 
   constructor() {
     componentContext = this;
-
+    this.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--medium-grey');
     this.createMap();
-    this.chartCallback = chart => {
-      // saving chart reference
-      componentContext.chart = chart;
-      // console.log(componentContext.chart);
-    };
   }
 
   ngOnChanges(changes: SimpleChanges) {
     this.ready = false;
     const componentContext = this, chart = this.chart;
 
-    if (this.mapData?.length > 0) {
+    if (this.mapData?.length >= 0) {
       setTimeout(() => {
         componentContext.chartOptions.title.text = this.title;
         componentContext.chartOptions.subtitle.text = this.subtitle;
@@ -57,13 +54,20 @@ export class HighchartsColorAxisMapComponent {
         let found = false;
         for (let i = 0; i < this.dataForInitialization.length; i++) {
           found = false;
-          for (let j = 0; j < this.mapData.length; j++) {
+          for (let j = 0; j < this.mapData?.length; j++) {
             if (this.dataForInitialization[i][0] === this.mapData[j][0]) {
               tmpArray.push(this.mapData[j]);
               found = true;
               break;
             }
           }
+          // for (let j = 0; j < this.participatingCountries.length; j++) {
+          //   if (this.dataForInitialization[i][0] === this.participatingCountries[j]) {
+          //     tmpArray.push([this.participatingCountries[j], -1]);
+          //     found = true;
+          //     break;
+          //   }
+          // }
           if (!found) {
             tmpArray.push(this.dataForInitialization[i]);
           }
@@ -78,88 +82,126 @@ export class HighchartsColorAxisMapComponent {
     }
   }
 
+  chartCallback: Highcharts.ChartCallbackFunction = chart => {
+    this.chart = chart;
+  };
+
   createMap() {
+    let that = this;
     this.chartOptions = {
-    chart: {
-      map: worldMap,
-      backgroundColor: 'rgba(0,0,0,0)'
-    },
-    mapView: {
-      center: [30, 50],
-      zoom: 4
-    },
-    title: {
-      text: this.title
-    },
-    subtitle: {
-      text: this.subtitle,
-    },
-    mapNavigation: {
-      enabled: true,
-      buttonOptions: {
-        alignTo: "spacingBox"
-      },
-      enableMouseWheelZoom: false
-    },
-    legend: {
-      enabled: true
-    },
-    colorAxis: {
-      min: 0,
-      max: 25,
-      // tickInterval: 3,
-      stops: [[0, '#F1EEF6'], [1, '#008792']],
-      // labels: {
-      //   format: '{value}%'
-      // }
-    },
-    plotOptions: {
-      series: {
-        point: {
-          events: {
-            click: function () {
-              console.log(this);
-            },
+      chart: {
+        map: worldMap,
+        backgroundColor: this.backgroundColor,
+        events: {
+          load: function () {
+            let chart = this;
+            let color = '#a9a9a9'; // Specify the color here
+
+            // Loop through the country names
+            that.participatingCountries.forEach(function(countryName: string) {
+              // Find the country point
+              let countryPoint = chart.series[0].points.find(function(point) {
+                return point.properties["iso-a2"]?.toLowerCase() === countryName;
+              });
+
+              // (1) Change the color of the country
+              if (countryPoint) {
+                // update point colors without redrawing the map every time.
+                countryPoint.update({color: color}, false);
+              }
+            });
+            // Redraw the chart for changes (1) to take effect
+            chart.update({}, true);
           }
         }
-      }
-    },
-    tooltip: {
-      formatter: function () {
-        return '<b>' + this.point.name + '</b>: ' + this.point.value + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
-      }
-    },
-    series: [
-      {
-        type: "map",
-        name: "Amount",
-        states: {
-          hover: {
-            color: "#8E8E8E"
-          }
+      },
+      mapView: {
+        center: [15, 50],
+        zoom: 4
+      },
+      title: {
+        text: this.title
+      },
+      subtitle: {
+        text: this.subtitle,
+      },
+      mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+          alignTo: "spacingBox"
         },
-        dataLabels: {
-          enabled: true,
-          // format: "{point.value}",
-          formatter:  function () {
-            if (this.point.value > 0) {
-              return this.point.value + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
-            }
-            else
-              return '';
-          }
-        },
-        allAreas: false,
-        data: [],
-        // tooltip: {
-        //   headerFormat: '<span style="font-size:10px">{series.name}</span><br/>',
-        //   pointFormat: '{point.name}: <b>{point.value} </b><br/>',
-        //   valueSuffix: ' M',
-        //   footerFormat: ''
+        enableMouseWheelZoom: false
+      },
+      legend: {
+        enabled: true
+      },
+      colorAxis: {
+        min: 0,
+        max: 25,
+        // tickInterval: 3,
+        stops: [[0, '#F1EEF6'], [1, '#008792']],
+        // labels: {
+        //   format: '{value}%'
         // }
+      },
+      plotOptions: {
+        series: {
+          point: {
+            events: {
+              click: function () {
+                console.log(this);
+              },
+            }
+          }
+        }
+      },
+      tooltip: {
+        formatter: function () {
+          let comment = that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
+          comment = comment.replace(/\\n/g,'<br>');
+          comment = comment.replace(/\\t/g,' ');
+          if (this.point.value < 0)
+            return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + (comment ? ('<br><br>' + '<p>'+comment+'</p>') : '');
+
+          return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (that.dataSeriesSuffix !== null ? that.dataSeriesSuffix : ' M') +'<br><br>'+ '<p>'+comment+'</p>';
+        }
+      },
+      series: [
+        {
+          type: "map",
+          name: "Amount",
+          states: {
+            hover: {
+              color: "#8E8E8E"
+            }
+          },
+          dataLabels: {
+            enabled: true,
+            // format: "{point.value}",
+            formatter:  function () {
+              if (this.point.value >= 0) {
+                return this.point.value + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
+              }
+              else
+                return '';
+            }
+          },
+          allAreas: false,
+          data: [],
+          // tooltip: {
+          //   headerFormat: '<span style="font-size:10px">{series.name}</span><br/>',
+          //   pointFormat: '{point.name}: <b>{point.value} </b><br/>',
+          //   valueSuffix: ' M',
+          //   footerFormat: ''
+          // }
+        }
+      ],
+      exporting: {
+        sourceWidth: 1200,
+        sourceHeight: 800
+        // scale: 1,
       }
-    ]
-  }
+    }
   }
 
 }
