@@ -4,6 +4,7 @@ import HC_ExportingOffline from 'highcharts/modules/offline-exporting';
 import {Component, Input, SimpleChanges} from "@angular/core";
 import {colorAxisDataWithZeroValue} from "../../../../domain/categorizedAreaData";
 import {SeriesMapDataOptions} from "highcharts/highmaps";
+import {ColorAxisOptions, LegendOptions} from "highcharts";
 
 HC_exporting(Highcharts);
 HC_ExportingOffline(Highcharts);
@@ -25,6 +26,8 @@ export class HighchartsColorAxisMapComponent {
   @Input() dataSeriesSuffix: string = null;
   @Input() toolTipData: Map<string, string> = new Map;
   @Input() participatingCountries: string[] = [];
+  @Input() legend: LegendOptions = {};
+  @Input() colorAxis: ColorAxisOptions = {min: 0, max: 25, stops: [[0, '#F1EEF6'], [1, '#008792']]};
 
   chart: any;
   updateFlag = false;
@@ -47,6 +50,7 @@ export class HighchartsColorAxisMapComponent {
     const componentContext = this, chart = this.chart;
 
     if (this.mapData?.length >= 0) {
+      // console.log(this.colorAxis);
       setTimeout(() => {
         componentContext.chartOptions.title.text = this.title;
         componentContext.chartOptions.subtitle.text = this.subtitle;
@@ -61,19 +65,14 @@ export class HighchartsColorAxisMapComponent {
               break;
             }
           }
-          // for (let j = 0; j < this.participatingCountries.length; j++) {
-          //   if (this.dataForInitialization[i][0] === this.participatingCountries[j]) {
-          //     tmpArray.push([this.participatingCountries[j], -1]);
-          //     found = true;
-          //     break;
-          //   }
-          // }
           if (!found) {
             tmpArray.push(this.dataForInitialization[i]);
           }
         }
         this.mapData = tmpArray;
         componentContext.chartOptions.series[0]['data'] = this.mapData;
+        componentContext.chartOptions.colorAxis = this.colorAxis;
+        componentContext.chartOptions.legend = this.legend;
         // console.log(componentContext.chartOptions.series)
         // chart.hideLoading();
         this.ready = true;
@@ -132,20 +131,12 @@ export class HighchartsColorAxisMapComponent {
         },
         enableMouseWheelZoom: false
       },
-      legend: {
-        enabled: true
-      },
-      colorAxis: {
-        min: 0,
-        max: 25,
-        // tickInterval: 3,
-        stops: [[0, '#F1EEF6'], [1, '#008792']],
-        // labels: {
-        //   format: '{value}%'
-        // }
-      },
+      legend: this.legend,
+      colorAxis: this.colorAxis,
+
       plotOptions: {
         series: {
+
           point: {
             events: {
               click: function () {
