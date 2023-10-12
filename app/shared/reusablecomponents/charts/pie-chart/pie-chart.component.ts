@@ -27,7 +27,7 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
                     type: 'pie'
                 },
                 title: {
-                    text: 'Pie Chart'
+                    text: 'Countries distribution'
                 },
                 series: this.series
             }, true);
@@ -41,7 +41,7 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
                 type: 'pie'
             },
             title: {
-                text: 'Pie Chart'
+                text: 'Countries distribution'
             },
             series: this.series
         } as any);
