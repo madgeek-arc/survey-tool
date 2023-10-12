@@ -12,6 +12,8 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
 
     pie: Highcharts.Chart;
 
+    backgroundColor: string = '#F3F4F5';
+
 
     ngAfterViewInit() {
         // this.initChart();
@@ -38,7 +40,8 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
         console.log(this.chartId);
         this.pie = Highcharts.chart('chartId', {
             chart: {
-                type: 'pie'
+                type: 'pie',
+                backgroundColor: this.backgroundColor
             },
             title: {
                 text: 'Countries distribution'

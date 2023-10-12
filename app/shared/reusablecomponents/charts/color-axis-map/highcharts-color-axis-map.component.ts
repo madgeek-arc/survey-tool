@@ -132,6 +132,10 @@ export class HighchartsColorAxisMapComponent {
         enableMouseWheelZoom: false
       },
       legend: this.legend,
+      // legend: {
+      //   layout: 'horizontal',
+      //   verticalAlign: 'top'
+      // },
       colorAxis: this.colorAxis,
 
       plotOptions: {
