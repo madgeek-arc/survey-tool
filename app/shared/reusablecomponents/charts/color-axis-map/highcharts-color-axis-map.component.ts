@@ -154,6 +154,9 @@ export class HighchartsColorAxisMapComponent {
           if (this.point.value < 0)
             return '<b>' + this.point.properties['name'] + '</b>: ' + 'N/A' + (comment ? ('<br><br>' + '<p>'+comment+'</p>') : '');
 
+          if (this.point.value >= 0 && this.point['dataClass'] >= 0)
+            return '<b>' + this.point.properties['name'] + '</b>: ' +'<br><br>'+ '<p>'+comment+'</p>';
+
           return '<b>' + this.point.properties['name'] + '</b>: ' + this.point.value + ' ' + (that.dataSeriesSuffix !== null ? that.dataSeriesSuffix : ' M') +'<br><br>'+ '<p>'+comment+'</p>';
         }
       },
@@ -171,6 +174,16 @@ export class HighchartsColorAxisMapComponent {
             // format: "{point.value}",
             formatter:  function () {
               if (this.point.value >= 0) {
+                // ---------> temp hack/fix for display purposes
+                if (this.point['dataClass'] >= 0) {
+                  switch (this.point['dataClass']) {
+                    case 0: return '< 1 M';
+                    case 1: return '1 - 5 M';
+                    case 2: return '5 - 10 M';
+                    case 3: return '10 - 20 M';
+                    case 4: return '> 20 M';
+                  }
+                } // <--------- temp hack/fix for display purposes
                 return this.point.value + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
               }
               else
