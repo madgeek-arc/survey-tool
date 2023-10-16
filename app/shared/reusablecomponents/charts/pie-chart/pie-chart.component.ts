@@ -10,9 +10,8 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
     @Input() chartId: string;
     @Input() series: any = [{}];
 
+  backgroundColor: string = '#F3F4F5';
     pie: Highcharts.Chart;
-
-    backgroundColor: string = '#F3F4F5';
 
 
     ngAfterViewInit() {
@@ -21,7 +20,7 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
 
     ngOnChanges(changes: SimpleChanges) {
         if (this.series) {
-            console.log(this.series);
+            // console.log(this.series);
             // this.pie.series[0].data = this.series.data;
             this.initChart();
             this.pie.update({
@@ -37,7 +36,7 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
     }
 
     initChart() {
-        console.log(this.chartId);
+        // console.log(this.chartId);
         this.pie = Highcharts.chart('chartId', {
             chart: {
                 type: 'pie',
