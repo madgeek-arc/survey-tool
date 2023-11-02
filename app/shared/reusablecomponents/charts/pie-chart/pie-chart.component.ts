@@ -3,7 +3,7 @@ import * as Highcharts from 'highcharts';
 
 @Component({
     selector: 'app-pie-chart',
-    template: '<div id="chartId"></div>',
+    template: '<div [id]="chartId"></div>',
 })
 export class PieChartComponent implements AfterViewInit, OnChanges{
 
@@ -15,29 +15,28 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
 
 
     ngAfterViewInit() {
-        // this.initChart();
+        this.initChart();
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (this.series) {
-            // console.log(this.series);
-            // this.pie.series[0].data = this.series.data;
-            this.initChart();
-            this.pie.update({
-                chart: {
-                    type: 'pie'
-                },
-                title: {
-                    text: 'Countries distribution'
-                },
-                series: this.series
-            }, true);
-        }
+      if (changes.series.currentValue !== changes.series.previousValue) {
+        // this.pie.series[0].data = this.series.data;
+        this.initChart();
+        this.pie.update({
+          chart: {
+            type: 'pie'
+          },
+          title: {
+            text: 'Countries distribution'
+          },
+          series: this.series
+        }, true);
+      }
     }
 
     initChart() {
         // console.log(this.chartId);
-        this.pie = Highcharts.chart('chartId', {
+        this.pie = Highcharts.chart(this.chartId, {
             chart: {
                 type: 'pie',
                 backgroundColor: this.backgroundColor

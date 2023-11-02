@@ -8,12 +8,13 @@ HC_ExportingOffline(Highcharts);
 
 @Component({
   selector: 'app-column-ranges-chart',
-  template: '<div id="columnChart" style="display: block; height: 100%; width: 100%"></div>',
+  template: '<div [id]="chartId" style="display: block; height: 100%; width: 100%"></div>',
 })
 
 export class HighchartsColumnRangesComponent implements OnChanges {
 
 
+  @Input() chartId: string;
   @Input() series: any = [];
   @Input() title: string = null;
   // @Input() subTitle: string = null;
@@ -56,16 +57,24 @@ export class HighchartsColumnRangesComponent implements OnChanges {
         column: {
           stacking: 'normal',
           dataLabels: {
+            // useHTML: true,
             enabled: true,
             inside: true,
             align: 'center',
             verticalAlign: 'middle',
             style: {
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              whiteSpace: 'normal',
+              // textOverflow: 'wrap',
             },
             formatter: function() {
+              // return '<span style=" white-space: normal">'+this.series.name+'</span>'
               return this.series.name;
             }
+            // formatter: function() {
+            //   // return this.series.name;
+            //   return 'Large text with many spaces';
+            // }
           }
         }
       },
@@ -74,7 +83,7 @@ export class HighchartsColumnRangesComponent implements OnChanges {
   }
 
   createChart() {
-    this.stackedColumns = Highcharts.chart('columnChart', this.chartOptions);
+    this.stackedColumns = Highcharts.chart(this.chartId, this.chartOptions);
   }
 
 }
