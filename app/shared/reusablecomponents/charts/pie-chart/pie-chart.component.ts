@@ -10,7 +10,7 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
     @Input() chartId: string;
     @Input() series: any = [{}];
 
-  backgroundColor: string = '#F3F4F5';
+  backgroundColor: string = '#FFFFFF';
     pie: Highcharts.Chart;
 
 
