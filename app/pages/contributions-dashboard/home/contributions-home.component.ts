@@ -7,4 +7,7 @@ import {Component} from "@angular/core";
 
 export class ContributionsHomeComponent {
 
+  title: string = 'Title';
+  text: string = 'Text';
+
 }

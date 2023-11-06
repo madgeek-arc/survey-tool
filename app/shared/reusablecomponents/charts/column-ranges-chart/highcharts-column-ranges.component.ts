@@ -17,6 +17,7 @@ export class HighchartsColumnRangesComponent implements OnChanges {
   @Input() chartId: string;
   @Input() series: any = [];
   @Input() title: string = null;
+  @Input() subTitle: string = null;
   // @Input() subTitle: string = null;
 
   backgroundColor: string = '#F3F4F5';
@@ -40,6 +41,9 @@ export class HighchartsColumnRangesComponent implements OnChanges {
       },
       title: {
         text: this.title
+      },
+      subtitle: {
+        text: this.subTitle
       },
       legend: {
         enabled: false
