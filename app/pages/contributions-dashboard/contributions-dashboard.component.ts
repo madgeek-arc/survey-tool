@@ -66,7 +66,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
         if (this.userInfo.stakeholders.length) {
           for (const stakeholder of this.userInfo.stakeholders) {
             if (groupId === stakeholder.id){
-              console.log(stakeholder);
+              // console.log(stakeholder);
               this.userService.changeCurrentStakeholder(stakeholder);
               break;
             }
