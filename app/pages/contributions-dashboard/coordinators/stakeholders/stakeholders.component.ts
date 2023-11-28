@@ -1,11 +1,11 @@
-import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {Paging} from "../../../../../catalogue-ui/domain/paging";
 import {Coordinator, Stakeholder} from "../../../../domain/userInfo";
 import {StakeholdersService} from "../../../../services/stakeholders.service";
 import {URLParameter} from "../../../../../catalogue-ui/domain/url-parameter";
 import {ActivatedRoute, Router} from "@angular/router";
-import {fromEvent} from "rxjs";
-import {debounceTime, distinctUntilChanged, map} from "rxjs/operators";
+import {fromEvent, Subject} from "rxjs";
+import {debounceTime, distinctUntilChanged, map, takeUntil} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 declare var UIkit;
@@ -16,10 +16,11 @@ declare var UIkit;
   providers: [StakeholdersService]
 })
 
-export class StakeholdersComponent implements OnInit {
+export class StakeholdersComponent implements OnInit, OnDestroy {
 
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 
+  private _destroyed: Subject<boolean> = new Subject();
   coordinator: Coordinator = null;
   stakeholders: Paging<Stakeholder> = null;
   urlParameters: URLParameter[] = [];
@@ -42,6 +43,9 @@ export class StakeholdersComponent implements OnInit {
   ngOnInit() {
 
     this.coordinator = JSON.parse(sessionStorage.getItem('currentCoordinator'));
+    console.log(this.coordinator);
+
+
     this.formInitialization();
 
     this.route.queryParams.subscribe(params => {
@@ -61,14 +65,29 @@ export class StakeholdersComponent implements OnInit {
 
       this.updateURLParameters('quantity',this.pageSize);
 
-      this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).subscribe(
-        res => {this.stakeholders = res;},
-        error => {console.error(error)},
-        () => {
-          this.paginationInit();
-          this.ready = true;
-        }
-      );
+      if (!this.coordinator) {
+        this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
+          params => {
+            if (params['id'])
+              this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+                res=> this.coordinator = res,
+                error => console.error(error),
+                ()=> {
+                  this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).pipe(takeUntil(this._destroyed)).subscribe(
+                    res => {this.stakeholders = res;},
+                    error => {console.error(error)},
+                    () => {
+                      this.paginationInit();
+                      this.ready = true;
+                    }
+                  );
+                }
+              );
+          }
+        )
+      }
+
+
     });
 
     fromEvent(this.searchInput.nativeElement, 'keyup').pipe(
@@ -87,8 +106,14 @@ export class StakeholdersComponent implements OnInit {
 
   }
 
+  ngOnDestroy() {
+
+    this._destroyed.next(true);
+    this._destroyed.complete();
+  }
+
   formInitialization() {
-    console.log(this.stakeholderForm);
+    // console.log(this.stakeholderForm);
     this.stakeholderForm.get('name').setValidators(Validators.required);
     this.stakeholderForm.get('country').setValidators(Validators.required);
     this.stakeholderForm.get('type').setValidators(Validators.required);

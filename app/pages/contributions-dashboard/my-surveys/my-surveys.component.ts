@@ -1,10 +1,12 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Stakeholder} from "../../../domain/userInfo";
+import {Stakeholder, UserInfo} from "../../../domain/userInfo";
 import {UserService} from "../../../services/user.service";
 import {Paging} from "../../../../catalogue-ui/domain/paging";
 import {SurveyService} from "../../../services/survey.service";
 import {Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
-import {Subscriber} from "rxjs";
+import {Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-contributions-my-surveys',
@@ -14,38 +16,46 @@ import {Subscriber} from "rxjs";
 
 export class MySurveysComponent implements OnInit, OnDestroy{
 
-  subscriptions = [];
+  private _destroyed: Subject<boolean> = new Subject();
+  groupId: string = null;
   currentGroup: Stakeholder = null;
   surveys: Paging<Model>;
 
-  constructor(private userService: UserService, private surveyService: SurveyService) {
+  constructor(private userService: UserService, private surveyService: SurveyService, private route: ActivatedRoute) {
   }
 
   ngOnInit() {
-    this.subscriptions.push(
-      this.userService.currentStakeholder.subscribe(
-        next => {
-          this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
-          if (this.currentGroup !== null) {
-            this.subscriptions.push(
-              this.surveyService.getSurveys('stakeholderId', this.currentGroup.id).subscribe(next => {
-                this.surveys = next;
-              })
-            );
-          }
-        },
-        error => {console.error(error)},
-        () => {}
-      )
+    this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
+      params => {
+        this.groupId = params['id']
+        if (this.groupId)
+          this.matchCurrentGroupFromUserInfo();
+      }
     );
   }
 
+  matchCurrentGroupFromUserInfo() {
+    let userInfo: UserInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    if (userInfo) {
+      userInfo.stakeholders.forEach(sh => {
+        if (sh.id === this.groupId)
+          this.currentGroup = sh;
+      });
+    }
+
+    if (this.currentGroup) {
+      this.userService.currentStakeholder.next(this.currentGroup);
+      this.surveyService.getSurveys('stakeholderId', this.currentGroup.id)
+        .pipe(takeUntil(this._destroyed)).subscribe(next => {
+        this.surveys = next;
+      });
+    }
+
+  }
+
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription instanceof Subscriber) {
-        subscription.unsubscribe();
-      }
-    });
+    this._destroyed.next(true);
+    this._destroyed.complete();
   }
 
 }

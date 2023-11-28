@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Coordinator, Stakeholder} from "../../domain/userInfo";
+import {Coordinator, Stakeholder, UserInfo} from "../../domain/userInfo";
 import {UserService} from "../../services/user.service";
-import {Subscriber} from "rxjs";
+import {Subject, Subscriber} from "rxjs";
 import {environment} from "../../../environments/environment";
+import {takeUntil} from "rxjs/operators";
 
 @Component({
   selector: 'app-side-menu-dashboard',
@@ -11,6 +12,7 @@ import {environment} from "../../../environments/environment";
 
 export class SideMenuDashboardComponent implements OnInit, OnDestroy {
 
+  private _destroyed: Subject<boolean> = new Subject();
   subscriptions = [];
   projectName: string = environment.projectName;
   currentStakeholder: Stakeholder = null;
@@ -22,24 +24,23 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscriptions.push(
-      this.userService.currentStakeholder.subscribe(next => {
-        this.currentStakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
-        if (this.currentStakeholder !== null) {
-          this.ready = true;
-          this.isManager = this.checkIfManager();
-        }
-      })
-    );
-    this.subscriptions.push(
-      this.userService.currentCoordinator.subscribe(next => {
-        this.currentCoordinator = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
-        if (this.currentCoordinator !== null) {
-          this.ready = true;
-        }
-      })
-    );
+
+    this.userService.currentStakeholder.pipe(takeUntil(this._destroyed)).subscribe(next => {
+      this.currentStakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
+      if (this.currentStakeholder !== null) {
+        this.ready = true;
+        this.isManager = this.checkIfManager();
+      }
+    });
+    this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+      this.currentCoordinator = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
+      if (this.currentCoordinator !== null) {
+        this.ready = true;
+      }
+    });
+
   }
+
 
   checkIfManager(): boolean {
     if (this.currentStakeholder) {
@@ -70,11 +71,9 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription instanceof Subscriber) {
-        subscription.unsubscribe();
-      }
-    });
+
+    this._destroyed.next(true);
+    this._destroyed.complete();
   }
 
 }
