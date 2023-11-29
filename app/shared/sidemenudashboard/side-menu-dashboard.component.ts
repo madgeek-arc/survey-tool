@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Coordinator, Stakeholder, UserInfo} from "../../domain/userInfo";
+import {Coordinator, Stakeholder} from "../../domain/userInfo";
 import {UserService} from "../../services/user.service";
-import {Subject, Subscriber} from "rxjs";
+import {Subject} from "rxjs";
 import {environment} from "../../../environments/environment";
 import {takeUntil} from "rxjs/operators";
 

@@ -1,45 +1,65 @@
 import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
+import {takeUntil} from "rxjs/operators";
+import {Subject} from "rxjs";
 import {Paging} from "../../../../../catalogue-ui/domain/paging";
 import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 import {UserService} from "../../../../services/user.service";
 import {SurveyService} from "../../../../services/survey.service";
-import {Subscriber} from "rxjs";
 import {Coordinator} from "../../../../domain/userInfo";
+import {StakeholdersService} from "../../../../services/stakeholders.service";
 
 @Component({
   selector: 'app-survey-lists',
-  templateUrl: 'surveys-list.component.html'
+  templateUrl: 'surveys-list.component.html',
+  providers: [StakeholdersService]
 })
 
 export class SurveysListComponent implements OnInit{
 
-  subscriptions = [];
+  private _destroyed: Subject<boolean> = new Subject();
   coordinator: Coordinator = null;
   surveys: Paging<Model> = null;
 
-  constructor(private surveyService: SurveyService) {
+  constructor(private surveyService: SurveyService, private route: ActivatedRoute,
+              private stakeholdersService: StakeholdersService, private userService: UserService) {
   }
 
   ngOnInit() {
     this.coordinator = JSON.parse(sessionStorage.getItem('currentCoordinator'));
-
-    if (this.coordinator?.type) {
-      this.subscriptions.push(
-        this.surveyService.getSurveys('type', this.coordinator.type).subscribe(
-          next => { this.surveys = next; },
-          error => {console.error(error);}
-        )
-      );
+    if (!this.coordinator) {
+      this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
+        params => {
+          if (params['id']) {
+            this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+              res => {
+                this.coordinator = res;
+                this.userService.changeCurrentCoordinator(this.coordinator);
+              },
+              error => console.error(error),
+              ()=> {
+                this.getSurveys();
+              }
+            );
+          }
+        }
+      )
+    } else {
+      this.getSurveys();
     }
 
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription instanceof Subscriber) {
-        subscription.unsubscribe();
-      }
-    });
+    this._destroyed.next(true);
+    this._destroyed.complete();
+  }
+
+  getSurveys() {
+    this.surveyService.getSurveys('type', this.coordinator.type).subscribe(
+      next => { this.surveys = next; },
+      error => {console.error(error);}
+    );
   }
 
 }

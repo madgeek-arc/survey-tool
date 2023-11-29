@@ -7,45 +7,53 @@ import {Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
+import {StakeholdersService} from "../../../services/stakeholders.service";
 
 @Component({
   selector: 'app-contributions-my-surveys',
   templateUrl: './my-surveys.component.html',
-  providers: [SurveyService]
+  providers: [SurveyService, StakeholdersService]
 })
 
 export class MySurveysComponent implements OnInit, OnDestroy{
 
   private _destroyed: Subject<boolean> = new Subject();
-  groupId: string = null;
-  currentGroup: Stakeholder = null;
+  id: string = null;
+  stakeholder: Stakeholder = null;
   surveys: Paging<Model>;
 
-  constructor(private userService: UserService, private surveyService: SurveyService, private route: ActivatedRoute) {
+  constructor(private userService: UserService, private surveyService: SurveyService,
+              private route: ActivatedRoute, private stakeholdersService: StakeholdersService) {
   }
 
   ngOnInit() {
     this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
       params => {
-        this.groupId = params['id']
-        if (this.groupId)
-          this.matchCurrentGroupFromUserInfo();
+        this.id = params['id']
+        if (this.id)
+          this.getStakeholder();
       }
     );
   }
 
-  matchCurrentGroupFromUserInfo() {
+  getStakeholder() {
+    this.stakeholdersService.getStakeholder(this.id).pipe(takeUntil(this._destroyed)).subscribe(
+      res => { this.stakeholder = res; },
+      error => { console.error(error); },
+      () => {}
+    );
+
     let userInfo: UserInfo = JSON.parse(sessionStorage.getItem('userInfo'));
     if (userInfo) {
       userInfo.stakeholders.forEach(sh => {
-        if (sh.id === this.groupId)
-          this.currentGroup = sh;
+        if (sh.id === this.id)
+          this.stakeholder = sh;
       });
     }
 
-    if (this.currentGroup) {
-      this.userService.currentStakeholder.next(this.currentGroup);
-      this.surveyService.getSurveys('stakeholderId', this.currentGroup.id)
+    if (this.stakeholder) {
+      this.userService.currentStakeholder.next(this.stakeholder);
+      this.surveyService.getSurveys('stakeholderId', this.stakeholder.id)
         .pipe(takeUntil(this._destroyed)).subscribe(next => {
         this.surveys = next;
       });

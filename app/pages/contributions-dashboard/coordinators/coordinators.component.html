@@ -24,7 +24,7 @@
             <button class="uk-button uk-button-primary">Export to tsv</button>
             <ul class="uk-card uk-card-body uk-card-default uk-list uk-padding-small uk-margin-remove"
                 uk-drop="mode: hover; animation: reveal-top; animate-out: true; pos: left-top; offset: 0; duration: 500">
-              <li *ngFor="let survey of getFacet('surveyId')" class="uk-margin-bottom">
+              <li *ngFor="let survey of surveys" class="uk-margin-bottom">
                 <a class="uk-flex uk-flex-middle" (click)="exportToCsv(survey.value)">
                   <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
                 </a>
@@ -36,13 +36,13 @@
           <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" uk-grid>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
-                         [items]="getFacet('surveyId')" [(ngModel)]="selectedSurvey"
+                         [items]="surveys" [(ngModel)]="selectedSurvey"
                          placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
               </ng-select>
             </div>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
-                         [items]="surveyEntries?.facets[8]?.values" [(ngModel)]="selectedStakeholder"
+                         [items]="stakeholderList" [(ngModel)]="selectedStakeholder"
                          placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
               </ng-select>
             </div>

@@ -7,6 +7,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {fromEvent, Subject} from "rxjs";
 import {debounceTime, distinctUntilChanged, map, takeUntil} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UserService} from "../../../../services/user.service";
 
 declare var UIkit;
 
@@ -37,15 +38,10 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   currentPage = 0;
 
   constructor(private router: Router, private route: ActivatedRoute, private fb: FormBuilder,
-              private stakeholdersService: StakeholdersService) {
+              private stakeholdersService: StakeholdersService, private userService: UserService) {
   }
 
   ngOnInit() {
-
-    this.coordinator = JSON.parse(sessionStorage.getItem('currentCoordinator'));
-    console.log(this.coordinator);
-
-
     this.formInitialization();
 
     this.route.queryParams.subscribe(params => {
@@ -65,28 +61,26 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
 
       this.updateURLParameters('quantity',this.pageSize);
 
+      this.coordinator = JSON.parse(sessionStorage.getItem('currentCoordinator'));
       if (!this.coordinator) {
         this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
           params => {
             if (params['id'])
               this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
-                res=> this.coordinator = res,
+                res => {
+                  this.coordinator = res;
+                  this.userService.changeCurrentCoordinator(this.coordinator);
+                },
                 error => console.error(error),
                 ()=> {
-                  this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters).pipe(takeUntil(this._destroyed)).subscribe(
-                    res => {this.stakeholders = res;},
-                    error => {console.error(error)},
-                    () => {
-                      this.paginationInit();
-                      this.ready = true;
-                    }
-                  );
+                  this.getStakeholders();
                 }
               );
           }
         )
+      } else {
+        this.getStakeholders();
       }
-
 
     });
 
@@ -107,7 +101,6 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
     this._destroyed.next(true);
     this._destroyed.complete();
   }
@@ -117,6 +110,18 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
     this.stakeholderForm.get('name').setValidators(Validators.required);
     this.stakeholderForm.get('country').setValidators(Validators.required);
     this.stakeholderForm.get('type').setValidators(Validators.required);
+  }
+
+  getStakeholders() {
+    this.stakeholdersService.getStakeholdersByType(this.coordinator.type, this.urlParameters)
+        .pipe(takeUntil(this._destroyed)).subscribe(
+      res => {this.stakeholders = res;},
+      error => {console.error(error)},
+      () => {
+        this.paginationInit();
+        this.ready = true;
+      }
+    );
   }
 
   addStakeholder() {

@@ -28,6 +28,7 @@ export class UserService {
 
   changeCurrentCoordinator(currentCoordinator: Coordinator) {
     this.currentCoordinator.next(currentCoordinator);
+    // console.log(this.currentCoordinator);
     sessionStorage.setItem('currentCoordinator', JSON.stringify(currentCoordinator));
     sessionStorage.removeItem('currentStakeholder');
     this.currentStakeholder.next(null);
