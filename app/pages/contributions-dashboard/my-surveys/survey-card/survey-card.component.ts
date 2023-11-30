@@ -40,7 +40,8 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
                       this.permissions = next;
                     })
                   );
-                })
+                },
+                error => {console.debug(JSON.stringify(error))})
             );
           }
         },
