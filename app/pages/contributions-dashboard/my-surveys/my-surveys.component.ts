@@ -8,6 +8,7 @@ import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
 import {StakeholdersService} from "../../../services/stakeholders.service";
+import {forEach} from "@angular-devkit/schematics";
 
 @Component({
   selector: 'app-contributions-my-surveys',
@@ -21,6 +22,8 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   id: string = null;
   stakeholder: Stakeholder = null;
   surveys: Paging<Model>;
+  top: Model[] = [];
+  bottom: Model[] = [];
 
   constructor(private userService: UserService, private surveyService: SurveyService,
               private route: ActivatedRoute, private stakeholdersService: StakeholdersService) {
@@ -53,10 +56,17 @@ export class MySurveysComponent implements OnInit, OnDestroy{
 
     if (this.stakeholder) {
       this.userService.currentStakeholder.next(this.stakeholder);
-      this.surveyService.getSurveys('stakeholderId', this.stakeholder.id)
-        .pipe(takeUntil(this._destroyed)).subscribe(next => {
-        this.surveys = next;
-      });
+      this.surveyService.getSurveys('stakeholderId', this.stakeholder.id).pipe(takeUntil(this._destroyed))
+        .subscribe(next => {
+            this.surveys = next;
+            this.surveys.results.forEach(model => {
+              if (model.locked && model.active)
+                this.top.push(model);
+              if (model.locked && !model.active)
+                this.bottom.push(model);
+            });
+          }
+        );
     }
 
   }
