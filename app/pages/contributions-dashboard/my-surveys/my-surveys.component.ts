@@ -71,6 +71,11 @@ export class MySurveysComponent implements OnInit, OnDestroy{
 
   }
 
+  getSurveysForImport(survey: Model) {
+    console.log(survey.name);
+    console.log(survey.configuration.importFrom);
+  }
+
   ngOnDestroy() {
     this._destroyed.next(true);
     this._destroyed.complete();

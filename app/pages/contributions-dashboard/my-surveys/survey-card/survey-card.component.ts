@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnDestroy, SimpleChanges} from "@angular/core";
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from "@angular/core";
 import {SurveyAnswer, ResourcePermission} from "../../../../domain/survey";
 import {UserService} from "../../../../services/user.service";
 import {Stakeholder} from "../../../../domain/userInfo";
@@ -15,6 +15,7 @@ import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 
 export class SurveyCardComponent implements OnChanges, OnDestroy {
   @Input() survey: Model;
+  @Output() selectedSurvey = new EventEmitter<Model>();
 
   subscriptions = [];
   currentGroup: Stakeholder = null;
@@ -85,6 +86,10 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
     } else {
       this.router.navigate([`contributions/${this.currentGroup.id}/mySurveys/${this.survey.id}/answer/validate`]);
     }
+  }
+
+  emitSurveyForImport() {
+    this.selectedSurvey.emit(this.survey);
   }
 
 }

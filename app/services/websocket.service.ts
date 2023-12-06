@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {environment} from "../../environments/environment";
 import {BehaviorSubject} from "rxjs";
 import {UserActivity} from "../domain/userInfo";
+import {count} from "rxjs/operators";
 
 declare var SockJS;
 declare var Stomp;
@@ -13,6 +14,7 @@ export class WebsocketService {
 
   stompClient: Promise<typeof Stomp>;
   msg: BehaviorSubject<UserActivity[]> = new BehaviorSubject<UserActivity[]>(null);
+  count = 0;
 
   constructor() {
     // this.initializeWebSocketConnection();
@@ -30,6 +32,7 @@ export class WebsocketService {
         const timer = setInterval(() => {
           if (stomp.connected) {
             clearInterval(timer);
+            that.count = 0;
             stomp.subscribe(`/topic/active-users/${resourceType}/${id}`, (message) => {
               if (message.body) {
                 that.msg.next(JSON.parse(message.body));
@@ -38,10 +41,12 @@ export class WebsocketService {
             // that.WsJoin(id, resourceType, action);
             resolve(stomp);
           }
-        }, 500);
+        }, 1000);
       }, function (error) {
-        setTimeout( () => {that.initializeWebSocketConnection(id, resourceType)}, 1000);
-        console.log('STOMP: Reconecting...');
+        let timeout = 1000;
+        that.count > 20 ? timeout = 10000 : that.count++ ;
+        setTimeout( () => {that.initializeWebSocketConnection(id, resourceType)}, timeout);
+        console.log('STOMP: Reconectingzzz...'+ that.count);
       });
     });
 
