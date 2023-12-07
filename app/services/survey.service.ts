@@ -37,6 +37,10 @@ export class SurveyService {
     return this.http.patch<SurveyAnswer>(this.base + `/answers/${answerId}/validation?validated=${valid}`, null, this.options);
   }
 
+  importSurveyAnswer(answerId: string, modelId: string) {
+    return this.http.put(this.base + `/answers/${answerId}/import/${modelId}`, {});
+  }
+
   getSurveys(type: string, id: string) {
     let params = new HttpParams();
     params = params.append(type, id);

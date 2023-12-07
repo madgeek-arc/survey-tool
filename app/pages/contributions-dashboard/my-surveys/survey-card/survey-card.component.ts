@@ -5,7 +5,7 @@ import {Stakeholder} from "../../../../domain/userInfo";
 import {SurveyService} from "../../../../services/survey.service";
 import {Router} from "@angular/router";
 import {Subscriber} from "rxjs";
-import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
+import {ImportSurveyData, Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 
 @Component({
   selector: 'app-survey-card',
@@ -15,13 +15,12 @@ import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 
 export class SurveyCardComponent implements OnChanges, OnDestroy {
   @Input() survey: Model;
-  @Output() selectedSurvey = new EventEmitter<Model>();
+  @Output() selectedSurvey = new EventEmitter<ImportSurveyData>();
 
   subscriptions = [];
   currentGroup: Stakeholder = null;
   surveyAnswer: SurveyAnswer = null
   permissions: ResourcePermission[] = null;
-  chapterIds: string[] = [];
 
   constructor(private userService: UserService, private surveyService: SurveyService, private router: Router) {
   }
@@ -89,7 +88,16 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
   }
 
   emitSurveyForImport() {
-    this.selectedSurvey.emit(this.survey);
+    let data: ImportSurveyData = new class implements ImportSurveyData {
+      importFrom: string[] = [];
+      importFromNames: string[] = [];
+      surveyId: string;
+      surveyAnswerId: string;
+    };
+    data.importFrom = this.survey.configuration.importFrom;
+    data.surveyId = this.survey.id;
+    data.surveyAnswerId = this.surveyAnswer.id;
+    this.selectedSurvey.emit(data);
   }
 
 }

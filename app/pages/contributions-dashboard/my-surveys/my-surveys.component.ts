@@ -3,12 +3,11 @@ import {Stakeholder, UserInfo} from "../../../domain/userInfo";
 import {UserService} from "../../../services/user.service";
 import {Paging} from "../../../../catalogue-ui/domain/paging";
 import {SurveyService} from "../../../services/survey.service";
-import {Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
+import {ImportSurveyData, Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
 import {Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {StakeholdersService} from "../../../services/stakeholders.service";
-import {forEach} from "@angular-devkit/schematics";
 
 @Component({
   selector: 'app-contributions-my-surveys',
@@ -22,10 +21,13 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   id: string = null;
   stakeholder: Stakeholder = null;
   surveys: Paging<Model>;
+  importFromData: ImportSurveyData = null;
+  importSelection: string = '';
+  showAlert= false;
   top: Model[] = [];
   bottom: Model[] = [];
 
-  constructor(private userService: UserService, private surveyService: SurveyService,
+  constructor(private userService: UserService, private surveyService: SurveyService, private router: Router,
               private route: ActivatedRoute, private stakeholdersService: StakeholdersService) {
   }
 
@@ -71,9 +73,37 @@ export class MySurveysComponent implements OnInit, OnDestroy{
 
   }
 
-  getSurveysForImport(survey: Model) {
-    console.log(survey.name);
-    console.log(survey.configuration.importFrom);
+  importSurveyAnswer() {
+    if (this.importFromData && this.importSelection) {
+      this.surveyService.importSurveyAnswer(this.importFromData.surveyAnswerId,this.importSelection)
+        .pipe(takeUntil(this._destroyed)).subscribe(
+        res => {
+          this.router.navigate([this.importFromData.surveyId+'/answer'], {relativeTo: this.route});
+        }, error => {console.error(error)},
+        () => { this.clearModal() }
+      );
+    } else {
+      this.showAlert = true;
+    }
+
+  }
+
+  getSurveysForImport(survey: ImportSurveyData) {
+    this.importFromData = survey;
+    for (let i = 0; i < this.importFromData.importFrom.length; i++) {
+      this.surveys.results.forEach(model => {
+        if (model.id === this.importFromData.importFrom[i]) {
+          this.importFromData.importFromNames[i] = model.name;
+          return;
+        }
+      });
+    }
+
+  }
+
+  clearModal() {
+    this.importFromData = null;
+    this.importSelection = '';
   }
 
   ngOnDestroy() {
