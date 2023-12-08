@@ -60,15 +60,14 @@ export class MySurveysComponent implements OnInit, OnDestroy{
       this.userService.currentStakeholder.next(this.stakeholder);
       this.surveyService.getSurveys('stakeholderId', this.stakeholder.id).pipe(takeUntil(this._destroyed))
         .subscribe(next => {
-            this.surveys = next;
-            this.surveys.results.forEach(model => {
-              if (model.locked && model.active)
-                this.top.push(model);
-              if (model.locked && !model.active)
-                this.bottom.push(model);
-            });
-          }
-        );
+          this.surveys = next;
+          this.surveys.results.forEach(model => {
+            if (model.locked && model.active)
+              this.top.push(model);
+            if (model.locked && !model.active)
+              this.bottom.push(model);
+          });
+        });
     }
 
   }
@@ -104,6 +103,12 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   clearModal() {
     this.importFromData = null;
     this.importSelection = '';
+  }
+
+  clearError() {
+    setTimeout(()=> {
+      this.showAlert = false;
+    }, 600);
   }
 
   ngOnDestroy() {
