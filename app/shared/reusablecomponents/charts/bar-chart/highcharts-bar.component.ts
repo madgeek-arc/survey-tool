@@ -20,6 +20,7 @@ export class HighchartsBarComponent implements OnChanges{
   @Input() mapData: (number | SeriesMapDataOptions | [string, number])[] = [];
   @Input() title: string = null;
   @Input() subTitle: string = null;
+  @Input() caption: string = null;
   @Input() dataSeriesSuffix: string = null;
 
   backgroundColor: string = '#ffffff';
@@ -53,6 +54,9 @@ export class HighchartsBarComponent implements OnChanges{
       },
       subtitle: {
         text: this.subTitle !== null ? this.subTitle : '(in millions of Euro)',
+      },
+      caption: {
+        text: this.caption
       },
       credits: {
         enabled: false,

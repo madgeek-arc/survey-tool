@@ -23,6 +23,7 @@ export class HighchartsColorAxisMapComponent {
   @Input() mapData: (number | SeriesMapDataOptions | [string, number])[] = [];
   @Input() title: string = null;
   @Input() subtitle: string = null;
+  @Input() caption: string = null;
   @Input() dataSeriesSuffix: string = null;
   @Input() toolTipData: Map<string, string> = new Map;
   @Input() participatingCountries: string[] = [];
@@ -54,6 +55,7 @@ export class HighchartsColorAxisMapComponent {
       setTimeout(() => {
         componentContext.chartOptions.title.text = this.title;
         componentContext.chartOptions.subtitle.text = this.subtitle;
+        componentContext.chartOptions.caption.text = this.caption;
         let tmpArray: (number | SeriesMapDataOptions | [string, number])[] = [];
         let found = false;
         for (let i = 0; i < this.dataForInitialization.length; i++) {
@@ -123,6 +125,9 @@ export class HighchartsColorAxisMapComponent {
       },
       subtitle: {
         text: this.subtitle,
+      },
+      caption: {
+        text: this.caption
       },
       mapNavigation: {
         enabled: true,
