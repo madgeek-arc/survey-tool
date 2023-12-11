@@ -29,7 +29,13 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
       this.currentStakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
       if (this.currentStakeholder !== null) {
         this.ready = true;
-        this.isManager = this.checkIfManager();
+        this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe({
+          next: value => {
+            if (value)
+              this.isManager = this.checkIfManager();
+          }
+        })
+
       }
     });
     this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
@@ -44,7 +50,8 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
 
   checkIfManager(): boolean {
     if (this.currentStakeholder) {
-      let userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+      let userInfo = this.userService.getCurrentUserInfo();
+
       for (const manager of this.currentStakeholder.admins) {
         if (userInfo.user.email === manager){
           return true;

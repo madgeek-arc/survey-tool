@@ -48,7 +48,7 @@ export class MySurveysComponent implements OnInit, OnDestroy{
       () => {}
     );
 
-    let userInfo: UserInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    let userInfo: UserInfo = this.userService.getCurrentUserInfo();
     if (userInfo) {
       userInfo.stakeholders.forEach(sh => {
         if (sh.id === this.id)

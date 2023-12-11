@@ -46,7 +46,7 @@ export class WebsocketService {
         let timeout = 1000;
         that.count > 20 ? timeout = 10000 : that.count++ ;
         setTimeout( () => {that.initializeWebSocketConnection(id, resourceType)}, timeout);
-        console.log('STOMP: Reconectingzzz...'+ that.count);
+        console.log('STOMP: Reconecting...'+ that.count);
       });
     });
 

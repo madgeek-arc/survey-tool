@@ -139,7 +139,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   }
 
   updateUserInfo() {
-    this.userService.userInfo.pipe(takeUntil(this._destroyed)).subscribe(next => {
+    this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe(next => {
       this.userInfo = next;
       if (this.userInfo) {
         this.subType = this.findSubType(this.userInfo.stakeholders, this.stakeholderId);

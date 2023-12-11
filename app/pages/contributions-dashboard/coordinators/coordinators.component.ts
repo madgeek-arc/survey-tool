@@ -73,7 +73,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
             }
           );
 
-          this.userService.userInfo.pipe(takeUntil(this._destroyed)).subscribe(
+          this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe(
             next => {
               this.userInfo = next;
               if (this.userInfo) {

@@ -1,19 +1,24 @@
-import {Injectable} from "@angular/core";
+import {Injectable, OnDestroy} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {Coordinator, Profile, Stakeholder, GroupMembers, User, UserInfo} from "../domain/userInfo";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
 
 @Injectable()
-export class UserService {
+export class UserService implements OnDestroy {
+
+  private _destroyed: Subject<boolean> = new Subject();
 
   options = {withCredentials: true};
   base = environment.API_ENDPOINT;
 
   userId = null;
-  userInfo = new BehaviorSubject<UserInfo>(null);
+  // userInfo = new BehaviorSubject<UserInfo>(null);
   currentStakeholder = new BehaviorSubject<Stakeholder>(null);
   currentCoordinator = new BehaviorSubject<Coordinator>(null);
+  private userInfoChangeSubject = new BehaviorSubject<UserInfo>(null);
+  private currentUserInfo: UserInfo = null;
 
   constructor(public http: HttpClient) {}
 
@@ -38,9 +43,31 @@ export class UserService {
     return this.http.get<UserInfo>(this.base + '/user/info');
   }
 
+  getUserObservable() {
+    if (!this.currentUserInfo) {
+      this.getUserInfo().pipe(takeUntil(this._destroyed)).subscribe({
+        next: value => this.setUserInfo(value),
+        error: err => console.error(err),
+      });
+    }
+
+    return this.userInfoChangeSubject.asObservable();
+  }
+
+  getCurrentUserInfo() {
+    return this.currentUserInfo;
+  }
+
   setUserInfo(userInfo: UserInfo){
     sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
-    this.userInfo.next(userInfo);
+    this.currentUserInfo = userInfo;
+    this.userInfoChangeSubject.next(userInfo);
+  }
+
+  clearUserInfo() {
+    this.currentUserInfo = null;
+    this.userInfoChangeSubject.next(null);
+    this.userInfoChangeSubject.complete();
   }
 
   setUserConsent(id: string) {
@@ -57,5 +84,12 @@ export class UserService {
 
   updateProfilePicture(picture: string | ArrayBuffer, id: string) {
     return this.http.post(this.base + `/users/${id}/profile/picture`, {picture});
+  }
+
+
+  ngOnDestroy(): void {
+    this._destroyed.next(true);
+    this.clearUserInfo();
+    this._destroyed.complete();
   }
 }

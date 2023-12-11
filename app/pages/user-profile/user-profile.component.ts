@@ -20,7 +20,7 @@ export class UserProfileComponent implements OnInit {
   constructor(private userService: UserService, private compressImage: CompressImageService) {}
 
   ngOnInit() {
-    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    this.userInfo = this.userService.getCurrentUserInfo();
     if (this.userInfo.user.profile === null)
       this.userInfo.user.profile = new Profile();
   }
