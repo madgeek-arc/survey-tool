@@ -47,7 +47,10 @@ export class UserService implements OnDestroy {
     if (!this.currentUserInfo) {
       this.getUserInfo().pipe(takeUntil(this._destroyed)).subscribe({
         next: value => this.setUserInfo(value),
-        error: err => console.error(err),
+        error: err => {
+          console.error(err);
+          this.clearUserInfo();
+        },
       });
     }
 
@@ -88,8 +91,12 @@ export class UserService implements OnDestroy {
 
 
   ngOnDestroy(): void {
-    this._destroyed.next(true);
     this.clearUserInfo();
+    this.currentStakeholder.next(null);
+    this.currentStakeholder.complete();
+    this.currentCoordinator.next(null);
+    this.currentCoordinator.complete();
+    this._destroyed.next(true);
     this._destroyed.complete();
   }
 }
