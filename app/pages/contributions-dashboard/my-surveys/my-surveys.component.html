@@ -1,20 +1,19 @@
 <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
   <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
 
-    <h3 *ngIf="top.length > 0">Current survey(s)</h3>
-    <div *ngIf="top.length > 0" class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+    <h3 *ngIf="currentSurveys.length > 0">Current survey(s)</h3>
+    <div *ngIf="currentSurveys.length > 0" class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
 
-
-      <div *ngFor="let survey of top" class="uk-margin-remove-top">
+      <div *ngFor="let survey of currentSurveys" class="uk-margin-remove-top">
         <app-survey-card *ngIf="survey.locked && survey.active" [survey]="survey" (selectedSurvey)="getSurveysForImport($event)"></app-survey-card>
       </div>
 
     </div>
 
-    <h3 *ngIf="bottom.length > 0">Previous survey(s)</h3>
-    <div *ngIf="bottom.length > 0" class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+    <h3 *ngIf="previousSurveys.length > 0">Previous survey(s)</h3>
+    <div *ngIf="previousSurveys.length > 0" class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
 
-      <div *ngFor="let survey of bottom" class="uk-margin-remove-top">
+      <div *ngFor="let survey of previousSurveys" class="uk-margin-remove-top">
         <app-survey-card *ngIf="survey.locked && !survey.active" [survey]="survey"></app-survey-card>
       </div>
 

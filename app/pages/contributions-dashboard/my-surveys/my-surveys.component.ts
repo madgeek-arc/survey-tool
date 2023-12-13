@@ -24,8 +24,8 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   importFromData: ImportSurveyData = null;
   importSelection: string = '';
   showAlert= false;
-  top: Model[] = [];
-  bottom: Model[] = [];
+  currentSurveys: Model[] = [];
+  previousSurveys: Model[] = [];
 
   constructor(private userService: UserService, private surveyService: SurveyService, private router: Router,
               private route: ActivatedRoute, private stakeholdersService: StakeholdersService) {
@@ -63,9 +63,9 @@ export class MySurveysComponent implements OnInit, OnDestroy{
           this.surveys = next;
           this.surveys.results.forEach(model => {
             if (model.locked && model.active)
-              this.top.push(model);
+              this.currentSurveys.push(model);
             if (model.locked && !model.active)
-              this.bottom.push(model);
+              this.previousSurveys.push(model);
           });
         });
     }

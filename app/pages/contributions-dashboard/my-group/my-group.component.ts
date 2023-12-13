@@ -16,9 +16,10 @@ import UIkit from 'uikit';
 
 export class MyGroupComponent implements OnInit, OnDestroy {
 
-  private _destroyed: Subject<boolean> = new Subject();  currentGroup: Stakeholder = null;
+  private _destroyed: Subject<boolean> = new Subject();
+  currentGroup: Stakeholder = null;
   members: GroupMembers = null
-  stakeholder: Stakeholder = null;
+  // stakeholder: Stakeholder = null;
   contributorEmail: string = null;
   userEmail: string = null;
   invitationToken: string = null;
@@ -38,17 +39,16 @@ export class MyGroupComponent implements OnInit, OnDestroy {
       } else {
         this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
           params => {
-            if (params['id'])
+            if (params['id']) {
               this.stakeholdersService.getStakeholder(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
                 res => {
-                  this.stakeholder = res;
-                  this.userService.changeCurrentStakeholder(this.stakeholder);
+                  this.currentGroup = res;
+                  this.userService.changeCurrentStakeholder(this.currentGroup);
                 },
                 error => console.error(error),
-                ()=> {
-                  this.getMembers();
-                }
+                ()=> { this.getMembers(); }
               );
+            }
           }
         )
       }
@@ -62,13 +62,12 @@ export class MyGroupComponent implements OnInit, OnDestroy {
   }
 
   getMembers() {
-    this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(next => {
+    this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+      next => {
         this.members = next;
-      },
-      error => {
+      }, error => {
         console.error(error);
-      },
-      () => {
+      }, () => {
         this.userEmail = this.userService.userId;
         this.isManager = this.checkIfManager(this.userEmail);
       }

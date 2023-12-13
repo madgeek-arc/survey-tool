@@ -20,6 +20,9 @@ export class SurveysListComponent implements OnInit{
   private _destroyed: Subject<boolean> = new Subject();
   coordinator: Coordinator = null;
   surveys: Paging<Model> = null;
+  currentSurveys: Model[] = [];
+  previousSurveys: Model[] = [];
+  draftSurveys: Model[] = [];
 
   constructor(private surveyService: SurveyService, private route: ActivatedRoute,
               private stakeholdersService: StakeholdersService, private userService: UserService) {
@@ -57,7 +60,23 @@ export class SurveysListComponent implements OnInit{
 
   getSurveys() {
     this.surveyService.getSurveys('type', this.coordinator.type).subscribe(
-      next => { this.surveys = next; },
+      next => {
+        this.surveys = next;
+        this.surveys.results.forEach(model => {
+          if (!model.locked) {
+            this.draftSurveys.push(model);
+            return;
+          }
+          if (model.locked && model.active){
+            this.currentSurveys.push(model);
+            return;
+          }
+          if (model.locked && !model.active){
+            this.previousSurveys.push(model);
+            return;
+          }
+        });
+      },
       error => {console.error(error);}
     );
   }
