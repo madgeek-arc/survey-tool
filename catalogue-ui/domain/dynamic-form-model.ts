@@ -97,6 +97,7 @@ export class Field {
   parent: string;
   label: StyledText;
   accessPath: string;
+  deprecated: boolean;
   kind: string;
   typeInfo: TypeInfo;
   includedInSnippet: boolean;
@@ -111,6 +112,7 @@ export class Field {
     this.parent = '';
     this.label = new StyledText();
     this.accessPath = '';
+    this.deprecated = false;
     this.typeInfo = new TypeInfo()
     this.includedInSnippet = false;
     this.form = new Form();
@@ -169,7 +171,21 @@ export class Model {
   createdBy: string;
   modifiedBy: string;
   sections: Section[];
+  configuration: Configuration;
   locked: boolean;
+  active: boolean;
+}
+
+export class Configuration {
+  prefillable: boolean;
+  importFrom: string[]
+}
+
+export interface ImportSurveyData {
+  importFrom: string[],
+  importFromNames: string[];
+  surveyAnswerId: string;
+  surveyId: string;
 }
 
 export class UiVocabulary {

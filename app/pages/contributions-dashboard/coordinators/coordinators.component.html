@@ -9,14 +9,14 @@
       <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
 
         <div class="uk-width-4-5">
-          <div *ngIf="stakeholder" class="uk-alert uk-alert-info">
-            <p>Please note that for the first survey (2021):</p>
-            <ol>
-              <li>EOSC-SB Members are invited to re-use the Observatory dashboard visualisations.</li>
-              <li>EOSC-SB Members are invited to analyse the survey data to improve their policy development and deployment.</li>
-              <li>Details of individual country surveys, such as country specific financial information, should not be shared outside the EOSC-SB, since the methodology to calculate financial investments is still being developed.</li>
-            </ol>
-          </div>
+<!--          <div *ngIf="stakeholder" class="uk-alert uk-alert-info">-->
+<!--            <p>Please note that for the first survey (2021):</p>-->
+<!--            <ol>-->
+<!--              <li>EOSC-SB Members are invited to re-use the Observatory dashboard visualisations.</li>-->
+<!--              <li>EOSC-SB Members are invited to analyse the survey data to improve their policy development and deployment.</li>-->
+<!--              <li>Details of individual country surveys, such as country specific financial information, should not be shared outside the EOSC-SB, since the methodology to calculate financial investments is still being developed.</li>-->
+<!--            </ol>-->
+<!--          </div>-->
         </div>
 
         <div class="uk-width-1-5">
@@ -24,7 +24,7 @@
             <button class="uk-button uk-button-primary">Export to tsv</button>
             <ul class="uk-card uk-card-body uk-card-default uk-list uk-padding-small uk-margin-remove"
                 uk-drop="mode: hover; animation: reveal-top; animate-out: true; pos: left-top; offset: 0; duration: 500">
-              <li *ngFor="let survey of getFacet('surveyId')" class="uk-margin-bottom">
+              <li *ngFor="let survey of surveys" class="uk-margin-bottom">
                 <a class="uk-flex uk-flex-middle" (click)="exportToCsv(survey.value)">
                   <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
                 </a>
@@ -36,13 +36,13 @@
           <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" uk-grid>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
-                         [items]="getFacet('surveyId')" [(ngModel)]="selectedSurvey"
+                         [items]="surveys" [(ngModel)]="selectedSurvey"
                          placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
               </ng-select>
             </div>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
-                         [items]="surveyEntries?.facets[8]?.values" [(ngModel)]="selectedStakeholder"
+                         [items]="stakeholderList" [(ngModel)]="selectedStakeholder"
                          placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
               </ng-select>
             </div>
@@ -102,7 +102,7 @@
             <thead>
             <tr>
 <!--              <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>-->
-              <th class="">EOSC SB member</th>
+              <th class="">Stakeholder</th>
               <th class="">Survey</th>
               <th class="">Modified</th>
               <th class="">Validated</th>

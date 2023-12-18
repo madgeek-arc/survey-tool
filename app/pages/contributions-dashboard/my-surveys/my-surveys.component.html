@@ -1,13 +1,55 @@
 <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
   <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
 
-    <div *ngIf="surveys" class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+    <h3 *ngIf="currentSurveys.length > 0">Current survey(s)</h3>
+    <div *ngIf="currentSurveys.length > 0" class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
 
-      <div *ngFor="let survey of surveys.results" class="uk-margin-remove-top">
-        <app-survey-card [survey]="survey"></app-survey-card>
+      <div *ngFor="let survey of currentSurveys" class="uk-margin-remove-top">
+        <app-survey-card *ngIf="survey.locked && survey.active" [survey]="survey" (selectedSurvey)="getSurveysForImport($event)"></app-survey-card>
       </div>
 
     </div>
 
+    <h3 *ngIf="previousSurveys.length > 0">Previous survey(s)</h3>
+    <div *ngIf="previousSurveys.length > 0" class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+
+      <div *ngFor="let survey of previousSurveys" class="uk-margin-remove-top">
+        <app-survey-card *ngIf="survey.locked && !survey.active" [survey]="survey"></app-survey-card>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div id="import-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <button class="uk-modal-close-default" type="button" uk-close (click)="clearModal()"></button>
+    <h4 class="uk-modal-title uk-margin-small-top">Import data from previous survey</h4>
+    <p>You can use a previous survey answer to prefill the current one. Keep in mind that this selection will overwrite
+      any changes that you may have previously made on the current survey. Select the survey that you want to use as a
+      prefill choice from the list below:</p>
+
+    <div *ngIf="showAlert" class="uk-alert-warning" uk-alert>
+      <a href class="uk-alert-close" uk-close (click)="clearError()"></a>
+      <p>Please select one before importing</p>
+    </div>
+
+    <div *ngIf="importFromData">
+      <div *ngFor="let modelId of importFromData.importFrom; let i=index" class="uk-margin-small-bottom">
+        <label [for]="modelId">
+          <input type="radio" [id]="modelId" name="surveyToImport" class="uk-radio" [value]="modelId" [(ngModel)]="importSelection">
+          {{' '+importFromData.importFromNames[i]}}
+        </label>
+      </div>
+    </div>
+
+    <p class="uk-text-right">
+      <button class="uk-button uk-button-default uk-modal-close" type="button" (click)="clearModal()">Cancel</button>
+      <button class="uk-button uk-button-primary" [ngClass]="{'uk-modal-close': !!importSelection}"
+              type="button" [title]="!importSelection ? 'Select survey to import from' : 'Click to import'"
+              (click)="importSurveyAnswer()">Import</button>
+    </p>
   </div>
 </div>

@@ -58,6 +58,7 @@
         </li>
 
       </ul>
+<!--      For messages-->
       <ul *ngIf="projectName === 'Observatory'">
         <li [routerLinkActive]="['current_section']" class="">
           <a [routerLink]="['contributions/'+(currentStakeholder ? currentStakeholder.id : currentCoordinator.id)+'/messages']"

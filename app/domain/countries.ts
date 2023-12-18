@@ -55,4 +55,4 @@ export const countries = [
   {id : 'UA', name : 'Ukraine'},
   {id : 'GB', name : 'United Kingdom'},
   // {id : 'AX', name : 'Åland Islands'}
-  ];
+];

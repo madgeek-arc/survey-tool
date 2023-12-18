@@ -126,6 +126,8 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
 
       legend: {
         enabled: true,
+        layout: 'horizontal',
+        verticalAlign: 'top',
         accessibility: {
           enabled: true
         }

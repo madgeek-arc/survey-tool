@@ -14,6 +14,8 @@ import {HighchartsColorAxisMapComponent} from "./charts/color-axis-map/highchart
 import {HighchartsBarComponent} from "./charts/bar-chart/highcharts-bar.component";
 import {GaugeActivityComponent} from "./charts/gauge-activity/gauge-activity.component";
 import {GaugeSimpleComponent} from "./charts/gauge-simple/gauge-simple.component";
+import {PieChartComponent} from "./charts/pie-chart/pie-chart.component";
+import {HighchartsColumnRangesComponent} from "./charts/column-ranges-chart/highcharts-column-ranges.component";
 
 @NgModule({
   imports: [
@@ -34,8 +36,10 @@ import {GaugeSimpleComponent} from "./charts/gauge-simple/gauge-simple.component
     HighchartsBubbleMapComponent,
     HighchartsColorAxisMapComponent,
     HighchartsBarComponent,
+    HighchartsColumnRangesComponent,
     GaugeActivityComponent,
-    GaugeSimpleComponent
+    GaugeSimpleComponent,
+    PieChartComponent
   ],
   exports: [
     SideMenuDashboardComponent,
@@ -47,8 +51,10 @@ import {GaugeSimpleComponent} from "./charts/gauge-simple/gauge-simple.component
     HighchartsBubbleMapComponent,
     HighchartsColorAxisMapComponent,
     HighchartsBarComponent,
+    HighchartsColumnRangesComponent,
     GaugeActivityComponent,
-    GaugeSimpleComponent
+    GaugeSimpleComponent,
+    PieChartComponent
   ],
   providers: [],
 })

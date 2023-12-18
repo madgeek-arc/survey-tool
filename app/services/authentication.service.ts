@@ -3,6 +3,7 @@ import {deleteCookie, getCookie} from "../../catalogue-ui/shared/reusable-compon
 import {environment} from "../../../environments/environment";
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
+import {UserService} from "./user.service";
 
 
 @Injectable()
@@ -12,13 +13,13 @@ export class AuthenticationService {
   loginRoute = environment.API_LOGIN;
   cookieName = 'AccessToken';
 
-  constructor(private router: Router, private http: HttpClient) {
-    setInterval( ()=> {
-      this.http.head(this.base + '/refreshLogin', {withCredentials: true}).subscribe(
-        suc => {console.log('Refreshed login ' + suc)},
-        error => {console.error(error)}
-      );
-    }, 1000 * 60 * 10);
+  constructor(private router: Router, private http: HttpClient, private userService: UserService) {
+    // setInterval( ()=> {
+    //   this.http.head(this.base + '/refreshLogin', {withCredentials: true}).subscribe(
+    //     suc => {console.log('Refreshed login ' + suc)},
+    //     error => {console.error(error)}
+    //   );
+    // }, 1000 * 60 * 10);
   }
 
   tryLogin() {
@@ -38,11 +39,12 @@ export class AuthenticationService {
   logout() {
     sessionStorage.clear();
     deleteCookie(this.cookieName);
+    this.userService.clearUserInfo();
     window.location.href = this.base + '/logout';
   }
 
   get authenticated(): boolean {
-    return getCookie(this.cookieName) !== null;
+    return this.userService.getCurrentUserInfo() !== null;
   }
 
   redirect() {
@@ -51,6 +53,7 @@ export class AuthenticationService {
       sessionStorage.removeItem('redirectUrl');
       this.router.navigate([url]);
     }
+    return;
   }
 
 }

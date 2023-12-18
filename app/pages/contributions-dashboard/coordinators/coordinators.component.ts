@@ -3,10 +3,12 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {SurveyService} from "../../../services/survey.service";
 import {UserService} from "../../../services/user.service";
 import {SurveyInfo} from "../../../domain/survey";
-import {Stakeholder} from "../../../domain/userInfo";
+import {Coordinator, Stakeholder, UserInfo} from "../../../domain/userInfo";
 import {Paging} from "../../../../catalogue-ui/domain/paging";
 import {URLParameter} from "../../../../catalogue-ui/domain/url-parameter";
-import {Subscriber} from "rxjs";
+import {Subject, Subscriber} from "rxjs";
+import {takeUntil} from "rxjs/operators";
+import {FacetValue} from "../../../../catalogue-ui/domain/facet";
 
 @Component({
   selector: 'app-coordinator-dashboard',
@@ -15,9 +17,11 @@ import {Subscriber} from "rxjs";
 
 export class CoordinatorsComponent implements OnInit, OnDestroy{
 
-  subscriptions = [];
+  private _destroyed: Subject<boolean> = new Subject();
   urlParameters: URLParameter[] = [];
+  userInfo: UserInfo = null;
   stakeholder: Stakeholder = null;
+  coordinator: Coordinator = null;
 
   surveyEntries: Paging<SurveyInfo>;
   surveyEntriesResults: SurveyInfo[];
@@ -25,6 +29,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   loading = false;
 
   // Filters
+  stakeholderList: FacetValue[] = [];
+  surveys: FacetValue[] = [];
   selectedStakeholder: string = null;
   selectedSurvey: string = null;
   validationStatus: string = '';
@@ -45,69 +51,86 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     this.loading = true;
-    this.subscriptions.push(
-      this.route.params.subscribe(params => {
-        this.subscriptions.push(
-          this.route.queryParams.subscribe(
-            qParams => {
-              this.id = params['id'];
-              this.setUrlParams(qParams);
-              this.updateCoordinatorStakeholderParameter(this.id);
-              this.setFilters();
-              this.subscriptions.push(
-                this.surveyService.getSurveyEntries(this.urlParameters).subscribe(surveyEntries => {
-                    this.surveyEntries = surveyEntries;
-                    this.surveyEntriesResults = this.surveyEntries.results;
-                  },
-                  error => {console.error(error)},
-                  () => {
-                    this.paginationInit();
-                    this.loading = false;
-                  }
-                )
-              );
+
+    this.route.params.pipe(takeUntil(this._destroyed)).subscribe(params => {
+      this.route.queryParams.pipe(takeUntil(this._destroyed)).subscribe(
+        qParams => {
+          this.id = params['id'];
+          this.setUrlParams(qParams);
+          // this.updateCoordinatorStakeholderParameter(this.id);
+          this.updateURLParameters('groupId', this.id);
+          this.setFilters();
+          this.surveyService.getSurveyEntries(this.urlParameters).pipe(takeUntil(this._destroyed)).subscribe(surveyEntries => {
+              this.surveyEntries = surveyEntries;
+              this.surveyEntriesResults = this.surveyEntries.results;
+              this.stakeholderList = this.getFacet('stakeholderId');
+              this.surveys = this.getFacet('surveyId')
+            },
+            error => {console.error(error)},
+            () => {
+              this.paginationInit();
+              this.loading = false;
             }
-          )
-        );
-      })
-    );
-    this.subscriptions.push(
-      this.userService.currentStakeholder.subscribe(
-        next => this.stakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'))
-      )
-    );
+          );
+
+          this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe(
+            next => {
+              this.userInfo = next;
+              if (this.userInfo) {
+                this.userInfo.stakeholders.every(sh => {
+                  if (sh.id === this.id) {
+                    this.stakeholder = sh;
+                    this.userService.changeCurrentStakeholder(this.stakeholder);
+                    return false;
+                  }
+                  return true;
+                });
+
+                this.userInfo.coordinators.every(co => {
+                  if (co.id === this.id) {
+                    this.coordinator = co;
+                    this.userService.changeCurrentCoordinator(this.coordinator);
+                    return false;
+                  }
+                  return true;
+                });
+
+              }
+            }
+          );
+
+        }
+      );
+    });
 
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription instanceof Subscriber) {
-        subscription.unsubscribe();
-      }
-    });
+    this._destroyed.next(true);
+    this._destroyed.complete();
   }
 
   exportToCsv(surveyId: string) {
     this.surveyService.exportToCsv(surveyId);
   }
 
-  updateCoordinatorStakeholderParameter(id: string) {
-    let key: string;
-    if (id.substring(0,2) === 'co') {
-      key = 'coordinator';
-    } else {
-      key = 'stakeholder';
-    }
-    if (this.urlParameters.find(param => param.key === key)) {
-      this.urlParameters.find(param => param.key === key).values = [id];
-    } else {
-      const parameter: URLParameter = {
-        key: key,
-        values: [id]
-      };
-      this.urlParameters.push(parameter);
-    }
-  }
+  // updateCoordinatorStakeholderParameter(id: string) {
+  //   let key: string;
+  //   if (id.substring(0,2) === 'co') {
+  //     key = 'coordinator';
+  //   } else {
+  //     key = 'stakeholder';
+  //   }
+  //   if (this.urlParameters.find(param => param.key === key)) {
+  //     this.urlParameters.find(param => param.key === key).values = [id];
+  //   } else {
+  //     const parameter: URLParameter = {
+  //       key: key,
+  //       values: [id]
+  //     };
+  //     this.urlParameters.push(parameter);
+  //   }
+  // }
 
   updateURLParameters(key: string, value: string | string[]) {
     // console.log('key: '+key);
@@ -214,6 +237,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     let foundOrder = false;
     this.urlParameters.splice(0, this.urlParameters.length);
     for (const obj in params) {
+      console.log(obj);
       if (params.hasOwnProperty(obj)) {
         if (obj === 'order')
           foundOrder = true;

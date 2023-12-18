@@ -11,10 +11,13 @@
     </div>
   </ng-container>
   <ng-template #noReadMore>
-    <div *ngIf="fieldData.form.description?.text" [innerHTML]="fieldData.form.description.text" style="{{fieldData.form.description.style}}"
-         class="uk-form-description uk-margin-bottom uk-width-9-10 {{fieldData.form.description.cssClasses}}">
+    <div *ngIf="fieldData.form.description?.text" style="{{fieldData.form.description.style}}"
+         class="uk-form-description uk-margin-bottom uk-width-9-10 {{fieldData.form.description.cssClasses}}"
+         [innerHTML]="fieldData.form.description.text | safeUrl: 'html'">
     </div>
   </ng-template>
+
+  <div *ngIf="fieldData.kind !== 'external'">
 
   <div *ngIf="fieldData.typeInfo.multiplicity; else noMultiplicity">
     <div uk-sortable="handle: .uk-sortable-handle" (moved)="movedElement($event)">
@@ -90,6 +93,12 @@
                                 (handleBitSets)="handleBitsetOfChildren($event)"
                                 (handleBitSetsOfComposite)="handleCompositeBitsetOfChildren($event)">
                 </app-date-field>
+              </div>
+              <div *ngIf="control.typeInfo.type === 'scale'">
+                <app-scale-field [fieldData]="control" [position]="i" (hasChanges)="unsavedChangesPrompt()"
+                                 (handleBitSets)="handleBitsetOfChildren($event)"
+                                 (handleBitSetsOfComposite)="handleCompositeBitsetOfChildren($event)">
+                </app-scale-field>
               </div>
             </div>
           </div>
@@ -202,6 +211,8 @@
       </div>
     </div>
   </ng-template>
+
+  </div>
 
   <div *ngIf="fieldData.form.suggestion?.text" class="uk-margin-top">
     <div class="uk-suggestion uk-width-9-10 {{fieldData.form.suggestion.cssClasses}}" style="{{fieldData.form.suggestion.style}}"

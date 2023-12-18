@@ -42,6 +42,16 @@
       </a>
     </div>
 
+    <div class="uk-margin-small-top">
+      <a *ngIf="checkForPermission('manage') && survey.configuration?.prefillable" href="#import-modal" uk-toggle
+         (click)="emitSurveyForImport()">
+        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up"
+             title="Import data from previous survey" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+          <span class="material-icons uk-margin-small-right">system_update_alt</span> Import
+        </div>
+      </a>
+    </div>
+
     <div class="uk-margin-small-top uk-float-right">
       <a [routerLink]="['./', surveyAnswer.surveyId, surveyAnswer.id, 'history']">
         <div class="uk-flex uk-flex-middle uk-animation-scale-up">

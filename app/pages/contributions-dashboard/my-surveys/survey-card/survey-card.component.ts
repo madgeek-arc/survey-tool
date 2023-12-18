@@ -1,11 +1,11 @@
-import {Component, Input, OnChanges, OnDestroy, SimpleChanges} from "@angular/core";
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from "@angular/core";
 import {SurveyAnswer, ResourcePermission} from "../../../../domain/survey";
 import {UserService} from "../../../../services/user.service";
 import {Stakeholder} from "../../../../domain/userInfo";
 import {SurveyService} from "../../../../services/survey.service";
 import {Router} from "@angular/router";
 import {Subscriber} from "rxjs";
-import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
+import {ImportSurveyData, Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 
 @Component({
   selector: 'app-survey-card',
@@ -15,12 +15,12 @@ import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 
 export class SurveyCardComponent implements OnChanges, OnDestroy {
   @Input() survey: Model;
+  @Output() selectedSurvey = new EventEmitter<ImportSurveyData>();
 
   subscriptions = [];
   currentGroup: Stakeholder = null;
   surveyAnswer: SurveyAnswer = null
   permissions: ResourcePermission[] = null;
-  chapterIds: string[] = [];
 
   constructor(private userService: UserService, private surveyService: SurveyService, private router: Router) {
   }
@@ -40,7 +40,8 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
                       this.permissions = next;
                     })
                   );
-                })
+                },
+                error => {console.debug(JSON.stringify(error))})
             );
           }
         },
@@ -84,6 +85,19 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
     } else {
       this.router.navigate([`contributions/${this.currentGroup.id}/mySurveys/${this.survey.id}/answer/validate`]);
     }
+  }
+
+  emitSurveyForImport() {
+    let data: ImportSurveyData = new class implements ImportSurveyData {
+      importFrom: string[] = [];
+      importFromNames: string[] = [];
+      surveyId: string;
+      surveyAnswerId: string;
+    };
+    data.importFrom = this.survey.configuration.importFrom;
+    data.surveyId = this.survey.id;
+    data.surveyAnswerId = this.surveyAnswer.id;
+    this.selectedSurvey.emit(data);
   }
 
 }
