@@ -70,6 +70,7 @@ export class UserService implements OnDestroy {
   clearUserInfo() {
     this.currentUserInfo = null;
     this.userInfoChangeSubject.next(null);
+    sessionStorage.removeItem('userInfo');
     this.userInfoChangeSubject.complete();
   }
 
