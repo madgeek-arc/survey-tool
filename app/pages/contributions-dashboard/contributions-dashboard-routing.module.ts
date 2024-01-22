@@ -17,6 +17,7 @@ const contributionsDashboardRoutes: Routes = [
     children: [
       {
         path: '',
+        pathMatch: 'full',
         redirectTo: 'home'
       },
       {
