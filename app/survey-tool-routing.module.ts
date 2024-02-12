@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import {RouterModule, Routes} from "@angular/router";
 import {FormBuilderComponent} from "../catalogue-ui/pages/form-builder/form-builder.component";
 import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/accept-invitation.component";
-import {AuthenticationGuardService} from "./services/authentication-guard.service";
+import {AuthGuard} from "./services/auth-guard.service";
 import {UserProfileComponent} from "./pages/user-profile/user-profile.component";
 
 const observatoryUiRoutes: Routes = [
@@ -14,7 +14,7 @@ const observatoryUiRoutes: Routes = [
   {
     path: 'invitation/accept/:invitationToken',
     component: AcceptInvitationComponent,
-    // canActivate: [AuthenticationGuardService]
+    canActivate: [AuthGuard]
   },
   {
     path: 'contributions/:id',

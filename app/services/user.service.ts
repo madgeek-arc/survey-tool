@@ -43,15 +43,19 @@ export class UserService implements OnDestroy {
     return this.http.get<UserInfo>(this.base + '/user/info');
   }
 
+  updateUserInfo() {
+    this.getUserInfo().pipe(takeUntil(this._destroyed)).subscribe({
+      next: value => this.setUserInfo(value),
+      error: err => {
+        console.error(err);
+        this.clearUserInfo();
+      },
+    });
+  }
+
   getUserObservable() {
     if (!this.currentUserInfo) {
-      this.getUserInfo().pipe(takeUntil(this._destroyed)).subscribe({
-        next: value => this.setUserInfo(value),
-        error: err => {
-          console.error(err);
-          this.clearUserInfo();
-        },
-      });
+      this.updateUserInfo();
     }
 
     return this.userInfoChangeSubject.asObservable();
