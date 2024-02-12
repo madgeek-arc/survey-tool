@@ -14,7 +14,7 @@ const observatoryUiRoutes: Routes = [
   {
     path: 'invitation/accept/:invitationToken',
     component: AcceptInvitationComponent,
-    canActivate: [AuthenticationGuardService]
+    // canActivate: [AuthenticationGuardService]
   },
   {
     path: 'contributions/:id',

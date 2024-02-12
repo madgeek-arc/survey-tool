@@ -27,6 +27,7 @@ export class AuthenticationGuardService implements CanActivate {
           return of(true);
         } else {
           // console.log('Not authorized');
+          this.authenticationService.tryLogin();
           this.router.navigate(["/home"]);
           return of(false);
         }

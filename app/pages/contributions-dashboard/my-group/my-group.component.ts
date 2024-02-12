@@ -100,6 +100,27 @@ export class MyGroupComponent implements OnInit, OnDestroy {
     }
   }
 
+  removeContributor() {
+    this.surveyService.removeContributor(this.currentGroup.id, this.contributorEmail).pipe(takeUntil(this._destroyed)).subscribe(
+      next => {
+        // this.members = next;
+        this.getMembers();
+        this.errorMessage = null;
+        this.contributorEmail = null;
+        UIkit.modal('#remove-contributor-modal').hide();
+      },
+      error => {
+        console.error(error)
+        this.errorMessage = error.message;
+      },
+      () => {
+        this.errorMessage = null;
+        this.contributorEmail = null;
+        UIkit.modal('#remove-contributor-modal').hide();
+      }
+    );
+  }
+
   copyToClipboard() {
     // navigator clipboard api needs a secure context (https)
     if (!navigator.clipboard) {
@@ -138,26 +159,6 @@ export class MyGroupComponent implements OnInit, OnDestroy {
     }
 
     document.body.removeChild(textArea);
-  }
-
-  removeContributor() {
-    this.surveyService.removeContributor(this.currentGroup.id, this.contributorEmail).pipe(takeUntil(this._destroyed)).subscribe(
-      next => {
-        this.members = next;
-        this.errorMessage = null;
-        this.contributorEmail = null;
-        UIkit.modal('#remove-contributor-modal').hide();
-      },
-      error => {
-        console.error(error)
-        this.errorMessage = error.message;
-      },
-      () => {
-        this.errorMessage = null;
-        this.contributorEmail = null;
-        UIkit.modal('#remove-contributor-modal').hide();
-      }
-    );
   }
 
   showRemoveModal(email: string) {
