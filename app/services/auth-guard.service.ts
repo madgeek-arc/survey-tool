@@ -1,6 +1,6 @@
 import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot,} from "@angular/router";
 import {of} from "rxjs";
-import {catchError, map, switchMap} from "rxjs/operators";
+import {catchError, switchMap} from "rxjs/operators";
 import {inject} from "@angular/core";
 import {AuthenticationService} from "./authentication.service";
 import {UserService} from "./user.service";
