@@ -1,5 +1,5 @@
 <div class="uk-section-default uk-section uk-section-small" style="min-height: calc(100svh - var(--header-height));">
-  <div class="uk-container uk-container-small">
+  <div *ngIf="userInfo" class="uk-container uk-container-small">
 
     <div class="uk-card uk-card-body uk-card-default">
       <h5 class="uk-flex uk-flex-middle">My profile
@@ -16,7 +16,7 @@
 
           <div *ngIf="edit" class="uk-margin-top">
             <span class="">Upload a profile picture</span>
-            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" #fileSelect
+            <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/webp" #fileSelect
                    (change)="onFileSelect($event)" style="display: none">
             <div class="uk-margin-small-left ">
               <a class="material-icons md-36" (click)="fileSelect.click()">upload_file</a>
