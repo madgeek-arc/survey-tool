@@ -1,8 +1,9 @@
-  import {Component, OnInit} from "@angular/core";
-import {Profile, UserInfo} from "../../domain/userInfo";
-import {UserService} from "../../services/user.service";
-import {CompressImageService} from "../../services/compress-image.service";
-import {take} from "rxjs/operators";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Profile, UserInfo } from "../../domain/userInfo";
+import { UserService } from "../../services/user.service";
+import { CompressImageService } from "../../services/compress-image.service";
+import { take, takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
 @Component({
   selector: 'app-profile',
@@ -11,7 +12,9 @@ import {take} from "rxjs/operators";
   providers: [CompressImageService]
 })
 
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
+
+  private _destroyed: Subject<boolean> = new Subject();
 
   userInfo: UserInfo = null;
   edit: boolean = false;
@@ -20,15 +23,25 @@ export class UserProfileComponent implements OnInit {
   constructor(private userService: UserService, private compressImage: CompressImageService) {}
 
   ngOnInit() {
-    this.userInfo = this.userService.getCurrentUserInfo();
-    if (this.userInfo.user.profile === null)
-      this.userInfo.user.profile = new Profile();
+    this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe({
+      next: value => {
+        this.userInfo = value;
+        if (this.userInfo?.user.profile === null)
+          this.userInfo.user.profile = new Profile();
+      }
+    });
   }
 
-  onFileSelect(event) {
+  ngOnDestroy() {
+    this._destroyed.next(true);
+    this._destroyed.complete();
+  }
+
+  onFileSelect(e: Event) {
+    let event = e.target as HTMLInputElement;
     const reader = new FileReader();
-    if(event.target.files && event.target.files.length) {
-      this.image = event.target.files[0];
+    if(event.files && event.files.length) {
+      this.image = event.files[0];
 
       this.compressImage.compress(this.image).pipe(take(1)).subscribe(
         compressedImage => {

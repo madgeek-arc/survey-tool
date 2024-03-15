@@ -6,7 +6,7 @@ import {URLParameter} from "../../../../../catalogue-ui/domain/url-parameter";
 import {ActivatedRoute, Router} from "@angular/router";
 import {fromEvent, Subject} from "rxjs";
 import {debounceTime, distinctUntilChanged, map, takeUntil} from "rxjs/operators";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
 import {UserService} from "../../../../services/user.service";
 
 declare var UIkit;
@@ -28,7 +28,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   searchQuery: string = null;
   ready: boolean = false;
   edit: boolean = false;
-  stakeholderForm: FormGroup = this.fb.group(new Stakeholder());
+  stakeholderForm: UntypedFormGroup = this.fb.group(new Stakeholder());
 
   // Paging
   pages: number[] = [];
@@ -37,7 +37,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   totalPages = 0;
   currentPage = 0;
 
-  constructor(private router: Router, private route: ActivatedRoute, private fb: FormBuilder,
+  constructor(private router: Router, private route: ActivatedRoute, private fb: UntypedFormBuilder,
               private stakeholdersService: StakeholdersService, private userService: UserService) {
   }
 

@@ -3,7 +3,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {SurveyService} from "../../services/survey.service";
 import {AuthenticationService} from "../../services/authentication.service";
 import {UserService} from "../../services/user.service";
-import {Subscriber} from "rxjs";
+import {Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
 
 
 @Component({
@@ -13,7 +14,7 @@ import {Subscriber} from "rxjs";
 
 export class AcceptInvitationComponent implements OnInit, OnDestroy {
 
-  subscriptions = [];
+  private _destroyed: Subject<boolean> = new Subject();
   token: string = null;
   loading: boolean = false;
   message: string = 'You are being registered';
@@ -25,39 +26,34 @@ export class AcceptInvitationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loading = true
-    this.subscriptions.push(
-      this.route.params.subscribe( params => {
-        this.token = params['invitationToken'];
-        if (this.token) {
-          this.subscriptions.push(
-            this.surveyService.acceptInvitation(this.token).subscribe(
-              res => {
-                this.loading = false;
-              },
-              error => {
-                this.message = 'Something went wrong, server replied: ';
-                this.error = error;
-                this.loading = false;
-                console.error(error);
-              },
-              () => {
-                this.authenticationService.login();
-                // this.userService.getUserInfo();
-                this.router.navigate(['/']);
-              }
-            )
-          );
-        }
-      })
-    );
+    this.route.params.pipe(takeUntil(this._destroyed)).subscribe( params => {
+      this.token = params['invitationToken'];
+      if (this.token) {
+        // if (!this.authenticationService.authenticated)
+        //   this.authenticationService.tryLogin();
+        // else
+          this.surveyService.acceptInvitation(this.token).pipe(takeUntil(this._destroyed)).subscribe({
+            error: err => {
+              this.message = 'Something went wrong, server replied: ';
+              this.error = err;
+              this.loading = false;
+              console.error(err);
+            },
+            complete: () => {
+              this.loading = false;
+              this.userService.updateUserInfo();
+              this.router.navigate(['/']);
+            }
+          });
+      } else {
+        this.router.navigate(['/']);
+      }
+    });
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription instanceof Subscriber) {
-        subscription.unsubscribe();
-      }
-    });
+    this._destroyed.next(true);
+    this._destroyed.complete();
   }
 
 }

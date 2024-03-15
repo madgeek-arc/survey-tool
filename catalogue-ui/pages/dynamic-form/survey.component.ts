@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
-import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
+import {UntypedFormArray, UntypedFormBuilder, UntypedFormGroup} from "@angular/forms";
 import {Router} from "@angular/router";
 import {FormControlService} from "../../services/form-control.service";
 import {Section, Field, Model, Tabs} from "../../domain/dynamic-form-model";
@@ -33,7 +33,7 @@ export class SurveyComponent implements OnInit, OnChanges {
   @Input() errorMessage = '';
   @Input() successMessage = '';
   @Output() valid = new EventEmitter<boolean>();
-  @Output() submit = new EventEmitter<[FormGroup, boolean, string?]>();
+  @Output() submit = new EventEmitter<[UntypedFormGroup, boolean, string?]>();
 
   sectionIndex = 0;
   chapterChangeMap: Map<string,boolean> = new Map<string, boolean>();
@@ -48,9 +48,9 @@ export class SurveyComponent implements OnInit, OnChanges {
   freeView: boolean = false;
   validate: boolean = false;
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
-  constructor(private formControlService: FormControlService, private fb: FormBuilder, private router: Router) {
+  constructor(private formControlService: FormControlService, private fb: UntypedFormBuilder, private router: Router) {
     this.form = this.fb.group({});
   }
 
@@ -139,12 +139,12 @@ export class SurveyComponent implements OnInit, OnChanges {
       let str = '';
       for (let key in this.form.value) {
         // console.log(this.form.get('extras.'+key));
-        console.log(key + ': '+ this.form.get(key).valid);
+        // console.log(key + ': '+ this.form.get(key).valid);
         if (!this.form.get(key).valid) {
           str =  str + '\n\t-> ' + key;
         }
         for (const keyElement in this.form.get(key).value) {
-          console.log(keyElement + ': '+ this.form.get(key+'.'+keyElement).valid);
+          // console.log(keyElement + ': '+ this.form.get(key+'.'+keyElement).valid);
         }
       }
       this.errorMessage = 'There are missing fields at chapters ' + str;
@@ -200,12 +200,12 @@ export class SurveyComponent implements OnInit, OnChanges {
     this.currentChapter = chapter;
   }
 
-  getFormGroup(sectionIndex: number): FormGroup {
+  getFormGroup(sectionIndex: number): UntypedFormGroup {
     if (this.model.sections[sectionIndex].subSections === null) {
-      return this.form.get(this.model.name) as FormGroup;
+      return this.form.get(this.model.name) as UntypedFormGroup;
     } else
       // console.log(this.form.get(this.survey.sections[sectionIndex].name));
-      return this.form.get(this.model.sections[sectionIndex].name) as FormGroup;
+      return this.form.get(this.model.sections[sectionIndex].name) as UntypedFormGroup;
   }
 
   setChapterChangesMap(chapterId: string[]) {
@@ -276,17 +276,17 @@ export class SurveyComponent implements OnInit, OnChanges {
     return null;
   }
 
-  getFormControl(group: FormGroup | FormArray, name: string, position?: number): FormArray {
+  getFormControl(group: UntypedFormGroup | UntypedFormArray, name: string, position?: number): UntypedFormArray {
     let abstractControl = null;
     for (const key in group.controls) {
       abstractControl = group.controls[key];
-      if (abstractControl instanceof FormGroup || abstractControl instanceof FormArray) {
+      if (abstractControl instanceof UntypedFormGroup || abstractControl instanceof UntypedFormArray) {
         if (key === name) {
-          return abstractControl as FormArray;
+          return abstractControl as UntypedFormArray;
         } else if (key !== name) {
-          if (abstractControl instanceof FormArray) {
+          if (abstractControl instanceof UntypedFormArray) {
             if (abstractControl.controls.length > position) {
-              abstractControl = this.getFormControl(abstractControl.controls[position] as FormGroup | FormArray, name, position);
+              abstractControl = this.getFormControl(abstractControl.controls[position] as UntypedFormGroup | UntypedFormArray, name, position);
               if (abstractControl !== null)
                 return abstractControl;
             } else {
@@ -318,7 +318,7 @@ export class SurveyComponent implements OnInit, OnChanges {
     docDefinition.info = new PdfMetadata(this.model.name);
 
     let description = 'none';
-    if (this.model.name === 'Survey on National Contributions to EOSC 2022') {
+    if (this.model.name === 'Survey on National Contributions to EOSC 2022' || this.model.id === 'm-eosc-sb-2023') {
       description = 'end'
     }
     this.createDocumentDefinition(this.form, docDefinition, description);
@@ -342,19 +342,56 @@ export class SurveyComponent implements OnInit, OnChanges {
             questionNumber = field.label.text.split('. ')[0];
           }
           // let term = field.form.description.text.split('-')[0]
-          let components = this.strip(field.form.description.text).split(' - ');
-          let content = {
-            style: ['mt_3'],
-            text: [
-              questionNumber,
-              ' ',
-              {text:  components.shift(), bold: true},
-              ' - ',
-              components.join('-')
-            ]
+          // console.log(this.strip(field.form.description.text));
+
+          if (this.model.id === 'm-eosc-sb-2023') {
+            let strArray = [];
+            if (this.strip(field.form.description.text).includes('Instructions')) {
+              if (this.strip(field.form.description.text).includes('Glossary'))
+                strArray[0] = this.string_between_strings('Instructions', 'Glossary', this.strip(field.form.description.text));
+              else
+                strArray[0] = this.strip(field.form.description.text).split('Instructions')[1];
+              // console.log(this.strip(field.form.description.text));
+            }
+            if (field.form.description.text.split('Glossary').length > 1)
+              strArray[1] = field.form.description.text.split('Glossary')[1];
+
+            let content = {
+              style: ['mt_3'],
+              text: []
+            }
+            content.text.push({text: questionNumber+' '});
+            let terms = strArray[1]?.split('<br><br>')
+            if (terms?.length > 0) {
+              for (let i = 0; i < terms.length; i++) {
+                content.text.push({text:  this.strip(terms[i].split(':')[0])+': ', bold: true});
+                content.text.push({text:  this.strip(terms[i].split(':')[1]).concat('\n')});
+              }
+            }
+            content.text.push({text:  strArray[0] ? 'Instructions' : '', bold: true});
+            content.text.push({text: strArray[0] ? ' - '+strArray[0] : ''});
+
+
+            // descriptionAtEnd.content.push(new Content(questionNumber + ' ' + components.shift() + '-' + components.join('-'), ['mt_3']));
+            if (strArray.length)
+              descriptionAtEnd.content.push(content);
+
+          } else {
+            let components = this.strip(field.form.description.text).split(' - ');
+            let content = {
+              style: ['mt_3'],
+              text: [
+                questionNumber,
+                ' ',
+                {text:  components.shift(), bold: true},
+                ' - ',
+                components.join('-')
+              ]
+            }
+            // descriptionAtEnd.content.push(new Content(questionNumber + ' ' + components.shift() + '-' + components.join('-'), ['mt_3']));
+            descriptionAtEnd.content.push(content);
           }
-          // descriptionAtEnd.content.push(new Content(questionNumber + ' ' + components.shift() + '-' + components.join('-'), ['mt_3']));
-          descriptionAtEnd.content.push(content);
+
         }
         if (description === 'show')
           docDefinition.content.push(new Content(field.form.description.text, ['mt_3']));
@@ -408,10 +445,10 @@ export class SurveyComponent implements OnInit, OnChanges {
     }
   }
 
-  createDocumentDefinition(group: FormGroup | FormArray, docDefinition: DocDefinition, description: string) {
+  createDocumentDefinition(group: UntypedFormGroup | UntypedFormArray, docDefinition: DocDefinition, description: string) {
     let descriptionsAtEnd = new DocDefinition();
 
-    if (this.model.name === 'Survey on National Contributions to EOSC 2022') {
+    if (this.model.name === 'Survey on National Contributions to EOSC 2022'  || this.model.id === 'm-eosc-sb-2023') {
       docDefinition.content.push(new Content('Definitions of key terms can be found in Appendix A', ['mt_3']));
     }
 
@@ -432,7 +469,7 @@ export class SurveyComponent implements OnInit, OnChanges {
 
     }
 
-    if (this.model.name === 'Survey on National Contributions to EOSC 2022') {
+    if (this.model.name === 'Survey on National Contributions to EOSC 2022' || this.model.id === 'm-eosc-sb-2023') {
 
       docDefinition.content.push(new Content('Appendix A', ['title']));
       docDefinition.content.push(...descriptionsAtEnd.content);
@@ -443,9 +480,9 @@ export class SurveyComponent implements OnInit, OnChanges {
           style: ['mt_3'],
           text: ['Visit the ',
             {text: 'EOSC Observatory', link: 'https://eoscobservatory.eosc-portal.eu', color: 'cornflowerblue', decoration: 'underline'},
-            ' to explore the data from the first EOSC Steering Board survey on National Contributions to EOSC 2021 and visit the ',
+            ' to explore the data from the EOSC Steering Board surveys on National Contributions to EOSC and visit the ',
             {text: 'EOSC Observatory Zenodo Community', link: 'https://zenodo.org/communities/eoscobservatory', color: 'cornflowerblue', decoration: 'underline'},
-            ' to access all relevant documents for the surveys and EOSC Observatory.']
+            ' to access all key outputs related to the surveys and EOSC Observatory.']
         }
       ]
       docDefinition.content.push(content);
@@ -482,6 +519,11 @@ export class SurveyComponent implements OnInit, OnChanges {
   strip(html){
     let doc = new DOMParser().parseFromString(html, 'text/html');
     return doc.body.textContent || "";
+  }
+
+  string_between_strings(startStr: string, endStr: any, str: string) {
+    let pos = str.indexOf(startStr) + startStr.length;
+    return str.substring(pos, str.indexOf(endStr, pos));
   }
 
   /** <-- Generate PDF **/
