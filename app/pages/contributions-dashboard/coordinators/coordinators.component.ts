@@ -237,7 +237,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     let foundOrder = false;
     this.urlParameters.splice(0, this.urlParameters.length);
     for (const obj in params) {
-      console.log(obj);
+      // console.log(obj);
       if (params.hasOwnProperty(obj)) {
         if (obj === 'order')
           foundOrder = true;

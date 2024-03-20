@@ -463,13 +463,7 @@ a.footerLink:hover {
 }
 
 .uk-button-default {
-  text-transform: uppercase;
-  color: var(--catalogue-light-purple);
-}
-
-.uk-button-default:hover {
-  text-transform: uppercase;
-  color: var(--grey);
+  border: 1px solid #ccc;
 }
 
 .uk-button-secondary, .uk-button-secondary:hover {
@@ -479,9 +473,9 @@ a.footerLink:hover {
 }
 
 
-a.uk-button {
-  line-height: 50px;
-}
+//a.uk-button {
+//  line-height: 50px;
+//}
 
 a.uk-icon-button {
   text-decoration: none;
