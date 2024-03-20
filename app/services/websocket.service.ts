@@ -1,8 +1,7 @@
-import {Injectable} from "@angular/core";
-import {environment} from "../../environments/environment";
-import {BehaviorSubject} from "rxjs";
-import {UserActivity} from "../domain/userInfo";
-import {count} from "rxjs/operators";
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
+import { BehaviorSubject } from "rxjs";
+import { UserActivity } from "../domain/userInfo";
 
 declare var SockJS;
 declare var Stomp;
@@ -36,6 +35,7 @@ export class WebsocketService {
             stomp.subscribe(`/topic/active-users/${resourceType}/${id}`, (message) => {
               if (message.body) {
                 that.msg.next(JSON.parse(message.body));
+                console.log(that.msg);
               }
             });
             // that.WsJoin(id, resourceType, action);
@@ -46,7 +46,7 @@ export class WebsocketService {
         let timeout = 1000;
         that.count > 20 ? timeout = 10000 : that.count++ ;
         setTimeout( () => {that.initializeWebSocketConnection(id, resourceType)}, timeout);
-        console.log('STOMP: Reconecting...'+ that.count);
+        console.log('STOMP: Reconnecting...'+ that.count);
       });
     });
 
@@ -62,5 +62,9 @@ export class WebsocketService {
 
   WsJoin(id: string, resourceType: string, action: string) {
     this.stompClient.then( client => client.send(`/app/join/${resourceType}/${id}`, {}, action));
+  }
+
+  WsEdit(id: string, resourceType: string, field: string, value: string) {
+    this.stompClient.then( client => client.send(`/app/edit/${resourceType}/${id}/${field}`, {}, value));
   }
 }

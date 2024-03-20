@@ -1,17 +1,17 @@
-import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {zip} from "rxjs/internal/observable/zip";
-import {SurveyComponent} from "../../../../../catalogue-ui/pages/dynamic-form/survey.component";
-import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
-import {SurveyService} from "../../../../services/survey.service";
-import {SurveyAnswer} from "../../../../domain/survey";
-import {Stakeholder, UserActivity, UserInfo} from "../../../../domain/userInfo";
-import {WebsocketService} from "../../../../services/websocket.service";
-import {Subject, Subscriber} from "rxjs";
+import {Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { zip } from "rxjs/internal/observable/zip";
+import { SurveyComponent } from "../../../../../catalogue-ui/pages/dynamic-form/survey.component";
+import { Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
+import { SurveyService } from "../../../../services/survey.service";
+import { SurveyAnswer } from "../../../../domain/survey";
+import { Stakeholder, UserActivity, UserInfo } from "../../../../domain/userInfo";
+import { WebsocketService } from "../../../../services/websocket.service";
+import { Subject } from "rxjs";
 import UIkit from "uikit";
-import {takeUntil} from "rxjs/operators";
-import {StakeholdersService} from "../../../../services/stakeholders.service";
-import {UserService} from "../../../../services/user.service";
+import { takeUntil } from "rxjs/operators";
+import { StakeholdersService } from "../../../../services/stakeholders.service";
+import { UserService } from "../../../../services/user.service";
 
 @Component({
   selector: 'app-survey-form',
@@ -38,8 +38,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   action: string = null;
 
   constructor(private surveyService: SurveyService, private route: ActivatedRoute, private router: Router,
-              private stakeholdersService: StakeholdersService, private wsService: WebsocketService,
-              private userService: UserService) {}
+              private wsService: WebsocketService, private userService: UserService) {}
 
   ngOnInit() {
     this.ready = false;
