@@ -25,7 +25,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   private _destroyed: Subject<boolean> = new Subject();
   survey: Model = null;
   subType: string;
-  surveyAnswers: SurveyAnswer = null
+  surveyAnswer: SurveyAnswer = null
   activeUsers: UserActivity[] = [];
   userInfo: UserInfo = null;
   tabsHeader: string = null;
@@ -67,21 +67,21 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(takeUntil(this._destroyed)),
             this.surveyService.getSurvey(this.surveyId).pipe(takeUntil(this._destroyed))).subscribe(
             next => {
-              this.surveyAnswers = next[0];
+              this.surveyAnswer = next[0];
               this.survey = next[1];
             },
             error => {console.log(error)},
             () => {
               this.ready = true;
-              this.wsService.initializeWebSocketConnection(this.surveyAnswers.id, 'surveyAnswer');
+              this.wsService.initializeWebSocketConnection(this.surveyAnswer.id, 'surveyAnswer');
               if (this.router.url.includes('/view')) {
-                this.wsService.WsJoin(this.surveyAnswers.id, 'surveyAnswer', 'view');
+                this.wsService.WsJoin(this.surveyAnswer.id, 'surveyAnswer', 'view');
                 this.action = 'view';
               } else if (this.router.url.includes('/validate')) {
-                this.wsService.WsJoin(this.surveyAnswers.id, 'surveyAnswer', 'validate');
+                this.wsService.WsJoin(this.surveyAnswer.id, 'surveyAnswer', 'validate');
                 this.action = 'validate';
               } else {
-                this.wsService.WsJoin(this.surveyAnswers.id, 'surveyAnswer', 'edit');
+                this.wsService.WsJoin(this.surveyAnswer.id, 'surveyAnswer', 'edit');
                 this.action = 'edit';
               }
             }
@@ -101,8 +101,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this._destroyed.next(true);
     this._destroyed.complete();
-    if (this.surveyAnswers?.id) {
-      this.wsService.WsLeave(this.surveyAnswers.id, 'surveyAnswer', this.action);
+    if (this.surveyAnswer?.id) {
+      this.wsService.WsLeave(this.surveyAnswer.id, 'surveyAnswer', this.action);
     }
   }
 
@@ -118,7 +118,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
   validateSurveyAnswer(valid: boolean) {
     console.log('Is valid: ', valid);
-    this.surveyService.changeAnswerValidStatus(this.surveyAnswers.id, !this.surveyAnswers.validated).subscribe(
+    this.surveyService.changeAnswerValidStatus(this.surveyAnswer.id, !this.surveyAnswer.validated).subscribe(
       next => {
         UIkit.modal('#validation-modal').hide();
         this.router.navigate([`/contributions/${this.stakeholderId}/mySurveys`]);
