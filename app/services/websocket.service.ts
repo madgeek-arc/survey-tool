@@ -67,11 +67,11 @@ export class WebsocketService {
     this.stompClient.then( client => client.send(`/app/join/${resourceType}/${this.surveyAnswerId}`, {}, action));
   }
 
-  WsEdit(id: string, resourceType: string, field: string, value: string) {
+  WsEdit(resourceType: string, field?: string, value?: string) {
     this.stompClient.then( client => client.send(`/app/edit/${resourceType}/${this.surveyAnswerId}/${field}`, {}, value));
   }
 
-  WsRevision(id: string, resourceType: string, field: string, value: string) {
+  WsRevision(resourceType: string, field: string, value: string) {
     this.stompClient.then( client => client.send(`/app/revision/${resourceType}/${this.surveyAnswerId}/${field}`, {}, value));
   }
 }
