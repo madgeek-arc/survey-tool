@@ -8,10 +8,10 @@ import { SurveyAnswer } from "../../../../domain/survey";
 import { Stakeholder, UserActivity, UserInfo } from "../../../../domain/userInfo";
 import { WebsocketService } from "../../../../services/websocket.service";
 import { Subject } from "rxjs";
-import UIkit from "uikit";
 import { takeUntil } from "rxjs/operators";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
+import UIkit from "uikit";
 
 @Component({
   selector: 'app-survey-form',
@@ -57,11 +57,11 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         }
         this.updateUserInfo();
 
-        this.wsService.msg.pipe(takeUntil(this._destroyed)).subscribe(
-        next => {
-            this.activeUsers = next;
-          }
-        );
+        // this.wsService.msg.pipe(takeUntil(this._destroyed)).subscribe(
+        // next => {
+        //     this.activeUsers = next;
+        //   }
+        // );
         if (!this.freeView) {
           zip(
             this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(takeUntil(this._destroyed)),
