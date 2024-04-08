@@ -38,7 +38,7 @@ export class WebsocketService {
             stomp.subscribe(`/topic/active-users/${resourceType}/${that.surveyAnswerId}`, (message) => {
               if (message.body) {
                 that.msg.next(JSON.parse(message.body));
-                console.log(that.msg);
+                // console.log(that.msg);
               }
             });
             // that.WsJoin(id, resourceType, action);
@@ -67,7 +67,7 @@ export class WebsocketService {
     this.stompClient.then( client => client.send(`/app/join/${resourceType}/${this.surveyAnswerId}`, {}, action));
   }
 
-  WsEdit(resourceType: string, field?: string, value?: string) {
+  WsFocus(resourceType: string, field?: string, value?: string) {
     this.stompClient.then( client => client.send(`/app/edit/${resourceType}/${this.surveyAnswerId}/${field}`, {}, value));
   }
 
