@@ -4,9 +4,10 @@ import {Stakeholder, GroupMembers} from "../../../../../domain/userInfo";
 import {SurveyService} from "../../../../../services/survey.service";
 
 import UIkit from 'uikit';
-import {Subscriber, zip} from "rxjs";
+import { Subject, Subscriber, zip } from "rxjs";
 import {StakeholdersService} from "../../../../../services/stakeholders.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: 'app-edit-managers',
@@ -15,6 +16,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 
 export class EditManagerComponent implements OnInit, OnDestroy {
+
+  private _destroyed: Subject<boolean> = new Subject();
 
   subscriptions = [];
   stakeholderId: string = null;
@@ -35,40 +38,16 @@ export class EditManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscriptions.push(
-      this.route.params.subscribe( params => {
-        this.stakeholderId = params['id'];
-        this.subscriptions.push(
-          zip(this.stakeholderService.getStakeholder(this.stakeholderId),
-            this.stakeholderService.getStakeholderMembers(this.stakeholderId)).subscribe(
-            res => {
-                this.stakeholder = res[0];
-                this.members = res[1];
-              },
-            error => {console.error(error)}
-          )
-        );
-      })
-
-      // this.userService.currentStakeholder.subscribe(next => {
-      //   this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
-      //   if (this.currentGroup !== null) {
-      //     this.subscriptions.push(
-      //       this.userService.getStakeholdersMembers(this.currentGroup.id).subscribe(next => {
-      //           this.members = next;
-      //         },
-      //         error => {
-      //           console.error(error);
-      //         },
-      //         () => {
-      //           this.userEmail = this.userService.userId;
-      //           this.isManager = this.checkIfManager(this.userEmail);
-      //         }
-      //       )
-      //     );
-      //   }
-      // })
-    );
+    this.route.params.pipe(takeUntil(this._destroyed)).subscribe( params => {
+      this.stakeholderId = params['id'];
+      this.getMembers();
+      this.stakeholderService.getStakeholder(this.stakeholderId).pipe(takeUntil(this._destroyed)).subscribe(
+        res => {
+            this.stakeholder = res;
+          },
+        error => {console.error(error)}
+      );
+    });
   }
 
   ngOnDestroy() {
@@ -76,6 +55,13 @@ export class EditManagerComponent implements OnInit, OnDestroy {
       if (subscription instanceof Subscriber) {
         subscription.unsubscribe();
       }
+    });
+  }
+
+  getMembers() {
+    this.stakeholderService.getStakeholderMembers(this.stakeholderId).pipe(takeUntil(this._destroyed)).subscribe({
+      next: value => this.members = value,
+      error: err => console.error(err)
     });
   }
 
@@ -103,6 +89,49 @@ export class EditManagerComponent implements OnInit, OnDestroy {
     } else {
       this.errorMessage = 'Please give a valid email address.'
     }
+  }
+
+  removeManager() {
+    this.subscriptions.push(
+      this.surveyService.removeManager(this.stakeholder.id, this.email).subscribe(
+        next => {
+          this.getMembers();
+          this.email = null;
+          UIkit.modal('#remove-manager-modal').hide();
+        },
+        error => {
+          console.error(error)
+          this.errorMessage = error.message;
+        },
+        () => {
+          this.errorMessage = null;
+          this.email = null;
+          UIkit.modal('#remove-manager-modal').hide();
+        }
+      )
+    );
+  }
+
+  removeContributors() {
+    this.subscriptions.push(
+      this.surveyService.removeContributor(this.stakeholder.id, this.email).subscribe(
+        next => {
+          this.getMembers();
+          this.errorMessage = null;
+          this.email = null;
+          UIkit.modal('#remove-contributors-modal').hide();
+        },
+        error => {
+          console.error(error)
+          this.errorMessage = error.message;
+        },
+        () => {
+          this.errorMessage = null;
+          this.email = null;
+          UIkit.modal('#remove-contributors-modal').hide();
+        }
+      )
+    );
   }
 
   copyToClipboard() {
@@ -143,50 +172,6 @@ export class EditManagerComponent implements OnInit, OnDestroy {
     }
 
     document.body.removeChild(textArea);
-  }
-
-  removeManager() {
-    this.subscriptions.push(
-      this.surveyService.removeManager(this.stakeholder.id, this.email).subscribe(
-        next => {
-          this.members = next;
-          this.errorMessage = null;
-          this.email = null;
-          UIkit.modal('#remove-manager-modal').hide();
-        },
-        error => {
-          console.error(error)
-          this.errorMessage = error.message;
-        },
-        () => {
-          this.errorMessage = null;
-          this.email = null;
-          UIkit.modal('#remove-manager-modal').hide();
-        }
-      )
-    );
-  }
-
-  removeContributors() {
-    this.subscriptions.push(
-      this.surveyService.removeContributor(this.stakeholder.id, this.email).subscribe(
-        next => {
-          this.members = next;
-          this.errorMessage = null;
-          this.email = null;
-          UIkit.modal('#remove-contributors-modal').hide();
-        },
-        error => {
-          console.error(error)
-          this.errorMessage = error.message;
-        },
-        () => {
-          this.errorMessage = null;
-          this.email = null;
-          UIkit.modal('#remove-contributors-modal').hide();
-        }
-      )
-    );
   }
 
   showRemoveModal(email: string, modalId: string) {
