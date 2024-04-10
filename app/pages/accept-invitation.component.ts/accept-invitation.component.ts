@@ -35,7 +35,7 @@ export class AcceptInvitationComponent implements OnInit, OnDestroy {
           this.surveyService.acceptInvitation(this.token).pipe(takeUntil(this._destroyed)).subscribe({
             error: err => {
               this.message = 'Something went wrong, server replied: ';
-              this.error = err;
+              this.error = err.message;
               this.loading = false;
               console.error(err);
             },
