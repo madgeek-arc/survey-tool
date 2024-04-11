@@ -1,9 +1,9 @@
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot,} from "@angular/router";
-import {of} from "rxjs";
-import {catchError, switchMap} from "rxjs/operators";
-import {inject} from "@angular/core";
-import {AuthenticationService} from "./authentication.service";
-import {UserService} from "./user.service";
+import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from "@angular/router";
+import { of } from "rxjs";
+import { catchError, switchMap } from "rxjs/operators";
+import { inject } from "@angular/core";
+import { AuthenticationService } from "./authentication.service";
+import { UserService } from "./user.service";
 
 
 export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
@@ -26,14 +26,14 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
       } else {
         // console.log('Not authorized');
         authenticationService.tryLogin();
-        router.navigate(["/home"]);
+        // router.navigate(["/home"]);
         return of(false);
       }
     }),
     catchError(() => {
       // console.log('Not authorized 2');
       authenticationService.tryLogin();
-      router.navigate(["/home"]);
+      // router.navigate(["/home"]);
       return of(false);
     })
   );

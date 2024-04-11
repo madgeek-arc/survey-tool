@@ -7,7 +7,6 @@ import {SurveyFormComponent} from "./pages/contributions-dashboard/my-surveys/su
 import {ContributionsDashboardComponent} from "./pages/contributions-dashboard/contributions-dashboard.component";
 import {ReusableComponentsModule} from "./shared/reusablecomponents/reusable-components.module";
 import {AuthenticationService} from "./services/authentication.service";
-import {AuthGuard} from "./services/auth-guard.service";
 import {SurveyService} from "./services/survey.service";
 import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/accept-invitation.component";
 import {SurveyToolRoutingModule} from "./survey-tool-routing.module";

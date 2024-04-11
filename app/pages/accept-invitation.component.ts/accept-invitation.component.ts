@@ -1,10 +1,9 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {SurveyService} from "../../services/survey.service";
-import {AuthenticationService} from "../../services/authentication.service";
-import {UserService} from "../../services/user.service";
-import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { SurveyService } from "../../services/survey.service";
+import { UserService } from "../../services/user.service";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 
 @Component({
@@ -21,7 +20,7 @@ export class AcceptInvitationComponent implements OnInit, OnDestroy {
   error: string = null;
 
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService,
-              private surveyService: SurveyService, private authenticationService: AuthenticationService) {
+              private surveyService: SurveyService) {
   }
 
   ngOnInit() {
@@ -29,24 +28,21 @@ export class AcceptInvitationComponent implements OnInit, OnDestroy {
     this.route.params.pipe(takeUntil(this._destroyed)).subscribe( params => {
       this.token = params['invitationToken'];
       if (this.token) {
-        // if (!this.authenticationService.authenticated)
-        //   this.authenticationService.tryLogin();
-        // else
-          this.surveyService.acceptInvitation(this.token).pipe(takeUntil(this._destroyed)).subscribe({
-            error: err => {
-              this.message = 'Something went wrong, server replied: ';
-              this.error = err.message;
-              this.loading = false;
-              console.error(err);
-            },
-            complete: () => {
-              this.loading = false;
-              this.userService.updateUserInfo();
-              this.router.navigate(['/']);
-            }
-          });
+        this.surveyService.acceptInvitation(this.token).pipe(takeUntil(this._destroyed)).subscribe({
+          error: err => {
+            this.message = 'Something went wrong, server replied: ';
+            this.error = err.message;
+            this.loading = false;
+            console.error(err);
+          },
+          complete: () => {
+            this.loading = false;
+            this.userService.updateUserInfo();
+            this.router.navigate(['/']).then();
+          }
+        });
       } else {
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then();
       }
     });
   }

@@ -1,13 +1,12 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {UserService} from "../../../../../services/user.service";
-import {Stakeholder, GroupMembers} from "../../../../../domain/userInfo";
-import {SurveyService} from "../../../../../services/survey.service";
-
-import UIkit from 'uikit';
-import { Subject, Subscriber, zip } from "rxjs";
-import {StakeholdersService} from "../../../../../services/stakeholders.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { UserService } from "../../../../../services/user.service";
+import { Stakeholder, GroupMembers } from "../../../../../domain/userInfo";
+import { SurveyService } from "../../../../../services/survey.service";
+import { Subject, Subscriber } from "rxjs";
+import { StakeholdersService } from "../../../../../services/stakeholders.service";
+import { ActivatedRoute } from "@angular/router";
 import { takeUntil } from "rxjs/operators";
+import UIkit from 'uikit';
 
 @Component({
   selector: 'app-edit-managers',
@@ -21,15 +20,10 @@ export class EditManagerComponent implements OnInit, OnDestroy {
 
   subscriptions = [];
   stakeholderId: string = null;
+  invitationToken: string = null;
   stakeholder: Stakeholder = null;
   members: GroupMembers = null
   email: string = null;
-
-
-  currentGroup: Stakeholder = null;
-  userEmail: string = null;
-  invitationToken: string = null;
-  // isManager: boolean = null;
   errorMessage: string = null;
   title = 'copy to clipboard';
 
@@ -51,6 +45,8 @@ export class EditManagerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this._destroyed.next(true);
+    this._destroyed.complete();
     this.subscriptions.forEach(subscription => {
       if (subscription instanceof Subscriber) {
         subscription.unsubscribe();
