@@ -1,7 +1,7 @@
 import {Injectable, OnDestroy} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
-import {Coordinator, Profile, Stakeholder, GroupMembers, User, UserInfo} from "../domain/userInfo";
+import {Coordinator, Profile, Stakeholder, GroupMembers, User, UserInfo, Administrator} from "../domain/userInfo";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 
@@ -17,6 +17,7 @@ export class UserService implements OnDestroy {
   // userInfo = new BehaviorSubject<UserInfo>(null);
   currentStakeholder = new BehaviorSubject<Stakeholder>(null);
   currentCoordinator = new BehaviorSubject<Coordinator>(null);
+  currentAdministrator = new BehaviorSubject<Administrator>(null);
   private userInfoChangeSubject = new BehaviorSubject<UserInfo>(null);
   private currentUserInfo: UserInfo = null;
 
@@ -28,7 +29,9 @@ export class UserService implements OnDestroy {
     // console.log(this.currentStakeholder);
     sessionStorage.setItem('currentStakeholder', JSON.stringify(currentGroup));
     sessionStorage.removeItem('currentCoordinator');
+    sessionStorage.removeItem('currentAdministrator');
     this.currentCoordinator.next(null);
+    this.currentAdministrator.next(null);
   }
 
   changeCurrentCoordinator(currentCoordinator: Coordinator) {
@@ -36,7 +39,19 @@ export class UserService implements OnDestroy {
     // console.log(this.currentCoordinator);
     sessionStorage.setItem('currentCoordinator', JSON.stringify(currentCoordinator));
     sessionStorage.removeItem('currentStakeholder');
+    sessionStorage.removeItem('currentAdministrator');
     this.currentStakeholder.next(null);
+    this.currentAdministrator.next(null);
+  }
+
+  changeCurrentAdministator(current: Administrator) {
+    this.currentAdministrator.next(current);
+    // console.log(this.currentAdministrator);
+    sessionStorage.setItem('currentAdministrator', JSON.stringify(current));
+    sessionStorage.removeItem('currentStakeholder');
+    sessionStorage.removeItem('currentCoordinator');
+    this.currentStakeholder.next(null);
+    this.currentCoordinator.next(null);
   }
 
   getUserInfo() {

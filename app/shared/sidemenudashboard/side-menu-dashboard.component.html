@@ -7,7 +7,7 @@
       <ul>
 
         <li [routerLinkActive]="['current_section']" class="">
-          <a [routerLink]="['contributions/'+(currentStakeholder ? currentStakeholder.id : currentCoordinator.id)+'/home']" class="uk-flex uk-flex-middle">
+          <a [routerLink]="['contributions/'+(currentStakeholder ? currentStakeholder.id : (currentCoordinator ? currentCoordinator.id : currentAdministrator.id))+'/home']" class="uk-flex uk-flex-middle">
             <span class="material-icons uk-margin-right">home</span>
             <span class="menu_title">Home</span>
           </a>
@@ -61,7 +61,7 @@
 <!--      For messages-->
       <ul *ngIf="projectName === 'Observatory'">
         <li [routerLinkActive]="['current_section']" class="">
-          <a [routerLink]="['contributions/'+(currentStakeholder ? currentStakeholder.id : currentCoordinator.id)+'/messages']"
+          <a [routerLink]="['contributions/'+(currentStakeholder ? currentStakeholder.id : (currentCoordinator ? currentCoordinator.id : currentAdministrator.id))+'/messages']"
              class="uk-flex uk-flex-middle">
             <span class="material-icons uk-margin-right">mail</span>
             <span class="menu_title">Messages</span>
@@ -69,10 +69,10 @@
         </li>
       </ul>
     </div>
-    <div *ngIf="currentCoordinator" class="menu_section border_top">
+    <div *ngIf="currentCoordinator || currentAdministrator" class="menu_section border_top">
       <ul>
         <li [routerLinkActive]="['current_section']">
-          <a [routerLink]="['contributions/'+currentCoordinator.id+'/stakeholders']" class="uk-flex uk-flex-middle">
+          <a [routerLink]="['contributions/'+ (currentCoordinator ? currentCoordinator.id : currentAdministrator.id) +'/stakeholders']" class="uk-flex uk-flex-middle">
             <span class="material-icons uk-margin-right">manage_accounts</span>
             <span class="menu_title">Stakeholders</span>
           </a>

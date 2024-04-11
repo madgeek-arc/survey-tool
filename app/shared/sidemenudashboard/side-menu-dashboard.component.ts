@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Coordinator, Stakeholder} from "../../domain/userInfo";
+import {Administrator, Coordinator, Stakeholder} from "../../domain/userInfo";
 import {UserService} from "../../services/user.service";
 import {Subject} from "rxjs";
 import {environment} from "../../../environments/environment";
@@ -17,6 +17,7 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
   projectName: string = environment.projectName;
   currentStakeholder: Stakeholder = null;
   currentCoordinator: Coordinator = null;
+  currentAdministrator: Administrator = null;
   ready = false;
   isManager = false;
 
@@ -41,6 +42,12 @@ export class SideMenuDashboardComponent implements OnInit, OnDestroy {
     this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
       this.currentCoordinator = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
       if (this.currentCoordinator !== null) {
+        this.ready = true;
+      }
+    });
+    this.userService.currentAdministrator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+      this.currentAdministrator = !!next ? next : JSON.parse(sessionStorage.getItem('currentAdministrator'));
+      if (this.currentAdministrator !== null) {
         this.ready = true;
       }
     });
