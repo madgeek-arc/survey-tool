@@ -25,7 +25,7 @@ export class UserService implements OnDestroy {
   constructor(public http: HttpClient) {
     this.intervalId = setInterval(() => {
       this.updateUserInfo();
-    }, 10 * 60 * 1000);
+    }, 60 * 60 * 1000);
   }
 
 
