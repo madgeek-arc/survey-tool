@@ -20,8 +20,13 @@ export class UserService implements OnDestroy {
   currentAdministrator = new BehaviorSubject<Administrator>(null);
   private userInfoChangeSubject = new BehaviorSubject<UserInfo>(null);
   private currentUserInfo: UserInfo = null;
+  private intervalId = null;
 
-  constructor(public http: HttpClient) {}
+  constructor(public http: HttpClient) {
+    this.intervalId = setInterval(() => {
+      this.updateUserInfo();
+    }, 60000);
+  }
 
 
   changeCurrentStakeholder(currentGroup: Stakeholder) {
@@ -44,7 +49,7 @@ export class UserService implements OnDestroy {
     this.currentAdministrator.next(null);
   }
 
-  changeCurrentAdministator(current: Administrator) {
+  changeCurrentAdministrator(current: Administrator) {
     this.currentAdministrator.next(current);
     // console.log(this.currentAdministrator);
     sessionStorage.setItem('currentAdministrator', JSON.stringify(current));
@@ -112,6 +117,7 @@ export class UserService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.clearUserInfo();
+    clearInterval(this.intervalId);
     this.currentStakeholder.next(null);
     this.currentStakeholder.complete();
     this.currentCoordinator.next(null);
