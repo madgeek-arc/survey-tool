@@ -5,18 +5,19 @@ import { ReusableComponentsModule } from "../../shared/reusablecomponents/reusab
 import { ContributionsHomeComponent } from "./home/contributions-home.component";
 import { MySurveysComponent } from "./my-surveys/my-surveys.component";
 import { MyGroupComponent } from "./my-group/my-group.component";
-import {SurveyCardComponent} from "./my-surveys/survey-card/survey-card.component";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {CoordinatorsComponent} from "./coordinators/coordinators.component";
-import {NgSelectModule} from "@ng-select/ng-select";
-import {SurveysListComponent} from "./coordinators/surveys-list/surveys-list.component";
-import {HistoryComponent} from "./survey-history/history.component";
-import {CompareModule} from "../../../catalogue-ui/pages/dynamic-form/compare-versions/compare.module";
-import {SurveyToolModule} from "../../survey-tool.module";
-import {StakeholdersComponent} from "./coordinators/stakeholders/stakeholders.component";
-import {EditManagerComponent} from "./coordinators/stakeholders/edit-managers/edit-manager.component";
+import { SurveyCardComponent } from "./my-surveys/survey-card/survey-card.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { CoordinatorsComponent } from "./coordinators/coordinators.component";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { SurveysListComponent } from "./coordinators/surveys-list/surveys-list.component";
+import { HistoryComponent } from "./survey-history/history.component";
+import { CompareModule } from "../../../catalogue-ui/pages/dynamic-form/compare-versions/compare.module";
+import { SurveyToolModule } from "../../survey-tool.module";
+import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
+import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
+import { WebsocketService } from "../../services/websocket.service";
 
-@NgModule ({
+@NgModule({
   imports: [
     CommonModule,
     ContributionsDashboardRoutingModule,
@@ -38,7 +39,7 @@ import {EditManagerComponent} from "./coordinators/stakeholders/edit-managers/ed
     StakeholdersComponent,
     EditManagerComponent
   ],
-  providers: [],
+  providers: [WebsocketService],
 })
 
 export class ContributionsDashboardModule {}
