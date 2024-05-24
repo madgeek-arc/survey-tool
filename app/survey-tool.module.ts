@@ -13,6 +13,9 @@ import {SurveyToolRoutingModule} from "./survey-tool-routing.module";
 import {SharedModule} from "../../app/shared/shared.module";
 import {UserProfileComponent} from "./pages/user-profile/user-profile.component";
 import {CatalogueUiSharedModule} from "../catalogue-ui/shared/catalogue-ui-shared.module";
+import {
+  CatalogueUiReusableComponentsModule
+} from "../catalogue-ui/shared/reusable-components/catalogue-ui-reusable-components.module";
 
 @NgModule({
   declarations: [
@@ -26,6 +29,7 @@ import {CatalogueUiSharedModule} from "../catalogue-ui/shared/catalogue-ui-share
     CommonModule,
     CatalogueUiModule,
     ReusableComponentsModule,
+    CatalogueUiReusableComponentsModule,
     FormsModule,
     SurveyToolRoutingModule,
     SharedModule,
@@ -39,6 +43,7 @@ import {CatalogueUiSharedModule} from "../catalogue-ui/shared/catalogue-ui-share
   exports: [
     ContributionsDashboardComponent,
     SurveyFormComponent,
+    CatalogueUiReusableComponentsModule
   ]
 })
 export class SurveyToolModule {

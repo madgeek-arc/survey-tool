@@ -4,7 +4,6 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {ForbiddenPageComponent} from './403-forbidden-page.component';
-import {ReadMoreComponent, ReadMoreTextComponent} from './read-more.component';
 import {SideMenuDashboardComponent} from "../sidemenudashboard/side-menu-dashboard.component";
 import {HighchartsChartModule} from "highcharts-angular";
 import {HighchartsTilemapComponent} from "./charts/highcharts-tilemap.component";
@@ -29,8 +28,6 @@ import {HighchartsColumnRangesComponent} from "./charts/column-ranges-chart/high
   declarations: [
     SideMenuDashboardComponent,
     ForbiddenPageComponent,
-    ReadMoreComponent,
-    ReadMoreTextComponent,
     HighchartsTilemapComponent,
     HighchartsCategoryMapComponent,
     HighchartsBubbleMapComponent,
@@ -44,8 +41,6 @@ import {HighchartsColumnRangesComponent} from "./charts/column-ranges-chart/high
   exports: [
     SideMenuDashboardComponent,
     ForbiddenPageComponent,
-    ReadMoreComponent,
-    ReadMoreTextComponent,
     HighchartsTilemapComponent,
     HighchartsCategoryMapComponent,
     HighchartsBubbleMapComponent,
