@@ -51,7 +51,7 @@ export class StakeholdersService {
   }
 
   getStakeholderMembers(id: string) {
-    return this.httpClient.get<GroupMembers>(this.base + `/stakeholders/${id}/members`);
+    return this.httpClient.get<GroupMembers>(this.base + `/stakeholders/${id}/users`);
   }
 
   /** Coordinators **/

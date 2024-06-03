@@ -103,7 +103,7 @@ export class UserService implements OnDestroy {
   }
 
   getStakeholdersMembers(id: string) {
-    return this.http.get<GroupMembers>(this.base + `/stakeholders/${id}/members`, this.options);
+    return this.http.get<GroupMembers>(this.base + `/stakeholders/${id}/users`, this.options);
   }
 
   updateProfile(profile: Profile, id: string) {
