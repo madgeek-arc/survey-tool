@@ -8,13 +8,13 @@ HC_ExportingOffline(Highcharts);
 
 @Component({
   selector: 'app-column-ranges-chart',
-  template: '<div [id]="chartId" style="display: block; height: 100%; width: 100%"></div>',
+  template: '<div *ngIf="chartId" [id]="chartId" style="display: block; height: 100%; width: 100%"></div>',
 })
 
 export class HighchartsColumnRangesComponent implements OnChanges {
 
 
-  @Input() chartId: string;
+  @Input() chartId: string = null;
   @Input() series: any = [];
   @Input() title: string = null;
   @Input() subTitle: string = null;
@@ -26,9 +26,11 @@ export class HighchartsColumnRangesComponent implements OnChanges {
 
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.series?.length > 0) {
-      this.initializeOptions();
-      this.createChart();
+    if (this.series?.length > 0 && this.chartId !== null) {
+      setTimeout(() => {
+        this.initializeOptions();
+        this.createChart();
+      }, 0);
     }
   }
 

@@ -1,26 +1,24 @@
-import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import * as Highcharts from 'highcharts';
 
 @Component({
-    selector: 'app-pie-chart',
-    template: '<div [id]="chartId"></div>',
+  selector: 'app-pie-chart',
+  template: '<div *ngIf="chartId" [id]="chartId"></div>',
 })
-export class PieChartComponent implements AfterViewInit, OnChanges{
+export class PieChartComponent implements OnChanges {
 
-    @Input() chartId: string;
-    @Input() series: any = [{}];
+  @Input() chartId: string = null;
+  @Input() series: any = [];
 
   backgroundColor: string = '#FFFFFF';
-    pie: Highcharts.Chart;
+  pie: Highcharts.Chart;
 
 
-    ngAfterViewInit() {
-        this.initChart();
-    }
+  ngOnChanges() {
+    if (this.series?.length > 0 && this.chartId !== null) {
 
-    ngOnChanges(changes: SimpleChanges) {
-      if (changes.series.currentValue !== changes.series.previousValue) {
-        // this.pie.series[0].data = this.series.data;
+      setTimeout(() => { // Timeout with delay 0 to reorder the
+        // console.log(document.getElementById(this.chartId));
         this.initChart();
         this.pie.update({
           chart: {
@@ -31,20 +29,22 @@ export class PieChartComponent implements AfterViewInit, OnChanges{
           },
           series: this.series
         }, true);
-      }
-    }
+      }, 0)
 
-    initChart() {
-        // console.log(this.chartId);
-        this.pie = Highcharts.chart(this.chartId, {
-            chart: {
-                type: 'pie',
-                backgroundColor: this.backgroundColor
-            },
-            title: {
-                text: 'Countries distribution'
-            },
-            series: this.series
-        } as any);
     }
+  }
+
+  initChart() {
+    // console.log(this.chartId);
+    this.pie = Highcharts.chart(this.chartId, {
+      chart: {
+        type: 'pie',
+        backgroundColor: this.backgroundColor
+      },
+      title: {
+        text: 'Countries distribution'
+      },
+      series: this.series
+    } as any);
+  }
 }
