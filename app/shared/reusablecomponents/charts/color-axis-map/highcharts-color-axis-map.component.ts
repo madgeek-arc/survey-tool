@@ -157,7 +157,7 @@ export class HighchartsColorAxisMapComponent {
       },
       tooltip: {
         formatter: function () {
-          let comment = that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()) ? that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
+          let comment = that.toolTipData.get(this.point.properties['iso-a2']?.toLowerCase()) ? that.toolTipData.get(this.point.properties['iso-a2'].toLowerCase()):'';
           comment = comment.replace(/\\n/g,'<br>');
           comment = comment.replace(/\\t/g,' ');
           if (this.point.value < 0)
