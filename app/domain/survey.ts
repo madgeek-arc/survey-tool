@@ -64,11 +64,9 @@ export class Entries {
 }
 
 export class DisplayEntries {
-  email: string;
-  fullname: string;
-  role: string;
-  comment: string;
   time: number;
+  editors: Editor[] = [];
+  comment: string;
   action: Action;
   resourceId: string;
   version: string;
@@ -78,6 +76,13 @@ export class Action {
   type: string;
   registryVersion: string;
   pointsTo: string;
+}
+
+export class Editor {
+  email: string;
+  fullname: string;
+  role: string;
+  updateDate: Date;
 }
 
 export class SurveyAnswerPublicMetadata {

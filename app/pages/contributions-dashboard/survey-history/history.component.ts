@@ -1,9 +1,9 @@
-import {Component, OnInit} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
-import {SurveyService} from "../../../services/survey.service";
-import {DisplayEntries, DisplayHistory, SurveyAnswer} from "../../../domain/survey";
-import {Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
-import {zip} from "rxjs/internal/observable/zip";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { SurveyService } from "../../../services/survey.service";
+import { DisplayEntries, DisplayHistory, Editor, SurveyAnswer } from "../../../domain/survey";
+import { Model } from "../../../../catalogue-ui/domain/dynamic-form-model";
+import { zip } from "rxjs/internal/observable/zip";
 
 import UIkit from "uikit";
 
@@ -20,6 +20,7 @@ export class HistoryComponent implements OnInit {
   surveyAnswerHistory: DisplayHistory = null;
   selectedEntries: DisplayEntries[] = [];
   selectedVersion: DisplayEntries = null;
+  editorsSet: Set<Editor> = new Set<Editor>();
 
   model: Model = null;
   surveyAnswerA: SurveyAnswer = null;

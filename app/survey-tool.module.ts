@@ -43,7 +43,8 @@ import {
   exports: [
     ContributionsDashboardComponent,
     SurveyFormComponent,
-    CatalogueUiReusableComponentsModule
+    CatalogueUiReusableComponentsModule,
+    CatalogueUiSharedModule
   ]
 })
 export class SurveyToolModule {

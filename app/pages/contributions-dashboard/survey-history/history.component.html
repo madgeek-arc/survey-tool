@@ -24,10 +24,10 @@
               <div *ngIf="i==0" class="uk-text-italic uk-text-small uk-text-margin-small-top">
                 Current version
               </div>
-              <div class="uk-margin-small-top uk-text-meta">
-                <div>{{entry.fullname}}</div>
-                <div>{{entry.email}}</div>
-                <div *ngIf="entry.role" class="">({{entry.role}})</div>
+              <div *ngFor="let editor of entry.editors | unique: 'email'" class="uk-margin-small-top uk-text-meta">
+                <div>{{editor.fullname}}</div>
+                <div>{{editor.email}}</div>
+                <div *ngIf="editor.role" class="">({{editor.role}})</div>
               </div>
             </div>
             <div class="">

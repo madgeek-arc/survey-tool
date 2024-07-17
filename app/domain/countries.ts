@@ -3,6 +3,7 @@ export const countries = [
   {id : 'AL', name : 'Albania'},
   {id : 'AM', name : 'Armenia'},
   {id : 'AT', name : 'Austria'},
+  {id : 'AZ', name : 'Azerbaijan'},
   {id : 'BY', name : 'Belarus'},
   {id : 'BE', name : 'Belgium'},
   {id : 'BA', name : 'Bosnia and Herzegovina'},

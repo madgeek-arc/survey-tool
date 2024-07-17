@@ -90,5 +90,6 @@ export class UserActivity {
   fullname: string;
   action: string;
   position: string;
+  color: string;
   date: Date;
 }

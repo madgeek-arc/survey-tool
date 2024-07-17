@@ -25,7 +25,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   private _destroyed: Subject<boolean> = new Subject();
   survey: Model = null;
   subType: string;
-  surveyAnswer: SurveyAnswer = null
+  surveyAnswer: SurveyAnswer = null;
   activeUsers: UserActivity[] = [];
   userInfo: UserInfo = null;
   tabsHeader: string = null;
@@ -73,17 +73,16 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             error => {console.log(error)},
             () => {
               this.ready = true;
-              this.wsService.initializeWebSocketConnection(this.surveyAnswer.id, 'surveyAnswer');
+              // this.wsService.initializeWebSocketEditConnection(this.surveyAnswer.id, this.surveyAnswer.type);
+              this.wsService.initializeWebSocketConnection(this.surveyAnswer.id, this.surveyAnswer.type);
               if (this.router.url.includes('/view')) {
-                this.wsService.WsJoin(this.surveyAnswer.id, 'surveyAnswer', 'view');
                 this.action = 'view';
               } else if (this.router.url.includes('/validate')) {
-                this.wsService.WsJoin(this.surveyAnswer.id, 'surveyAnswer', 'validate');
                 this.action = 'validate';
               } else {
-                this.wsService.WsJoin(this.surveyAnswer.id, 'surveyAnswer', 'edit');
                 this.action = 'edit';
               }
+              this.wsService.WsJoin(this.action);
             }
           );
         } else {
@@ -102,8 +101,9 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
     this._destroyed.next(true);
     this._destroyed.complete();
     if (this.surveyAnswer?.id) {
-      this.wsService.WsLeave(this.surveyAnswer.id, 'surveyAnswer', this.action);
+      this.wsService.WsLeave(this.action);
     }
+    this.wsService.closeWs();
   }
 
 
