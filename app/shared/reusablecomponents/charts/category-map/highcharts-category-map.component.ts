@@ -1,10 +1,10 @@
 import * as Highcharts from "highcharts/highmaps";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
+import { CategorizedAreaData } from "../../../../domain/categorizedAreaData";
+import { SeriesOptionsType } from "highcharts/highmaps";
+import { PremiumSortPipe } from "../../../../../catalogue-ui/shared/pipes/premium-sort.pipe";
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_ExportingOffline from 'highcharts/modules/offline-exporting';
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
-import {CategorizedAreaData} from "../../../../domain/categorizedAreaData";
-import {SeriesOptionsType} from "highcharts/highmaps";
-import {PremiumSortPipe} from "../../../../../catalogue-ui/shared/pipes/premium-sort.pipe";
 
 HC_exporting(Highcharts);
 HC_ExportingOffline(Highcharts);
@@ -79,7 +79,9 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
           this.mapData.series[1].color = this.colorPallet[4];
       }
 
-      this.mapData.series[0].allAreas = true;
+      if (this.mapData.series[0])
+        this.mapData.series[0].allAreas = true;
+
       setTimeout(() => {
         self.chartOptions.title.text = this.title;
         self.chartOptions.series = this.mapData.series as SeriesOptionsType[];
