@@ -15,7 +15,8 @@ let componentContext;
 
 @Component({
   selector: 'app-highcharts-color-axis',
-  templateUrl: 'highcharts-color-axis-map.component.html'
+  templateUrl: 'highcharts-color-axis-map.component.html',
+  styles: ['#container {display: block; width: 100%; height: 100%; }']
 })
 
 export class HighchartsColorAxisMapComponent {

@@ -8,7 +8,8 @@ HC_ExportingOffline(Highcharts);
 
 @Component({
   selector: 'app-column-ranges-chart',
-  template: '<div *ngIf="chartId" [id]="chartId" style="display: block; height: 100%; width: 100%"></div>',
+  template: '<div *ngIf="chartId" [id]="chartId" class="container"></div>',
+  styles: [`.container {display: block; width: 100%; height: 100%; }`]
 })
 
 export class HighchartsColumnRangesComponent implements OnChanges {

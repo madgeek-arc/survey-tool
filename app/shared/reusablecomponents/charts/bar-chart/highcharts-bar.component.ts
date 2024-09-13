@@ -10,7 +10,8 @@ let componentContext;
 
 @Component({
   selector: 'app-bar-chart',
-  templateUrl: './highcharts-bar.component.html'
+  templateUrl: './highcharts-bar.component.html',
+  styles: ['#container {display: block; width: 100%; height: 100%; }']
 })
 
 export class HighchartsBarComponent implements OnChanges{
