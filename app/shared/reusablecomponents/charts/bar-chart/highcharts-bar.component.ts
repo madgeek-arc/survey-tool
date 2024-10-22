@@ -74,7 +74,7 @@ export class HighchartsBarComponent implements OnChanges{
       },
       tooltip: {
         formatter: function () {
-          console.log(componentContext.dataSeriesSuffix);
+          // console.log(componentContext.dataSeriesSuffix);
           return '<b>' + this.point.name + '</b>: ' + this.point.y + ' ' + (componentContext.dataSeriesSuffix !== null ? componentContext.dataSeriesSuffix : ' M');
         },
         // headerFormat: `<div>Country: {point.key}</div>`,
