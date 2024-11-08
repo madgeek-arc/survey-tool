@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {SurveyService} from "../../../services/survey.service";
-import {UserService} from "../../../services/user.service";
-import {SurveyInfo} from "../../../domain/survey";
-import {Coordinator, Stakeholder, UserInfo} from "../../../domain/userInfo";
-import {Paging} from "../../../../catalogue-ui/domain/paging";
-import {URLParameter} from "../../../../catalogue-ui/domain/url-parameter";
-import {Subject, Subscriber} from "rxjs";
-import {takeUntil} from "rxjs/operators";
-import {FacetValue} from "../../../../catalogue-ui/domain/facet";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { SurveyService } from "../../../services/survey.service";
+import { UserService } from "../../../services/user.service";
+import { SurveyInfo } from "../../../domain/survey";
+import { Coordinator, Stakeholder, UserInfo } from "../../../domain/userInfo";
+import { Paging } from "../../../../catalogue-ui/domain/paging";
+import { URLParameter } from "../../../domain/url-parameter";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { FacetValue } from "../../../../catalogue-ui/domain/facet";
 
 @Component({
   selector: 'app-coordinator-dashboard',

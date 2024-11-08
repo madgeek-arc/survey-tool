@@ -1,17 +1,11 @@
-import {Injectable} from "@angular/core";
-import {environment} from "../../../environments/environment";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {
-  DisplayHistory,
-  ResourcePermission,
-  SurveyAnswer,
-  SurveyAnswerPublicMetadata,
-  SurveyInfo
-} from "../domain/survey";
-import {Paging} from "../../catalogue-ui/domain/paging";
-import {GroupMembers} from "../domain/userInfo";
-import {URLParameter} from "../../catalogue-ui/domain/url-parameter";
-import {Model} from "../../catalogue-ui/domain/dynamic-form-model";
+import { Injectable } from "@angular/core";
+import { environment } from "../../../environments/environment";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { DisplayHistory, ResourcePermission, SurveyAnswer, SurveyAnswerPublicMetadata, SurveyInfo } from "../domain/survey";
+import { Paging } from "../../catalogue-ui/domain/paging";
+import { GroupMembers } from "../domain/userInfo";
+import { URLParameter } from "../domain/url-parameter";
+import { Model } from "../../catalogue-ui/domain/dynamic-form-model";
 
 @Injectable()
 export class SurveyService {

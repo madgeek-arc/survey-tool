@@ -1,11 +1,9 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { RawData } from "../domain/raw-data";
-import {Stakeholder, GroupMembers, Coordinator} from "../domain/userInfo";
-import {Paging} from "../../catalogue-ui/domain/paging";
-import {URLParameter} from "../../catalogue-ui/domain/url-parameter";
+import { Stakeholder, GroupMembers, Coordinator } from "../domain/userInfo";
+import { Paging } from "../../catalogue-ui/domain/paging";
+import { URLParameter } from "../domain/url-parameter";
 
 
 const headerOptions = {
