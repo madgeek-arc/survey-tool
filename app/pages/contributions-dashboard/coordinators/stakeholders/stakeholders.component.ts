@@ -1,13 +1,13 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from "@angular/core";
-import {Paging} from "../../../../../catalogue-ui/domain/paging";
-import {Coordinator, Stakeholder} from "../../../../domain/userInfo";
-import {StakeholdersService} from "../../../../services/stakeholders.service";
-import {URLParameter} from "../../../../../catalogue-ui/domain/url-parameter";
-import {ActivatedRoute, Router} from "@angular/router";
-import {fromEvent, Subject} from "rxjs";
-import {debounceTime, distinctUntilChanged, map, takeUntil} from "rxjs/operators";
-import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
-import {UserService} from "../../../../services/user.service";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Paging } from "../../../../../catalogue-ui/domain/paging";
+import { Coordinator, Stakeholder } from "../../../../domain/userInfo";
+import { StakeholdersService } from "../../../../services/stakeholders.service";
+import { URLParameter } from "../../../../domain/url-parameter";
+import { ActivatedRoute, Router } from "@angular/router";
+import { fromEvent, Subject } from "rxjs";
+import { debounceTime, distinctUntilChanged, map, takeUntil } from "rxjs/operators";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { UserService } from "../../../../services/user.service";
 
 declare var UIkit;
 
