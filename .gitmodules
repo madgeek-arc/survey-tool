@@ -1,0 +1,3 @@
+[submodule "catalogue-ui"]
+	path = catalogue-ui
+	url = git@github.com:madgeek-arc/catalogue-ui.git
