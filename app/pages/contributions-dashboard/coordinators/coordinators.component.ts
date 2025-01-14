@@ -249,7 +249,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       }
     }
     if (!foundOrder) {
-      this.updateURLParameters('orderField', 'modificationDate');
+      this.updateURLParameters('sort', 'modificationDate');
       this.updateURLParameters('order', 'desc');
     }
 

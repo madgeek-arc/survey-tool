@@ -39,7 +39,7 @@ export class SurveyService {
     let params = new HttpParams();
     params = params.append(type, id);
     params = params.append('order', 'desc');
-    params = params.append('orderField', 'creationDate');
+    params = params.append('sort', 'creationDate');
     return this.http.get<Paging<Model>>(this.base + `/surveys`, {params});
   }
 

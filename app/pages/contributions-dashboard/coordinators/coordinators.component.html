@@ -66,7 +66,7 @@
           <div class="uk-margin-remove-top uk-flex uk-flex-middle" uk-grid>
             <div class="uk-width-1-4 uk-padding-remove">
               <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"
-                         (change)="this.updateURLParameters('orderField', 'modificationDate'); filterSelection('order', order)">
+                         (change)="this.updateURLParameters('sort', 'modificationDate'); filterSelection('order', order)">
                 <ng-option [value]="'desc'">Most recently modified</ng-option>
                 <ng-option [value]="'asc'">Least recently modified</ng-option>
               </ng-select>
