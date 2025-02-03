@@ -52,7 +52,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
             key: obj,
             values: params[obj].split(',')
           };
-          if (urlParameter.key === 'query') {
+          if (urlParameter.key === 'keyword') {
             this.searchQuery = urlParameter.values[0];
           }
           this.urlParameters.push(urlParameter);
@@ -93,7 +93,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
       , distinctUntilChanged() // If previous query is different from current
     ).subscribe((text: string) => {
         this.updateURLParameters('from', 0);
-        this.updateURLParameters('query', text);
+        this.updateURLParameters('keyword', text);
         this.navigateUsingParameters();
       }
     );
