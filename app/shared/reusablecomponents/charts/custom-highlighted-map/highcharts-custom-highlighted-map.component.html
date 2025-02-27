@@ -1,0 +1,133 @@
+<h5>
+  Financial strategy on open access publications
+</h5>
+
+<highcharts-chart *ngIf="ready"
+                  id="container"
+                  [Highcharts]="Highcharts"
+                  [constructorType]="chartConstructor"
+                  [options]="chartOptions"
+                  [callbackFunction]="chartCallback"
+                  [(update)]="updateFlag">
+  <!--  style="display: block; height: 100%; width: 100%">-->
+</highcharts-chart>
+<div class="uk-margin-large-bottom">
+  <h6>10 countries most at risk</h6>
+  <hr>
+  <div class="">
+    <div class="uk-child-width-1-5 uk-grid-margin" uk-grid>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+<!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/gr-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Greece</h6>
+          <div class="uk-text-primary uk-text-bold">45.2 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/fr-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">France</h6>
+          <div class="uk-text-primary uk-text-bold">30.2 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/de-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Germany</h6>
+          <div class="uk-text-primary uk-text-bold">20.5%</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/es-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Spain</h6>
+          <div class="uk-text-primary uk-text-bold">12.9 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/se-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Sweden</h6>
+          <div class="uk-text-primary uk-text-bold">42.6 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/bg-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Bulgaria</h6>
+          <div class="uk-text-primary uk-text-bold">34.9 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/it-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Italy</h6>
+          <div class="uk-text-primary uk-text-bold">50.6 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/no-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Norway</h6>
+          <div class="uk-text-primary uk-text-bold">30.4 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/pt-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Portugal</h6>
+          <div class="uk-text-primary uk-text-bold">24.1 %</div>
+        </div>
+      </div>
+
+      <div class="uk-flex uk-flex-middle">
+        <div>
+          <!--          <img src="src/survey-tool/assets/images/flags/gr-flag-round.png">-->
+          <img src="../survey-tool/assets/images/flags/ua-flag-round.png" width="50">
+        </div>
+        <div class="uk-margin-small-left">
+          <h6 class="uk-margin-remove">Ukraine</h6>
+          <div class="uk-text-primary uk-text-bold">19.8 %</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <hr>
+</div>

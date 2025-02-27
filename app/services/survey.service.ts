@@ -47,6 +47,10 @@ export class SurveyService {
     return this.http.get<Model>(this.base + `/surveys/${surveyId}`);
   }
 
+  getSurveyValidatedCountries(surveyId: string) {
+    return this.http.get<string[]>(this.base + `/surveys/${surveyId}/answers/validated`);
+  }
+
   getPermissions(resourceIds: string[]) {
     return this.http.get<ResourcePermission[]>(this.base + `/permissions?resourceIds=${resourceIds}`);
   }

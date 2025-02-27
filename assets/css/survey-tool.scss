@@ -5,8 +5,11 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 //@import url('http://fonts.cdnfonts.com/css/helvetica-neue-55');
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+//@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+//@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&family=Quicksand:wght@300..700&display=swap');
 
 /*:root {*/
   /*--primary-color: #004494;*/
@@ -38,8 +41,10 @@
   --header-height: 80px;
 
   //--main-font-family: 'Helvetica Neue', 'Montserrat', 'Open Sans', sans-serif;
-  --main-font-family: 'Montserrat', 'Open Sans', sans-serif;
-  --secondary-font-family: 'Ubuntu', sans-serif;
+  //--main-font-family: 'Montserrat', 'Open Sans', sans-serif;
+  --main-font-family: 'Oxygen', 'Open Sans', sans-serif;
+  //--secondary-font-family: 'Ubuntu', sans-serif;
+  --secondary-font-family: 'Quicksand', sans-serif;
   --black: #1A1A1A;
   --grey: #6E6E6E;
   --catalogue-light-purple: #AD20E7;

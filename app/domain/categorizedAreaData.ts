@@ -17,6 +17,7 @@ export class Series {
   showInLegend: boolean;
   dataLabels: DataLabelsOptions = {};
   marker: PointMarkerOptionsObject = {};
+  custom: Record<string, string[]> = {};
   data: any[];
 
   constructor(name: string, allAreas: boolean, type?: string) {

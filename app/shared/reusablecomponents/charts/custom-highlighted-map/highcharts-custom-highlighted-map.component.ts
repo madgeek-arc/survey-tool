@@ -13,12 +13,12 @@ declare var require: any;
 const worldMap = require('@highcharts/map-collection/custom/world-highres3.topo.json');
 
 @Component({
-  selector: 'app-highcharts-category-map',
-  templateUrl: './highcharts-category-map.component.html',
+  selector: 'app-highcharts-custom-highlighted-map',
+  templateUrl: './highcharts-custom-highlighted-map.component.html',
   styles: ['#container { display: block; width: 100%; height: 100%; }']
 })
 
-export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
+export class HighchartsCustomHighlightedMapComponent implements OnInit, OnChanges {
 
   @Input() mapData: CategorizedAreaData = null;
   @Input() title: string = null;
@@ -26,10 +26,6 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   @Input() pointFormat: string = null;
   @Input() mapType: string = null;
   @Input() toolTipData: Map<string, string> = new Map;
-  @Input() customLabelText?: string = undefined;
-  @Input() backgroundColor?: string = undefined;
-  @Input() caption?: string = undefined;
-
   @Output() mapClick = new EventEmitter<any>();
 
   chart;
@@ -37,6 +33,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   updateFlag = false;
   Highcharts: typeof Highcharts = Highcharts;
   colorPallet = ['#2A9D8F', '#E9C46A', '#F4A261', '#E76F51', '#A9A9A9'];
+  backgroundColor: string = '#ffffff';
   datasetOrder = [ 'Yes', 'Partly', 'In planning', 'No', 'Awaiting data' ];
   premiumSort = new PremiumSortPipe();
   chartConstructor = "mapChart";
@@ -55,8 +52,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    if(!this.backgroundColor)
-      this.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--medium-grey');
+    this.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--medium-grey');
     this.createMap();
   }
 
@@ -108,67 +104,8 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       chart: {
         map: worldMap,
         spacingBottom: 20,
-        backgroundColor: this.backgroundColor,
-        events: {
-          // load: function () {
-          //   // Create a custom info box
-          //   const infoBox = document.createElement('div');
-          //   infoBox.innerHTML = 'Custom Info Box';
-          //   infoBox.style.position = 'absolute';
-          //   infoBox.style.top = '130px';
-          //   infoBox.style.right = '30px';
-          //   infoBox.style.backgroundColor = 'white';
-          //   infoBox.style.padding = '10px';
-          //   infoBox.style.border = '1px solid #ccc';
-          //   infoBox.style.zIndex = '1000'; // Ensure it's on top
-          //   this.container.appendChild(infoBox);
-          // }
-          load: function () {
-
-            // const customLabelText = 'Custom Info Box <br>with <strong>Variable</strong>';
-            if (that.customLabelText) {
-              // Define your custom label text
-              const infoBox = this.renderer.label(that.customLabelText, 10, 10, null, null, null, true)
-                .attr({
-                  fill: '#AAD3D7',
-                  padding: 10,
-                  zIndex: 5,
-                  borderWidth: 1,
-                  borderColor: '#AAD3D7',
-                  borderRadius: 30
-                })
-                .css({
-                  color: '#333',
-                  borderRadius: 30
-                })
-                .add();
-
-              // Position the info box in the top right corner
-              infoBox.translate(this.plotWidth - 180, 130);
-            }
-
-            // const chart = this;
-            //
-            // const customLabelHTML = '<strong>Custom Info Box</strong><br><em>Styled with HTML</em>';
-            //
-            // // Create a div for the custom info box
-            // const infoBox = document.createElement('div');
-            // infoBox.innerHTML = customLabelHTML;
-            // infoBox.style.position = 'absolute';
-            // infoBox.style.top = '130px';
-            // infoBox.style.right = '30px';
-            // infoBox.style.backgroundColor = '#f9f9f9'; // Custom background color
-            // infoBox.style.padding = '10px';
-            // infoBox.style.border = '1px solid #ccc';
-            // infoBox.style.borderRadius = '5px';
-            // infoBox.style.zIndex = '1000'; // Ensure it's on top
-            // infoBox.style.color = '#333';
-            // infoBox.style.fontSize = '14px';
-            //
-            // // Append the info box to the chart container
-            // chart.container.appendChild(infoBox);
-          }
-        }
+        // backgroundColor: this.backgroundColor,
+        backgroundColor: 'transparent'
       },
       mapView: {
         center: [15, 50],
@@ -176,30 +113,20 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       },
 
       title: {
-        text: this.title,
-        // verticalAlign: 'bottom',
-        // y: -5 // Adjusts the vertical position of the title
+        text: this.title
       },
 
       subtitle: {
         text: this.subtitle
       },
 
-      caption: {
-        text: this.caption
-      },
-
-      credits: {
-        enabled: false
-      },
-
-      mapNavigation: {
-        enabled: true,
-        buttonOptions: {
-          alignTo: "spacingBox"
-        },
-        enableMouseWheelZoom: false
-      },
+      // mapNavigation: {
+      //   enabled: true,
+      //   buttonOptions: {
+      //     alignTo: "spacingBox"
+      //   },
+      //   enableMouseWheelZoom: false
+      // },
 
       legend: {
         enabled: true,
@@ -216,12 +143,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
           comment = comment.replace(/\\n/g,'<br>');
           comment = comment.replace(/\\t/g,' ');
 
-          let areas: string = '<br>'; // Open science Areas for merged monitoring/policy maps
-          this.point.series.userOptions.custom[this.point['code']]?.forEach((item: string) => {
-            areas = areas.concat(item,'<br>');
-          });
-
-          return '<b>'+this.point.name+'</b>' + (comment ?  '<br><br>' + '<p>'+comment+'</p>' : '') + areas;
+          return '<b>'+this.point.name+'</b>' + (comment ?  '<br><br>' + '<p>'+comment+'</p>' : '');
         },
       },
 
@@ -244,7 +166,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
             events: {
               click: function () {
                 // console.log(this);
-                that.mapClick.emit(this.options);
+                that.mapClick.emit(this);
               },
             }
           }
@@ -254,26 +176,7 @@ export class HighchartsCategoryMapComponent implements OnInit, OnChanges {
       series: [] as SeriesOptionsType[],
       exporting: {
         sourceWidth: 1200,
-        sourceHeight: 800,
-        // chartOptions: {
-        //   // Include the custom info box in the export
-        //   chart: {
-        //     events: {
-        //       load: function () {
-        //         const infoBox = document.createElement('div');
-        //         infoBox.innerHTML = 'Custom Info Box';
-        //         infoBox.style.position = 'absolute';
-        //         infoBox.style.top = '130px';
-        //         infoBox.style.right = '30px';
-        //         infoBox.style.backgroundColor = 'white';
-        //         infoBox.style.padding = '10px';
-        //         infoBox.style.border = '1px solid #ccc';
-        //         infoBox.style.zIndex = '1000';
-        //         this.container.appendChild(infoBox);
-        //       }
-        //     }
-        //   }
-        // }
+        sourceHeight: 800
         // scale: 1,
       }
     }

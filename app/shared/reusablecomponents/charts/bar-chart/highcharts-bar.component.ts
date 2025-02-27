@@ -38,8 +38,8 @@ export class HighchartsBarComponent implements OnChanges{
       this.mapData = this.mapData.filter((element) => {
         return element[1] > 0;
       });
-      this.createChartBar()
-      this.ready = true
+      this.createChartBar();
+      this.ready = true;
     }
   }
 
