@@ -13,11 +13,12 @@ export class BarChartComponent implements OnChanges {
   @Input() titles = {title: '', xAxis: '', yAxis: ''};
   @Input() stacking?: Highcharts.OptionsStackingValue;
   @Input() legendOptions?: LegendOptions = {};
-  @Input() borderRadius?: (number|string|Highcharts.BorderRadiusOptionsObject) = undefined;
+  @Input() borderRadius?: (number | string | Highcharts.BorderRadiusOptionsObject) = undefined;
   @Input() pointWidth?: number = undefined;
   @Input() valueSuffix?: string = undefined;
   @Input() customTooltip?: boolean = false;
   @Input() yAxisLabels?: boolean = true;
+  @Input() duplicateXAxis?: boolean = false;
 
 
   Highcharts: typeof Highcharts = Highcharts;
@@ -81,13 +82,25 @@ export class BarChartComponent implements OnChanges {
         title: {
           text: this.titles.title
         },
-        xAxis: {
+        xAxis: [{
           type: 'category',
           categories: this.categories,
+
           title: {
             text: this.titles.xAxis
           }
         },
+          this.duplicateXAxis ? {
+            // mirror axis on right side
+            opposite: true,
+            type: 'category',
+            categories: this.categories,
+            linkedTo: 0,
+            lineWidth: 0
+          } : {
+            showEmpty: false
+          }
+        ],
         yAxis: {
           title: {
             text: this.titles.yAxis,
@@ -118,7 +131,7 @@ export class BarChartComponent implements OnChanges {
           },
         },
         legend: this.legendOptions,
-        series: this.series as SeriesOptionsType[]
+        series: this.series
       }, true, true, true);
     } else {
 
