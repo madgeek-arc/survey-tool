@@ -19,6 +19,7 @@ export class BarChartComponent implements OnChanges {
   @Input() customTooltip?: boolean = false;
   @Input() yAxisLabels?: boolean = true;
   @Input() duplicateXAxis?: boolean = false;
+  @Input() caption?: string;
 
 
   Highcharts: typeof Highcharts = Highcharts;
@@ -31,6 +32,9 @@ export class BarChartComponent implements OnChanges {
       text: this.titles.title,
       align: 'left'
     },
+    caption: {
+      text: this.caption,
+    },
     xAxis: {
       categories: this.categories,
       title: {
@@ -40,7 +44,7 @@ export class BarChartComponent implements OnChanges {
       lineWidth: 0
     },
     yAxis: {
-      min: 0,
+      // min: 0,
       title: {
         text: this.titles.yAxis,
         align: 'high'
@@ -106,7 +110,8 @@ export class BarChartComponent implements OnChanges {
             text: this.titles.yAxis,
           },
           labels: {
-            enabled: this.yAxisLabels
+            enabled: this.yAxisLabels,
+            format: this.duplicateXAxis ? '{abs value}' : undefined
           }
         },
         tooltip: {
