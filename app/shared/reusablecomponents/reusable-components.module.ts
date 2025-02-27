@@ -27,6 +27,7 @@ import { TreemapComponent } from "./charts/treemap/treemap.component";
 import {
   HighchartsCustomHighlightedMapComponent
 } from "./charts/custom-highlighted-map/highcharts-custom-highlighted-map.component";
+import { SankeyChartComponent } from "./charts/sankey-chart/sankey-chart.component";
 
 @NgModule({
   imports: [
@@ -58,7 +59,8 @@ import {
     FixedTooltipMapComponent,
     BarChartComponent,
     StackedColumnComponent,
-    TreemapComponent
+    TreemapComponent,
+    SankeyChartComponent,
   ],
   exports: [
     SideMenuDashboardComponent,
@@ -81,7 +83,8 @@ import {
     FixedTooltipMapComponent,
     BarChartComponent,
     StackedColumnComponent,
-    TreemapComponent
+    TreemapComponent,
+    SankeyChartComponent,
   ],
   providers: [],
 })
