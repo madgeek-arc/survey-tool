@@ -1,17 +1,17 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { Stakeholder, GroupMembers, Coordinator } from "../domain/userInfo";
 import { Paging } from "../../catalogue-ui/domain/paging";
+import { Stakeholder, GroupMembers, Coordinator } from "../domain/userInfo";
 import { URLParameter } from "../domain/url-parameter";
 
 
 const headerOptions = {
-  headers : new HttpHeaders().set('Content-Type', 'application/json')
+  headers: new HttpHeaders().set('Content-Type', 'application/json')
     .set('Accept', 'application/json'),
 };
 
-@Injectable ()
+@Injectable()
 export class StakeholdersService {
 
   base: string = environment.API_ENDPOINT;
@@ -55,7 +55,7 @@ export class StakeholdersService {
   /** Coordinators **/
 
   getCoordinatorById(id: string) {
-    return this.httpClient.get<Coordinator>(this.base+`/coordinators/${id}`);
+    return this.httpClient.get<Coordinator>(this.base + `/coordinators/${id}`);
   }
 
 }

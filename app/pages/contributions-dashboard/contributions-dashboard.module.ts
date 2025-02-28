@@ -16,7 +16,6 @@ import { SurveyToolModule } from "../../survey-tool.module";
 import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
 import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
 import { WebsocketService } from "../../services/websocket.service";
-import { CatalogueUiSharedModule } from "../../../catalogue-ui/shared/catalogue-ui-shared.module";
 
 @NgModule({
   imports: [
