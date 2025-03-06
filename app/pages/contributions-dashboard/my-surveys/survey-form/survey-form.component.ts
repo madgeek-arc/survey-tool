@@ -1,5 +1,6 @@
-import {Component, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { zip } from "rxjs/internal/observable/zip";
 import { SurveyComponent } from "../../../../../catalogue-ui/pages/dynamic-form/survey.component";
 import { Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
@@ -7,11 +8,12 @@ import { SurveyService } from "../../../../services/survey.service";
 import { SurveyAnswer } from "../../../../domain/survey";
 import { Stakeholder, UserActivity, UserInfo } from "../../../../domain/userInfo";
 import { WebsocketService } from "../../../../services/websocket.service";
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
 import UIkit from "uikit";
+
+declare var require: any;
+const seedRandom = require('seedrandom');
 
 @Component({
   selector: 'app-survey-form',
@@ -22,7 +24,7 @@ import UIkit from "uikit";
 export class SurveyFormComponent implements OnInit, OnDestroy {
   @ViewChild(SurveyComponent) child: SurveyComponent
 
-  private _destroyed: Subject<boolean> = new Subject();
+  private destroyRef = inject(DestroyRef);
   survey: Model = null;
   subType: string;
   surveyAnswer: SurveyAnswer = null;
@@ -34,6 +36,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   surveyId: string = null;
   stakeholderId: string = null;
   freeView = false;
+  readonly = false;
+  validate = false;
   ready = false;
   action: string = null;
 
@@ -44,11 +48,13 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
     this.ready = false;
     this.tabsHeader = 'Sections';
 
-    this.route.url.pipe(takeUntil(this._destroyed)).subscribe(
+    this.route.url.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
     next => {
+      this.validate = (next[next.length - 1].path === 'validate');
       this.freeView = (next[next.length - 1].path === 'freeView');
+      this.readonly = (next[next.length - 1].path === 'view');
 
-      this.route.params.pipe(takeUntil(this._destroyed)).subscribe(params => {
+      this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
         this.surveyId = params['surveyId'];
         if (params['stakeholderId']) {
           this.stakeholderId = params['stakeholderId'];
@@ -57,15 +63,10 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         }
         this.updateUserInfo();
 
-        // this.wsService.msg.pipe(takeUntil(this._destroyed)).subscribe(
-        // next => {
-        //     this.activeUsers = next;
-        //   }
-        // );
         if (!this.freeView) {
           zip(
-            this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(takeUntil(this._destroyed)),
-            this.surveyService.getSurvey(this.surveyId).pipe(takeUntil(this._destroyed))).subscribe(
+            this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(takeUntilDestroyed(this.destroyRef)),
+            this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef))).subscribe(
             next => {
               this.surveyAnswer = next[0];
               this.survey = next[1];
@@ -87,7 +88,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
           );
         } else {
           this.activeUsers = [];
-          this.surveyService.getSurvey(this.surveyId).pipe(takeUntil(this._destroyed)).subscribe(
+          this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
             next => {this.survey = next;},
             error => {console.log(error)},
             () => { this.ready = true; }
@@ -95,17 +96,43 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         }
       });
     });
+
+
+    this.wsService.activeUsers.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+      next => {
+        this.removeClass(this.activeUsers);
+        this.activeUsers = next;
+        this.activeUsers?.forEach( user => {
+          user.color = this.getRandomDarkColor(user.sessionId);
+          if(user.position) {
+            let sheet = window.document.styleSheets[0];
+
+            let styleExists = false;
+            for (let i = 0; i < sheet.cssRules.length; i++) {
+              if(sheet.cssRules[i] instanceof CSSStyleRule) {
+                if((sheet.cssRules[i] as CSSStyleRule).selectorText === `.user-${user.sessionId}`) {
+                  styleExists = true;
+                  break;
+                }
+              }
+            }
+            if (!styleExists)
+              sheet.insertRule(`.user-${user.sessionId} { border-color: ${this.getRandomDarkColor(user.sessionId)} !important}`, sheet.cssRules.length);
+
+            // console.log(sheet);
+          }
+        });
+        this.addClass(this.activeUsers);
+      }
+    );
   }
 
   ngOnDestroy() {
-    this._destroyed.next(true);
-    this._destroyed.complete();
     if (this.surveyAnswer?.id) {
       this.wsService.WsLeave(this.action);
     }
     this.wsService.closeWs();
   }
-
 
 
   findSubType(stakeholders: Stakeholder[], stakeholderId: string): string {
@@ -138,7 +165,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   }
 
   updateUserInfo() {
-    this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe(next => {
+    this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
       this.userInfo = next;
       if (this.userInfo) {
         this.subType = this.findSubType(this.userInfo.stakeholders, this.stakeholderId);
@@ -163,4 +190,69 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Other
+  getInitials(fullName: string) {
+    return fullName.split(" ").map((n)=>n[0]).join("")
+  }
+
+  actionIcon(action: string) {
+    switch (action) {
+      case 'view':
+        return 'visibility';
+      case 'validate':
+        return 'task_alt';
+      case 'edit':
+        return 'edit';
+      default:
+        return '';
+    }
+  }
+
+  actionTooltip(action: string) {
+    switch (action) {
+      case 'view':
+        return 'viewing';
+      case 'validate':
+        return 'validating';
+      case 'edit':
+        return 'editing';
+      default:
+        return '';
+    }
+  }
+
+  getRandomDarkColor(sessionId: string) { // (use for background with white/light font color)
+    const rng = seedRandom(sessionId);
+    const h = Math.floor(rng() * 1000 % 361),
+      s = Math.floor(rng() * 80 + 20) + '%', // set s above 20 to avoid similar grayish tones
+      // max value of l is 100, but limit it from 15 to 70 in order to generate darker colors
+      l = Math.floor(rng() * 55 + 15) + '%';
+    // console.log(`h= ${h}, s= ${s}, l= ${l}`);
+    return `hsl(${h},${s},${l})`;
+  };
+
+
+  /** Mark field as active --> **/
+  addClass(users: UserActivity[]) {
+    users?.forEach( user => {
+      if (!user.position)
+        return;
+
+      const htmlElement = document.getElementById(user.position);
+      if (htmlElement)
+        htmlElement.classList.add(`user-${user.sessionId}`)
+    });
+  }
+
+  removeClass(users: UserActivity[]) {
+    users?.forEach( user => {
+      if (!user.position)
+        return;
+
+      const htmlElement = document.getElementById(user.position);
+      if (htmlElement)
+        htmlElement.classList.remove(`user-${user.sessionId}`);
+    });
+  }
+  /** <-- Mark field as active **/
 }
