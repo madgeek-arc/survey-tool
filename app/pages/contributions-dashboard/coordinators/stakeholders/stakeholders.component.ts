@@ -29,6 +29,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   ready: boolean = false;
   edit: boolean = false;
   stakeholderForm: UntypedFormGroup = this.fb.group(new Stakeholder());
+  allStakeholders: any[] = [];
 
   // Paging
   pages: number[] = [];
@@ -40,6 +41,8 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private route: ActivatedRoute, private fb: UntypedFormBuilder,
               private stakeholdersService: StakeholdersService, private userService: UserService) {
   }
+
+  selectedView: 'card' | 'table' = 'card';
 
   ngOnInit() {
     this.formInitialization();
@@ -236,5 +239,65 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
     }
     return this.router.navigate([`/contributions/${this.coordinator.id}/stakeholders/`], {queryParams: map});
   }
+
+  /** CSV Method */
+
+     exportToCSV(
+      data: any[],
+      headers: string[],
+      headerLabels?: string[],
+      filename: string = 'stakeholders.csv',
+     ): void {
+      if (!data || !data.length) return;
+
+      const csvRows: string[] = [];
+
+      const headerRow = (headerLabels && headerLabels.length === headers.length
+        ? headerLabels
+        : headers
+      ).map(header => `"${header}"`).join(',');
+      csvRows.push(headerRow);
+
+      for (const row of data) {
+        const values = headers.map(header => {
+          const rawValue = this.getNestedValue(row, header);
+          const stringValue = rawValue !== null && rawValue !== undefined ? String(rawValue) : '';
+          const escaped = stringValue.replace(/"/g, '""');
+          return `"${escaped}"`;
+        });
+        csvRows.push(values.join(','));
+      }
+
+      const csvString = csvRows.join('\n');
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    getNestedValue(obj: any, path: string): any {
+      return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+
+  	}
+
+    exportData(): void {
+      const headerLabels = ['Name', 'ID', 'Country', 'Managers', 'Members'];
+      const filename = 'stakeholders.csv';
+
+      
+      const tmpParams: URLParameter[] = [{key:'from', values:['0']}, {key:'quantity', values:['1000']}];
+      this.stakeholdersService.getStakeholdersByType(this.coordinator.type, tmpParams).subscribe(
+        res => {this.exportToCSV(res.results, ['name', 'id', 'country', 'admins', 'members'], headerLabels, filename);},
+        error => {console.error(error);}
+      );
+
+
+    }
+  
+    
 
 }
