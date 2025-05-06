@@ -16,6 +16,8 @@
         </div>
       </div>
     </div>
+    
+    
 
     <div *ngIf="ready" class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
       <div class="uk-width-1-1">
@@ -50,29 +52,79 @@
       </div>
     </div>
 
+    <!--Tabs Buttons-->
+    <div class="uk-flex uk-flex-center uk-margin">
+      <ul uk-tab="connect: #my-switcher">
+        <li><a href="#">Card</a></li>
+        <li><a href="#">Table</a></li>
+      </ul>
+    </div>
 
-    <div class="uk-child-width-1-4@l uk-child-width-1-3@m uk-child-width-1-1@s uk-grid-match" uk-grid>
-    <div *ngFor="let stakeholder of stakeholders?.results">
-      <div class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
-        <div class="uk-card-body">
-          <div>Name: {{stakeholder.name}}</div>
-          <div>Id: {{stakeholder.id}}</div>
-          <div>Country: {{stakeholder.country}}</div>
-        </div>
-        <div class="uk-card-footer uk-flex uk-flex-right">
-          <a class="uk-flex uk-flex-middle uk-margin-right" [routerLink]="[stakeholder.id]">
-            <span class="material-icons md-18 uk-margin-small-right">update</span>Update Managers
-          </a>
-          <a class="uk-flex uk-flex-middle" href="#modal-center" uk-toggle (click)="openForEdit(stakeholder)">
-            <span class="material-icons md-18 uk-margin-small-right">mode_edit</span>Edit
-          </a>
-        </div>
+    <!--button for csv-->
+    <div class="uk-flex uk-flex-center">
+      <button class="uk-button uk-button-default uk-margin-small-right" type="button" (click)="exportData()">Export to CSV</button>
+    </div>
+    
+
+    
+    <!--Switcher Content-->
+    <div class="uk-flex uk-flex-center uk-margin">
+      <ul id="my-switcher" class="uk-switcher uk-margin">
+        <li>
+          <!--Card View-->
+          <div class="uk-child-width-1-4@l uk-child-width-1-3@m uk-child-width-1-1@s uk-grid-match" uk-grid>
+            <div *ngFor="let stakeholder of stakeholders?.results">
+              <div class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
+                <div class="uk-card-body">
+                  <div>Name: {{stakeholder.name}}</div>
+                  <div>Id: {{stakeholder.id}}</div>
+                  <div>Country: {{stakeholder.country}}</div>
+                </div>
+                <div class="uk-card-footer uk-flex uk-flex-right">
+                  <a class="uk-flex uk-flex-middle uk-margin-right" [routerLink]="[stakeholder.id]">
+                    <span class="material-icons md-18 uk-margin-small-right">update</span>Update Managers
+                  </a>
+                  <a class="uk-flex uk-flex-middle" href="#modal-center" uk-toggle (click)="openForEdit(stakeholder)">
+                    <span class="material-icons md-18 uk-margin-small-right">mode_edit</span>Edit
+                  </a>
+                </div>
+              </div>
+            </div>
+            </div>
+        </li>
+        <li>
+          <!--Table View-->
+        
+          <table class="uk-table uk-table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Id</th>
+                <th>Country</th>
+                <th>Managers</th>
+                <th>Contributors</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let stakeholder of stakeholders?.results">
+                <td>{{stakeholder.name}}</td>
+                <td>{{stakeholder.id}}</td>
+                <td>{{stakeholder.country}}</td>
+                <td><span *ngFor="let admin of stakeholder.admins; let i = index">{{(i === 0? '': ', ') + admin}} </span></td>
+                <td><span *ngFor="let member of stakeholder.members; let i = index">{{(i ===0? '': ', ') + member}}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ul>
       </div>
     </div>
     </div>
+    
 
-  </div>
-</div>
+
+ <!--<pre>{{stakeholders.results | json}}</pre> -->
+
 
 <div *ngIf="ready" id="modal-center" class="uk-flex-top" uk-modal>
   <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
