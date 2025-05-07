@@ -16,6 +16,7 @@ import {CatalogueUiSharedModule} from "../catalogue-ui/shared/catalogue-ui-share
 import {
   CatalogueUiReusableComponentsModule
 } from "../catalogue-ui/shared/reusable-components/catalogue-ui-reusable-components.module";
+import { SafeUrlPipe } from "../catalogue-ui/shared/pipes/safeUrlPipe";
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import {
     SurveyToolRoutingModule,
     SharedModule,
     CatalogueUiSharedModule,
+    SafeUrlPipe,
   ],
   providers: [
     AuthenticationService,

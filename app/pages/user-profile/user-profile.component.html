@@ -12,7 +12,7 @@
       <div class="uk-animation-scale-up" uk-grid>
         <div class="uk-width-1-4">
           <img *ngIf="!edit" class="uk-align-right circular-square"
-               [src]="'data:image;base64,' + userInfo.user?.profile?.picture | safeUrl:'resourceUrl'">
+               [src]="'data:image;base64,' + userInfo.user?.profile?.picture | safeUrl: 'resourceUrl'">
 
           <div *ngIf="edit" class="uk-margin-top">
             <span class="">Upload a profile picture</span>
