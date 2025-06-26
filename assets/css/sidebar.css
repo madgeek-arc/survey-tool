@@ -202,5 +202,5 @@
  ========================================================================== */
 
 .sidebar_main_active #page_content {
-  margin-left: var(--sidebar-width);
+  /*margin-left: var(--sidebar-width);*/
 }

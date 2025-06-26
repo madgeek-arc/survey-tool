@@ -140,9 +140,10 @@ body {
   display: none;
 }
 
-.sidebar_main_active #page_content {
-  margin-left: var(--sidebar-width);
-}
+//fixme removed since importing the eosc-obs theme on the parent project. Will need to do something for just survey tool
+//.sidebar_main_active #page_content {
+//  margin-left: var(--sidebar-width);
+//}
 
 
 /* ========================================================================
