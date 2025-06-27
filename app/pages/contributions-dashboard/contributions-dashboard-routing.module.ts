@@ -60,6 +60,7 @@ const contributionsDashboardRoutes: Routes = [
         component: HistoryComponent,
         canActivate: [AuthGuard],
         data: {
+          hasSidebar: false,
           showSideMenu: false,
           showFooter: false
         }
@@ -69,6 +70,7 @@ const contributionsDashboardRoutes: Routes = [
         component: HistoryComponent,
         canActivate: [AuthGuard],
         data: {
+          hasSidebar: false,
           showSideMenu: false,
           showFooter: false
         }

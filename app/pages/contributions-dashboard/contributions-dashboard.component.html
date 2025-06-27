@@ -16,10 +16,12 @@
 
 <app-top-menu-dashboard></app-top-menu-dashboard>
 
-<div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active" [class.sidebar_main_active]="openSideBar">
-  <!--  fixme removed since importing the eosc-obs theme on the parent project. Will need to do something for just survey tool-->
-  <!--  <div style="margin-top: 83px"></div>-->
-  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>
+<div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active"
+     [class.sidebar_main_active]="open && (hasSidebar || hasAdminMenu)"
+     [class.sidebar_mini]="!open && (hasSidebar || hasAdminMenu)"
+     [class.sidebar_hover]="hover">
+<!--  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>-->
+  <dashboard-sidebar *ngIf="hasSidebar" [items]="menuItems"></dashboard-sidebar>
 
   <main class="uk-width-1-1">
     <div id="page_content">

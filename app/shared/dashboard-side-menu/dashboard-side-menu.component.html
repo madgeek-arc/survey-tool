@@ -1,0 +1,81 @@
+<!--  Todo: Give proper id when css are ported over, remove explore prefix from explore_sidebar_main_swipe  -->
+<!--<div id="explore_sidebar_main" uk-sticky="end: .explore_sidebar_main_swipe;" [attr.offset]="offset" class="uk-visible@m">-->
+<!--<div class="uk-visible@m">-->
+<div id="sidebar_main" [attr.offset]="offset" class="uk-visible@m" offset="65" style="position: fixed; top: var(--header-height) !important; z-index: 980; height: 100%;">
+<!--  <div id="sidebar_main" [attr.offset]="offset" uk-sticky="end: .sidebar_main_swipe;" class="uk-visible@m uk-sticky uk-sticky-fixed" offset="65" style="position: sticky; top: 65px;">-->
+<!--<div id="sidebar_main" [attr.offset]="offset" class="uk-visible@m uk-sticky uk-sticky-fixed" uk-sticky>-->
+  <div sidebar-content>
+    <ng-container *ngTemplateOutlet="menu; context: {mobile: false}"></ng-container>
+  </div>
+</div>
+<div class="uk-hidden@m">
+  <div id="sidebar_offcanvas" #sidebar_offcanvas [attr.uk-offcanvas]="'overlay: true'">
+    <div class="uk-offcanvas-bar uk-padding-remove">
+      <nav class="uk-navbar uk-background-default" uk-sticky>
+        <div class="uk-navbar-right">
+          <button class="uk-navbar-toggle uk-icon uk-close" (click)="closeOffcanvas()">
+<!--            <icon name="close" ratio="1.5" visuallyHidden="close menu"></icon>-->
+          </button>
+        </div>
+      </nav>
+      <ng-container *ngTemplateOutlet="menu; context: {mobile: true}"></ng-container>
+    </div>
+  </div>
+</div>
+
+<ng-template #menu let-mobile=mobile>
+  <div *ngIf="backItem" class="back" [class.mobile]="mobile">
+    <a [routerLink]="backItem.route" [queryParams]="backItem.params" class="uk-flex uk-flex-middle uk-flex-center"
+       (click)="closeOffcanvas()" [queryParamsHandling]="queryParamsHandling">
+<!--      <div *ngIf="backItem.icon" class="uk-width-auto">-->
+<!--        <icon [name]="backItem.icon.name" ratio="1.3" [svg]="backItem.icon.svg" [flex]="true"></icon>-->
+<!--      </div>-->
+      <span class="uk-width-expand uk-text-truncate uk-margin-left" [class.hide-on-close]="backItem.icon">
+        {{backItem.title}}
+      </span>
+    </a>
+  </div>
+  <div *ngIf="logoURL" id="sidebar_logo" class="uk-margin-top">
+    <img [src]="logoURL" alt="Logo">
+  </div>
+  <div *ngIf="items.length > 0" class="menu_section uk-margin-top" [class.mobile]="mobile" style="min-height: 30vh">
+    <ul #nav class="uk-list uk-nav" [class.uk-list-large]="mobile" [class.uk-nav-default]="!mobile"
+        [class.uk-nav-primary]="mobile" uk-nav="duration: 400">
+      <ng-template ngFor [ngForOf]="items" let-item>
+        <li [class.uk-active]="item.isActive" [ngClass]="item.customClass" [class.uk-parent]="item.items.length > 0">
+          <a *ngIf="!item.url && item.route" [routerLink]="getItemRoute(item)"
+             [queryParams]="item.route?item.params:null" [queryParamsHandling]="item.route?queryParamsHandling:null"
+             [title]="item.title" (click)="item.items.length === 0?closeOffcanvas():null"
+             [href]="item.url ?? null" [target]="item.url ? item.target : null" class="uk-flex uk-flex-middle">
+            <div *ngIf="item.icon && (item.icon.svg || item.icon.name)" class="uk-width-auto">
+              <icon class="menu-icon" [customClass]="item.icon.class" [name]="item.icon.name" [ratio]="item.icon.ratio?item.icon.ratio:0.9" [svg]="item.icon.svg" [flex]="true"></icon>
+            </div>
+            <span [class.hide-on-close]="item.icon" class="uk-width-expand@l uk-text-truncate uk-margin-small-left">
+              {{item.title}}
+            </span>
+            <span *ngIf="item.items.length > 0" class="uk-nav-parent-icon hide-on-close"></span>
+          </a>
+          <a *ngIf="item.url && !item.route"
+             [title]="item.title" (click)="item.items.length === 0?closeOffcanvas():null"
+             [href]="item.url" [target]="item.target" class="uk-flex uk-flex-middle">
+              <div *ngIf="item.icon && (item.icon.svg || item.icon.name)" class="uk-width-auto">
+                <icon class="menu-icon" [customClass]="item.icon.class" [name]="item.icon.name" [ratio]="item.icon.ratio?item.icon.ratio:0.9" [svg]="item.icon.svg" [flex]="true"></icon>
+              </div>
+            <span [class.hide-on-close]="item.icon" class="uk-width-expand@l uk-text-truncate uk-margin-small-left">
+              {{item.title}}
+            </span>
+            <span *ngIf="item.items.length > 0" class="uk-nav-parent-icon hide-on-close"></span>
+          </a>
+          <ul *ngIf="item.items?.length > 0 && (isBrowser || item.isActive)" class="uk-nav-sub">
+            <li *ngFor="let subItem of item.items" [ngClass]="subItem.customClass" [class.uk-active]="subItem.isActive">
+              <a [routerLink]="subItem.route?subItem.route:null" [title]="subItem.title" (click)="closeOffcanvas()"
+                 [queryParams]="subItem.route?subItem.params:null" [queryParamsHandling]="subItem.route?queryParamsHandling:null">
+                <span class="uk-text-truncate">{{subItem.title}}</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ng-template>
+    </ul>
+  </div>
+</ng-template>
