@@ -1,12 +1,31 @@
+<!--<div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active" [class.sidebar_main_active]="openSideBar">-->
+<!--  <app-top-menu-dashboard></app-top-menu-dashboard>-->
+<!--&lt;!&ndash;  fixme removed since importing the eosc-obs theme on the parent project. Will need to do something for just survey tool&ndash;&gt;-->
+<!--&lt;!&ndash;  <div style="margin-top: 83px"></div>&ndash;&gt;-->
+<!--  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>-->
+
+<!--  <div id="page_content">-->
+<!--    <router-outlet></router-outlet>-->
+<!--  </div>-->
+
+<!--  <div *ngIf="showFooter" style="margin-left: 320px">-->
+<!--    <app-footer></app-footer>-->
+<!--  </div>-->
+
+<!--</div>-->
+
+<app-top-menu-dashboard></app-top-menu-dashboard>
+
 <div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active" [class.sidebar_main_active]="openSideBar">
-  <app-top-menu-dashboard></app-top-menu-dashboard>
-<!--  fixme removed since importing the eosc-obs theme on the parent project. Will need to do something for just survey tool-->
-<!--  <div style="margin-top: 83px"></div>-->
+  <!--  fixme removed since importing the eosc-obs theme on the parent project. Will need to do something for just survey tool-->
+  <!--  <div style="margin-top: 83px"></div>-->
   <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>
 
-  <div id="page_content">
-    <router-outlet></router-outlet>
-  </div>
+  <main class="uk-width-1-1">
+    <div id="page_content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
 
   <div *ngIf="showFooter" style="margin-left: 320px">
     <app-footer></app-footer>

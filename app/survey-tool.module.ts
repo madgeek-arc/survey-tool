@@ -17,6 +17,7 @@ import {
   CatalogueUiReusableComponentsModule
 } from "../catalogue-ui/shared/reusable-components/catalogue-ui-reusable-components.module";
 import { SafeUrlPipe } from "../catalogue-ui/shared/pipes/safeUrlPipe";
+import {SideBarComponent} from "../../app/shared/side-bar/side-bar.component";
 
 @NgModule({
   declarations: [
@@ -26,17 +27,18 @@ import { SafeUrlPipe } from "../catalogue-ui/shared/pipes/safeUrlPipe";
     AcceptInvitationComponent,
     UserProfileComponent,
   ],
-  imports: [
-    CommonModule,
-    CatalogueUiModule,
-    ReusableComponentsModule,
-    CatalogueUiReusableComponentsModule,
-    FormsModule,
-    SurveyToolRoutingModule,
-    SharedModule,
-    CatalogueUiSharedModule,
-    SafeUrlPipe,
-  ],
+    imports: [
+        CommonModule,
+        CatalogueUiModule,
+        ReusableComponentsModule,
+        CatalogueUiReusableComponentsModule,
+        FormsModule,
+        SurveyToolRoutingModule,
+        SharedModule,
+        CatalogueUiSharedModule,
+        SafeUrlPipe,
+        SideBarComponent,
+    ],
   providers: [
     AuthenticationService,
     // AuthGuard,
