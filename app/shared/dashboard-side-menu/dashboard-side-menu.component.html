@@ -1,9 +1,5 @@
-<!--  Todo: Give proper id when css are ported over, remove explore prefix from explore_sidebar_main_swipe  -->
-<!--<div id="explore_sidebar_main" uk-sticky="end: .explore_sidebar_main_swipe;" [attr.offset]="offset" class="uk-visible@m">-->
-<!--<div class="uk-visible@m">-->
-<div id="sidebar_main" [attr.offset]="offset" class="uk-visible@m" offset="65" style="position: fixed; top: var(--header-height) !important; z-index: 980; height: 100%;">
-<!--  <div id="sidebar_main" [attr.offset]="offset" uk-sticky="end: .sidebar_main_swipe;" class="uk-visible@m uk-sticky uk-sticky-fixed" offset="65" style="position: sticky; top: 65px;">-->
-<!--<div id="sidebar_main" [attr.offset]="offset" class="uk-visible@m uk-sticky uk-sticky-fixed" uk-sticky>-->
+<!--<div id="sidebar_main" uk-sticky="end: .sidebar_main_swipe;" [attr.offset]="offset" class="uk-visible@m">-->
+<div id="sidebar_main" [attr.offset]="offset" class="uk-visible@m" style="position: fixed; top: var(--header-height) !important; z-index: 980; height: 100%;">
   <div sidebar-content>
     <ng-container *ngTemplateOutlet="menu; context: {mobile: false}"></ng-container>
   </div>
@@ -42,20 +38,22 @@
     <ul #nav class="uk-list uk-nav" [class.uk-list-large]="mobile" [class.uk-nav-default]="!mobile"
         [class.uk-nav-primary]="mobile" uk-nav="duration: 400">
       <ng-template ngFor [ngForOf]="items" let-item>
-        <li [class.uk-active]="item.isActive" [ngClass]="item.customClass" [class.uk-parent]="item.items.length > 0">
-          <a *ngIf="!item.url && item.route" [routerLink]="getItemRoute(item)"
-             [queryParams]="item.route?item.params:null" [queryParamsHandling]="item.route?queryParamsHandling:null"
-             [title]="item.title" (click)="item.items.length === 0?closeOffcanvas():null"
-             [href]="item.url ?? null" [target]="item.url ? item.target : null" class="uk-flex uk-flex-middle">
-            <div *ngIf="item.icon && (item.icon.svg || item.icon.name)" class="uk-width-auto">
-              <icon class="menu-icon" [customClass]="item.icon.class" [name]="item.icon.name" [ratio]="item.icon.ratio?item.icon.ratio:0.9" [svg]="item.icon.svg" [flex]="true"></icon>
-            </div>
-            <span [class.hide-on-close]="item.icon" class="uk-width-expand@l uk-text-truncate uk-margin-small-left">
-              {{item.title}}
-            </span>
-            <span *ngIf="item.items.length > 0" class="uk-nav-parent-icon hide-on-close"></span>
-          </a>
-          <a *ngIf="item.url && !item.route"
+        <li [class.uk-active]="item.isActive" [ngClass]="item.customClass" [class.uk-parent]="true">
+          <ng-template #noExternalLink>
+            <a [routerLink]="getItemRoute(item)"
+               [queryParams]="item.route?item.params:null" [queryParamsHandling]="item.route?queryParamsHandling:null"
+               [title]="item.title" (click)="item.items.length === 0?closeOffcanvas():null"
+               [href]="item.url ?? null" [target]="item.url ? item.target : null" class="uk-flex uk-flex-middle">
+              <div *ngIf="item.icon && (item.icon.svg || item.icon.name)" class="uk-width-auto">
+                <icon class="menu-icon" [customClass]="item.icon.class" [name]="item.icon.name" [ratio]="item.icon.ratio?item.icon.ratio:0.9" [svg]="item.icon.svg" [flex]="true"></icon>
+              </div>
+              <span [class.hide-on-close]="item.icon" class="uk-width-expand@l uk-text-truncate uk-margin-small-left">
+                {{item.title}}
+              </span>
+              <span *ngIf="item.items.length > 0" class="uk-nav-parent-icon hide-on-close"></span>
+            </a>
+          </ng-template>
+          <a *ngIf="item.url && !item.route; else noExternalLink"
              [title]="item.title" (click)="item.items.length === 0?closeOffcanvas():null"
              [href]="item.url" [target]="item.target" class="uk-flex uk-flex-middle">
               <div *ngIf="item.icon && (item.icon.svg || item.icon.name)" class="uk-width-auto">

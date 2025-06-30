@@ -1,9 +1,10 @@
 import {Inject, Injectable, NgZone, PLATFORM_ID} from "@angular/core";
 import {BehaviorSubject, Observable, Subscriber} from "rxjs";
-import {ActivationStart, Router} from "@angular/router";
+import { ActivationEnd, ActivationStart, Router } from "@angular/router";
 // import {Icon} from "../../../sharedComponents/menu";
 import {isPlatformBrowser} from "@angular/common";
 import { Icon } from "./dashboard-side-menu.component";
+import { filter } from "rxjs/operators";
 // import {properties} from "../../../../../environments/environment";
 
 declare var ResizeObserver;
@@ -162,81 +163,82 @@ export class DashboardSideMenuService {
     if (typeof window !== 'undefined') {
       this.isMobileSubject.next(window.innerWidth < this.deviceBreakpoint);
     }
-    this.subscriptions.push(this.router.events.subscribe(event => {
-      if (event instanceof ActivationStart) {
-        this.setReplaceHeader(false);
-        let data = event.snapshot.data;
-        if (data['hasSidebar'] !== undefined && data['hasSidebar'] === false) {
-          this.setHasSidebar(false);
-        } else {
-          this.setHasSidebar(true);
+    this.subscriptions.push(this.router.events.pipe(
+      filter(event => event instanceof ActivationEnd),
+      filter((event: ActivationEnd) => event.snapshot.firstChild === null) // only leaf routes
+    ).subscribe(event => {
+      this.setReplaceHeader(false);
+      let data = event.snapshot.data;
+      if (data['hasSidebar'] !== undefined && data['hasSidebar'] === false) {
+        this.setHasSidebar(false);
+      } else {
+        this.setHasSidebar(true);
+      }
+      if (data['hasHeader'] !== undefined &&
+        data['hasHeader'] === false) {
+        this.setHasHeader(false);
+        if (typeof document !== "undefined") {
+          document.documentElement.style.setProperty('--header-height', '0px');
         }
-        if (data['hasHeader'] !== undefined &&
-          data['hasHeader'] === false) {
-          this.setHasHeader(false);
-          if (typeof document !== "undefined") {
-            document.documentElement.style.setProperty('--header-height', '0px');
-          }
-        } else {
-          this.setHasHeader(true);
-          if (typeof document !== "undefined") {
-            document.documentElement.style.setProperty('--header-height', DashboardSideMenuService.HEADER_HEIGHT);
-          }
+      } else {
+        this.setHasHeader(true);
+        if (typeof document !== "undefined") {
+          document.documentElement.style.setProperty('--header-height', DashboardSideMenuService.HEADER_HEIGHT);
         }
-        if (data['hasAdminMenu'] !== undefined &&
-          data['hasAdminMenu'] === true) {
-          this.setHasAdminMenu(true);
-        } else {
-          this.setHasAdminMenu(false);
-        }
-        if (data['hasInternalSidebar'] !== undefined &&
-          data['hasInternalSidebar'] === true) {
-          this.setHasInternalSidebar(true);
-        } else {
-          this.setHasInternalSidebar(false);
-        }
-        if (data['isFrontPage'] !== undefined &&
-          data['isFrontPage'] === true) {
-          this.setFrontPage(true);
-        } else {
-          this.setFrontPage(false);
-        }
-        if (data['isSmallScreen'] !== undefined &&
-          data['isSmallScreen'] === true) {
-          this.setSmallScreen(true);
-        } else {
-          this.setSmallScreen(false);
-        }
-        if (data['hasQuickContact'] !== undefined &&
-          data['hasQuickContact'] === false) {
-          this.setHasQuickContact(false);
-        } else {
-          this.setHasQuickContact(true);
-        }
-        if (data['activeMenuItem'] !== undefined &&
-          data['activeMenuItem'] !== null) {
-          this.setActiveMenuItem(data['activeMenuItem']);
-        } else {
-          this.setActiveMenuItem('');
-        }
-        if (data['hasMenuSearchBar'] !== undefined &&
-          data['hasMenuSearchBar'] === true) {
-          this.setHasMenuSearchBar(true);
-        } else {
-          this.setHasMenuSearchBar(false);
-        }
-        if (data['hasStickyHeaderOnMobile'] !== undefined &&
-          data['hasStickyHeaderOnMobile'] === true) {
-          this.setHasStickyHeaderOnMobile(true);
-        } else {
-          this.setHasStickyHeaderOnMobile(false);
-        }
-        if (data['isEmbeddedPage'] !== undefined &&
-          data['isEmbeddedPage'] === true) {
-          this.setEmbeddedPage(true);
-        } else {
-          this.setEmbeddedPage(false);
-        }
+      }
+      if (data['hasAdminMenu'] !== undefined &&
+        data['hasAdminMenu'] === true) {
+        this.setHasAdminMenu(true);
+      } else {
+        this.setHasAdminMenu(false);
+      }
+      if (data['hasInternalSidebar'] !== undefined &&
+        data['hasInternalSidebar'] === true) {
+        this.setHasInternalSidebar(true);
+      } else {
+        this.setHasInternalSidebar(false);
+      }
+      if (data['isFrontPage'] !== undefined &&
+        data['isFrontPage'] === true) {
+        this.setFrontPage(true);
+      } else {
+        this.setFrontPage(false);
+      }
+      if (data['isSmallScreen'] !== undefined &&
+        data['isSmallScreen'] === true) {
+        this.setSmallScreen(true);
+      } else {
+        this.setSmallScreen(false);
+      }
+      if (data['hasQuickContact'] !== undefined &&
+        data['hasQuickContact'] === false) {
+        this.setHasQuickContact(false);
+      } else {
+        this.setHasQuickContact(true);
+      }
+      if (data['activeMenuItem'] !== undefined &&
+        data['activeMenuItem'] !== null) {
+        this.setActiveMenuItem(data['activeMenuItem']);
+      } else {
+        this.setActiveMenuItem('');
+      }
+      if (data['hasMenuSearchBar'] !== undefined &&
+        data['hasMenuSearchBar'] === true) {
+        this.setHasMenuSearchBar(true);
+      } else {
+        this.setHasMenuSearchBar(false);
+      }
+      if (data['hasStickyHeaderOnMobile'] !== undefined &&
+        data['hasStickyHeaderOnMobile'] === true) {
+        this.setHasStickyHeaderOnMobile(true);
+      } else {
+        this.setHasStickyHeaderOnMobile(false);
+      }
+      if (data['isEmbeddedPage'] !== undefined &&
+        data['isEmbeddedPage'] === true) {
+        this.setEmbeddedPage(true);
+      } else {
+        this.setEmbeddedPage(false);
       }
     }));
     this.setObserver();
@@ -273,7 +275,6 @@ export class DashboardSideMenuService {
 
   setHasSidebar(value: boolean) {
     this.hasSidebarSubject.next(value);
-    console.log(this.hasSidebarSubject.value);
   }
 
   get hasHeader(): Observable<boolean> {
@@ -411,7 +412,7 @@ export class DashboardSideMenuService {
     return this.isBottomIntersectingSubject.asObservable();
   }
 
-  get showCharts(): Observable<boolean> {
-    return this.showChartsSubject.asObservable();
-  }
+  // get showCharts(): Observable<boolean> {
+  //   return this.showChartsSubject.asObservable();
+  // }
 }

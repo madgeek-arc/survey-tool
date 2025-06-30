@@ -190,7 +190,7 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
   }
 
   get activeIndex(): number {
-    return this.items?this.items.findIndex(item => item.isActive):0;
+    return this.items ? this.items.findIndex(item => item.isActive) : 0;
   }
 
   getItemRoute(item: MenuItem) {

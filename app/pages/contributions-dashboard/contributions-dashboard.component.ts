@@ -184,13 +184,13 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
     if (this.currentStakeholder) {
       this.menuItems.push(new MenuItem('1', 'My Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/mySurveys', null, {name: 'assignment'}));
       this.menuItems.push(new MenuItem('2', 'My Group', null, '/contributions/' + this.currentStakeholder?.id + '/group', null, {name: 'group'}));
-      this.menuItems.push(new MenuItem('3', this.currentStakeholder.type.toUpperCase() + 'Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/surveys', null, {name: 'assignment'}));
+      this.menuItems.push(new MenuItem('3', this.currentStakeholder.type.toUpperCase() + ' Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/surveys', null, {name: 'assignment'}));
     }
     if (this.currentCoordinator) {
       this.menuItems.push(new MenuItem('4', 'Surveys', null, '/contributions/' + this.currentCoordinator?.id + '/surveys', null, {name: 'assignment'}));
       this.menuItems.push(new MenuItem('5', 'Survey Templates', null, '/contributions/' + this.currentCoordinator?.id + '/surveyTemplates', null, {name: 'assignment'}));
     }
-    this.menuItems.push(new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'messages'}));
+    this.menuItems.push(new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'}));
     if (this.currentCoordinator || this.currentAdministrator) {
       this.menuItems.push(new MenuItem('7', 'Stakeholders', null, '/contributions/' + (this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/stakeholders', null, {name: 'manage_accounts'}));
     }
