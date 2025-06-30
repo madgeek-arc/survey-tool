@@ -28,7 +28,6 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   protected cdr: ChangeDetectorRef;
 
   subscriptions = [];
-  openSideBar: boolean = true;
   showFooter: boolean = true;
 
   currentStakeholder: Stakeholder = null;
@@ -49,11 +48,9 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
           this.userService.setUserInfo(res);
           this.userInfo = res;
           this.userService.userId = this.userInfo.user.email;
+          this.setGroup();
         }, error => {
           console.error(error);
-        },
-        () => {
-          this.setGroup();
         }
       )
     );
@@ -70,40 +67,37 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
         }
       }
     );
+
     this.userService.currentStakeholder.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
-      this.currentStakeholder = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
+      this.currentStakeholder =  next ?? JSON.parse(sessionStorage.getItem('currentStakeholder'));
       if (this.currentStakeholder !== null) {
         // this.ready = true;
-        this.createMenuItems();
+        setTimeout(() => {this.createMenuItems();});
         this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: value => {
             if (value)
               this.isManager = this.checkIfManager();
           }
-        })
-
+        });
       }
     });
     this.userService.currentCoordinator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
-      this.currentCoordinator = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
+      this.currentCoordinator = next ?? JSON.parse(sessionStorage.getItem('currentCoordinator'));
       if (this.currentCoordinator !== null) {
         // this.ready = true;
-        this.createMenuItems();
+        setTimeout(() => {this.createMenuItems();});
       }
     });
     this.userService.currentAdministrator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
-      this.currentAdministrator = !!next ? next : JSON.parse(sessionStorage.getItem('currentAdministrator'));
+      this.currentAdministrator = next ?? JSON.parse(sessionStorage.getItem('currentAdministrator'));
       if (this.currentAdministrator !== null) {
         // this.ready = true;
-        this.createMenuItems();
+        setTimeout(() => {this.createMenuItems();});
       }
     });
 
-    // Todo: find why on refresh hasSidebar is set to false
     this.layoutService.hasSidebar.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(hasSidebar => {
       this.hasSidebar = hasSidebar;
-      // console.log(this.hasSidebar);
-      // this.cdr.detectChanges();
     });
 
     this.layoutService.setOpen(true);
@@ -144,7 +138,6 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
 
   findChildRouteData() {
 
-    this.openSideBar = true;
     this.showFooter = true;
 
     let child = this.route.firstChild;
@@ -152,8 +145,6 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       if (child.firstChild) {
         child = child.firstChild;
       } else if (child.snapshot.data) {
-        if (child.snapshot.data['showSideMenu'] !== undefined)
-          this.openSideBar = child.snapshot.data['showSideMenu'];
         if (child.snapshot.data['showFooter'] !== undefined)
           this.showFooter = child.snapshot.data['showFooter'];
         return null;
@@ -179,6 +170,10 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
 
   createMenuItems() {
     this.menuItems = [];
+
+    console.log('Administrator object', this.currentAdministrator);
+    console.log('Stakeholder object', this.currentStakeholder);
+    console.log('Coordinator object', this.currentCoordinator);
 
     this.menuItems.push(new MenuItem('0', 'Home', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', {name: 'home'}));
     if (this.currentStakeholder) {

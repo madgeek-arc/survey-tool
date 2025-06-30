@@ -38,7 +38,8 @@
     <ul #nav class="uk-list uk-nav" [class.uk-list-large]="mobile" [class.uk-nav-default]="!mobile"
         [class.uk-nav-primary]="mobile" uk-nav="duration: 400">
       <ng-template ngFor [ngForOf]="items" let-item>
-        <li [class.uk-active]="item.isActive" [ngClass]="item.customClass" [class.uk-parent]="true">
+        <!--  Apply uk-parent so subItems collapse when selecting an item with no subItems / Remove uk-parent for external links  -->
+        <li [class.uk-active]="item.isActive" [ngClass]="item.customClass" [class.uk-parent]="!(item.url && !item.route)">
           <ng-template #noExternalLink>
             <a [routerLink]="getItemRoute(item)"
                [queryParams]="item.route?item.params:null" [queryParamsHandling]="item.route?queryParamsHandling:null"

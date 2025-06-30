@@ -61,7 +61,6 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           hasSidebar: false,
-          showSideMenu: false,
           showFooter: false
         }
       },
@@ -71,7 +70,6 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           hasSidebar: false,
-          showSideMenu: false,
           showFooter: false
         }
       },
