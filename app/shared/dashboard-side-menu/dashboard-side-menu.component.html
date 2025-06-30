@@ -2,6 +2,7 @@
 <div id="sidebar_main" [attr.offset]="offset" class="uk-visible@m" style="position: fixed; top: var(--header-height) !important; z-index: 980; height: 100%;">
   <div sidebar-content>
     <ng-container *ngTemplateOutlet="menu; context: {mobile: false}"></ng-container>
+    <ng-content></ng-content>
   </div>
 </div>
 <div class="uk-hidden@m">
