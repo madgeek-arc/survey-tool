@@ -8,9 +8,9 @@ import {
   OnChanges,
   OnDestroy,
   OnInit, Output,
-  PLATFORM_ID,
+  PLATFORM_ID, QueryList,
   SimpleChanges,
-  ViewChild
+  ViewChild, ViewChildren
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, QueryParamsHandling, Router, RouterLink } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -85,19 +85,22 @@ export class MenuItem {
   }
 
   private static isTheActiveMenuItem(menu: MenuItem, currentRoute: any, activeMenuItem: string) {
-    return (
-      ((menu.route == currentRoute.route || menu.route == (currentRoute.route + "/")) && currentRoute.fragment == menu.fragment))
+    return (((menu.route == currentRoute.route || menu.route == (currentRoute.route + "/")) && currentRoute.fragment == menu.fragment))
       || (menu.routeActive && (currentRoute.route.startsWith(menu.routeActive)))
       || (menu._id && menu._id === activeMenuItem);
   }
 
 }
 
-interface SidebarItem {
-  icon?: string,
-  name: string,
-  subItem?: SidebarItem
+export interface MenuSections {
+  items: MenuItem[],
+  customClass?: string,
 }
+// interface SidebarItem {
+//   icon?: string,
+//   name: string,
+//   subItem?: SidebarItem
+// }
 
 @Component({
   selector: 'dashboard-sidebar',
@@ -112,14 +115,16 @@ interface SidebarItem {
 })
 
 export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  @Input() items: MenuItem[] = [];
+  @Input() menuSections: MenuSections[] = [];
+  // @Input() items: MenuItem[] = [];
   @Input() activeItem: string = '';
   @Input() activeSubItem: string = '';
   @Input() backItem: MenuItem = null;
   @Input() queryParamsHandling: QueryParamsHandling;
   @Input() logoURL: string;
   @Output() hoverChange = new EventEmitter<boolean>();
-  @ViewChild("nav") nav: ElementRef;
+  // @ViewChild("nav") nav: ElementRef;
+  @ViewChildren("nav") nav: QueryList<ElementRef>;
   @ViewChild("sidebar_offcanvas") sidebar_offcanvas: ElementRef;
   public offset: number;
   // public properties = properties;
@@ -168,11 +173,13 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
 
   toggle(init: boolean = false) {
     this.init = this.init || init;
-    if(this.nav && typeof UIkit !== "undefined") {
+    const activePos = this.activeItemPosition;
+    if(this.nav && typeof UIkit !== "undefined" && activePos) {
 
       setTimeout(() => {
-        if(this.items[this.activeIndex]?.items?.length > 0) {
-          UIkit.nav(this.nav.nativeElement).toggle(this.activeIndex, true);
+        // if(this.items[this.activeIndex]?.items?.length > 0) {
+        if(this.menuSections[activePos.sectionIndex].items[activePos.itemIndex]?.items?.length > 0) {
+          UIkit.nav(this.nav.toArray()[activePos.sectionIndex].nativeElement).toggle(activePos.itemIndex, true);
         }
       });
     }
@@ -189,9 +196,20 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
     }
   }
 
-  get activeIndex(): number {
-    return this.items ? this.items.findIndex(item => item.isActive) : 0;
+  get activeItemPosition(): { sectionIndex: number; itemIndex: number } | null {
+    for (let sectionIndex = 0; sectionIndex < this.menuSections.length; sectionIndex++) {
+      const section = this.menuSections[sectionIndex];
+      const itemIndex = section.items.findIndex(item => item.isActive);
+      if (itemIndex !== -1) {
+        return { sectionIndex, itemIndex };
+      }
+    }
+    return null; // no active item found
   }
+
+  // get activeIndex(): number {
+  //   return this.items ? this.items.findIndex(item => item.isActive) : 0;
+  // }
 
   getItemRoute(item: MenuItem) {
     if(this.activeSubItem && item.items.length > 0) {
@@ -203,38 +221,50 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
   }
 
   setActiveMenuItem() {
-    this.items.forEach(item => {
-      item.isActive = this.isTheActiveMenuItem(item);
-      if(item.isActive) {
-        if(item.items.length > 0) {
-          item.items.forEach(subItem => {
-            subItem.isActive = this.isTheActiveMenuItem(item, subItem);
-            if(subItem.isActive) {
-              this.layoutService.setActiveSidebarItem({
-                name: item.title,
-                icon: item.icon,
-                subItem: {
-                  name: subItem.title
-                }
-              });
-            }
-          });
+    this.menuSections.forEach(section => {
+      section.items.forEach(item => {
+        item.isActive = this.isTheActiveMenuItem(item);
+
+        if (item.isActive) {
+          if (item.items?.length > 0) {
+            item.items.forEach(subItem => {
+              subItem.isActive = this.isTheActiveMenuItem(item, subItem);
+              if (subItem.isActive) {
+                this.layoutService.setActiveSidebarItem({
+                  name: item.title,
+                  icon: item.icon,
+                  subItem: {
+                    name: subItem.title
+                  }
+                });
+              }
+            });
+          } else {
+            this.layoutService.setActiveSidebarItem({
+              name: item.title,
+              icon: item.icon
+            });
+          }
         } else {
-          this.layoutService.setActiveSidebarItem({
-            name: item.title,
-            icon: item.icon
+          item.items?.forEach(subItem => {
+            subItem.isActive = false;
           });
         }
-      } else {
-        item.items.forEach(subItem => {
-          subItem.isActive = false;
-        });
-      }
+      });
     });
-    if(!this.items.find(item => item.isActive)) {
+
+    this.layoutService.activeSidebarItem.subscribe(value => {
+      console.log(value);
+    })
+
+    if (this.hasNoActiveMenuItems(this.menuSections)) {
       this.layoutService.setActiveSidebarItem(null);
     }
     this.cdr.detectChanges();
+  }
+
+  hasNoActiveMenuItems(sections: MenuSections[]): boolean {
+    return !sections.some(section => section.items.some(item => item.isActive));
   }
 
   private isTheActiveMenuItem(item: MenuItem, subItem: MenuItem = null): boolean {
@@ -245,7 +275,7 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
       if (subItem) {
         return MenuItem.isTheActiveMenu(subItem, this.currentRoute);
       }
-      return MenuItem.isTheActiveMenu(item,this.currentRoute);
+      return MenuItem.isTheActiveMenu(item, this.currentRoute);
     }
   }
 
