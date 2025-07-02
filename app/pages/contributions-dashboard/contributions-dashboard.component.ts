@@ -34,30 +34,29 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   subscriptions = [];
   showFooter: boolean = true;
 
+  userInfo: UserInfo;
   currentStakeholder: Stakeholder = null;
   currentCoordinator: Coordinator = null;
   currentAdministrator: Administrator = null;
   isManager = false;
-  userInfo: UserInfo;
 
-  menuItems: MenuItem[] = [];
   menuSections: MenuSections[] = [];
   hasSidebar = true;
   hasAdminMenu = false;
 
+  ready = false;
+
   constructor(public userService: UserService, public router: Router, public route: ActivatedRoute,
               private layoutService: DashboardSideMenuService) {
-    this.subscriptions.push(
-      this.userService.getUserInfo().subscribe(
-        res => {
-          this.userService.setUserInfo(res);
-          this.userInfo = res;
-          this.userService.userId = this.userInfo.user.email;
-          this.setGroup();
-        }, error => {
-          console.error(error);
-        }
-      )
+    this.userService.getUserInfo().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+      res => {
+        this.userService.setUserInfo(res);
+        this.userInfo = res;
+        this.userService.userId = this.userInfo.user.email;
+        this.setGroup();
+      }, error => {
+        console.error(error);
+      }
     );
 
     this.findChildRouteData();
@@ -65,7 +64,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit() {
-    this.router.events.subscribe(
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       event => {
         if (event instanceof NavigationEnd) {
          this.findChildRouteData();
@@ -74,10 +73,13 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
     );
 
     this.userService.currentStakeholder.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
-      this.currentStakeholder =  next ?? JSON.parse(sessionStorage.getItem('currentStakeholder'));
+      const stakeholderChange = next?.id !== this.currentStakeholder?.id;
+      this.currentStakeholder = next ?? JSON.parse(sessionStorage.getItem('currentStakeholder'));
       if (this.currentStakeholder !== null) {
-        // this.ready = true;
-        setTimeout(() => {this.createMenuItems();});
+        // console.log('Current stakeholder change: ', this.currentStakeholder);
+        if (stakeholderChange || this.menuSections.length === 0) {
+          this.createMenuItems();
+        }
         this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: value => {
             if (value)
@@ -87,17 +89,23 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       }
     });
     this.userService.currentCoordinator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
+      const coordinatorChange = next?.id !== this.currentCoordinator?.id;
       this.currentCoordinator = next ?? JSON.parse(sessionStorage.getItem('currentCoordinator'));
       if (this.currentCoordinator !== null) {
-        // this.ready = true;
-        setTimeout(() => {this.createMenuItems();});
+        // console.log('Current coordinator change: ', this.currentCoordinator);
+        if (coordinatorChange || this.menuSections.length === 0) {
+          this.createMenuItems();
+        }
       }
     });
     this.userService.currentAdministrator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
+      const adminChange = next?.id !== this.currentAdministrator?.id;
       this.currentAdministrator = next ?? JSON.parse(sessionStorage.getItem('currentAdministrator'));
       if (this.currentAdministrator !== null) {
-        // this.ready = true;
-        setTimeout(() => {this.createMenuItems();});
+        // console.log('Current Administrator change: ', this.currentAdministrator);
+        if (adminChange || this.menuSections.length === 0) {
+          this.createMenuItems();
+        }
       }
     });
 
@@ -174,49 +182,54 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   }
 
   createMenuItems() {
-    this.menuItems = [];
-    this.menuSections = [];
 
     // console.log('Administrator object', this.currentAdministrator);
     // console.log('Stakeholder object', this.currentStakeholder);
     // console.log('Coordinator object', this.currentCoordinator);
 
-    this.menuSections.push({
-      items: [new MenuItem('0', 'Home', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', {name: 'home'})]
-    });
-    if (this.currentStakeholder) {
+    setTimeout(() => {
+      this.menuSections = [];
+
       this.menuSections.push({
-        items: [
-          new MenuItem('1', 'My Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/mySurveys', null, {name: 'assignment'}),
-          new MenuItem('2', 'My Group', null, '/contributions/' + this.currentStakeholder?.id + '/group', null, {name: 'group'}),
-          new MenuItem('3', this.currentStakeholder.type.toUpperCase() + ' Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/surveys', null, {name: 'assignment'}),
-          new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'})
-        ]
+        items: [new MenuItem('0', 'Home', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', {name: 'home'})]
       });
-    }
-    if (this.currentCoordinator) {
-      this.menuSections.push({
-        items: [
-          new MenuItem('4', 'Surveys', null, '/contributions/' + this.currentCoordinator?.id + '/surveys', null, {name: 'assignment'}),
-          new MenuItem('5', 'Survey Templates', null, '/contributions/' + this.currentCoordinator?.id + '/surveyTemplates', null, {name: 'assignment'}),
-          new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'})
-        ]
-      });
-    }
-    if (this.currentCoordinator || this.currentAdministrator) {
-      this.menuSections[2] = {
-        items: [
-          new MenuItem('7', 'Stakeholders', null, '/contributions/' + (this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/stakeholders', null, {name: 'manage_accounts'})
-        ]
+      if (this.currentStakeholder) {
+        this.menuSections.push({
+          items: [
+            new MenuItem('1', 'My Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/mySurveys', null, {name: 'assignment'}),
+            new MenuItem('2', 'My Group', null, '/contributions/' + this.currentStakeholder?.id + '/group', null, {name: 'group'}),
+            new MenuItem('3', this.currentStakeholder.type.toUpperCase() + ' Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/surveys', null, {name: 'assignment'}),
+            new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'})
+          ]
+        });
       }
-    }
-    this.menuSections.push({
-      items: [
-        new MenuItem('8', 'Support', 'mailto:stefania.martziou@athenarc.gr', null, null, {name: 'help'}),
-        new MenuItem('9', 'Privacy policy', '../assets/pdf/EOSC-SB%20Privacy%20Policy%20V2.0.pdf', null, null, {name: 'policy'}),
-        new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V1.0.pdf', null, null, {name: 'policy'})
-      ]
-    });
+      if (this.currentCoordinator) {
+        this.menuSections.push({
+          items: [
+            new MenuItem('4', 'Surveys', null, '/contributions/' + this.currentCoordinator?.id + '/surveys', null, {name: 'assignment'}),
+            new MenuItem('5', 'Survey Templates', null, '/contributions/' + this.currentCoordinator?.id + '/surveyTemplates', null, {name: 'assignment'}),
+            new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'})
+          ]
+        });
+      }
+      if (this.currentCoordinator || this.currentAdministrator) {
+        this.menuSections.push({
+          items: [
+            new MenuItem('7', 'Stakeholders', null, '/contributions/' + (this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/stakeholders', null, {name: 'manage_accounts'})
+          ]
+        });
+      }
+      this.menuSections.push({
+        items: [
+          new MenuItem('8', 'Support', 'mailto:stefania.martziou@athenarc.gr', null, null, {name: 'help'}),
+          new MenuItem('9', 'Privacy policy', '../assets/pdf/EOSC-SB%20Privacy%20Policy%20V2.0.pdf', null, null, {name: 'policy'}),
+          new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V1.0.pdf', null, null, {name: 'policy'})
+        ]
+      });
+
+      this.ready = true;
+    }, 0);
+
   }
 
 

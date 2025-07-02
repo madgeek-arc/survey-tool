@@ -253,10 +253,6 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
       });
     });
 
-    this.layoutService.activeSidebarItem.subscribe(value => {
-      console.log(value);
-    })
-
     if (this.hasNoActiveMenuItems(this.menuSections)) {
       this.layoutService.setActiveSidebarItem(null);
     }

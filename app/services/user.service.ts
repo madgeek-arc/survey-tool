@@ -9,6 +9,9 @@ import {takeUntil} from "rxjs/operators";
 export class UserService implements OnDestroy {
 
   private _destroyed: Subject<boolean> = new Subject();
+  private userInfoChangeSubject = new BehaviorSubject<UserInfo>(null);
+  private currentUserInfo: UserInfo = null;
+  private readonly intervalId = null;
 
   options = {withCredentials: true};
   base = environment.API_ENDPOINT;
@@ -18,9 +21,7 @@ export class UserService implements OnDestroy {
   currentStakeholder = new BehaviorSubject<Stakeholder>(null);
   currentCoordinator = new BehaviorSubject<Coordinator>(null);
   currentAdministrator = new BehaviorSubject<Administrator>(null);
-  private userInfoChangeSubject = new BehaviorSubject<UserInfo>(null);
-  private currentUserInfo: UserInfo = null;
-  private intervalId = null;
+
 
   constructor(public http: HttpClient) {
     this.intervalId = setInterval(() => {

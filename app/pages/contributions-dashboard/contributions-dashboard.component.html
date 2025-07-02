@@ -21,7 +21,7 @@
      [class.sidebar_mini]="!open && (hasSidebar || hasAdminMenu)"
      [class.sidebar_hover]="hover">
 <!--  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>-->
-  <dashboard-sidebar *ngIf="hasSidebar" [menuSections]="menuSections">
+  <dashboard-sidebar *ngIf="hasSidebar && ready" [menuSections]="menuSections">
 <!--    <div class="sidebar-footer uk-padding uk-position-absolute uk-position-bottom uk-margin-large-bottom uk-text-xsmall">-->
 <!--      <div class="uk-flex uk-flex-center uk-margin-bottom">-->
 <!--        <a class="uk-link-reset uk-flex uk-flex-middle" href="mailto:stefania.martziou@athenarc.gr">-->
