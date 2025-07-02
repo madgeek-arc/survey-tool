@@ -22,14 +22,15 @@
         <div class="uk-width-1-5">
           <div *ngIf="stakeholder?.country != 'CH'" class="uk-flex uk-flex-right uk-margin-bottom uk-inline">
             <button class="uk-button uk-button-primary">Export to tsv</button>
-            <ul class="uk-card uk-card-body uk-card-default uk-list uk-padding-small uk-margin-remove"
-                uk-drop="mode: hover; animation: reveal-top; animate-out: true; pos: left-top; offset: 0; duration: 500">
-              <li *ngFor="let survey of surveys" class="uk-margin-bottom">
-                <a class="uk-flex uk-flex-middle" (click)="exportToCsv(survey.value)">
-                  <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
-                </a>
-              </li>
-            </ul>
+            <div class="" uk-dropdown="mode: hover; animation: reveal-top; animate-out: true; pos: left-top; offset: 20; duration: 500">
+              <ul class="uk-list uk-padding-small uk-margin-remove">
+                <li *ngFor="let survey of surveys" class="uk-margin-bottom">
+                  <a class="uk-flex uk-flex-middle uk-link-reset" (click)="exportToCsv(survey.value)">
+                    <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
         <div *ngIf="surveyEntries?.facets" class="uk-width-1-1 uk-child-width-1-2" uk-grid>
@@ -139,18 +140,22 @@
               <td class="">
                 <div class="uk-inline uk-margin-left">
                   <a><span class="material-icons">more_vert</span></a>
-                  <ul class="uk-card uk-card-body uk-card-default uk-list uk-dropdown-nav" uk-drop="mode: hover">
-                    <li class="uk-margin-small-bottom">
-                      <a class="uk-flex uk-flex-middle" [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
-                        <span class="material-icons uk-margin-right">visibility</span> View Survey
-                      </a>
-                    </li>
-                    <li class="uk-margin-small-bottom">
-                      <a class="uk-flex uk-flex-middle" [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
-                        <span class="material-icons uk-margin-right">manage_history</span> View Survey History
-                      </a>
-                    </li>
-                  </ul>
+                  <div class="uk-dropdown-nav" uk-dropdown="mode: hover; pos: bottom-center">
+                    <div class="uk-padding-small">
+                      <ul class="uk-list">
+                        <li class="uk-margin-small-bottom">
+                          <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
+                            <span class="material-icons uk-margin-right">visibility</span> View Survey
+                          </a>
+                        </li>
+                        <li class="uk-margin-small-bottom">
+                          <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
+                            <span class="material-icons uk-margin-right">manage_history</span> View Survey History
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </td>
             </tr>
