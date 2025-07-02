@@ -134,7 +134,7 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
   constructor(private route: ActivatedRoute, private router: Router, private layoutService: DashboardSideMenuService,
               private cdr: ChangeDetectorRef, @Inject(PLATFORM_ID) private platformId) {
     this.subscriptions.push(this.router.events.subscribe(event => {
-      if(event instanceof NavigationEnd && (!this.activeItem && !this.activeSubItem)) {
+      if (event instanceof NavigationEnd && (!this.activeItem && !this.activeSubItem)) {
         this.setActiveMenuItem();
       }
     }));
@@ -154,9 +154,9 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes.activeItem || changes.activeSubItem || changes.items) {
+    if(changes.activeItem || changes.activeSubItem || changes.menuSections) {
       this.setActiveMenuItem();
-      if(this.init && changes.items) {
+      if(this.init && changes.menuSections) {
         this.toggle();
       }
     }
@@ -173,13 +173,14 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
 
   toggle(init: boolean = false) {
     this.init = this.init || init;
-    const activePos = this.activeItemPosition;
-    if(this.nav && typeof UIkit !== "undefined" && activePos) {
-
+    const activePos = this.activeItemPosition || null;
+    if (this.nav && typeof UIkit !== "undefined" && activePos != null) {
       setTimeout(() => {
-        // if(this.items[this.activeIndex]?.items?.length > 0) {
         if(this.menuSections[activePos.sectionIndex].items[activePos.itemIndex]?.items?.length > 0) {
           UIkit.nav(this.nav.toArray()[activePos.sectionIndex].nativeElement).toggle(activePos.itemIndex, true);
+          // nav: QueryList<ElementRef> also includes hidden / not visible nav Elements (sidebar exists twice).
+          // so to work for both mobile and desktop, toggle at both Elements
+          UIkit.nav(this.nav.toArray()[activePos.sectionIndex + this.nav.toArray().length/2].nativeElement).toggle(activePos.itemIndex, true);
         }
       });
     }
@@ -265,8 +266,7 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
 
   private isTheActiveMenuItem(item: MenuItem, subItem: MenuItem = null): boolean {
     if (this.activeItem || this.activeSubItem) {
-      return (!subItem && this.activeItem === item._id) ||
-        (subItem && this.activeItem === item._id && this.activeSubItem === subItem._id);
+      return (!subItem && this.activeItem === item._id) || (subItem && this.activeItem === item._id && this.activeSubItem === subItem._id);
     } else {
       if (subItem) {
         return MenuItem.isTheActiveMenu(subItem, this.currentRoute);

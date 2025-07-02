@@ -166,7 +166,7 @@ export class DashboardSideMenuService {
     this.subscriptions.push(this.router.events.pipe(
       filter(event => event instanceof ActivationEnd),
       filter((event: ActivationEnd) => event.snapshot.firstChild === null) // only leaf routes
-    ).subscribe(event => {
+    ).subscribe((event: ActivationEnd) => {
       this.setReplaceHeader(false);
       let data = event.snapshot.data;
       if (data['hasSidebar'] !== undefined && data['hasSidebar'] === false) {

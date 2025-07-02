@@ -35,7 +35,7 @@ export class SidebarMobileToggleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subscriptions.push(this.layoutService.activeSidebarItem.subscribe(activeSidebarItem => {
-      console.log('activeSidebarItem', activeSidebarItem);
+      // console.log('activeSidebarItem', activeSidebarItem);
       this.activeSidebarItem = activeSidebarItem;
     }));
   }

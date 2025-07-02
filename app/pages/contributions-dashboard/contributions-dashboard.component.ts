@@ -44,7 +44,6 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   hasSidebar = true;
   hasAdminMenu = false;
 
-  ready = false;
 
   constructor(public userService: UserService, public router: Router, public route: ActivatedRoute,
               private layoutService: DashboardSideMenuService) {
@@ -76,7 +75,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       const stakeholderChange = next?.id !== this.currentStakeholder?.id;
       this.currentStakeholder = next ?? JSON.parse(sessionStorage.getItem('currentStakeholder'));
       if (this.currentStakeholder !== null) {
-        // console.log('Current stakeholder change: ', this.currentStakeholder);
+        console.log('Current stakeholder change: ', this.currentStakeholder);
         if (stakeholderChange || this.menuSections.length === 0) {
           this.createMenuItems();
         }
@@ -92,7 +91,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       const coordinatorChange = next?.id !== this.currentCoordinator?.id;
       this.currentCoordinator = next ?? JSON.parse(sessionStorage.getItem('currentCoordinator'));
       if (this.currentCoordinator !== null) {
-        // console.log('Current coordinator change: ', this.currentCoordinator);
+        console.log('Current coordinator change: ', this.currentCoordinator);
         if (coordinatorChange || this.menuSections.length === 0) {
           this.createMenuItems();
         }
@@ -102,7 +101,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       const adminChange = next?.id !== this.currentAdministrator?.id;
       this.currentAdministrator = next ?? JSON.parse(sessionStorage.getItem('currentAdministrator'));
       if (this.currentAdministrator !== null) {
-        // console.log('Current Administrator change: ', this.currentAdministrator);
+        console.log('Current Administrator change: ', this.currentAdministrator);
         if (adminChange || this.menuSections.length === 0) {
           this.createMenuItems();
         }
@@ -227,7 +226,6 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
         ]
       });
 
-      this.ready = true;
     }, 0);
 
   }
