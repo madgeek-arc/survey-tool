@@ -213,8 +213,8 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
     this.menuSections.push({
       items: [
         new MenuItem('8', 'Support', 'mailto:stefania.martziou@athenarc.gr', null, null, {name: 'help'}),
-        new MenuItem('9', 'Privacy policy', '../assets/pdf/EOSC-SB%20Privacy%20Policy%20V2.0.pdf', null, null, {name: 'policy'}),
-        new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V1.0.pdf', null, null, {name: 'policy'})
+        new MenuItem('9', 'Privacy policy', '../assets/pdf/EOSC-SB%20Privacy%20Policy%20V3.0.pdf', null, null, {name: 'policy'}),
+        new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V2.pdf', null, null, {name: 'policy'})
       ]
     });
   }
