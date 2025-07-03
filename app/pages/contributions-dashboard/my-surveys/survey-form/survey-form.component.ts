@@ -10,7 +10,7 @@ import { Stakeholder, UserActivity, UserInfo } from "../../../../domain/userInfo
 import { WebsocketService } from "../../../../services/websocket.service";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
-import UIkit from "uikit";
+import * as UIkit from 'uikit';
 
 declare var require: any;
 const seedRandom = require('seedrandom');

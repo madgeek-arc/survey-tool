@@ -5,7 +5,7 @@ import { DisplayEntries, DisplayHistory, Editor, SurveyAnswer } from "../../../d
 import { Model } from "../../../../catalogue-ui/domain/dynamic-form-model";
 import { zip } from "rxjs/internal/observable/zip";
 
-import UIkit from "uikit";
+import * as UIkit from 'uikit';
 
 @Component({
   selector: 'app-survey-history',

@@ -6,7 +6,7 @@ import { Subject, Subscriber } from "rxjs";
 import { StakeholdersService } from "../../../../../services/stakeholders.service";
 import { ActivatedRoute } from "@angular/router";
 import { takeUntil } from "rxjs/operators";
-import UIkit from 'uikit';
+import * as UIkit from 'uikit';
 
 @Component({
   selector: 'app-edit-managers',

@@ -6,7 +6,7 @@ import {UserService} from "../../../services/user.service";
 import {Stakeholder, GroupMembers} from "../../../domain/userInfo";
 import {SurveyService} from "../../../services/survey.service";
 import {StakeholdersService} from "../../../services/stakeholders.service";
-import UIkit from 'uikit';
+import * as UIkit from 'uikit';
 
 @Component({
   selector: 'app-contributions-my-group',
