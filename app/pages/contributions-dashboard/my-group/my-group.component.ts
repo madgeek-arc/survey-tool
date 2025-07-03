@@ -43,10 +43,11 @@ export class MyGroupComponent implements OnInit, OnDestroy {
               this.stakeholdersService.getStakeholder(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
                 res => {
                   this.currentGroup = res;
+                  this.getMembers();
                   this.userService.changeCurrentStakeholder(this.currentGroup);
                 },
                 error => console.error(error),
-                ()=> { this.getMembers(); }
+                ()=> {  }
               );
             }
           }

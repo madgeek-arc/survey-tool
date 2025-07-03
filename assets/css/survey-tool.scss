@@ -140,9 +140,10 @@ body {
   display: none;
 }
 
-.sidebar_main_active #page_content {
-  margin-left: var(--sidebar-width);
-}
+//fixme removed since importing the eosc-obs theme on the parent project. Will need to do something for just survey tool
+//.sidebar_main_active #page_content {
+//  margin-left: var(--sidebar-width);
+//}
 
 
 /* ========================================================================
@@ -866,12 +867,12 @@ a.serviceDetails {
   position: initial;
 }
 
-.material-icons {
-  /*width: 24px;*/
-  /*height: 24px;*/
-  /*vertical-align: middle;*/
-  color: #6b6b6b;
-}
+//.material-icons {
+//  /*width: 24px;*/
+//  /*height: 24px;*/
+//  /*vertical-align: middle;*/
+//  color: #6b6b6b;
+//}
 
 .material-icons.md-10 { font-size: 10px; }
 .material-icons.md-12 { font-size: 12px; }

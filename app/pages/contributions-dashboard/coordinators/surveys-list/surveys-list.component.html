@@ -7,9 +7,12 @@
         <div class="uk-card uk-card-default survey-card uk-margin-bottom">
 
           <div class="uk-card-body">
-            <div class="uk-card-badge">
-              Published on {{survey.creationDate | date}}
+            <div *ngIf="survey.creationDate" class="uk-flex uk-flex-right">
+              <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
             </div>
+<!--            <div class="uk-card-badge">-->
+<!--              Published on {{survey.creationDate | date}}-->
+<!--            </div>-->
 
             <div class="uk-margin-top">
               <h5>{{survey.name}}</h5>
@@ -19,7 +22,7 @@
 
           <div class="uk-card-footer uk-flex uk-flex-wrap">
             <div class="uk-margin-small-top">
-              <a [routerLink]="['./', survey.id, 'freeView']">
+              <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
                 <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
                   <span class="material-icons uk-margin-small-right">visibility</span>View
                 </div>
@@ -38,9 +41,12 @@
         <div class="uk-card uk-card-default survey-card uk-margin-bottom">
 
           <div class="uk-card-body">
-            <div class="uk-card-badge">
-              Published on {{survey.creationDate | date}}
+            <div *ngIf="survey.creationDate" class="uk-flex uk-flex-right">
+              <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
             </div>
+<!--            <div class="uk-card-badge">-->
+<!--              Published on {{survey.creationDate | date}}-->
+<!--            </div>-->
 
             <div class="uk-margin-top">
               <h5>{{survey.name}}</h5>
@@ -50,7 +56,7 @@
 
           <div class="uk-card-footer uk-flex uk-flex-wrap">
             <div class="uk-margin-small-top">
-              <a [routerLink]="['./', survey.id, 'freeView']">
+              <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
                 <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
                   <span class="material-icons uk-margin-small-right">visibility</span>View
                 </div>
@@ -69,9 +75,12 @@
         <div class="uk-card uk-card-default survey-card uk-margin-bottom">
 
           <div class="uk-card-body">
-            <div class="uk-card-badge">
-              Published on {{survey.creationDate | date}}
+            <div *ngIf="survey.creationDate" class="uk-flex uk-flex-right">
+              <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
             </div>
+<!--            <div class="uk-card-badge">-->
+<!--              Published on {{survey.creationDate | date}}-->
+<!--            </div>-->
 
             <div class="uk-margin-top">
               <h5>{{survey.name}}</h5>
@@ -81,7 +90,7 @@
 
           <div class="uk-card-footer uk-flex uk-flex-wrap">
             <div class="uk-margin-small-top">
-              <a [routerLink]="['./', survey.id, 'freeView']">
+              <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
                 <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
                   <span class="material-icons uk-margin-small-right">visibility</span>View
                 </div>
