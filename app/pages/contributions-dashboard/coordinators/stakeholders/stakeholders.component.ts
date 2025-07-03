@@ -166,6 +166,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
     this.edit = false;
     this.stakeholderForm.reset();
     this.stakeholderForm.get('type').setValue(this.coordinator.type);
+
   }
   /** <--------------------------------------------------------------------------------- Modal **/
 
@@ -288,7 +289,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
       const headerLabels = ['Name', 'ID', 'Country', 'Managers', 'Members'];
       const filename = 'stakeholders.csv';
 
-      
+
       const tmpParams: URLParameter[] = [{key:'from', values:['0']}, {key:'quantity', values:['1000']}];
       this.stakeholdersService.getStakeholdersByType(this.coordinator.type, tmpParams).subscribe(
         res => {this.exportToCSV(res.results, ['name', 'id', 'country', 'admins', 'members'], headerLabels, filename);},
@@ -297,7 +298,7 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
 
 
     }
-  
-    
+
+
 
 }
