@@ -75,7 +75,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       const stakeholderChange = next?.id !== this.currentStakeholder?.id;
       this.currentStakeholder = next ?? JSON.parse(sessionStorage.getItem('currentStakeholder'));
       if (this.currentStakeholder !== null) {
-        console.log('Current stakeholder change: ', this.currentStakeholder);
+        // console.log('Current stakeholder change: ', this.currentStakeholder);
         if (stakeholderChange || this.menuSections.length === 0) {
           this.createMenuItems();
         }
@@ -91,7 +91,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       const coordinatorChange = next?.id !== this.currentCoordinator?.id;
       this.currentCoordinator = next ?? JSON.parse(sessionStorage.getItem('currentCoordinator'));
       if (this.currentCoordinator !== null) {
-        console.log('Current coordinator change: ', this.currentCoordinator);
+        // console.log('Current coordinator change: ', this.currentCoordinator);
         if (coordinatorChange || this.menuSections.length === 0) {
           this.createMenuItems();
         }
@@ -101,7 +101,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       const adminChange = next?.id !== this.currentAdministrator?.id;
       this.currentAdministrator = next ?? JSON.parse(sessionStorage.getItem('currentAdministrator'));
       if (this.currentAdministrator !== null) {
-        console.log('Current Administrator change: ', this.currentAdministrator);
+        // console.log('Current Administrator change: ', this.currentAdministrator);
         if (adminChange || this.menuSections.length === 0) {
           this.createMenuItems();
         }
@@ -221,8 +221,8 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       this.menuSections.push({
         items: [
           new MenuItem('8', 'Support', 'mailto:stefania.martziou@athenarc.gr', null, null, {name: 'help'}),
-          new MenuItem('9', 'Privacy policy', '../assets/pdf/EOSC-SB%20Privacy%20Policy%20V2.0.pdf', null, null, {name: 'policy'}),
-          new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V1.0.pdf', null, null, {name: 'policy'})
+          new MenuItem('9', 'Privacy policy', '../assets/pdf/EOSC-SB%20Privacy%20Policy%20V3.0.pdf', null, null, {name: 'policy'}),
+          new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V2.pdf', null, null, {name: 'policy'})
         ]
       });
 
