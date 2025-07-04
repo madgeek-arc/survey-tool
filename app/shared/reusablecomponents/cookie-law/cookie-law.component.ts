@@ -81,9 +81,9 @@ export class CookieLawComponent implements OnInit {
   @HostBinding('attr.seen')
   public isSeen: boolean;
 
-  private animation: CookieLawAnimation;
+  protected animation: CookieLawAnimation;
   private closeSvg: SafeHtml;
-  private currentStyles: {};
+  protected currentStyles: {};
   private _learnMore: string;
   private _target: CookieLawTarget;
   private _position: CookieLawPosition;

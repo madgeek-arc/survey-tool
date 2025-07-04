@@ -6,7 +6,7 @@ import { Subscriber } from "rxjs";
 import {
   DashboardSideMenuComponent,
   MenuItem,
-  MenuSections
+  MenuSection
 } from "../../shared/dashboard-side-menu/dashboard-side-menu.component";
 import { NgIf } from "@angular/common";
 import { SharedModule } from "../../../../app/shared/shared.module";
@@ -40,7 +40,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   currentAdministrator: Administrator = null;
   isManager = false;
 
-  menuSections: MenuSections[] = [];
+  menuSections: MenuSection[] = [];
   hasSidebar = true;
   hasAdminMenu = false;
 

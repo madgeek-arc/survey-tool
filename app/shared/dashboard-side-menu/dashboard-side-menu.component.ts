@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectorRef,
-  Component,
+  Component, ContentChild,
   ElementRef, EventEmitter,
   Inject,
   Input,
@@ -9,7 +9,7 @@ import {
   OnDestroy,
   OnInit, Output,
   PLATFORM_ID, QueryList,
-  SimpleChanges,
+  SimpleChanges, TemplateRef,
   ViewChild, ViewChildren
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, QueryParamsHandling, Router, RouterLink } from "@angular/router";
@@ -92,7 +92,7 @@ export class MenuItem {
 
 }
 
-export interface MenuSections {
+export interface MenuSection {
   items: MenuItem[],
   customClass?: string,
 }
@@ -115,17 +115,25 @@ export interface MenuSections {
 })
 
 export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  @Input() menuSections: MenuSections[] = [];
+  @Input() menuSections: MenuSection[] = [];
   // @Input() items: MenuItem[] = [];
   @Input() activeItem: string = '';
   @Input() activeSubItem: string = '';
   @Input() backItem: MenuItem = null;
   @Input() queryParamsHandling: QueryParamsHandling;
   @Input() logoURL: string;
+  @Input() collapsible = true;
+
   @Output() hoverChange = new EventEmitter<boolean>();
-  // @ViewChild("nav") nav: ElementRef;
+
   @ViewChildren("nav") nav: QueryList<ElementRef>;
   @ViewChild("sidebar_offcanvas") sidebar_offcanvas: ElementRef;
+
+  @Input() logoTpl!: TemplateRef<any>;
+  @ContentChild('logoTpl') logo?: TemplateRef<any>; // if passed as content
+  @Input() footerTpl!: TemplateRef<any>;
+  @ContentChild('logoTpl') footer?: TemplateRef<any>; // if passed as content
+
   public offset: number;
   // public properties = properties;
   private subscriptions: any[] = [];
@@ -260,7 +268,7 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
     this.cdr.detectChanges();
   }
 
-  hasNoActiveMenuItems(sections: MenuSections[]): boolean {
+  hasNoActiveMenuItems(sections: MenuSection[]): boolean {
     return !sections.some(section => section.items.some(item => item.isActive));
   }
 
