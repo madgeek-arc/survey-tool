@@ -1,11 +1,8 @@
-import {Inject, Injectable, NgZone, PLATFORM_ID} from "@angular/core";
-import {BehaviorSubject, Observable, Subscriber} from "rxjs";
-import { ActivationEnd, ActivationStart, Router } from "@angular/router";
-// import {Icon} from "../../../sharedComponents/menu";
-import {isPlatformBrowser} from "@angular/common";
+import { Inject, Injectable, NgZone, PLATFORM_ID } from "@angular/core";
+import { BehaviorSubject, Observable, Subscriber } from "rxjs";
+import { ActivationEnd, Router } from "@angular/router";
 import { Icon } from "./dashboard-side-menu.component";
 import { filter } from "rxjs/operators";
-// import {properties} from "../../../../../environments/environment";
 
 declare var ResizeObserver;
 
