@@ -24,8 +24,6 @@ import { IconsComponent } from "../../../utils/icons/icons.component";
   `
 })
 export class SidebarMobileToggleComponent implements OnInit, OnDestroy {
-  @Input() activeSidebarItemStatic: string;
-  @Input() activeSidebarSubItem: string;
 
   public activeSidebarItem: SidebarItem;
   private subscriptions: any[] = [];
