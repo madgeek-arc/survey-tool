@@ -20,13 +20,14 @@
 </div>
 
 <ng-template #menu let-mobile=mobile>
-  <div *ngIf="backItem" class="back" [class.mobile]="mobile">
+<!--  By default the back class is used class="back" -->
+  <div *ngIf="backItem" class="" [class.mobile]="mobile" [ngClass]="backItem.customClass">
     <a [routerLink]="backItem.route" [queryParams]="backItem.params" class="uk-flex uk-flex-middle uk-flex-center"
        (click)="closeOffcanvas()" [queryParamsHandling]="queryParamsHandling">
-      <div *ngIf="backItem.icon" class="uk-width-auto">
+      <div *ngIf="backItem.icon" class="uk-width-auto uk-margin-right">
         <icon [name]="backItem.icon.name" [ratio]="1.3" [svg]="backItem.icon.svg" [flex]="true"></icon>
       </div>
-      <span class="uk-width-expand uk-text-truncate uk-margin-left" [ngClass]="backItem.customClass" [class.hide-on-close]="backItem.icon">
+      <span class="uk-width-expand uk-text-truncate uk-flex uk-flex-center" [class.hide-on-close]="backItem.icon">
         {{backItem.title}}
       </span>
     </a>
