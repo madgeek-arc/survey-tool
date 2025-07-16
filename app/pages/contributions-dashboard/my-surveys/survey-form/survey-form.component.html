@@ -9,7 +9,7 @@
         <div class="uk-width-1-1 uk-flex uk-flex-middle uk-flex-right">
           <ng-container *ngIf="!freeView">
             <div *ngIf="activeUsers === null; else users" class="uk-margin-large-right">
-              <div uk-spinner></div>
+              <div data-uk-spinner></div>
             </div>
             <ng-template #users id="concurrentEdit">
               <div class="uk-margin-medium-right">
@@ -22,7 +22,7 @@
                     </text>
                     <circle cx="34" cy="34" r="7" stroke-width="1" fill="white"></circle>
                     <text x="28" y="40" fill="black" alignment-baseline="middle">
-                      <tspan class="material-icons md-12"> {{ actionIcon(user.action) }}</tspan>
+                      <tspan class="material-icons" style="font-size: 12px"> {{ actionIcon(user.action) }}</tspan>
                     </text>
                   </svg>
                 </a>
