@@ -1,4 +1,9 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import PizZip from 'pizzip';
+import Docxtemplater from 'docxtemplater';
+import ImageModule from 'docxtemplater-image-module';
+import { saveAs } from 'file-saver';
 
 @Injectable({
   providedIn: 'root'
@@ -6,15 +11,18 @@ import { Injectable } from '@angular/core';
 
 export class ReportCreationService {
 
+  // templateUrl = 'src/survey-tool/assets/docx-templates/report_template_test.docx';
+  templateUrl = 'assets/docx-templates/report_template_test.docx';
+
+  constructor(private http: HttpClient) {}
+
   async exportDoc() {
     // 1. Export chart to base64 PNG
     // const imgData = this.chart.createCanvas().toDataURL('image/png');
     const imgData = 'test.png'
 
     // 2. Fetch the .docx template as ArrayBuffer
-    const content = await this.http
-      .get(this.templateUrl, { responseType: 'arraybuffer' })
-      .toPromise();
+    const content = await this.http.get(this.templateUrl, { responseType: 'arraybuffer' }).toPromise();
 
     // 3. Initialize PizZip + docxtemplater/image-module
     const zip = new PizZip(content);
@@ -26,16 +34,13 @@ export class ReportCreationService {
     const doc = new Docxtemplater(zip, { modules: [ new ImageModule(imageOpts) ] });
 
     // 4. Set your dynamic data
+    let tmpData = 12;
     doc.setData({
-      customerName: 'Acme Corp.',
-      orderDate: new Date().toLocaleDateString(),
-      items: [
-        { quantity: 2, description: 'Widget A', price: '$20' },
-        { quantity: 1, description: 'Widget B', price: '$15' },
-      ],
-      total: '$55',
+      "Question22": '33%',
+      "Question22.1": tmpData + ' %',
+
       // Pass the full data URI for the image tag in your template
-      chartImage: imgData
+      // chartImage: imgData
     });
 
     // 5. Render & generate a Blob
@@ -49,6 +54,6 @@ export class ReportCreationService {
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
 
     // 6. Trigger download
-    saveAs(out, 'order-report.docx');
+    saveAs(out, 'report.docx');
   }
 }
