@@ -7,6 +7,14 @@ import { EoscReadinessDataService } from "../../../../../app/pages/services/eosc
 import { StakeholdersService } from "../../../services/stakeholders.service";
 import { WorldMapComponent } from "../../../../../app/shared/charts/world-map/world-map.component";
 
+interface Chart {
+  title: string;
+  namedQueries: string[];
+  data: any[];
+  type: string;
+  order: number;
+}
+
 @Component({
   selector: 'app-report-creation',
   standalone: true,
@@ -22,6 +30,20 @@ import { WorldMapComponent } from "../../../../../app/shared/charts/world-map/wo
 export class ReportCreationComponent implements OnInit, AfterViewInit {
   year = '2023';
   countriesArray: string[] = [];
+
+  reportCfg: {
+    charts: Chart[];
+  } = {
+    charts: [
+      {
+        title: 'Participating countries',
+        namedQueries: ['Question22','Question22.1'],
+        data: [],
+        type: 'map',
+        order: 1
+      },
+    ]
+  }
 
   constructor(private queryData: EoscReadinessDataService, private stakeholdersService: StakeholdersService,
               private reportService: ReportCreationService) {}
