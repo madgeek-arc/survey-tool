@@ -28,6 +28,8 @@ interface Chart {
 })
 
 export class ReportCreationComponent implements OnInit, AfterViewInit {
+  private worldChart!: Highcharts.Chart;
+
   year = '2023';
   countriesArray: string[] = [];
 
@@ -45,14 +47,30 @@ export class ReportCreationComponent implements OnInit, AfterViewInit {
     ]
   }
 
+  data: object = {
+    Question22: '33%',
+    'Question22.1': 12 + ' %',
+    chartImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QIJBywfp3IOswAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAkUlEQVQY052PMQqDQBREZ1f/d1kUm3SxkeAF/FdIjpOcw2vpKcRWCwsRPMFPsaIQSIoMr5pXDGNUFd9j8TOn7kRW71fvO5HTq6qqtnWtzh20IqE3YXtL0zyKwAROQLQ5l/c9gHjfKK6wMZjADE6s49Dver4/smEAc2CuqgwAYI5jU9NcxhHEy60sni986H9+vwG1yDHfK1jitgAAAABJRU5ErkJggg==",
+  }
+
   constructor(private queryData: EoscReadinessDataService, private stakeholdersService: StakeholdersService,
               private reportService: ReportCreationService) {}
 
   ngOnInit() {
+    this.data['Question22.1'] = 12 + ' %'
+    // this.data['chartImage'] = "data:image/svg;base64,PHN2ZyBoZWlnaHQ9IjEwMCIgd2lkdGg9IjEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDAiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0icmVkIi8+PC9zdmc+IA=="
+    // this.data['chartImage'] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QIJBywfp3IOswAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAkUlEQVQY052PMQqDQBREZ1f/d1kUm3SxkeAF/FdIjpOcw2vpKcRWCwsRPMFPsaIQSIoMr5pXDGNUFd9j8TOn7kRW71fvO5HTq6qqtnWtzh20IqE3YXtL0zyKwAROQLQ5l/c9gHjfKK6wMZjADE6s49Dver4/smEAc2CuqgwAYI5jU9NcxhHEy60sni986H9+vwG1yDHfK1jitgAAAABJRU5ErkJggg=="
+
   }
 
 
   ngAfterViewInit() {
+    setTimeout( ()=> {
+      this.downloadMap();
+
+      // this.data['chartImage'] = (this.worldChart as any).createCanvas().toDataURL('image/png');
+      this.reportService.exportDoc().then(res => {});
+    },2000);
   }
 
   getSoftwareData() {
@@ -79,5 +97,20 @@ export class ReportCreationComponent implements OnInit, AfterViewInit {
       error => {console.error(error)},
       () => {}
     );
+  }
+
+  onChildChartReady(chart: Highcharts.Chart) {
+    this.worldChart = chart;
+  }
+
+  downloadMap() {
+    if (!this.worldChart) { return; }
+    // Option A: use built‑in exporting
+    // const tmpImg = this.worldChart.getSVG();
+    // const tmpImg = this.worldChart.exportChartLocal({ type: 'image/png' });
+    // console.log(tmpImg);
+    // Option B: create a dataURL yourself
+    // const canvas = (this.worldChart as any).createCanvas();
+    // const dataURL = canvas.toDataURL('image/png');
   }
 }
