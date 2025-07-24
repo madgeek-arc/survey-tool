@@ -1,10 +1,42 @@
-<div class="uk-section uk-section-primary uk-section-small">
+<div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
   <div class="uk-container uk-container-expand">
     <a [routerLink]="['../surveys']" class="uk-text-primary">Back to surveys</a>
+    <div class="uk-flex uk-flex-right">
+      <div>
+        <button class="uk-button uk-button-primary uk-button-large" (click)="generateReport()">
+          Generate Complete Report
+        </button>
+        <p class="uk-text-meta uk-margin-small-top">
+          Charts ready: {{worldCharts.length}}/3
+        </p>
+      </div>
+    </div>
   </div>
 </div>
-<div class="uk-section uk-section-primary uk-section-small">
+
+<div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
   <div class="uk-container uk-container-expand uk-child-width-1-3" data-uk-grid>
-    <app-world-map (chartReady)="onChildChartReady($event)"></app-world-map>
+    <div>
+      <h6 class="uk-flex uk-flex-center">Chart 1 - Participating Countries</h6>
+      <app-world-map (chartReady)="onChildChartReady($event, 0)"></app-world-map>
+      <button class="uk-button uk-button-small uk-button-secondary uk-margin-small-top"
+              (click)="downloadSingleChart(0)">Download Chart 1</button>
+    </div>
+    <div>
+      <h6 class="uk-flex uk-flex-center">Chart 2 - Regional Distribution</h6>
+      <app-world-map (chartReady)="onChildChartReady($event, 1)"></app-world-map>
+      <button class="uk-button uk-button-small uk-button-secondary uk-margin-small-top"
+              (click)="downloadSingleChart(1)">Download Chart 2</button>
+    </div>
+    <div>
+      <h6 class="uk-flex uk-flex-center">Chart 3 - Comparative Analysis</h6>
+      <app-world-map (chartReady)="onChildChartReady($event, 2)"></app-world-map>
+      <button class="uk-button uk-button-small uk-button-secondary uk-margin-small-top"
+              (click)="downloadSingleChart(2)">Download Chart 3</button>
+    </div>
   </div>
+</div>
+
+<div class="uk-section">
+
 </div>
