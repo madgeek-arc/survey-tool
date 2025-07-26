@@ -4,15 +4,22 @@ import { ReportCreationService } from "../../../services/report-creation.service
 import { ChartsModule } from "../../../../../app/shared/charts/charts.module";
 import { EoscReadinessDataService } from "../../../../../app/pages/services/eosc-readiness-data.service";
 import { StakeholdersService } from "../../../services/stakeholders.service";
-import { WorldMapComponent } from "../../../../../app/shared/charts/world-map/world-map.component";
+import {
+  CustomSeriesMapOptions,
+  WorldMapComponent
+} from "../../../../../app/shared/charts/world-map/world-map.component";
 import { forkJoin } from "rxjs";
+import { RawData } from "../../../../../app/domain/raw-data";
+import { SeriesMappointOptions, SeriesOptionsType } from "highcharts";
+import { latlong } from "../../../../../app/domain/countries-lat-lon";
+import { NgForOf, NgIf } from "@angular/common";
 
 interface Chart {
   title: string;
   namedQueries: string[];
   data: any[];
   series: any[];
-  type: string;
+  // type: string;
   order: number;
 }
 
@@ -29,7 +36,9 @@ interface ChartImageData {
   imports: [
     RouterLink,
     ChartsModule,
-    WorldMapComponent
+    WorldMapComponent,
+    NgIf,
+    NgForOf
   ],
   providers: [StakeholdersService],
   templateUrl: './report-creation.component.html'
@@ -46,21 +55,29 @@ export class ReportCreationComponent implements OnInit {
   } = {
     charts: [
       {
+        title: 'National policy on open access publications',
+        namedQueries: ['Question6','Question6.1'],
+        data: [],
+        series: [],
+        // type: 'mapWithPoints',
+        order: 1
+      },
+      {
         title: 'National policies',
         namedQueries: ['Question22','Question22.1'],
         data: [],
         series: [],
-        type: 'mapWithPoints',
-        order: 1
-      },
-      {
-        title: 'Participating countries',
-        namedQueries: ['Question6'],
-        data: [],
-        series: [],
-        type: 'map',
+        // type: 'mapWithPoints',
         order: 2
       },
+      // {
+      //   title: 'Participating countries',
+      //   namedQueries: ['Question6'],
+      //   data: [],
+      //   series: [],
+      //   type: 'map',
+      //   order: 2
+      // },
     ]
   }
 
@@ -86,8 +103,8 @@ export class ReportCreationComponent implements OnInit {
       next: results => {
         // results is an array in the same order as namedQueries
         chart.data = results;
-        // Todo: create chart series
         console.log(`Loaded ${chart.title}:`, results);
+        chart.series = this.mapSeries(results); // Create map series
       },
       error: err => console.error(`Error loading ${chart.title}`, err)
     });
@@ -188,6 +205,123 @@ export class ReportCreationComponent implements OnInit {
         console.error(`Error downloading chart ${chartIndex + 1}:`, error);
       }
     }
+  }
+
+  mapSeries(data: RawData[]) {
+
+    let series = [];
+    const mapLegendSeries = [
+      {
+        type: 'map',
+        name: 'Has national policy',
+        color: '#2A9D8F',
+        showInLegend: true,
+        data: [], // Keep empty for legend-only
+        // visible: false, // Hide from map but show in legend
+      },
+      {
+        type: 'map',
+        name: 'Does not have national policy',
+        color: '#E76F51',
+        showInLegend: true,
+        data: [], // Keep empty for legend-only
+        // visible: false, // Hide from map but show in legend
+      },
+      {
+        type: 'map',
+        name: 'Awaiting data',
+        color: '#A9A9A9',
+        showInLegend: true,
+        data: [], // Keep empty for legend-only
+        // visible: false, // Hide from map but show in legend
+      }
+    ];
+
+    if (data.length >= 1) {
+      const tmpSeries: CustomSeriesMapOptions = {
+        type: 'map',
+        name: 'Countries',
+        allAreas: true,
+        data: [],
+        showInLegend: false,
+      }
+
+      let flag1 = false;
+      let flag2 = false;
+      let flag3 = false;
+      data[0].datasets[0].series.result.forEach(element => {
+        if (element.row[1] === 'Yes') {
+          tmpSeries.data.push({code: element.row[0], value: 0});
+          flag1 = true;
+        }
+        else if (element.row[1] === 'No') {
+          tmpSeries.data.push({code: element.row[0], value: 1});
+          flag2 = true;
+        }
+        else {
+          tmpSeries.data.push({code: element.row[0], value: 2});
+          flag3 = true;
+        }
+      });
+
+      // Filter out legend series that aren't needed
+      const activeLegendSeries = [];
+      if (flag1) activeLegendSeries.push(mapLegendSeries[0]);
+      if (flag2) activeLegendSeries.push(mapLegendSeries[1]);
+      if (flag3) activeLegendSeries.push(mapLegendSeries[2]);
+
+      series.push(...activeLegendSeries);
+
+      series.push(tmpSeries);
+    }
+
+    if (data.length === 2) {
+
+      const tmpMandatorySeries: SeriesMappointOptions = {
+        type: 'mappoint',
+        name: 'Mandatory',
+        marker: {
+          symbol: 'circle',
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        color: '#7CFC00',
+        data: [],
+        showInLegend: true
+      }
+
+      const tmpNotMandatorySeries: SeriesMappointOptions = {
+        type: 'mappoint',
+        name: 'Not Mandatory',
+        marker: {
+          symbol: 'diamond',
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        color: '#FFEF00',
+        data: [],
+        showInLegend: true
+      }
+
+      // console.log(data[1].datasets[0].series.result);
+      data[1].datasets[0].series.result.forEach(element => {
+        if (element.row[1] === 'Yes')
+          tmpMandatorySeries.data.push({name: element.row[0], lat: latlong.get(element.row[0]).latitude, lon: latlong.get(element.row[0]).longitude});
+        else if (element.row[1] === 'No')
+          tmpNotMandatorySeries.data.push({name: element.row[0], lat: latlong.get(element.row[0]).latitude, lon: latlong.get(element.row[0]).longitude});
+      });
+
+      if (tmpMandatorySeries.data.length)
+        series.push(tmpMandatorySeries);
+      if (tmpNotMandatorySeries.data.length)
+        series.push(tmpNotMandatorySeries);
+    }
+
+    // console.log(series);
+
+    return series;
   }
 
 }
