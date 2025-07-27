@@ -1,18 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { RouterLink } from "@angular/router";
-import { ReportCreationService } from "../../../services/report-creation.service";
-import { ChartsModule } from "../../../../../app/shared/charts/charts.module";
-import { EoscReadinessDataService } from "../../../../../app/pages/services/eosc-readiness-data.service";
-import { StakeholdersService } from "../../../services/stakeholders.service";
+import {Component, OnInit} from "@angular/core";
+import {RouterLink} from "@angular/router";
+import {ReportCreationService} from "../../../services/report-creation.service";
+import {ChartsModule} from "../../../../../app/shared/charts/charts.module";
+import {EoscReadinessDataService} from "../../../../../app/pages/services/eosc-readiness-data.service";
+import {StakeholdersService} from "../../../services/stakeholders.service";
 import {
   CustomSeriesMapOptions,
   WorldMapComponent
 } from "../../../../../app/shared/charts/world-map/world-map.component";
-import { forkJoin } from "rxjs";
-import { RawData } from "../../../../../app/domain/raw-data";
-import { SeriesMappointOptions, SeriesOptionsType } from "highcharts";
-import { latlong } from "../../../../../app/domain/countries-lat-lon";
-import { NgForOf, NgIf } from "@angular/common";
+import {forkJoin} from "rxjs";
+import {RawData} from "../../../../../app/domain/raw-data";
+import {SeriesMappointOptions} from "highcharts";
+import {latlong} from "../../../../../app/domain/countries-lat-lon";
+import {NgForOf, NgIf} from "@angular/common";
 
 interface Chart {
   title: string;
@@ -20,7 +20,7 @@ interface Chart {
   data: any[];
   series: any[];
   // type: string;
-  order: number;
+  order?: number;
 }
 
 interface ChartImageData {
@@ -48,7 +48,6 @@ export class ReportCreationComponent implements OnInit {
   worldCharts: Highcharts.Chart[] = [];
 
   year = '2023';
-  countriesArray: string[] = [];
 
   reportCfg: {
     charts: Chart[];
@@ -60,30 +59,89 @@ export class ReportCreationComponent implements OnInit {
         data: [],
         series: [],
         // type: 'mapWithPoints',
-        order: 1
+        // order: 1
       },
       {
-        title: 'National policies',
-        namedQueries: ['Question22','Question22.1'],
+        title: 'National policy on data management',
+        namedQueries: ['Question10','Question10.1'],
         data: [],
         series: [],
         // type: 'mapWithPoints',
-        order: 2
+        // order: 2
       },
-      // {
-      //   title: 'Participating countries',
-      //   namedQueries: ['Question6'],
-      //   data: [],
-      //   series: [],
-      //   type: 'map',
-      //   order: 2
-      // },
+      {
+        title: 'National policy on FAIR data',
+        namedQueries: ['Question14','Question14.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on open data',
+        namedQueries: ['Question18','Question18.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on open source software',
+        namedQueries: ['Question22','Question22.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on offering services through EOSC',
+        namedQueries: ['Question26','Question26.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on connecting repositories to EOSC',
+        namedQueries: ['Question30','Question30.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on data stewardship',
+        namedQueries: ['Question34','Question34.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on long-term data preservation ',
+        namedQueries: ['Question38','Question38.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on shills/training for Open Science',
+        namedQueries: ['Question42','Question42.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on incentives/rewards for Open Science',
+        namedQueries: ['Question46','Question46.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'National policy on citizen science',
+        namedQueries: ['Question50','Question50.1'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'Financial strategy on open access publications',
+        namedQueries: ['Question7'],
+        data: [],
+        series: [],
+      },
+      {
+        title: 'Financial strategy on data management',
+        namedQueries: ['Question11'],
+        data: [],
+        series: [],
+      }
     ]
-  }
-
-  data: object = {
-    Question22: '33%',
-    'Question22.1': 12 + ' %'
   }
 
   constructor(private queryData: EoscReadinessDataService, private reportService: ReportCreationService) {}
