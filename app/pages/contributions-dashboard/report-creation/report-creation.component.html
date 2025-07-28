@@ -14,6 +14,9 @@
   </div>
 </div>
 
+<pre>
+  {{ reportData | json }}
+</pre>
 <div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
   <div class="uk-container uk-container-expand uk-child-width-1-3" data-uk-grid>
     <div *ngFor="let chart of reportCfg.charts; let i = index">

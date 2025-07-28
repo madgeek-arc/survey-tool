@@ -12,14 +12,15 @@ import {forkJoin} from "rxjs";
 import {RawData} from "../../../../../app/domain/raw-data";
 import {SeriesMappointOptions} from "highcharts";
 import {latlong} from "../../../../../app/domain/countries-lat-lon";
-import {NgForOf, NgIf} from "@angular/common";
+import { JsonPipe, NgForOf, NgIf } from "@angular/common";
 
 interface Chart {
   title: string;
   namedQueries: string[];
   data: any[];
   series: any[];
-  // type: string;
+  stats?: string[],
+  type?: string;
   order?: number;
 }
 
@@ -38,7 +39,8 @@ interface ChartImageData {
     ChartsModule,
     WorldMapComponent,
     NgIf,
-    NgForOf
+    NgForOf,
+    JsonPipe
   ],
   providers: [StakeholdersService],
   templateUrl: './report-creation.component.html'
@@ -49,6 +51,7 @@ export class ReportCreationComponent implements OnInit {
 
   year = '2023';
 
+  reportData: Record<string, string> = {};
   reportCfg: {
     charts: Chart[];
   } = {
@@ -58,7 +61,8 @@ export class ReportCreationComponent implements OnInit {
         namedQueries: ['Question6','Question6.1'],
         data: [],
         series: [],
-        // type: 'mapWithPoints',
+        type: 'mapWithPoints',
+        stats: ['Question6','Question6.1'],
         // order: 1
       },
       {
@@ -67,6 +71,7 @@ export class ReportCreationComponent implements OnInit {
         data: [],
         series: [],
         // type: 'mapWithPoints',
+        stats: ['Question10','Question10.1'],
         // order: 2
       },
       {
@@ -74,74 +79,86 @@ export class ReportCreationComponent implements OnInit {
         namedQueries: ['Question14','Question14.1'],
         data: [],
         series: [],
+        stats: ['Question14','Question14.1'],
       },
       {
         title: 'National policy on open data',
         namedQueries: ['Question18','Question18.1'],
         data: [],
         series: [],
+        stats: ['Question18','Question18.1'],
       },
       {
         title: 'National policy on open source software',
         namedQueries: ['Question22','Question22.1'],
         data: [],
         series: [],
+        stats: ['Question22','Question22.1'],
       },
       {
         title: 'National policy on offering services through EOSC',
         namedQueries: ['Question26','Question26.1'],
         data: [],
         series: [],
+        stats: ['Question26','Question26.1'],
       },
       {
         title: 'National policy on connecting repositories to EOSC',
         namedQueries: ['Question30','Question30.1'],
         data: [],
         series: [],
+        stats: ['Question30','Question30.1'],
       },
       {
         title: 'National policy on data stewardship',
         namedQueries: ['Question34','Question34.1'],
         data: [],
         series: [],
+        stats: ['Question34','Question34.1'],
       },
       {
         title: 'National policy on long-term data preservation ',
         namedQueries: ['Question38','Question38.1'],
         data: [],
         series: [],
+        stats: ['Question38','Question38.1'],
       },
       {
         title: 'National policy on shills/training for Open Science',
         namedQueries: ['Question42','Question42.1'],
         data: [],
         series: [],
+        stats: ['Question42','Question42.1'],
       },
       {
         title: 'National policy on incentives/rewards for Open Science',
         namedQueries: ['Question46','Question46.1'],
         data: [],
         series: [],
+        stats: ['Question46','Question46.1'],
       },
       {
         title: 'National policy on citizen science',
         namedQueries: ['Question50','Question50.1'],
         data: [],
         series: [],
+        stats: ['Question50','Question50.1'],
       },
       {
         title: 'Financial strategy on open access publications',
         namedQueries: ['Question7'],
         data: [],
         series: [],
+        stats: ['Question7'],
       },
       {
         title: 'Financial strategy on data management',
         namedQueries: ['Question11'],
         data: [],
         series: [],
+        stats: ['Question11'],
       }
-    ]
+    ],
   }
 
   constructor(private queryData: EoscReadinessDataService, private reportService: ReportCreationService) {}
@@ -163,6 +180,11 @@ export class ReportCreationComponent implements OnInit {
         chart.data = results;
         console.log(`Loaded ${chart.title}:`, results);
         chart.series = this.mapSeries(results); // Create map series
+        if (chart.stats) {
+          chart.stats.forEach((query, index) => {
+            this.reportData[query] = this.countAnswer(chart.data[index]);
+          });
+        }
       },
       error: err => console.error(`Error loading ${chart.title}`, err)
     });
@@ -193,16 +215,8 @@ export class ReportCreationComponent implements OnInit {
       // Add static images if needed
       staticImages['logoImage'] = { path: 'assets/images/2-2.png', width: 200, height: 300 };
 
-      // Prepare the data report
-      const reportData = {
-        "Question22": "33%",
-        Question22_1: 12 + ' %',
-        generatedDate: new Date().toLocaleDateString(),
-        totalCharts: this.worldCharts.length
-      };
-
       // Export document with both chart images and static images
-      await this.reportService.exportDocWithMultipleImages(reportData, chartImages, staticImages);
+      await this.reportService.exportDocWithMultipleImages(this.reportData, chartImages, staticImages);
 
       console.log('Report generated successfully!');
 
@@ -380,6 +394,23 @@ export class ReportCreationComponent implements OnInit {
     // console.log(series);
 
     return series;
+  }
+
+  countAnswer(data: RawData) {
+    console.log(data);
+    let count = 0;
+    let total = 0;
+    let percentage: number;
+    data.datasets[0].series.result.forEach(element => {
+      if (element.row[1] !== null && element.row[1].trim() !== '')
+        total++;
+
+      if (element.row[1] === 'Yes')
+        count++;
+    });
+    percentage = Math.round((count / total + Number.EPSILON) * 100);
+
+    return `${percentage}% (${count}/${total})`
   }
 
 }
