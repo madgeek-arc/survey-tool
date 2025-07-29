@@ -7,7 +7,7 @@
           Generate Complete Report
         </button>
         <p class="uk-text-meta uk-margin-small-top">
-          Charts ready: {{ worldCharts.length }}/{{ reportCfg.charts.length }}
+          Charts ready: {{ worldCharts.length }}/{{ chartsCfg.length }}
         </p>
       </div>
     </div>
@@ -19,7 +19,7 @@
 </pre>
 <div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
   <div class="uk-container uk-container-expand uk-child-width-1-3" data-uk-grid>
-    <div *ngFor="let chart of reportCfg.charts; let i = index">
+    <div *ngFor="let chart of chartsCfg; let i = index">
       <ng-container *ngIf="chart.series.length > 0">
         <h6 class="uk-flex uk-flex-center">{{ chart.title }}</h6>
         <app-world-map [series]="chart.series" (chartReady)="onChildChartReady($event, i)"></app-world-map>

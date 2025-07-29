@@ -52,119 +52,139 @@ export class ReportCreationComponent implements OnInit {
   year = '2023';
 
   reportData: Record<string, string> = {};
-  reportCfg: {
-    charts: Chart[];
-  } = {
-    charts: [
-      {
-        title: 'National policy on open access publications',
-        namedQueries: ['Question6','Question6.1'],
-        data: [],
-        series: [],
-        type: 'mapWithPoints',
-        stats: ['Question6','Question6.1'],
-        // order: 1
-      },
-      {
-        title: 'National policy on data management',
-        namedQueries: ['Question10','Question10.1'],
-        data: [],
-        series: [],
-        // type: 'mapWithPoints',
-        stats: ['Question10','Question10.1'],
-        // order: 2
-      },
-      {
-        title: 'National policy on FAIR data',
-        namedQueries: ['Question14','Question14.1'],
-        data: [],
-        series: [],
-        stats: ['Question14','Question14.1'],
-      },
-      {
-        title: 'National policy on open data',
-        namedQueries: ['Question18','Question18.1'],
-        data: [],
-        series: [],
-        stats: ['Question18','Question18.1'],
-      },
-      {
-        title: 'National policy on open source software',
-        namedQueries: ['Question22','Question22.1'],
-        data: [],
-        series: [],
-        stats: ['Question22','Question22.1'],
-      },
-      {
-        title: 'National policy on offering services through EOSC',
-        namedQueries: ['Question26','Question26.1'],
-        data: [],
-        series: [],
-        stats: ['Question26','Question26.1'],
-      },
-      {
-        title: 'National policy on connecting repositories to EOSC',
-        namedQueries: ['Question30','Question30.1'],
-        data: [],
-        series: [],
-        stats: ['Question30','Question30.1'],
-      },
-      {
-        title: 'National policy on data stewardship',
-        namedQueries: ['Question34','Question34.1'],
-        data: [],
-        series: [],
-        stats: ['Question34','Question34.1'],
-      },
-      {
-        title: 'National policy on long-term data preservation ',
-        namedQueries: ['Question38','Question38.1'],
-        data: [],
-        series: [],
-        stats: ['Question38','Question38.1'],
-      },
-      {
-        title: 'National policy on shills/training for Open Science',
-        namedQueries: ['Question42','Question42.1'],
-        data: [],
-        series: [],
-        stats: ['Question42','Question42.1'],
-      },
-      {
-        title: 'National policy on incentives/rewards for Open Science',
-        namedQueries: ['Question46','Question46.1'],
-        data: [],
-        series: [],
-        stats: ['Question46','Question46.1'],
-      },
-      {
-        title: 'National policy on citizen science',
-        namedQueries: ['Question50','Question50.1'],
-        data: [],
-        series: [],
-        stats: ['Question50','Question50.1'],
-      },
-      {
-        title: 'Financial strategy on open access publications',
-        namedQueries: ['Question7'],
-        data: [],
-        series: [],
-        stats: ['Question7'],
-      },
-      {
-        title: 'Financial strategy on data management',
-        namedQueries: ['Question11'],
-        data: [],
-        series: [],
-        stats: ['Question11'],
-      }
-    ],
-  }
-
+  chartsCfg: Chart[] = [
+    {
+      title: 'National policy on open access publications',
+      namedQueries: ['Question6','Question6.1'],
+      data: [],
+      series: [],
+      type: 'mapWithPoints',
+      stats: ['Question6','Question6.1'],
+      // order: 1
+    },
+    {
+      title: 'Countries with a Specific Policy on Immediate Open Access to Publications',
+      namedQueries: ['Question6.3'],
+      data: [],
+      series: [],
+      type: 'mapWithPoints',
+      stats: ['Question6.3'],
+      // order: 1
+    },
+    {
+      title: 'Countries with a Specific Policy on Retention of IPR on Publications',
+      namedQueries: ['Question6.4', 'Question6.4.1'],
+      data: [],
+      series: [],
+      type: 'mapWithPoints',
+      stats: ['Question6.4, Question6.4.1'],
+      // order: 1
+    },
+    {
+      title: 'National policy on data management',
+      namedQueries: ['Question10','Question10.1'],
+      data: [],
+      series: [],
+      // type: 'mapWithPoints',
+      stats: ['Question10','Question10.1'],
+      // order: 2
+    },
+    {
+      title: 'National policy on FAIR data',
+      namedQueries: ['Question14','Question14.1'],
+      data: [],
+      series: [],
+      stats: ['Question14','Question14.1'],
+    },
+    {
+      title: 'National policy on open data',
+      namedQueries: ['Question18','Question18.1'],
+      data: [],
+      series: [],
+      stats: ['Question18','Question18.1'],
+    },
+    {
+      title: 'National policy on open source software',
+      namedQueries: ['Question22','Question22.1'],
+      data: [],
+      series: [],
+      stats: ['Question22','Question22.1'],
+    },
+    {
+      title: 'National policy on offering services through EOSC',
+      namedQueries: ['Question26','Question26.1'],
+      data: [],
+      series: [],
+      stats: ['Question26','Question26.1'],
+    },
+    {
+      title: 'National policy on connecting repositories to EOSC',
+      namedQueries: ['Question30','Question30.1'],
+      data: [],
+      series: [],
+      stats: ['Question30','Question30.1'],
+    },
+    {
+      title: 'National policy on data stewardship',
+      namedQueries: ['Question34','Question34.1'],
+      data: [],
+      series: [],
+      stats: ['Question34','Question34.1'],
+    },
+    {
+      title: 'National policy on long-term data preservation ',
+      namedQueries: ['Question38','Question38.1'],
+      data: [],
+      series: [],
+      stats: ['Question38','Question38.1'],
+    },
+    {
+      title: 'National policy on shills/training for Open Science',
+      namedQueries: ['Question42','Question42.1'],
+      data: [],
+      series: [],
+      stats: ['Question42','Question42.1'],
+    },
+    {
+      title: 'National policy on incentives/rewards for Open Science',
+      namedQueries: ['Question46','Question46.1'],
+      data: [],
+      series: [],
+      stats: ['Question46','Question46.1'],
+    },
+    {
+      title: 'National policy on citizen science',
+      namedQueries: ['Question50','Question50.1'],
+      data: [],
+      series: [],
+      stats: ['Question50','Question50.1'],
+    },
+    {
+      title: 'Financial strategy on open access publications',
+      namedQueries: ['Question7'],
+      data: [],
+      series: [],
+      stats: ['Question7'],
+    },
+    {
+      title: 'Financial strategy on data management',
+      namedQueries: ['Question11'],
+      data: [],
+      series: [],
+      stats: ['Question11'],
+    },
+    {
+      title: 'Financial strategy on FAIR data',
+      namedQueries: ['Question15'],
+      data: [],
+      series: [],
+      stats: ['Question15'],
+    }
+  ]
   constructor(private queryData: EoscReadinessDataService, private reportService: ReportCreationService) {}
 
   ngOnInit() {
-    this.reportCfg.charts.forEach(chart => this.loadChart(chart));
+    this.chartsCfg.forEach(chart => this.loadChart(chart));
   }
 
   loadChart(chart: Chart) {
