@@ -6,10 +6,11 @@ import { take, takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: 'user-profile.component.html',
-  styleUrls: ['user-profile.component.scss'],
-  providers: [CompressImageService]
+    selector: 'app-profile',
+    templateUrl: 'user-profile.component.html',
+    styleUrls: ['user-profile.component.scss'],
+    providers: [CompressImageService],
+    standalone: false
 })
 
 export class UserProfileComponent implements OnInit, OnDestroy {

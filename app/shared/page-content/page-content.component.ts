@@ -17,10 +17,10 @@ declare var UIkit;
 
 @Component({
   selector: '[page-content]',
-  standalone: true,
   imports: [
     NgClass
   ],
+  standalone: true,
   template: `
     <div id="page_content">
       <div [class.uk-hidden]="!isBrowser" id="page_content_sticky_footer" #sticky_footer
@@ -31,15 +31,17 @@ declare var UIkit;
           </div>
         </div>
       </div>
-      <div id="page_content_header" #header class="uk-blur-background" [class.uk-border-bottom]="border && isStickyActive"
+      <div id="page_content_header" #header class="uk-blur-background"
+           [class.uk-border-bottom]="border && isStickyActive"
            [attr.style]="'margin-top: '+(footer_height? '-'+footer_height+'px': '0')">
         <div class="uk-container uk-container-large">
           <div [ngClass]="!isMobile?'uk-padding-small uk-padding-remove-vertical uk-padding-remove-right':''">
-             <ng-content select="[header]"></ng-content>
+            <ng-content select="[header]"></ng-content>
           </div>
         </div>
       </div>
-      <div id="page_content_actions" #actions class="uk-blur-background" [class.uk-border-bottom]="border && isStickyActive">
+      <div id="page_content_actions" #actions class="uk-blur-background"
+           [class.uk-border-bottom]="border && isStickyActive">
         <!--          <div class="uk-container uk-container-large">-->
         <div [class]="fullWidth?'':'uk-container uk-container-large'">
           <div [ngClass]="!isMobile?'uk-padding-small uk-padding-remove-vertical uk-padding-remove-right':''">
@@ -48,7 +50,7 @@ declare var UIkit;
         </div>
       </div>
       <div id="page_content_inner" [class]="fullWidth?'':'uk-container uk-container-large'">
-<!--        <div [ngClass]="!isMobile?'uk-padding-small uk-padding-remove-vertical':''">-->
+        <!--        <div [ngClass]="!isMobile?'uk-padding-small uk-padding-remove-vertical':''">-->
         <div>
           <ng-content select="[inner]"></ng-content>
         </div>
@@ -61,7 +63,7 @@ declare var UIkit;
         </div>
       </div>
     </div>
-  `,
+  `
 })
 
 export class PageContentComponent implements OnInit, AfterViewInit, OnDestroy {

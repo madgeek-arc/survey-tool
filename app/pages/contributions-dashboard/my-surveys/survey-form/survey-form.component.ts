@@ -16,9 +16,10 @@ declare var require: any;
 const seedRandom = require('seedrandom');
 
 @Component({
-  selector: 'app-survey-form',
-  templateUrl: 'survey-form.component.html',
-  providers: [SurveyService, StakeholdersService]
+    selector: 'app-survey-form',
+    templateUrl: 'survey-form.component.html',
+    providers: [SurveyService, StakeholdersService],
+    standalone: false
 })
 
 export class SurveyFormComponent implements OnInit, OnDestroy {

@@ -11,8 +11,9 @@ import { takeUntil } from "rxjs/operators";
 import { FacetValue } from "../../../../catalogue-ui/domain/facet";
 
 @Component({
-  selector: 'app-coordinator-dashboard',
-  templateUrl: './coordinators.component.html'
+    selector: 'app-coordinator-dashboard',
+    templateUrl: './coordinators.component.html',
+    standalone: false
 })
 
 export class CoordinatorsComponent implements OnInit, OnDestroy{

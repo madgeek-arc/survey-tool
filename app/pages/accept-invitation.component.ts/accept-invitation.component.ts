@@ -7,8 +7,9 @@ import { takeUntil } from "rxjs/operators";
 
 
 @Component({
-  selector: 'app-accept-invitation',
-  templateUrl: 'accept-invitation.component.html'
+    selector: 'app-accept-invitation',
+    templateUrl: 'accept-invitation.component.html',
+    standalone: false
 })
 
 export class AcceptInvitationComponent implements OnInit, OnDestroy {

@@ -6,8 +6,9 @@ import {environment} from "../../../environments/environment";
 import {takeUntil} from "rxjs/operators";
 
 @Component({
-  selector: 'app-side-menu-dashboard',
-  templateUrl: 'side-menu-dashboard.component.html',
+    selector: 'app-side-menu-dashboard',
+    templateUrl: 'side-menu-dashboard.component.html',
+    standalone: false
 })
 
 export class SideMenuDashboardComponent implements OnInit, OnDestroy {

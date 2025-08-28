@@ -48,15 +48,18 @@ export interface StopRule {
  * */
 @Component({
   selector: 'icon',
-  standalone: true,
   imports: [
     CommonModule,
     SafeUrlPipe
   ],
+  standalone: true,
   template: `
     <ng-container *ngIf="icon">
-      <span #svgIcon *ngIf="icon.data" class="uk-icon" [class.uk-preserve]="gradient || icon.preserveColor" [class.uk-flex]="flex" [ngClass]="customClass" [ngStyle]="style" [innerHTML]="icon.data | safeUrl: 'html'"></span>
-      <span *ngIf="!icon.data && icon.name" [class.uk-flex]="flex" [ngClass]="customClass" [class.uk-display-inline-block]="!flex">
+      <span #svgIcon *ngIf="icon.data" class="uk-icon" [class.uk-preserve]="gradient || icon.preserveColor"
+            [class.uk-flex]="flex" [ngClass]="customClass" [ngStyle]="style"
+            [innerHTML]="icon.data | safeUrl: 'html'"></span>
+      <span *ngIf="!icon.data && icon.name" [class.uk-flex]="flex" [ngClass]="customClass"
+            [class.uk-display-inline-block]="!flex">
         <span class="material-icons" [ngClass]="type?type:icon.type" [ngStyle]="style">{{ icon.name }}</span>
       </span>
       <span *ngIf="visuallyHidden" class="visually-hidden">{{ visuallyHidden }}</span>

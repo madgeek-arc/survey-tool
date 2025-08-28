@@ -10,9 +10,10 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {StakeholdersService} from "../../../services/stakeholders.service";
 
 @Component({
-  selector: 'app-contributions-my-surveys',
-  templateUrl: './my-surveys.component.html',
-  providers: [SurveyService, StakeholdersService]
+    selector: 'app-contributions-my-surveys',
+    templateUrl: './my-surveys.component.html',
+    providers: [SurveyService, StakeholdersService],
+    standalone: false
 })
 
 export class MySurveysComponent implements OnInit, OnDestroy{
