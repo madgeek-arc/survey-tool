@@ -1,18 +1,21 @@
-<div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: calc(100svh - var(--header-height));">
-  <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
-
-    <div class="uk-grid">
-
-      <div class="uk-width-3-5">
-        <div class="uk-card uk-card-body uk-card-default">
-          <h5>{{title}}</h5>
-          <p>{{text}}</p>
+<div page-content [fullWidth]="true">
+  <div actions class="uk-section-primary uk-preserve-color">
+    <sidebar-mobile-toggle class="uk-hidden@m uk-display-block uk-padding-small"></sidebar-mobile-toggle>
+  </div>
+  <div inner>
+    <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: calc(100svh - var(--header-height));">
+      <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+        <div class="uk-grid">
+          <div class="uk-width-3-5">
+            <div class="uk-card uk-card-body uk-card-default">
+              <h5>{{title}}</h5>
+              <p>{{text}}</p>
+            </div>
+          </div>
         </div>
       </div>
-
     </div>
-
-
   </div>
 </div>
+
 

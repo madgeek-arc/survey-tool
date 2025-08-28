@@ -1,171 +1,178 @@
-<div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
-  <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+<div page-content [fullWidth]="true">
+  <div actions class="uk-section-primary uk-preserve-color">
+    <sidebar-mobile-toggle class="uk-hidden@m uk-display-block uk-padding-small"></sidebar-mobile-toggle>
+  </div>
+  <div inner>
+    <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
+      <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
 
-    <ng-template [ngIf]="loading" class="whiteFilm">
-      <i class="loader-big" aria-hidden="true"></i>
-    </ng-template>
-    <div *ngIf="surveyEntries">
+        <ng-template [ngIf]="loading" class="whiteFilm">
+          <i class="loader-big" aria-hidden="true"></i>
+        </ng-template>
+        <div *ngIf="surveyEntries">
 
-      <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
+          <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
 
-        <div class="uk-width-4-5">
-<!--          <div *ngIf="stakeholder" class="uk-alert uk-alert-info">-->
-<!--            <p>Please note that for the first survey (2021):</p>-->
-<!--            <ol>-->
-<!--              <li>EOSC-SB Members are invited to re-use the Observatory dashboard visualisations.</li>-->
-<!--              <li>EOSC-SB Members are invited to analyse the survey data to improve their policy development and deployment.</li>-->
-<!--              <li>Details of individual country surveys, such as country specific financial information, should not be shared outside the EOSC-SB, since the methodology to calculate financial investments is still being developed.</li>-->
-<!--            </ol>-->
-<!--          </div>-->
-        </div>
-
-        <div class="uk-width-1-5">
-          <div *ngIf="stakeholder?.country != 'CH'" class="uk-flex uk-flex-right uk-margin-bottom uk-inline">
-            <button class="uk-button uk-button-primary">Export to tsv</button>
-            <div class="" uk-dropdown="mode: hover; animation: reveal-top; animate-out: true; pos: left-top; offset: 20; duration: 500">
-              <ul class="uk-list uk-padding-small uk-margin-remove">
-                <li *ngFor="let survey of surveys" class="uk-margin-bottom">
-                  <a class="uk-flex uk-flex-middle uk-link-reset" (click)="exportToCsv(survey.value)">
-                    <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
-                  </a>
-                </li>
-              </ul>
+            <div class="uk-width-4-5">
+              <!--          <div *ngIf="stakeholder" class="uk-alert uk-alert-info">-->
+              <!--            <p>Please note that for the first survey (2021):</p>-->
+              <!--            <ol>-->
+              <!--              <li>EOSC-SB Members are invited to re-use the Observatory dashboard visualisations.</li>-->
+              <!--              <li>EOSC-SB Members are invited to analyse the survey data to improve their policy development and deployment.</li>-->
+              <!--              <li>Details of individual country surveys, such as country specific financial information, should not be shared outside the EOSC-SB, since the methodology to calculate financial investments is still being developed.</li>-->
+              <!--            </ol>-->
+              <!--          </div>-->
             </div>
-          </div>
-        </div>
-        <div *ngIf="surveyEntries?.facets" class="uk-width-1-1 uk-child-width-1-2" uk-grid>
-          <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" uk-grid>
-            <div class="uk-width-1-4 uk-padding-remove">
-              <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
-                         [items]="surveys" [(ngModel)]="selectedSurvey"
-                         placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
-              </ng-select>
-            </div>
-            <div class="uk-width-1-4 uk-padding-remove">
-              <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
-                         [items]="stakeholderList" [(ngModel)]="selectedStakeholder"
-                         placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
-              </ng-select>
-            </div>
-            <div class="uk-width-1-4 uk-padding-remove">
-            <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
-                       placeholder="Validation Status" [(ngModel)]="validationStatus" clearAllText="Clear">
-              <ng-option [value]="''">All validation statuses</ng-option>
-              <ng-option [value]="'true'">Validated</ng-option>
-              <ng-option [value]="'false'">Not validated</ng-option>
-            </ng-select>
-            </div>
-            <div class="uk-width-1-4 uk-padding-remove">
-              <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
-                         placeholder="Publication Status" [(ngModel)]="publishedStatus" clearAllText="Clear">
-                <ng-option [value]="''">All published statuses</ng-option>
-                <ng-option [value]="'true'">Published</ng-option>
-                <ng-option [value]="'false'">Not published</ng-option>
-              </ng-select>
-            </div>
-          </div>
-          <div class="uk-margin-remove-top uk-flex uk-flex-middle" uk-grid>
-            <div class="uk-width-1-4 uk-padding-remove">
-              <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"
-                         (change)="this.updateURLParameters('sort', 'modificationDate'); filterSelection('order', order)">
-                <ng-option [value]="'desc'">Most recently modified</ng-option>
-                <ng-option [value]="'asc'">Least recently modified</ng-option>
-              </ng-select>
-            </div>
-            <div class="uk-width-expand">
-              <div class="uk-flex uk-flex-middle uk-flex-right">
 
-                <p class="uk-margin-remove uk-padding-small">
-                  Results <span class="uk-text-bold">{{surveyEntries.from + 1}}-</span><span class="uk-text-bold">{{(currentPage-1) * pageSize + surveyEntries.results.length}}</span> of <span class="uk-text-bold">{{surveyEntries.total}}</span>
-                </p>
-
-                <ul class="uk-pagination uk-visible@m">
-                  <li *ngIf="currentPage>2 && totalPages>5"><a (click)="goToPage(1)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a></li>
-                  <li *ngIf="currentPage!==1"><a (click)="previousPage()"><span uk-pagination-previous></span></a></li>
-                  <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active': ''">
-                    <a (click)="goToPage(i)">{{i}}</a>
-                  </li>
-                  <li *ngIf="currentPage!==totalPages"><a (click)="nextPage()"><span uk-pagination-next></span></a></li>
-                  <li *ngIf="currentPage<totalPages-1 && totalPages>5"><a (click)="goToPage(totalPages)"><span uk-pagination-next></span><span uk-pagination-next></span></a></li>
-                </ul>
-
+            <div class="uk-width-1-5">
+              <div *ngIf="stakeholder?.country != 'CH'" class="uk-flex uk-flex-right uk-margin-bottom uk-inline">
+                <button class="uk-button uk-button-primary">Export to tsv</button>
+                <div class="" uk-dropdown="mode: hover; animation: reveal-top; animate-out: true; pos: left-top; offset: 20; duration: 500">
+                  <ul class="uk-list uk-padding-small uk-margin-remove">
+                    <li *ngFor="let survey of surveys" class="uk-margin-bottom">
+                      <a class="uk-flex uk-flex-middle uk-link-reset" (click)="exportToCsv(survey.value)">
+                        <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="">
-
-        <div class="uk-overflow-auto uk-margin-bottom">
-          <table class="uk-table uk-table-striped uk-table-middle uk-table-divider" *ngIf="surveyEntriesResults">
-            <thead>
-            <tr>
-<!--              <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>-->
-              <th class="">Stakeholder</th>
-              <th class="">Survey</th>
-              <th class="">Modified</th>
-              <th class="">Validated</th>
-              <th class="">Published</th>
-              <th class="">Progress</th>
-              <th class="">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let surveyEntry of surveyEntriesResults">
-<!--              <td><input class="uk-checkbox" type="checkbox"></td>-->
-              <td>{{surveyEntry.stakeholder.name}}</td>
-              <td class="">
-                {{surveyEntry.surveyName}}
-              </td>
-              <td>
-                {{surveyEntry.lastUpdate | date}}
-              </td>
-              <td>
-                <div class="uk-margin-left">
-                  <span *ngIf="surveyEntry.validated" class="material-icons">done</span>
-                  <span *ngIf="!surveyEntry.validated" class="material-icons">remove</span>
+            <div *ngIf="surveyEntries?.facets" class="uk-width-1-1 uk-child-width-1-2" uk-grid>
+              <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" uk-grid>
+                <div class="uk-width-1-4 uk-padding-remove">
+                  <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
+                             [items]="surveys" [(ngModel)]="selectedSurvey"
+                             placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
+                  </ng-select>
                 </div>
-              </td>
-              <td class="">
-                <div class="uk-margin-left">
-                  <span *ngIf="surveyEntry.published" class="material-icons">done</span>
-                  <span *ngIf="!surveyEntry.published" class="material-icons">remove</span>
+                <div class="uk-width-1-4 uk-padding-remove">
+                  <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
+                             [items]="stakeholderList" [(ngModel)]="selectedStakeholder"
+                             placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
+                  </ng-select>
                 </div>
-              </td>
-              <td class="">
-                <div class="percentageNumber" style="margin-left: 10%;">{{surveyEntry.progressTotal.current}} of {{surveyEntry.progressTotal.total}}</div>
-              </td>
-              <td class="">
-                <div class="uk-inline uk-margin-left">
-                  <a><span class="material-icons">more_vert</span></a>
-                  <div class="uk-dropdown-nav" uk-dropdown="mode: hover; pos: bottom-center">
-                    <div class="uk-padding-small">
-                      <ul class="uk-list">
-                        <li class="uk-margin-small-bottom">
-                          <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
-                            <span class="material-icons uk-margin-right">visibility</span> View Survey
-                          </a>
-                        </li>
-                        <li class="uk-margin-small-bottom">
-                          <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
-                            <span class="material-icons uk-margin-right">manage_history</span> View Survey History
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
+                <div class="uk-width-1-4 uk-padding-remove">
+                  <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
+                             placeholder="Validation Status" [(ngModel)]="validationStatus" clearAllText="Clear">
+                    <ng-option [value]="''">All validation statuses</ng-option>
+                    <ng-option [value]="'true'">Validated</ng-option>
+                    <ng-option [value]="'false'">Not validated</ng-option>
+                  </ng-select>
+                </div>
+                <div class="uk-width-1-4 uk-padding-remove">
+                  <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
+                             placeholder="Publication Status" [(ngModel)]="publishedStatus" clearAllText="Clear">
+                    <ng-option [value]="''">All published statuses</ng-option>
+                    <ng-option [value]="'true'">Published</ng-option>
+                    <ng-option [value]="'false'">Not published</ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="uk-margin-remove-top uk-flex uk-flex-middle" uk-grid>
+                <div class="uk-width-1-4 uk-padding-remove">
+                  <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"
+                             (change)="this.updateURLParameters('sort', 'modificationDate'); filterSelection('order', order)">
+                    <ng-option [value]="'desc'">Most recently modified</ng-option>
+                    <ng-option [value]="'asc'">Least recently modified</ng-option>
+                  </ng-select>
+                </div>
+                <div class="uk-width-expand">
+                  <div class="uk-flex uk-flex-middle uk-flex-right">
+
+                    <p class="uk-margin-remove uk-padding-small">
+                      Results <span class="uk-text-bold">{{surveyEntries.from + 1}}-</span><span class="uk-text-bold">{{(currentPage-1) * pageSize + surveyEntries.results.length}}</span> of <span class="uk-text-bold">{{surveyEntries.total}}</span>
+                    </p>
+
+                    <ul class="uk-pagination uk-visible@m">
+                      <li *ngIf="currentPage>2 && totalPages>5"><a (click)="goToPage(1)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a></li>
+                      <li *ngIf="currentPage!==1"><a (click)="previousPage()"><span uk-pagination-previous></span></a></li>
+                      <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active': ''">
+                        <a (click)="goToPage(i)">{{i}}</a>
+                      </li>
+                      <li *ngIf="currentPage!==totalPages"><a (click)="nextPage()"><span uk-pagination-next></span></a></li>
+                      <li *ngIf="currentPage<totalPages-1 && totalPages>5"><a (click)="goToPage(totalPages)"><span uk-pagination-next></span><span uk-pagination-next></span></a></li>
+                    </ul>
+
                   </div>
                 </div>
-              </td>
-            </tr>
-            </tbody>
-          </table>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="">
+
+            <div class="uk-overflow-auto uk-margin-bottom">
+              <table class="uk-table uk-table-striped uk-table-middle uk-table-divider" *ngIf="surveyEntriesResults">
+                <thead>
+                <tr>
+                  <!--              <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>-->
+                  <th class="">Stakeholder</th>
+                  <th class="">Survey</th>
+                  <th class="">Modified</th>
+                  <th class="">Validated</th>
+                  <th class="">Published</th>
+                  <th class="">Progress</th>
+                  <th class="">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let surveyEntry of surveyEntriesResults">
+                  <!--              <td><input class="uk-checkbox" type="checkbox"></td>-->
+                  <td>{{surveyEntry.stakeholder.name}}</td>
+                  <td class="">
+                    {{surveyEntry.surveyName}}
+                  </td>
+                  <td>
+                    {{surveyEntry.lastUpdate | date}}
+                  </td>
+                  <td>
+                    <div class="uk-margin-left">
+                      <span *ngIf="surveyEntry.validated" class="material-icons">done</span>
+                      <span *ngIf="!surveyEntry.validated" class="material-icons">remove</span>
+                    </div>
+                  </td>
+                  <td class="">
+                    <div class="uk-margin-left">
+                      <span *ngIf="surveyEntry.published" class="material-icons">done</span>
+                      <span *ngIf="!surveyEntry.published" class="material-icons">remove</span>
+                    </div>
+                  </td>
+                  <td class="">
+                    <div class="percentageNumber" style="margin-left: 10%;">{{surveyEntry.progressTotal.current}} of {{surveyEntry.progressTotal.total}}</div>
+                  </td>
+                  <td class="">
+                    <div class="uk-inline uk-margin-left">
+                      <a><span class="material-icons">more_vert</span></a>
+                      <div class="uk-dropdown-nav" uk-dropdown="mode: hover; pos: bottom-center">
+                        <div class="uk-padding-small">
+                          <ul class="uk-list">
+                            <li class="uk-margin-small-bottom">
+                              <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
+                                <span class="material-icons uk-margin-right">visibility</span> View Survey
+                              </a>
+                            </li>
+                            <li class="uk-margin-small-bottom">
+                              <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
+                                <span class="material-icons uk-margin-right">manage_history</span> View Survey History
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
+
       </div>
-
     </div>
-
   </div>
 </div>
 
