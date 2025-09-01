@@ -10,9 +10,10 @@ import {Coordinator} from "../../../../domain/userInfo";
 import {StakeholdersService} from "../../../../services/stakeholders.service";
 
 @Component({
-  selector: 'app-survey-lists',
-  templateUrl: 'surveys-list.component.html',
-  providers: [StakeholdersService]
+    selector: 'app-survey-lists',
+    templateUrl: 'surveys-list.component.html',
+    providers: [StakeholdersService],
+    standalone: false
 })
 
 export class SurveysListComponent implements OnInit{

@@ -9,9 +9,10 @@ import {StakeholdersService} from "../../../services/stakeholders.service";
 import * as UIkit from 'uikit';
 
 @Component({
-  selector: 'app-contributions-my-group',
-  templateUrl: './my-group.component.html',
-  providers: [SurveyService, StakeholdersService]
+    selector: 'app-contributions-my-group',
+    templateUrl: './my-group.component.html',
+    providers: [SurveyService, StakeholdersService],
+    standalone: false
 })
 
 export class MyGroupComponent implements OnInit, OnDestroy {

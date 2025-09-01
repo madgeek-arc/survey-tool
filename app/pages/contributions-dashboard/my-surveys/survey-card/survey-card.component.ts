@@ -8,9 +8,10 @@ import {Subscriber} from "rxjs";
 import {ImportSurveyData, Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
 
 @Component({
-  selector: 'app-survey-card',
-  templateUrl: './survey-card.component.html',
-  providers: [SurveyService]
+    selector: 'app-survey-card',
+    templateUrl: './survey-card.component.html',
+    providers: [SurveyService],
+    standalone: false
 })
 
 export class SurveyCardComponent implements OnChanges, OnDestroy {

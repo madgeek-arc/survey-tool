@@ -16,8 +16,8 @@ import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashb
 
 @Component({
   selector: 'app-contributions-dashboard',
-  standalone: true,
   templateUrl: 'contributions-dashboard.component.html',
+  standalone: true,
   imports: [
     RouterOutlet,
     NgIf,

@@ -5,17 +5,21 @@ import { Subscription } from "rxjs";
 import { IconsComponent } from "../../../utils/icons/icons.component";
 
 @Component({
-  standalone: true,
   imports: [CommonModule, IconsComponent],
   selector: 'sidebar-mobile-toggle',
+  standalone: true,
   template: `
-    <a *ngIf="activeSidebarItem" href="#sidebar_offcanvas" class="sidebar_mobile_toggle uk-link-reset uk-width-3-5 uk-flex uk-flex-middle" uk-toggle>
-      <div *ngIf="activeSidebarItem.icon && (activeSidebarItem.icon.svg || activeSidebarItem.icon.name)" class="uk-width-auto">
-        <icon class="menu-icon" [customClass]="activeSidebarItem.icon.class" [name]="activeSidebarItem.icon.name" [ratio]="activeSidebarItem.icon.ratio?activeSidebarItem.icon.ratio:0.8" [svg]="activeSidebarItem.icon.svg" [flex]="true"></icon>
+    <a *ngIf="activeSidebarItem" href="#sidebar_offcanvas"
+       class="sidebar_mobile_toggle uk-link-reset uk-width-3-5 uk-flex uk-flex-middle" uk-toggle>
+      <div *ngIf="activeSidebarItem.icon && (activeSidebarItem.icon.svg || activeSidebarItem.icon.name)"
+           class="uk-width-auto">
+        <icon class="menu-icon" [customClass]="activeSidebarItem.icon.class" [name]="activeSidebarItem.icon.name"
+              [ratio]="activeSidebarItem.icon.ratio?activeSidebarItem.icon.ratio:0.8" [svg]="activeSidebarItem.icon.svg"
+              [flex]="true"></icon>
       </div>
       <span class="uk-width-expand uk-text-truncate uk-margin-small-left uk-text-bolder">
-          {{activeSidebarItem.name}}
-        <span *ngIf="activeSidebarItem.subItem">- {{activeSidebarItem.subItem.name}}</span>
+          {{ activeSidebarItem.name }}
+        <span *ngIf="activeSidebarItem.subItem">- {{ activeSidebarItem.subItem.name }}</span>
       </span>
       <div class="uk-width-auto uk-margin-small-left">
         <icon name="arrow_right" [ratio]=1.4></icon>

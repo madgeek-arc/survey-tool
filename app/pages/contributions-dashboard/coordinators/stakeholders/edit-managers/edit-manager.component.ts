@@ -9,9 +9,10 @@ import { takeUntil } from "rxjs/operators";
 import * as UIkit from 'uikit';
 
 @Component({
-  selector: 'app-edit-managers',
-  templateUrl: 'edit-managers.component.html',
-  providers: [SurveyService, StakeholdersService]
+    selector: 'app-edit-managers',
+    templateUrl: 'edit-managers.component.html',
+    providers: [SurveyService, StakeholdersService],
+    standalone: false
 })
 
 export class EditManagerComponent implements OnInit, OnDestroy {

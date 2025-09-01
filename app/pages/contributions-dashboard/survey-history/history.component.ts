@@ -8,9 +8,10 @@ import { zip } from "rxjs/internal/observable/zip";
 import * as UIkit from 'uikit';
 
 @Component({
-  selector: 'app-survey-history',
-  templateUrl: 'history.component.html',
-  styleUrls: ['./history.component.css']
+    selector: 'app-survey-history',
+    templateUrl: 'history.component.html',
+    styleUrls: ['./history.component.css'],
+    standalone: false
 })
 
 export class HistoryComponent implements OnInit {

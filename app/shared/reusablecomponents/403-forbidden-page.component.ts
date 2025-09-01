@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
     selector: 'forbidden-page',
     templateUrl: './403-forbidden-page.component.html',
+    standalone: false
 })
 export class ForbiddenPageComponent implements OnInit {
 

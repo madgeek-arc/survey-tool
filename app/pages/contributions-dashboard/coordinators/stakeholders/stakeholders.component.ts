@@ -12,9 +12,10 @@ import { UserService } from "../../../../services/user.service";
 declare var UIkit;
 
 @Component({
-  selector: 'app-stakeholders',
-  templateUrl: 'stakeholders.component.html',
-  providers: [StakeholdersService]
+    selector: 'app-stakeholders',
+    templateUrl: 'stakeholders.component.html',
+    providers: [StakeholdersService],
+    standalone: false
 })
 
 export class StakeholdersComponent implements OnInit, OnDestroy {

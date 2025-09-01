@@ -4,10 +4,10 @@ import { NgIf } from "@angular/common";
 
 @Component({
   selector: '[sidebar-content]',
-  standalone: true,
   imports: [
     NgIf
   ],
+  standalone: true,
   template: `
     <div *ngIf="collapsible" id="sidebar_toggle" (click)="toggleOpen()"></div>
     <div id="sidebar_content" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">

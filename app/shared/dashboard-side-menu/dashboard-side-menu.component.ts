@@ -104,8 +104,8 @@ export interface MenuSection {
 
 @Component({
   selector: 'dashboard-sidebar',
-  standalone: true,
   templateUrl: 'dashboard-side-menu.component.html',
+  standalone: true,
   imports: [
     CommonModule,
     RouterLink,
