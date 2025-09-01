@@ -11,8 +11,11 @@ import {
 import {forkJoin} from "rxjs";
 import {RawData} from "../../../../../app/domain/raw-data";
 import {SeriesMappointOptions} from "highcharts";
+import { SeriesPieOptions } from 'highcharts';
+import { PointOptionsObject } from 'highcharts';
 import {latlong} from "../../../../../app/domain/countries-lat-lon";
 import { JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { HighchartsChartModule } from "highcharts-angular";
 
 
 
@@ -20,7 +23,8 @@ interface Chart {
   title: string;
   namedQueries: string[];
   data: any[];
-  series: any[];
+  mapSeries: any[];
+  pieSeries?: any[];
   stats?: string[],
   type?: string;
   order?: number;
@@ -43,13 +47,15 @@ interface ChartImageData {
     NgIf,
     NgForOf,
     JsonPipe,
-  ],
+    HighchartsChartModule
+],
   providers: [StakeholdersService],
   templateUrl: './report-creation.component.html'
 })
 
 export class ReportCreationComponent implements OnInit {
   worldCharts: Highcharts.Chart[] = [];
+  pieCharts: Highcharts.Chart[][] = [];
 
   year = '2023';
 
@@ -59,7 +65,8 @@ export class ReportCreationComponent implements OnInit {
       title: 'National policy on open access publications',
       namedQueries: ['Question6','Question6.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       type: 'mapWithPoints',
       stats: ['Question6','Question6.1'],
       // order: 1
@@ -68,7 +75,8 @@ export class ReportCreationComponent implements OnInit {
       title: 'Countries with a Specific Policy on Immediate Open Access to Publications',
       namedQueries: ['Question6.3', 'Question6.3.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       type: 'mapWithPoints',
       stats: ['Question6.3', 'Question6.3.1'],
       // order: 1
@@ -77,7 +85,8 @@ export class ReportCreationComponent implements OnInit {
       title: ' Countries with a Specific Policy on Open Licensing of Publications',
       namedQueries: ['Question6.5', 'Question6.5.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       type: 'mapWithPoints',
       stats: ['Question6.5', 'Question6.5.1'],
     },
@@ -85,7 +94,8 @@ export class ReportCreationComponent implements OnInit {
       title: 'Countries with a Specific Policy on Retention of IPR on Publications',
       namedQueries: ['Question6.4', 'Question6.4.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       type: 'mapWithPoints',
       stats: ['Question6.4',' Question6.4.1'],
       // order: 1
@@ -94,7 +104,8 @@ export class ReportCreationComponent implements OnInit {
       title: 'Countries with a Financial Strategy on Open Access to Publications',
       namedQueries: ['Question7'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       type: 'mapWithPoints',
       stats: ['Question7'],
     },
@@ -102,7 +113,8 @@ export class ReportCreationComponent implements OnInit {
       title: 'Countries with a National Monitoring on Open Access to Publications',
       namedQueries: ['Question54'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       type: 'mapWithPoints',
       stats: ['Question54'],
     },
@@ -110,7 +122,8 @@ export class ReportCreationComponent implements OnInit {
        title: 'National policy on data management',
        namedQueries: ['Question10','Question10.1'],
        data: [],
-       series: [],
+       mapSeries: [],
+       pieSeries: [],
        type: 'mapWithPoints',
        stats: ['Question10','Question10.1'],
        // order: 2
@@ -119,213 +132,245 @@ export class ReportCreationComponent implements OnInit {
        title: 'National policy on FAIR data',
        namedQueries: ['Question14','Question14.1'],
        data: [],
-       series: [],
+       mapSeries: [],
+       pieSeries: [],
        stats: ['Question14','Question14.1'],
      },
      {
        title: 'National policy on open data',
        namedQueries: ['Question18','Question18.1'],
        data: [],
-       series: [],
+       mapSeries: [],
+       pieSeries: [],
        stats: ['Question18','Question18.1'],
      },
      {
        title: 'Financial Strategy on Data Management',
        namedQueries: ['Question11'],
        data: [],
-       series: [],
+       mapSeries: [],
+       pieSeries: [],
        stats: ['Question11'],
      },
      {
       title: 'Countries with a Financial Strategy on FAIR Data',
       namedQueries: ['Question15'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question15'],
      },
      {
       title: 'Financial Strategy on Open Data',
       namedQueries: ['Question19'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question19'],
      },
      {
       title: 'National Monitoring on Data Management',
       namedQueries: ['Question58'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question58'],
      },
      {
       title: 'National Monitoring on FAIR Data',
       namedQueries: ['Question62'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question62'],
      },
      {
       title: 'National Monitoring on Open Data',
       namedQueries: ['Question66'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question66'],
      },
      {
       title: 'National Policy on Open Source Software',
       namedQueries: ['Question22','Question22.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question22','Question22.1'],
      },
      {
       title: 'National Monitoring on Open Source Software',
       namedQueries: ['Question70'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question70'],
      },
      {
       title: 'National Policy on Offering Services through EOSC',
       namedQueries: ['Question26','Question26.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question26','Question26.1'],
      },
      {
       title: 'National Monitoring on Offering Services through EOSC',
       namedQueries: ['Question74'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question74'],
      },
      {
       title: 'National Policy on Connecting Repositories to EOSC',
       namedQueries: ['Question30','Question30.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question30','Question30.1'],
      },
      {
       title: 'National Policy on Data Stewardship',
       namedQueries: ['Question34','Question34.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question34','Question34.1'],
      },
      {
       title: 'National Policy on Long-term Data Preservation',
       namedQueries: ['Question38','Question38.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question38','Question38.1'],
      },
      {
       title: 'Financial Strategy on Connecting Repositories to EOSC',
       namedQueries: ['Question31'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question31'],
      },
      {
       title: 'Financial Strategy on Data Stewardship',
       namedQueries: ['Question35'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question35'],
      },
      {
       title: 'Financial Strategy on Long-term Data Preservation',
       namedQueries: ['Question39'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question39'],
      },
      {
       title: 'National Monitoring on Connecting Repositories to EOSC',
       namedQueries: ['Question78'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question78'],
      },
      {
       title: 'National Monitoring on Data Stewardship',
       namedQueries: ['Question82'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question82'],
      },
      {
       title: 'National Monitoring on Long-term Data Preservation',
       namedQueries: ['Question86'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question86'],
      },
      {
       title: 'National Policy on Skills/Training for Open Science',
       namedQueries: ['Question42','Question42.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question42','Question42.1'],
      },
      {
       title: 'Financial Strategy on Skills/Training for Open Science',
       namedQueries: ['Question43'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question43'],
      },
      {
       title: 'National Monitoring on Skills/Training for Open Science',
       namedQueries: ['Question90'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question90'],
      },
      {
       title: 'National Policy on Incentives/Rewards for Open Science',
       namedQueries: ['Question46','Question46.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question46','Question46.1'],
      },
      {
       title: 'Financial Strategy on Incentives/Rewards for Open Science',
       namedQueries: ['Question47'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question47'],
      },
      {
       title: 'National Policy on Citizen Science',
       namedQueries: ['Question50','Question50.1'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question50','Question50.1'],
      },
      {
       title: 'Financial Strategy on Citizen Science',
       namedQueries: ['Question51'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question51'],
      },
      {
       title: 'National Monitoring on Citizen Science',
       namedQueries: ['Question98'],
       data: [],
-      series: [],
+      mapSeries: [],
+      pieSeries: [],
       stats: ['Question98'],
      },
   ]
   constructor(private queryData: EoscReadinessDataService, private reportService: ReportCreationService) {}
 
   ngOnInit() {
+
     this.chartsCfg.forEach(chart => this.loadChart(chart));
   }
 
   loadChart(chart: Chart) {
+    this.worldCharts = [];
+    this.pieCharts = [];
     // map each key to its observable
     const calls = chart.namedQueries.map(q =>
       this.queryData.getQuestion(this.year, q)
@@ -337,7 +382,12 @@ export class ReportCreationComponent implements OnInit {
         // results is an array in the same order as namedQueries
         chart.data = results;
         console.log(`Loaded ${chart.title}:`, results);
-        chart.series = this.mapSeries(results); // Create map series
+        chart.mapSeries = this.mapSeries(results); // Create map series
+        results.forEach(result => {
+          console.log('Pie input result:', result);
+          chart.pieSeries.push(this.pieSeries(result));
+        });
+
         if (chart.stats) {
           chart.stats.forEach((query, index) => {
             this.reportData[query] = this.countAnswer(chart.data[index]);
@@ -368,6 +418,26 @@ export class ReportCreationComponent implements OnInit {
           height: 300,
           title: `Chart ${i + 1}`
         };
+      }
+
+      // Process Pie Charts
+      for (let i = 0; i < this.pieCharts.length; i++) {
+        if (!this.pieCharts[i]) continue; // Skip if no pie charts for this index
+
+        for (let j = 0; j < this.pieCharts[i].length; j++) {
+          const pieChart = this.pieCharts[i][j];
+          if (!pieChart) continue; // Skip if no pie chart at this index
+
+          console.log(`Exporting pie chart [${i}, ${j}]...`);
+          console.log(pieChart);
+          const buffer = await this.chartToArrayBuffer(pieChart, 400, 300);
+          chartImages[`pieChartImage_${i}_${j}`] = {
+            buffer: buffer,
+            width: 400,
+            height: 300,
+            title: `Pie Chart [${i + 1}, ${j + 1}]`
+          };
+        }
       }
 
       // Add static images if needed
@@ -415,6 +485,16 @@ export class ReportCreationComponent implements OnInit {
     // (chart as any).customTitle = `World Map ${chartIndex + 1}`;
   }
 
+  // Handle multiple charts from child components
+  onPieChartReady(chart: Highcharts.Chart, i: number, j: number) {
+    console.log(`Pie Chart ready - chart group ${i}, pie ${j}`);
+    if (!this.pieCharts[i]) {
+      this.pieCharts[i] = [];
+    }
+
+    this.pieCharts[i][j] = chart;
+  }
+
   // Generate individual chart image (useful for testing)
   async downloadSingleChart(chartIndex: number) {
     if (this.worldCharts[chartIndex]) {
@@ -435,6 +515,39 @@ export class ReportCreationComponent implements OnInit {
         console.error(`Error downloading chart ${chartIndex + 1}:`, error);
       }
     }
+  }
+
+  pieSeries(data: RawData) {
+
+    let yesCount = 0;
+    let noCount = 0;
+
+  data.datasets[0].series.result.forEach(entry => {
+    console.log('Row:', entry.row);
+    if (entry.row[1] === 'Yes') yesCount++;
+    else if (entry.row[1] === 'No') noCount++;
+  });
+
+    let series: SeriesPieOptions[] = [
+      {
+        name: 'Policy',
+        type: 'pie',
+        data: [
+          {
+            name: 'Has policy',
+            y: yesCount,
+            color: '#137CBD'
+          },
+          {
+            name: 'Does not have policy',
+            y: noCount,
+            color: '#EC7A1C'
+          }
+        ]
+      }
+    ];
+
+    return series;
   }
 
   mapSeries(data: RawData[]) {
