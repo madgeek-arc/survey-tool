@@ -4,12 +4,13 @@ import { SurveyFormComponent } from "./my-surveys/survey-form/survey-form.compon
 import { ContributionsHomeComponent } from "./home/contributions-home.component";
 import { MySurveysComponent } from "./my-surveys/my-surveys.component";
 import { MyGroupComponent } from "./my-group/my-group.component";
-import {AuthGuard} from "../../services/auth-guard.service";
-import {CoordinatorsComponent} from "./coordinators/coordinators.component";
-import {SurveysListComponent} from "./coordinators/surveys-list/surveys-list.component";
-import {HistoryComponent} from "./survey-history/history.component";
-import {StakeholdersComponent} from "./coordinators/stakeholders/stakeholders.component";
-import {EditManagerComponent} from "./coordinators/stakeholders/edit-managers/edit-manager.component";
+import { AuthGuard } from "../../services/auth-guard.service";
+import { CoordinatorsComponent } from "./coordinators/coordinators.component";
+import { SurveysListComponent } from "./coordinators/surveys-list/surveys-list.component";
+import { HistoryComponent } from "./survey-history/history.component";
+import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
+import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
+import { ReportCreationComponent } from "./report-creation/report-creation.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -97,6 +98,15 @@ const contributionsDashboardRoutes: Routes = [
         path: 'stakeholders/:id',
         component: EditManagerComponent,
         canActivate: [AuthGuard]
+      },
+      {
+        path: 'reportExport',
+        component: ReportCreationComponent,
+        canActivate: [AuthGuard],
+        data: {
+          hasSidebar: false,
+          showFooter: false,
+        }
       }
     ]
   }
