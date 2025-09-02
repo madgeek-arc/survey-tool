@@ -1,22 +1,20 @@
-import {Component, OnInit} from "@angular/core";
-import {RouterLink} from "@angular/router";
-import {ReportCreationService} from "../../../services/report-creation.service";
-import {ChartsModule} from "../../../../../app/shared/charts/charts.module";
-import {EoscReadinessDataService} from "../../../../../app/pages/services/eosc-readiness-data.service";
-import {StakeholdersService} from "../../../services/stakeholders.service";
+import { Component, OnInit } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { ReportCreationService } from "../../../services/report-creation.service";
+import { ChartsModule } from "../../../../../app/shared/charts/charts.module";
+import { EoscReadinessDataService } from "../../../../../app/pages/services/eosc-readiness-data.service";
+import { StakeholdersService } from "../../../services/stakeholders.service";
 import {
   CustomSeriesMapOptions,
   WorldMapComponent
 } from "../../../../../app/shared/charts/world-map/world-map.component";
-import {forkJoin} from "rxjs";
-import {RawData} from "../../../../../app/domain/raw-data";
-import {SeriesMappointOptions} from "highcharts";
-import { SeriesPieOptions } from 'highcharts';
-import { PointOptionsObject } from 'highcharts';
-import {latlong} from "../../../../../app/domain/countries-lat-lon";
-import { JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { forkJoin } from "rxjs";
+import { RawData } from "../../../../../app/domain/raw-data";
+import { SeriesMappointOptions, SeriesPieOptions } from "highcharts";
+import { latlong } from "../../../../../app/domain/countries-lat-lon";
+import { NgForOf, NgIf } from "@angular/common";
 import { HighchartsChartModule } from "highcharts-angular";
-
+import { ReportPieChartComponent } from "../../../../../app/shared/charts/report-pie-chart/report-pie-chart.component";
 
 
 interface Chart {
@@ -42,13 +40,11 @@ interface ChartImageData {
   standalone: true,
   imports: [
     RouterLink,
-    ChartsModule,
-    WorldMapComponent,
     NgIf,
     NgForOf,
-    JsonPipe,
-    HighchartsChartModule
-],
+    WorldMapComponent,
+    ReportPieChartComponent
+  ],
   providers: [StakeholdersService],
   templateUrl: './report-creation.component.html'
 })
@@ -361,10 +357,10 @@ export class ReportCreationComponent implements OnInit {
       stats: ['Question98'],
      },
   ]
+
   constructor(private queryData: EoscReadinessDataService, private reportService: ReportCreationService) {}
 
   ngOnInit() {
-
     this.chartsCfg.forEach(chart => this.loadChart(chart));
   }
 
