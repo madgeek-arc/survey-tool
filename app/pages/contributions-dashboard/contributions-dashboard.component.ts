@@ -218,6 +218,14 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
           ]
         });
       }
+      if (this.currentAdministrator) {
+        this.menuSections.push({
+          items: [
+            //todo replace icon
+            new MenuItem('11', 'Resources Registry', null, '/contributions/' + (this.currentAdministrator?.id) + '/resources-registry/search', null, {name: 'manage_accounts'})
+          ]
+        });
+      }
       this.menuSections.push({
         items: [
           new MenuItem('8', 'Support', 'mailto:stefania.martziou@athenarc.gr', null, null, {name: 'help'}),
