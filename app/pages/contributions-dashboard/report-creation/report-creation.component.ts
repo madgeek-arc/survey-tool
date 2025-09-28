@@ -1,32 +1,22 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ReportCreationService } from "../../../services/report-creation.service";
-import { ChartsModule } from "../../../../../app/shared/charts/charts.module";
 import { EoscReadinessDataService } from "../../../../../app/pages/services/eosc-readiness-data.service";
 import { StakeholdersService } from "../../../services/stakeholders.service";
 import {
   CustomSeriesMapOptions,
   WorldMapComponent
-} from "../../../../../app/shared/charts/world-map/world-map.component";
+} from "../../../../../app/shared/charts/report-charts/world-map.component";
 import { forkJoin } from "rxjs";
-import { RawData } from "../../../../../app/domain/raw-data";
+import { RawData, Row } from "../../../../../app/domain/raw-data";
+import * as Highcharts from 'highcharts';
 import { SeriesMappointOptions, SeriesPieOptions } from "highcharts";
 import { latlong } from "../../../../../app/domain/countries-lat-lon";
-import { NgForOf, NgIf } from "@angular/common";
-import { HighchartsChartModule } from "highcharts-angular";
-import { ReportPieChartComponent } from "../../../../../app/shared/charts/report-pie-chart/report-pie-chart.component";
+import { JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { ReportPieChartComponent } from "../../../../../app/shared/charts/report-charts/report-pie-chart.component";
+import { Chart, chartsCfg } from "./report-chart.configuration";
+import { RangeColumnsComponent } from "../../../../../app/shared/charts/report-charts/range-columns.component";
 
-
-interface Chart {
-  title: string;
-  namedQueries: string[];
-  data: any[];
-  mapSeries: any[];
-  pieSeries?: any[];
-  stats?: string[],
-  type?: string;
-  order?: number;
-}
 
 interface ChartImageData {
   buffer: ArrayBuffer;
@@ -43,330 +33,40 @@ interface ChartImageData {
     NgIf,
     NgForOf,
     WorldMapComponent,
-    ReportPieChartComponent
+    ReportPieChartComponent,
+    JsonPipe,
+    RangeColumnsComponent
   ],
   providers: [StakeholdersService],
   templateUrl: './report-creation.component.html'
 })
 
 export class ReportCreationComponent implements OnInit {
+  private queryData = inject(EoscReadinessDataService);
+  private reportService =  inject(ReportCreationService);
+
   worldCharts: Highcharts.Chart[] = [];
   pieCharts: Highcharts.Chart[][] = [];
 
   year = '2023';
 
   reportData: Record<string, string> = {};
-  chartsCfg: Chart[] = [
-    {
-      title: 'National policy on open access publications',
-      namedQueries: ['Question6','Question6.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      type: 'mapWithPoints',
-      stats: ['Question6','Question6.1'],
-      // order: 1
-    },
-    {
-      title: 'Countries with a Specific Policy on Immediate Open Access to Publications',
-      namedQueries: ['Question6.3', 'Question6.3.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      type: 'mapWithPoints',
-      stats: ['Question6.3', 'Question6.3.1'],
-      // order: 1
-    },
-    {
-      title: ' Countries with a Specific Policy on Open Licensing of Publications',
-      namedQueries: ['Question6.5', 'Question6.5.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      type: 'mapWithPoints',
-      stats: ['Question6.5', 'Question6.5.1'],
-    },
-    {
-      title: 'Countries with a Specific Policy on Retention of IPR on Publications',
-      namedQueries: ['Question6.4', 'Question6.4.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      type: 'mapWithPoints',
-      stats: ['Question6.4',' Question6.4.1'],
-      // order: 1
-    },
-    {
-      title: 'Countries with a Financial Strategy on Open Access to Publications',
-      namedQueries: ['Question7'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      type: 'mapWithPoints',
-      stats: ['Question7'],
-    },
-    {
-      title: 'Countries with a National Monitoring on Open Access to Publications',
-      namedQueries: ['Question54'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      type: 'mapWithPoints',
-      stats: ['Question54'],
-    },
-    {
-       title: 'National policy on data management',
-       namedQueries: ['Question10','Question10.1'],
-       data: [],
-       mapSeries: [],
-       pieSeries: [],
-       type: 'mapWithPoints',
-       stats: ['Question10','Question10.1'],
-       // order: 2
-     },
-     {
-       title: 'National policy on FAIR data',
-       namedQueries: ['Question14','Question14.1'],
-       data: [],
-       mapSeries: [],
-       pieSeries: [],
-       stats: ['Question14','Question14.1'],
-     },
-     {
-       title: 'National policy on open data',
-       namedQueries: ['Question18','Question18.1'],
-       data: [],
-       mapSeries: [],
-       pieSeries: [],
-       stats: ['Question18','Question18.1'],
-     },
-     {
-       title: 'Financial Strategy on Data Management',
-       namedQueries: ['Question11'],
-       data: [],
-       mapSeries: [],
-       pieSeries: [],
-       stats: ['Question11'],
-     },
-     {
-      title: 'Countries with a Financial Strategy on FAIR Data',
-      namedQueries: ['Question15'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question15'],
-     },
-     {
-      title: 'Financial Strategy on Open Data',
-      namedQueries: ['Question19'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question19'],
-     },
-     {
-      title: 'National Monitoring on Data Management',
-      namedQueries: ['Question58'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question58'],
-     },
-     {
-      title: 'National Monitoring on FAIR Data',
-      namedQueries: ['Question62'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question62'],
-     },
-     {
-      title: 'National Monitoring on Open Data',
-      namedQueries: ['Question66'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question66'],
-     },
-     {
-      title: 'National Policy on Open Source Software',
-      namedQueries: ['Question22','Question22.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question22','Question22.1'],
-     },
-     {
-      title: 'National Monitoring on Open Source Software',
-      namedQueries: ['Question70'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question70'],
-     },
-     {
-      title: 'National Policy on Offering Services through EOSC',
-      namedQueries: ['Question26','Question26.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question26','Question26.1'],
-     },
-     {
-      title: 'National Monitoring on Offering Services through EOSC',
-      namedQueries: ['Question74'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question74'],
-     },
-     {
-      title: 'National Policy on Connecting Repositories to EOSC',
-      namedQueries: ['Question30','Question30.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question30','Question30.1'],
-     },
-     {
-      title: 'National Policy on Data Stewardship',
-      namedQueries: ['Question34','Question34.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question34','Question34.1'],
-     },
-     {
-      title: 'National Policy on Long-term Data Preservation',
-      namedQueries: ['Question38','Question38.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question38','Question38.1'],
-     },
-     {
-      title: 'Financial Strategy on Connecting Repositories to EOSC',
-      namedQueries: ['Question31'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question31'],
-     },
-     {
-      title: 'Financial Strategy on Data Stewardship',
-      namedQueries: ['Question35'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question35'],
-     },
-     {
-      title: 'Financial Strategy on Long-term Data Preservation',
-      namedQueries: ['Question39'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question39'],
-     },
-     {
-      title: 'National Monitoring on Connecting Repositories to EOSC',
-      namedQueries: ['Question78'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question78'],
-     },
-     {
-      title: 'National Monitoring on Data Stewardship',
-      namedQueries: ['Question82'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question82'],
-     },
-     {
-      title: 'National Monitoring on Long-term Data Preservation',
-      namedQueries: ['Question86'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question86'],
-     },
-     {
-      title: 'National Policy on Skills/Training for Open Science',
-      namedQueries: ['Question42','Question42.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question42','Question42.1'],
-     },
-     {
-      title: 'Financial Strategy on Skills/Training for Open Science',
-      namedQueries: ['Question43'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question43'],
-     },
-     {
-      title: 'National Monitoring on Skills/Training for Open Science',
-      namedQueries: ['Question90'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question90'],
-     },
-     {
-      title: 'National Policy on Incentives/Rewards for Open Science',
-      namedQueries: ['Question46','Question46.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question46','Question46.1'],
-     },
-     {
-      title: 'Financial Strategy on Incentives/Rewards for Open Science',
-      namedQueries: ['Question47'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question47'],
-     },
-     {
-      title: 'National Policy on Citizen Science',
-      namedQueries: ['Question50','Question50.1'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question50','Question50.1'],
-     },
-     {
-      title: 'Financial Strategy on Citizen Science',
-      namedQueries: ['Question51'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question51'],
-     },
-     {
-      title: 'National Monitoring on Citizen Science',
-      namedQueries: ['Question98'],
-      data: [],
-      mapSeries: [],
-      pieSeries: [],
-      stats: ['Question98'],
-     },
-  ]
+  chartImages: { [key: string]: ChartImageData } = {};
+  staticImages: { [key: string]: { path: string, width: number, height: number } } = {};
 
-  constructor(private queryData: EoscReadinessDataService, private reportService: ReportCreationService) {}
+  chartsCfg: Chart[] = chartsCfg;
 
   ngOnInit() {
+    // this.pieCharts = this.chartsCfg.map(c => new Array(c.namedQueries.length).fill(null));
+    // this.worldCharts = new Array(this.chartsCfg.length).fill(null);
+    this.worldCharts = [];
+    this.pieCharts = [];
     this.chartsCfg.forEach(chart => this.loadChart(chart));
   }
 
   loadChart(chart: Chart) {
-    this.worldCharts = [];
-    this.pieCharts = [];
+    // this.worldCharts = [];
+    // this.pieCharts = [];
     // map each key to its observable
     const calls = chart.namedQueries.map(q =>
       this.queryData.getQuestion(this.year, q)
@@ -377,11 +77,17 @@ export class ReportCreationComponent implements OnInit {
       next: results => {
         // results is an array in the same order as namedQueries
         chart.data = results;
-        console.log(`Loaded ${chart.title}:`, results);
-        chart.mapSeries = this.mapSeries(results); // Create map series
+        // console.log(`Loaded ${chart.title}:`, results);
+        if (chart.type === 'rangeColumns') {
+          chart.chartSeries = this.rangeColumnsSeries(results, chart.stats[0]);
+          console.log(chart.chartSeries);
+          return;
+        }
+
+        chart.chartSeries = this.mapSeries(results); // Create map series
         results.forEach(result => {
-          console.log('Pie input result:', result);
-          chart.pieSeries.push(this.pieSeries(result));
+          // console.log('Loaded Pie:', result);
+          chart.pieSeries.push(this.pieSeries(result, chart.pieSeries.length));
         });
 
         if (chart.stats) {
@@ -395,58 +101,70 @@ export class ReportCreationComponent implements OnInit {
   }
 
   async generateReport() {
+    const before = this.pieCharts.map(r => r ? r.map(c => Object.keys(c||{}).length) : []);
+    console.log('before keysCount: ', before);
     try {
-      console.log(`Processing ${this.worldCharts.length} charts...`);
+      console.log(`Processing ${(this.worldCharts.length + this.countAllPieSeries())} charts...`);
 
       // Generate image buffers for all charts
-      const chartImages: { [key: string]: ChartImageData } = {};
-      const staticImages: { [key: string]: { path: string, width: number, height: number } } = {};
+      // const chartImages: { [key: string]: ChartImageData } = {};
+      // const staticImages: { [key: string]: { path: string, width: number, height: number } } = {};
 
-      // Process Highcharts
-      for (let i = 0; i < this.worldCharts.length; i++) {
-        const chart = this.worldCharts[i];
-        console.log(`Converting chart ${i + 1} to image buffer...`);
+      if (Object.keys(this.chartImages).length === 0) {
+        // Process Map charts
+        for (let i = 0; i < this.worldCharts.length; i++) {
+          const chart = this.worldCharts[i];
+          console.log(`Converting chart ${i + 1} to image buffer...`);
 
-        const imageBuffer = await this.chartToArrayBuffer(chart, 400, 300);
-        chartImages[`chartImage${i + 1}`] = {
-          buffer: imageBuffer,
-          width: 400,
-          height: 300,
-          title: `Chart ${i + 1}`
-        };
-      }
-
-      // Process Pie Charts
-      for (let i = 0; i < this.pieCharts.length; i++) {
-        if (!this.pieCharts[i]) continue; // Skip if no pie charts for this index
-
-        for (let j = 0; j < this.pieCharts[i].length; j++) {
-          const pieChart = this.pieCharts[i][j];
-          if (!pieChart) continue; // Skip if no pie chart at this index
-
-          console.log(`Exporting pie chart [${i}, ${j}]...`);
-          console.log(pieChart);
-          const buffer = await this.chartToArrayBuffer(pieChart, 400, 300);
-          chartImages[`pieChartImage_${i}_${j}`] = {
-            buffer: buffer,
+          const imageBuffer = await this.chartToArrayBuffer(chart, 400, 300);
+          this.chartImages[`chartImage${i + 1}`] = {
+            buffer: imageBuffer,
             width: 400,
             height: 300,
-            title: `Pie Chart [${i + 1}, ${j + 1}]`
+            title: `Chart ${i + 1}`
           };
         }
+
+        // Process Pie Charts
+        const pieChartsSnapshot = this.pieCharts.map(row => row ? row.slice() : []);
+        for (let i = 0; i < pieChartsSnapshot.length; i++) {
+          const row = pieChartsSnapshot[i];
+          if (!row)
+            continue;
+
+          for (let j = 0; j < row.length; j++) {
+            const pieChart = row[j];
+            if (!pieChart) continue; // Skip if no pie chart at this index
+
+            console.log(`Exporting pie chart [${i}, ${j}]...`);
+            const buffer = await this.chartToArrayBuffer(pieChart, 400, 300);
+            this.chartImages[`pieChartImage_${i}_${j}`] = {
+              buffer: buffer,
+              width: 400,
+              height: 300,
+              title: `Pie Chart [${i + 1}, ${j + 1}]`
+            };
+          }
+        }
+
+      }
+      if (Object.keys(this.staticImages).length === 0) {
+        // Add static images if needed
+        this.staticImages['logoImage'] = {path: 'assets/images/2-2.png', width: 200, height: 300};
       }
 
-      // Add static images if needed
-      staticImages['logoImage'] = { path: 'assets/images/2-2.png', width: 200, height: 300 };
-
       // Export document with both chart images and static images
-      await this.reportService.exportDocWithMultipleImages(this.reportData, chartImages, staticImages);
+      await this.reportService.exportDocWithMultipleImages(this.reportData, this.chartImages, this.staticImages);
 
       console.log('Report generated successfully!');
+
+      const after = this.pieCharts.map(r => r ? r.map(c => Object.keys(c||{}).length) : []);
+      console.log('after keysCount: ', after);
 
     } catch (error) {
       console.error('Error generating report:', error);
     }
+
   }
 
   // Convert Highcharts instance to ArrayBuffer
@@ -468,27 +186,24 @@ export class ReportCreationComponent implements OnInit {
   }
 
   // Handle multiple charts from child components
-  onChildChartReady(chart: Highcharts.Chart, chartIndex: number) {
+  onChartReady(chart: Highcharts.Chart, chartIndex: number) {
     console.log(`Chart ${chartIndex + 1} ready`);
     if (this.worldCharts[chartIndex]) // Skip if the chart already exists
       return;
 
     this.worldCharts[chartIndex] = chart;
-    // this.chartCounter++;
-
-    // Optional: Add unique identifiers or metadata
-    // (chart as any).customId = `chart_${chartIndex + 1}`;
-    // (chart as any).customTitle = `World Map ${chartIndex + 1}`;
   }
 
-  // Handle multiple charts from child components
   onPieChartReady(chart: Highcharts.Chart, i: number, j: number) {
-    console.log(`Pie Chart ready - chart group ${i}, pie ${j}`);
-    if (!this.pieCharts[i]) {
+    console.log(`Pie Chart ready [${i}, ${j}]`);
+    if (this.pieCharts[i] && this.pieCharts[i][j])
+      return;
+
+    if (!this.pieCharts[i])
       this.pieCharts[i] = [];
-    }
 
     this.pieCharts[i][j] = chart;
+
   }
 
   // Generate individual chart image (useful for testing)
@@ -513,35 +228,124 @@ export class ReportCreationComponent implements OnInit {
     }
   }
 
-  pieSeries(data: RawData) {
+  rangeColumnsSeries(data: RawData[], query: string): Highcharts.SeriesColumnOptions[] {
+    let seriesOptions: Highcharts.SeriesColumnOptions[] = [];
+    let series: Highcharts.SeriesColumnOptions = {
+      type: 'column',
+      name: 'countries',
+      data: [],
+      showInLegend: false,
+      color: '#2A9D8F',
+    };
+
+    let responses = data[0].datasets[0].series.result.length; // Double check if this is valid
+    let notInvesting = 0;
+    const seriesData = [0, 0, 0, 0, 0, 0];
+
+    const investments: {code: string, value: number | null}[] = [];
+    data[0].datasets[0].series.result.map((element) => {
+
+      // * 1000 in order to ser value in €K
+      return investments.push({
+        code: element.row[0],
+        value: this.isNumeric(element.row[1]) ? (parseFloat(element.row[1]) * 1000) : null
+      });
+    });
+
+    const tmpData = data[1].datasets[0].series.result;
+    investments.forEach((element, index) => {
+      const researchersInFTEs = this.getResearchersByCountry(element.code, tmpData);
+      // console.log('country: ',element.code, ' researchers: ', researchersInFTEs);
+      if (researchersInFTEs !== null && element.value !== null)
+        investments[index].value = investments[index].value / (researchersInFTEs / 1000);
+      else
+        investments[index].value = null;
+
+      if (investments[index].value === 0 || investments[index].value === null) {
+        notInvesting++;
+      } else if (investments[index].value <= 50) {
+        seriesData[0]++;
+      } else if (investments[index].value <= 100) {
+        seriesData[1]++;
+      } else if (investments[index].value <= 250) {
+        seriesData[2]++;
+      } else if (investments[index].value <= 500) {
+        seriesData[3]++;
+      } else if (investments[index].value <= 1000) {
+        seriesData[4]++;
+      } else {
+        seriesData[5]++;
+      }
+
+    });
+
+
+    let percentage = Math.round((notInvesting / responses + Number.EPSILON) * 100);
+    this.reportData[query+'[0]'] = `${percentage}% (${notInvesting}/${responses})`;
+
+    percentage = Math.round((seriesData[0] / responses + Number.EPSILON) * 100);
+    this.reportData[query+'[1]'] = `${percentage}% (${seriesData[0]}/${responses})`;
+
+    percentage = Math.round((seriesData[1] / responses + Number.EPSILON) * 100);
+    this.reportData[query+'[2]'] = `${percentage}% (${seriesData[1]}/${responses})`;
+
+    percentage = Math.round((seriesData[2] / responses + Number.EPSILON) * 100);
+    this.reportData[query+'[3]'] = `${percentage}% (${seriesData[2]}/${responses})`;
+
+    percentage = Math.round((seriesData[3] / responses + Number.EPSILON) * 100);
+    this.reportData[query+'[4]'] = `${percentage}% (${seriesData[3]}/${responses})`;
+
+    percentage = Math.round((seriesData[4] / responses + Number.EPSILON) * 100);
+    this.reportData[query+'[5]'] = `${percentage}% (${seriesData[4]}/${responses})`;
+
+    percentage = Math.round((seriesData[5] / responses + Number.EPSILON) * 100);
+    this.reportData[query+'[6]'] = `${percentage}% (${seriesData[5]}/${responses})`;
+
+    series.data = seriesData;
+    seriesOptions.push(series)
+    return seriesOptions;
+  }
+
+  getResearchersByCountry(countryCode: string, rows: Row[]): number | null {
+    if (!countryCode || !Array.isArray(rows)) return null;
+    const match = rows.find(r => r && Array.isArray(r.row) && r.row[0] === countryCode);
+    if (!match)
+      return null;
+
+    const researchers: (number | null) = (this.isNumeric(match.row[1]) ? parseFloat(match.row[1]) : null);
+    if (researchers === 0)
+      return null;
+
+    return researchers;
+  }
+
+  pieSeries(data: RawData, index: number) {
 
     let yesCount = 0;
     let noCount = 0;
 
-  data.datasets[0].series.result.forEach(entry => {
-    console.log('Row:', entry.row);
-    if (entry.row[1] === 'Yes') yesCount++;
-    else if (entry.row[1] === 'No') noCount++;
-  });
+    data.datasets[0].series.result.forEach(entry => {
+      // console.log('Row:', entry.row);
+      if (entry.row[1] === 'Yes') yesCount++;
+      else if (entry.row[1] === 'No') noCount++;
+    });
 
-    let series: SeriesPieOptions[] = [
-      {
-        name: 'Policy',
-        type: 'pie',
-        data: [
-          {
-            name: 'Has policy',
-            y: yesCount,
-            color: '#137CBD'
-          },
-          {
-            name: 'Does not have policy',
-            y: noCount,
-            color: '#EC7A1C'
-          }
-        ]
-      }
-    ];
+    let series: SeriesPieOptions[] = [{
+      // name: 'Policy',
+      type: 'pie',
+      data: [
+        {
+          name: index > 0 ? 'Policy is mandatory' : 'Has policy',
+          y: yesCount,
+          color: '#137CBD'
+        },
+        {
+          name: index > 0 ? 'Not mandatory policy' : 'Does not have policy',
+          y: noCount,
+          color: '#EC7A1C'
+        }
+      ]
+    }];
 
     return series;
   }
@@ -664,7 +468,6 @@ export class ReportCreationComponent implements OnInit {
   }
 
   countAnswer(data: RawData) {
-    console.log(data);
     let count = 0;
     let total = 0;
     let percentage: number;
@@ -678,6 +481,24 @@ export class ReportCreationComponent implements OnInit {
     percentage = Math.round((count / total + Number.EPSILON) * 100);
 
     return `${percentage}% (${count}/${total})`
+  }
+
+  countAllPieSeries() {
+    return this.chartsCfg.reduce((sum, obj) => sum + obj.namedQueries.length, 0);
+  }
+
+
+  // Utilities
+  isNumeric(value: string | null): boolean {
+    // Check if the value is empty
+    if (value === undefined || value === null || value.trim() === '')
+      return false;
+
+    // Attempt to parse the value as a float
+    const number = parseFloat(value);
+
+    // Check if parsing resulted in NaN or the value has extraneous characters
+    return !Number.isNaN(number) && Number.isFinite(number) && String(number) === value;
   }
 
 }

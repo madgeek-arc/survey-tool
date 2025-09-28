@@ -1,15 +1,3 @@
- <!-- <app-report-pie-chart></app-report-pie-chart>  -->
-
-<div *ngFor="let chart of chartsCfg; let i = index">
-  <ng-container *ngFor="let ser of chart.pieSeries let j = index">
-    <app-report-pie-chart  [series]="ser" (chartReady)="onPieChartReady($event, i, j)"></app-report-pie-chart>
-    {{i}} - {{j}}
-  </ng-container>
-
-</div>
-
-
-
 <div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
   <div class="uk-container uk-container-expand">
     <a [routerLink]="['../surveys']" class="uk-text-primary">Back to surveys</a>
@@ -20,30 +8,49 @@
         </button>
         <p class="uk-text-meta uk-margin-small-top">
           Charts ready: {{ worldCharts.length }}/{{ chartsCfg.length }} <br>
-          Pies ready: {{ pieCharts.length }} <br>
+          Pies ready: {{ pieCharts.flat().length }} / {{ countAllPieSeries() }}
+          <br>
         </p>
       </div>
     </div>
   </div>
 </div>
 
-<pre>
-  <!-- {{ reportData | json }} -->
-    <ng-container *ngFor="let chart of chartsCfg">
-      <!-- {{ chart.pieSeries| json }} -->
-    </ng-container>
-</pre>
+
+<div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
+  <div class="uk-container uk-container-expand uk-child-width-1-3" data-uk-grid>
+    <pre>{{ reportData | json }}</pre>
+  </div>
+</div>
+
 <div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
   <div class="uk-container uk-container-expand uk-child-width-1-3" data-uk-grid>
     <div *ngFor="let chart of chartsCfg; let i = index">
-      <ng-container *ngIf="chart.mapSeries.length > 0">
+      <ng-container *ngIf="chart.chartSeries.length > 0">
         <h6 class="uk-flex uk-flex-center">{{ chart.title }}</h6>
-        <app-world-map [series]="chart.mapSeries" (chartReady)="onChildChartReady($event, i)"></app-world-map>
+        <ng-container *ngIf="chart.type === 'rangeColumns'; else worldMap">
+          <range-columns [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></range-columns>
+        </ng-container>
+        <ng-template #worldMap>
+          <app-world-map [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></app-world-map>
+        </ng-template>
         <!-- <app-report-pie-chart  [series]="chart.pieSeries" (chartReady)="onPieChartReady($event, i)"></app-report-pie-chart> -->
-        <button class="uk-button uk-button-small uk-button-secondary uk-margin-small-top" (click)="downloadSingleChart(i)">
-          Download Chart {{i+1}}
+        <button class="uk-button uk-button-small uk-button-secondary uk-margin-small-top"
+                (click)="downloadSingleChart(i)">
+          Download Chart {{ i + 1 }}
         </button>
       </ng-container>
     </div>
+  </div>
+</div>
+
+<div class="uk-section uk-section-primary uk-preserve-color uk-section-small">
+  <div class="uk-container uk-container-expand uk-child-width-1-4" data-uk-grid>
+    <ng-container *ngFor="let chartArray of chartsCfg; let i = index">
+      <div *ngFor="let chart of chartArray.pieSeries; let j = index">
+        <h6 class="uk-flex uk-flex-center">{{ chartArray.title }} - {{ j }}</h6>
+        <app-report-pie-chart [series]="chart" (chartReady)="onPieChartReady($event, i, j)"></app-report-pie-chart>
+      </div>
+    </ng-container>
   </div>
 </div>
