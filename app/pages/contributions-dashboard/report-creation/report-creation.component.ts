@@ -7,7 +7,7 @@ import {
   CustomSeriesMapOptions,
   WorldMapComponent
 } from "../../../../../app/shared/charts/report-charts/world-map.component";
-import { forkJoin } from "rxjs";
+import { forkJoin, Observable } from "rxjs";
 import { RawData, Row } from "../../../../../app/domain/raw-data";
 import * as Highcharts from 'highcharts';
 import { SeriesMappointOptions, SeriesPieOptions } from "highcharts";
@@ -16,6 +16,7 @@ import { JsonPipe, NgForOf, NgIf } from "@angular/common";
 import { ReportPieChartComponent } from "../../../../../app/shared/charts/report-charts/report-pie-chart.component";
 import { Chart, chartsCfg } from "./report-chart.configuration";
 import { RangeColumnsComponent } from "../../../../../app/shared/charts/report-charts/range-columns.component";
+import { isNumeric } from "../../../utils/utils";
 
 
 interface ChartImageData {
@@ -45,10 +46,10 @@ export class ReportCreationComponent implements OnInit {
   private queryData = inject(EoscReadinessDataService);
   private reportService =  inject(ReportCreationService);
 
-  worldCharts: Highcharts.Chart[] = [];
+  charts: Highcharts.Chart[] = [];
   pieCharts: Highcharts.Chart[][] = [];
 
-  year = '2023';
+  years = ['2022', '2023'];
 
   reportData: Record<string, string> = {};
   chartImages: { [key: string]: ChartImageData } = {};
@@ -59,7 +60,7 @@ export class ReportCreationComponent implements OnInit {
   ngOnInit() {
     // this.pieCharts = this.chartsCfg.map(c => new Array(c.namedQueries.length).fill(null));
     // this.worldCharts = new Array(this.chartsCfg.length).fill(null);
-    this.worldCharts = [];
+    this.charts = [];
     this.pieCharts = [];
     this.chartsCfg.forEach(chart => this.loadChart(chart));
   }
@@ -68,9 +69,18 @@ export class ReportCreationComponent implements OnInit {
     // this.worldCharts = [];
     // this.pieCharts = [];
     // map each key to its observable
-    const calls = chart.namedQueries.map(q =>
-      this.queryData.getQuestion(this.year, q)
-    );
+    let calls: Observable<RawData>[] = [];
+    if (chart.type === 'stackedBars') {
+      this.years.forEach(year => {
+        calls.push(...chart.namedQueries.map(q => this.queryData.getQuestion(year, q)));
+      });
+    } else {
+      calls = chart.namedQueries.map(q =>
+        this.queryData.getQuestion(this.years[this.years.length-1], q)
+      );
+    }
+
+
 
     // run them all in parallel
     forkJoin(calls).subscribe({
@@ -80,11 +90,16 @@ export class ReportCreationComponent implements OnInit {
         // console.log(`Loaded ${chart.title}:`, results);
         if (chart.type === 'rangeColumns') {
           chart.chartSeries = this.rangeColumnsSeries(results, chart.stats[0]);
-          console.log(chart.chartSeries);
+          return;
+        }
+
+        if (chart.type === 'stackedBars') {
+          this.stackedBarSeries(results);
           return;
         }
 
         chart.chartSeries = this.mapSeries(results); // Create map series
+
         results.forEach(result => {
           // console.log('Loaded Pie:', result);
           chart.pieSeries.push(this.pieSeries(result, chart.pieSeries.length));
@@ -104,7 +119,7 @@ export class ReportCreationComponent implements OnInit {
     const before = this.pieCharts.map(r => r ? r.map(c => Object.keys(c||{}).length) : []);
     console.log('before keysCount: ', before);
     try {
-      console.log(`Processing ${(this.worldCharts.length + this.countAllPieSeries())} charts...`);
+      console.log(`Processing ${(this.charts.length + this.countAllPieSeries())} charts...`);
 
       // Generate image buffers for all charts
       // const chartImages: { [key: string]: ChartImageData } = {};
@@ -112,8 +127,8 @@ export class ReportCreationComponent implements OnInit {
 
       if (Object.keys(this.chartImages).length === 0) {
         // Process Map charts
-        for (let i = 0; i < this.worldCharts.length; i++) {
-          const chart = this.worldCharts[i];
+        for (let i = 0; i < this.charts.length; i++) {
+          const chart = this.charts[i];
           console.log(`Converting chart ${i + 1} to image buffer...`);
 
           const imageBuffer = await this.chartToArrayBuffer(chart, 400, 300);
@@ -188,10 +203,10 @@ export class ReportCreationComponent implements OnInit {
   // Handle multiple charts from child components
   onChartReady(chart: Highcharts.Chart, chartIndex: number) {
     console.log(`Chart ${chartIndex + 1} ready`);
-    if (this.worldCharts[chartIndex]) // Skip if the chart already exists
+    if (this.charts[chartIndex]) // Skip if the chart already exists
       return;
 
-    this.worldCharts[chartIndex] = chart;
+    this.charts[chartIndex] = chart;
   }
 
   onPieChartReady(chart: Highcharts.Chart, i: number, j: number) {
@@ -208,9 +223,9 @@ export class ReportCreationComponent implements OnInit {
 
   // Generate individual chart image (useful for testing)
   async downloadSingleChart(chartIndex: number) {
-    if (this.worldCharts[chartIndex]) {
+    if (this.charts[chartIndex]) {
       try {
-        const imageBuffer = await this.chartToArrayBuffer(this.worldCharts[chartIndex], 800, 600);
+        const imageBuffer = await this.chartToArrayBuffer(this.charts[chartIndex], 800, 600);
 
         // Create a download link for testing
         const blob = new Blob([imageBuffer], { type: 'image/png' });
@@ -226,6 +241,11 @@ export class ReportCreationComponent implements OnInit {
         console.error(`Error downloading chart ${chartIndex + 1}:`, error);
       }
     }
+  }
+
+  // Trends chart
+  stackedBarSeries(data: RawData[]) {
+    console.log(data);
   }
 
   rangeColumnsSeries(data: RawData[], query: string): Highcharts.SeriesColumnOptions[] {
@@ -248,7 +268,7 @@ export class ReportCreationComponent implements OnInit {
       // * 1000 in order to ser value in €K
       return investments.push({
         code: element.row[0],
-        value: this.isNumeric(element.row[1]) ? (parseFloat(element.row[1]) * 1000) : null
+        value: isNumeric(element.row[1]) ? (parseFloat(element.row[1]) * 1000) : null
       });
     });
 
@@ -312,7 +332,7 @@ export class ReportCreationComponent implements OnInit {
     if (!match)
       return null;
 
-    const researchers: (number | null) = (this.isNumeric(match.row[1]) ? parseFloat(match.row[1]) : null);
+    const researchers: (number | null) = (isNumeric(match.row[1]) ? parseFloat(match.row[1]) : null);
     if (researchers === 0)
       return null;
 
@@ -485,20 +505,6 @@ export class ReportCreationComponent implements OnInit {
 
   countAllPieSeries() {
     return this.chartsCfg.reduce((sum, obj) => sum + obj.namedQueries.length, 0);
-  }
-
-
-  // Utilities
-  isNumeric(value: string | null): boolean {
-    // Check if the value is empty
-    if (value === undefined || value === null || value.trim() === '')
-      return false;
-
-    // Attempt to parse the value as a float
-    const number = parseFloat(value);
-
-    // Check if parsing resulted in NaN or the value has extraneous characters
-    return !Number.isNaN(number) && Number.isFinite(number) && String(number) === value;
   }
 
 }

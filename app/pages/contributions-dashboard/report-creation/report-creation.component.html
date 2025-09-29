@@ -7,7 +7,7 @@
           Generate Complete Report
         </button>
         <p class="uk-text-meta uk-margin-small-top">
-          Charts ready: {{ worldCharts.length }}/{{ chartsCfg.length }} <br>
+          Charts ready: {{ charts.length }}/{{ chartsCfg.length }} <br>
           Pies ready: {{ pieCharts.flat().length }} / {{ countAllPieSeries() }}
           <br>
         </p>
@@ -28,12 +28,19 @@
     <div *ngFor="let chart of chartsCfg; let i = index">
       <ng-container *ngIf="chart.chartSeries.length > 0">
         <h6 class="uk-flex uk-flex-center">{{ chart.title }}</h6>
-        <ng-container *ngIf="chart.type === 'rangeColumns'; else worldMap">
-          <range-columns [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></range-columns>
-        </ng-container>
-        <ng-template #worldMap>
-          <app-world-map [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></app-world-map>
-        </ng-template>
+        @switch (chart.type) {
+          @case ('rangeColumns') {
+            <range-columns [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></range-columns>
+          }
+          @case ('stackedBars') {
+            <range-columns [series]="chart.chartSeries"
+                           (chartReady)="onChartReady($event, i)">
+            </range-columns>
+          }
+          @default {
+            <app-world-map [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></app-world-map>
+          }
+        }
         <!-- <app-report-pie-chart  [series]="chart.pieSeries" (chartReady)="onPieChartReady($event, i)"></app-report-pie-chart> -->
         <button class="uk-button uk-button-small uk-button-secondary uk-margin-small-top"
                 (click)="downloadSingleChart(i)">

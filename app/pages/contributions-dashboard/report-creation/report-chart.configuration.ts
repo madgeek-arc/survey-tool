@@ -76,6 +76,15 @@ export const chartsCfg: Chart[] = [
     type: 'rangeColumns',
     stats: ['Question56'],
   },
+  {
+    title: 'Trend in EU Countries with a National Policy on Open Access to Publications',
+    namedQueries: ['Question6', 'Question6.1'],
+    data: [],
+    chartSeries: [],
+    pieSeries: [],
+    type: 'stackedBars',
+    stats: ['Trends'],
+  },
   // {
   //   title: 'National policy on data management',
   //   namedQueries: ['Question10','Question10.1'],

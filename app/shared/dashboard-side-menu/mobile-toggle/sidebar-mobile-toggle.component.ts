@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DashboardSideMenuService, SidebarItem } from "../dashboard-side-menu.service";
 import { Subscription } from "rxjs";
-import { IconsComponent } from "../../../utils/icons/icons.component";
+import { IconsComponent } from "../../icons/icons.component";
 
 @Component({
   imports: [CommonModule, IconsComponent],

@@ -17,7 +17,7 @@ import { Subscription } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { DashboardSideMenuService } from "./dashboard-side-menu.service";
 import { DashboardSideMenuContentComponent } from "./dashboard-side-menu-content.component";
-import { IconsComponent } from "../../utils/icons/icons.component";
+import { IconsComponent } from "../icons/icons.component";
 
 
 declare var UIkit;
