@@ -30,12 +30,16 @@
         <h6 class="uk-flex uk-flex-center">{{ chart.title }}</h6>
         @switch (chart.type) {
           @case ('rangeColumns') {
-            <range-columns [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></range-columns>
+            <bar-columns-chart [series]="chart.chartSeries" [XAxisTitleText]="'per 1000 FTEs'"
+                           (chartReady)="onChartReady($event, i)">
+            </bar-columns-chart>
           }
           @case ('stackedBars') {
-            <range-columns [series]="chart.chartSeries"
+            <bar-columns-chart [series]="chart.chartSeries" [categories]="years"
+                           [enableLegend]="true" [stacking]="'normal'"
+                           [titleText]="'National Policy'"
                            (chartReady)="onChartReady($event, i)">
-            </range-columns>
+            </bar-columns-chart>
           }
           @default {
             <app-world-map [series]="chart.chartSeries" (chartReady)="onChartReady($event, i)"></app-world-map>

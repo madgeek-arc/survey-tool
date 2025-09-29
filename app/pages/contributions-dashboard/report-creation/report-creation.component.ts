@@ -15,7 +15,7 @@ import { latlong } from "../../../../../app/domain/countries-lat-lon";
 import { JsonPipe, NgForOf, NgIf } from "@angular/common";
 import { ReportPieChartComponent } from "../../../../../app/shared/charts/report-charts/report-pie-chart.component";
 import { Chart, chartsCfg } from "./report-chart.configuration";
-import { RangeColumnsComponent } from "../../../../../app/shared/charts/report-charts/range-columns.component";
+import { BarColumnsComponent } from "../../../../../app/shared/charts/report-charts/bar-columns.component";
 import { isNumeric } from "../../../utils/utils";
 
 
@@ -36,7 +36,7 @@ interface ChartImageData {
     WorldMapComponent,
     ReportPieChartComponent,
     JsonPipe,
-    RangeColumnsComponent
+    BarColumnsComponent
   ],
   providers: [StakeholdersService],
   templateUrl: './report-creation.component.html'
@@ -81,7 +81,6 @@ export class ReportCreationComponent implements OnInit {
     }
 
 
-
     // run them all in parallel
     forkJoin(calls).subscribe({
       next: results => {
@@ -94,7 +93,7 @@ export class ReportCreationComponent implements OnInit {
         }
 
         if (chart.type === 'stackedBars') {
-          this.stackedBarSeries(results);
+          chart.chartSeries = this.stackedBarSeries(results);
           return;
         }
 
@@ -245,7 +244,41 @@ export class ReportCreationComponent implements OnInit {
 
   // Trends chart
   stackedBarSeries(data: RawData[]) {
-    console.log(data);
+    const seriesOptions: Highcharts.SeriesBarOptions[] = [
+      {
+        type: 'bar',
+        name: 'Mandatory policy',
+        color: '#E76F51',
+        data: []
+      },
+      {
+        type: 'bar',
+        name: 'Non mandatory policy',
+        color: '#2A9D8F',
+        data: []
+      }
+    ];
+
+    this.years.forEach((year, index) => {
+      let hasPolicy = 0;
+      let isMandatory = 0;
+      data[index * 2].datasets[0].series.result.forEach(element => {
+        if (element.row[1] === 'Yes') {
+          hasPolicy++;
+        }
+      });
+      data[index * 2 + 1].datasets[0].series.result.forEach(element => {
+        if (element.row[1] === 'Yes') {
+          isMandatory++;
+        }
+      });
+
+      seriesOptions[0].data.push(isMandatory);
+      seriesOptions[1].data.push(hasPolicy-isMandatory);
+
+    });
+
+    return seriesOptions;
   }
 
   rangeColumnsSeries(data: RawData[], query: string): Highcharts.SeriesColumnOptions[] {
