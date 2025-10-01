@@ -17,6 +17,7 @@ import { ReportPieChartComponent } from "../../../../../app/shared/charts/report
 import { Chart, chartsCfg } from "./report-chart.configuration";
 import { BarColumnsComponent } from "../../../../../app/shared/charts/report-charts/bar-columns.component";
 import { isNumeric } from "../../../utils/utils";
+import { result } from "lodash";
 
 
 interface ChartImageData {
@@ -70,13 +71,13 @@ export class ReportCreationComponent implements OnInit {
     // this.pieCharts = [];
     // map each key to its observable
     let calls: Observable<RawData>[] = [];
-    if (chart.type === 'stackedBars') {
+    if (chart.type === 'stackedBars' || chart.type === 'barChart' || chart.type === 'totalInvestments') {
       this.years.forEach(year => {
-        calls.push(...chart.namedQueries.map(q => this.queryData.getQuestion(year, q)));
+        calls.push(...chart.namedQueries.map(q => this.queryData.getQuestionEU(year, q)));
       });
     } else {
       calls = chart.namedQueries.map(q =>
-        this.queryData.getQuestion(this.years[this.years.length-1], q)
+        this.queryData.getQuestionEU(this.years[this.years.length-1], q)
       );
     }
 
@@ -93,7 +94,17 @@ export class ReportCreationComponent implements OnInit {
         }
 
         if (chart.type === 'stackedBars') {
-          chart.chartSeries = this.stackedBarSeries(results);
+          chart.chartSeries = this.stackedBarSeries(results, chart.stats[0]);
+          return;
+        }
+
+        if (chart.type === 'barChart') {
+          chart.chartSeries = this.barSeries(results, chart.stats[0]);
+          return;
+        }
+
+        if (chart.type === 'totalInvestments') {
+          chart.chartSeries = this.totalInvestmentsPer1000ResearchersFTEs(results, chart.stats[0]);
           return;
         }
 
@@ -199,51 +210,89 @@ export class ReportCreationComponent implements OnInit {
     }
   }
 
-  // Handle multiple charts from child components
-  onChartReady(chart: Highcharts.Chart, chartIndex: number) {
-    console.log(`Chart ${chartIndex + 1} ready`);
-    if (this.charts[chartIndex]) // Skip if the chart already exists
-      return;
-
-    this.charts[chartIndex] = chart;
-  }
-
-  onPieChartReady(chart: Highcharts.Chart, i: number, j: number) {
-    console.log(`Pie Chart ready [${i}, ${j}]`);
-    if (this.pieCharts[i] && this.pieCharts[i][j])
-      return;
-
-    if (!this.pieCharts[i])
-      this.pieCharts[i] = [];
-
-    this.pieCharts[i][j] = chart;
-
-  }
-
-  // Generate individual chart image (useful for testing)
-  async downloadSingleChart(chartIndex: number) {
-    if (this.charts[chartIndex]) {
-      try {
-        const imageBuffer = await this.chartToArrayBuffer(this.charts[chartIndex], 800, 600);
-
-        // Create a download link for testing
-        const blob = new Blob([imageBuffer], { type: 'image/png' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `chart_${chartIndex + 1}.png`;
-        link.click();
-        URL.revokeObjectURL(url);
-
-        console.log(`Chart ${chartIndex + 1} downloaded successfully`);
-      } catch (error) {
-        console.error(`Error downloading chart ${chartIndex + 1}:`, error);
+  totalInvestmentsPer1000ResearchersFTEs(data: RawData[], queryName: string) {
+    const seriesOptions: Highcharts.SeriesBarOptions[] = [
+      {
+        type: 'bar',
+        color: '#2A9D8F',
+        data: []
       }
-    }
+    ];
+
+    const trends: {year: string, investment: number}[] = [];
+
+    this.years.forEach((year, index) => {
+      let investments = 0;
+      let researchersInFTE = 0;
+      data[index * 2].datasets[0].series.result.forEach(result => {
+        if (isNumeric(result.row[1]) && parseFloat(result.row[1]) !== 0) {
+          // console.log(parseFloat(result.row[1]));
+          let tmp: number | null = this.getResearchersInFTEs(data[index * 2 + 1], result.row[0])
+          // console.log(tmp);
+          if (tmp !== null) { // Add to sum only if both values exist and are valid
+            investments += parseFloat(result.row[1]);
+            researchersInFTE += tmp;
+          }
+        }
+      })
+      console.log(investments);
+      console.log(researchersInFTE);
+      seriesOptions[0].data.push(Math.floor((investments * 1000) / (researchersInFTE / 1000)));
+
+      trends.push({year: year, investment: Math.floor((investments * 1000) / (researchersInFTE / 1000))});
+    });
+
+    trends.sort((a: { year: string; }, b: { year: string; }) => a.year.localeCompare(b.year));
+
+    const surveyStartYear = trends[0];
+    const previousYear = trends[trends.length-2];
+    const currentYear = trends[trends.length-1];
+
+    this.reportData[queryName+'[0]'] = currentYear.investment > previousYear.investment ? 'an increase' : currentYear.investment < previousYear.investment ? 'a decrease' : 'no change';
+    this.reportData[queryName+'[1]'] = currentYear.investment > surveyStartYear.investment ? 'an overall increase' : currentYear.investment < surveyStartYear.investment ? 'an overall decrease' : 'overall no change';
+
+    return seriesOptions;
   }
 
-  // Trends chart
-  stackedBarSeries(data: RawData[]) {
+  // Trends charts
+  barSeries(data: RawData[], queryName: string) {
+    const seriesOptions: Highcharts.SeriesBarOptions[] = [
+      {
+        type: 'bar',
+        color: '#2A9D8F',
+        data: []
+      }
+    ];
+
+    const trends: {year: string, hasPolicy: number}[] = [];
+
+    this.years.forEach((year, index) => {
+      let hasPolicy = 0;
+      let isMandatory = 0;
+      data[index].datasets[0].series.result.forEach(element => {
+        if (element.row[1] === 'Yes') {
+          hasPolicy++;
+        }
+      });
+
+      seriesOptions[0].data.push(hasPolicy);
+
+      trends.push({year: year, hasPolicy: hasPolicy});
+    });
+
+    trends.sort((a: { year: string; }, b: { year: string; }) => a.year.localeCompare(b.year));
+
+    const surveyStartYear = trends[0];
+    const previousYear = trends[trends.length-2];
+    const currentYear = trends[trends.length-1];
+
+    this.reportData[queryName+'[0]'] = currentYear.hasPolicy > previousYear.hasPolicy ? 'an increase' : currentYear.hasPolicy < previousYear.hasPolicy ? 'a decrease' : 'no change';
+    this.reportData[queryName+'[1]'] = currentYear.hasPolicy > surveyStartYear.hasPolicy ? 'an overall increase' : currentYear.hasPolicy < surveyStartYear.hasPolicy ? 'an overall decrease' : 'overall no change';
+
+    return seriesOptions;
+  }
+
+  stackedBarSeries(data: RawData[], queryName: string): Highcharts.SeriesBarOptions[] {
     const seriesOptions: Highcharts.SeriesBarOptions[] = [
       {
         type: 'bar',
@@ -258,6 +307,8 @@ export class ReportCreationComponent implements OnInit {
         data: []
       }
     ];
+
+    const trends: {year: string, hasPolicy: number, isMandatory: number}[] = [];
 
     this.years.forEach((year, index) => {
       let hasPolicy = 0;
@@ -276,7 +327,19 @@ export class ReportCreationComponent implements OnInit {
       seriesOptions[0].data.push(isMandatory);
       seriesOptions[1].data.push(hasPolicy-isMandatory);
 
+      trends.push({year: year, hasPolicy: hasPolicy, isMandatory: isMandatory});
     });
+
+    trends.sort((a: { year: string; }, b: { year: string; }) => a.year.localeCompare(b.year));
+
+    const surveyStartYear = trends[0];
+    const previousYear = trends[trends.length-2];
+    const currentYear = trends[trends.length-1];
+
+    this.reportData[queryName+'[0]'] = currentYear.hasPolicy > previousYear.hasPolicy ? 'an increase' : currentYear.hasPolicy < previousYear.hasPolicy ? 'a decrease' : 'no change';
+    this.reportData[queryName+'[1]'] = currentYear.hasPolicy > surveyStartYear.hasPolicy ? 'an overall increase' : currentYear.hasPolicy < surveyStartYear.hasPolicy ? 'an overall decrease' : 'overall no change';
+    this.reportData[queryName+'[2]'] = currentYear.isMandatory > previousYear.isMandatory ? 'an increase' : currentYear.isMandatory < previousYear.isMandatory ? 'a decrease' : 'no change';
+    this.reportData[queryName+'[3]'] = currentYear.isMandatory > surveyStartYear.isMandatory ? 'an overall increase' : currentYear.isMandatory < surveyStartYear.isMandatory ? 'an overall decrease' : 'overall no change';
 
     return seriesOptions;
   }
@@ -520,6 +583,8 @@ export class ReportCreationComponent implements OnInit {
     return series;
   }
 
+
+  /** utils **/
   countAnswer(data: RawData) {
     let count = 0;
     let total = 0;
@@ -540,4 +605,61 @@ export class ReportCreationComponent implements OnInit {
     return this.chartsCfg.reduce((sum, obj) => sum + obj.namedQueries.length, 0);
   }
 
+  // Store ready charts
+  onChartReady(chart: Highcharts.Chart, chartIndex: number) {
+    console.log(`Chart ${chartIndex + 1} ready`);
+    if (this.charts[chartIndex]) // Skip if the chart already exists
+      return;
+
+    this.charts[chartIndex] = chart;
+  }
+
+  onPieChartReady(chart: Highcharts.Chart, i: number, j: number) {
+    console.log(`Pie Chart ready [${i}, ${j}]`);
+    if (this.pieCharts[i] && this.pieCharts[i][j])
+      return;
+
+    if (!this.pieCharts[i])
+      this.pieCharts[i] = [];
+
+    this.pieCharts[i][j] = chart;
+
+  }
+
+  // Generate individual chart image (useful for testing)
+  async downloadSingleChart(chartIndex: number) {
+    if (this.charts[chartIndex]) {
+      try {
+        const imageBuffer = await this.chartToArrayBuffer(this.charts[chartIndex], 800, 600);
+
+        // Create a download link for testing
+        const blob = new Blob([imageBuffer], { type: 'image/png' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `chart_${chartIndex + 1}.png`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        console.log(`Chart ${chartIndex + 1} downloaded successfully`);
+      } catch (error) {
+        console.error(`Error downloading chart ${chartIndex + 1}:`, error);
+      }
+    }
+  }
+
+  getResearchersInFTEs(data: RawData, code: string): number | null {
+    let researchersInFTEs: number | null = null;
+    data.datasets[0].series.result.forEach(element => {
+      if (element.row[0] === code)
+        if (isNumeric(element.row[1])) {
+          researchersInFTEs = parseFloat(element.row[1]);
+          return;
+        } else {
+          researchersInFTEs = null;
+          return ;
+        }
+    });
+    return researchersInFTEs;
+  }
 }

@@ -41,7 +41,7 @@ export const chartsCfg: Chart[] = [
     // order: 1
   },
   {
-    title: ' Countries with a Specific Policy on Open Licensing of Publications',
+    title: 'Countries with a Specific Policy on Open Licensing of Publications',
     namedQueries: ['Question6.5', 'Question6.5.1'],
     data: [],
     chartSeries: [],
@@ -77,14 +77,73 @@ export const chartsCfg: Chart[] = [
     stats: ['Question56'],
   },
   {
-    title: 'Trend in EU Countries with a National Policy on Open Access to Publications',
+    title: 'National Policy on Open Access to Publications',
     namedQueries: ['Question6', 'Question6.1'],
     data: [],
     chartSeries: [],
     pieSeries: [],
     type: 'stackedBars',
-    stats: ['Trends'],
+    stats: ['Question6'],
   },
+  {
+    title: 'Specific Policy on Immediate Open Access to Publications',
+    namedQueries: ['Question6.3', 'Question6.3.1'],
+    data: [],
+    chartSeries: [],
+    pieSeries: [],
+    type: 'stackedBars',
+    stats: ['Question6.3'],
+  },
+  {
+    title: 'Specific Policy on Retention of IPR on Publications',
+    namedQueries: ['Question6.4', 'Question6.4.1'],
+    data: [],
+    chartSeries: [],
+    pieSeries: [],
+    type: 'stackedBars',
+    stats: ['Question6.4'],
+  },
+  {
+    title: 'Specific Policy on Open Licensing of Publications',
+    namedQueries: ['Question6.5', 'Question6.5.1'],
+    data: [],
+    chartSeries: [],
+    pieSeries: [],
+    type: 'stackedBars',
+    stats: ['Question6.5'],
+  },
+  {
+    title: 'Financial Strategy on Open Access to Publications',
+    namedQueries: ['Question7'],
+    data: [],
+    chartSeries: [],
+    pieSeries: [],
+    type: 'barChart',
+    stats: ['Question7'],
+  },
+  {
+    title: 'National Monitoring on Open Access to Publications',
+    namedQueries: ['Question54'],
+    data: [],
+    chartSeries: [],
+    pieSeries: [],
+    type: 'barChart',
+    stats: ['Question54'],
+  },
+  {
+    title: 'Trend in EU Countries with National Investments in Open Access to Publications per 1000 FTE Researchers',
+    namedQueries: ['Question56', 'Question1'],
+    data: [],
+    chartSeries: [],
+    pieSeries: [],
+    type: 'totalInvestments',
+    stats: ['Question56_trend'],
+  },
+
+
+
+
+
   // {
   //   title: 'National policy on data management',
   //   namedQueries: ['Question10','Question10.1'],

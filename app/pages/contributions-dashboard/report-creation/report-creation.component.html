@@ -36,9 +36,22 @@
           }
           @case ('stackedBars') {
             <bar-columns-chart [series]="chart.chartSeries" [categories]="years"
-                           [enableLegend]="true" [stacking]="'normal'"
-                           [titleText]="'National Policy'"
-                           (chartReady)="onChartReady($event, i)">
+                               [enableLegend]="true" [stacking]="'normal'" [dataLabelsEnabled]="true"
+                               [subtitleText]="chart.title "
+                               (chartReady)="onChartReady($event, i)">
+            </bar-columns-chart>
+          }
+          @case ('barChart') {
+            <bar-columns-chart [series]="chart.chartSeries" [categories]="years"
+                               [dataLabelsEnabled]="true"
+                               [subtitleText]="chart.title "
+                               (chartReady)="onChartReady($event, i)">
+            </bar-columns-chart>
+          }
+          @case ('totalInvestments') {
+            <bar-columns-chart [series]="chart.chartSeries" [categories]="years"
+                               [dataLabelsEnabled]="true" [YAxisTitleText]="'€K per 1000 FTEs'"
+                               (chartReady)="onChartReady($event, i)">
             </bar-columns-chart>
           }
           @default {
