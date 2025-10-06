@@ -17,7 +17,6 @@ import { ReportPieChartComponent } from "../../../../../app/shared/charts/report
 import { Chart, chartsCfg } from "./report-chart.configuration";
 import { BarColumnsComponent } from "../../../../../app/shared/charts/report-charts/bar-columns.component";
 import { isNumeric } from "../../../utils/utils";
-import { result } from "lodash";
 
 
 interface ChartImageData {
@@ -50,7 +49,7 @@ export class ReportCreationComponent implements OnInit {
   charts: Highcharts.Chart[] = [];
   pieCharts: Highcharts.Chart[][] = [];
 
-  years = ['2022', '2023'];
+  years = ['2022', '2023', '2024'];
 
   reportData: Record<string, string> = {};
   chartImages: { [key: string]: ChartImageData } = {};
@@ -63,6 +62,7 @@ export class ReportCreationComponent implements OnInit {
     // this.worldCharts = new Array(this.chartsCfg.length).fill(null);
     this.charts = [];
     this.pieCharts = [];
+    this.reportData['Year'] = this.years[this.years.length-1];
     this.chartsCfg.forEach(chart => this.loadChart(chart));
   }
 
@@ -214,7 +214,7 @@ export class ReportCreationComponent implements OnInit {
     const seriesOptions: Highcharts.SeriesBarOptions[] = [
       {
         type: 'bar',
-        color: '#2A9D8F',
+        color: '#008792',
         data: []
       }
     ];
@@ -234,9 +234,8 @@ export class ReportCreationComponent implements OnInit {
             researchersInFTE += tmp;
           }
         }
-      })
-      console.log(investments);
-      console.log(researchersInFTE);
+      });
+
       seriesOptions[0].data.push(Math.floor((investments * 1000) / (researchersInFTE / 1000)));
 
       trends.push({year: year, investment: Math.floor((investments * 1000) / (researchersInFTE / 1000))});
@@ -259,7 +258,7 @@ export class ReportCreationComponent implements OnInit {
     const seriesOptions: Highcharts.SeriesBarOptions[] = [
       {
         type: 'bar',
-        color: '#2A9D8F',
+        color: '#008792',
         data: []
       }
     ];
@@ -297,13 +296,13 @@ export class ReportCreationComponent implements OnInit {
       {
         type: 'bar',
         name: 'Mandatory policy',
-        color: '#E76F51',
+        color: '#EB5C80',
         data: []
       },
       {
         type: 'bar',
         name: 'Non mandatory policy',
-        color: '#2A9D8F',
+        color: '#008792',
         data: []
       }
     ];
@@ -351,7 +350,7 @@ export class ReportCreationComponent implements OnInit {
       name: 'countries',
       data: [],
       showInLegend: false,
-      color: '#2A9D8F',
+      color: '#008792',
     };
 
     let responses = data[0].datasets[0].series.result.length; // Double check if this is valid
@@ -453,12 +452,12 @@ export class ReportCreationComponent implements OnInit {
         {
           name: index > 0 ? 'Policy is mandatory' : 'Has policy',
           y: yesCount,
-          color: '#137CBD'
+          color: '#008792'
         },
         {
           name: index > 0 ? 'Not mandatory policy' : 'Does not have policy',
           y: noCount,
-          color: '#EC7A1C'
+          color: '#EB5C80'
         }
       ]
     }];
@@ -473,7 +472,7 @@ export class ReportCreationComponent implements OnInit {
       {
         type: 'map',
         name: 'Has national policy',
-        color: '#2A9D8F',
+        color: '#008792',
         showInLegend: true,
         data: [], // Keep empty for legend-only
         // visible: false, // Hide from map but show in legend
@@ -481,7 +480,7 @@ export class ReportCreationComponent implements OnInit {
       {
         type: 'map',
         name: 'Does not have national policy',
-        color: '#E76F51',
+        color: '#EB5C80',
         showInLegend: true,
         data: [], // Keep empty for legend-only
         // visible: false, // Hide from map but show in legend
@@ -545,7 +544,7 @@ export class ReportCreationComponent implements OnInit {
         dataLabels: {
           enabled: false,
         },
-        color: '#7CFC00',
+        color: '#23CE6B',
         data: [],
         showInLegend: true
       }
@@ -559,7 +558,7 @@ export class ReportCreationComponent implements OnInit {
         dataLabels: {
           enabled: false,
         },
-        color: '#FFEF00',
+        color: '#FFCB47',
         data: [],
         showInLegend: true
       }

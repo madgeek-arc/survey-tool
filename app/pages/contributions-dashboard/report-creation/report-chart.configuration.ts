@@ -139,11 +139,6 @@ export const chartsCfg: Chart[] = [
     type: 'totalInvestments',
     stats: ['Question56_trend'],
   },
-
-
-
-
-
   // {
   //   title: 'National policy on data management',
   //   namedQueries: ['Question10','Question10.1'],
