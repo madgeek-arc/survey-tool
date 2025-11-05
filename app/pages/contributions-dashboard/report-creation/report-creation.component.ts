@@ -162,11 +162,11 @@ export class ReportCreationComponent implements OnInit {
             if (!pieChart) continue; // Skip if no pie chart at this index
 
             console.log(`Exporting pie chart [${i}, ${j}]...`);
-            const buffer = await this.chartToArrayBuffer(pieChart, 400, 300);
+            const buffer = await this.chartToArrayBuffer(pieChart, 300, 225);
             this.chartImages[`pieChartImage_${i}_${j}`] = {
               buffer: buffer,
-              width: 400,
-              height: 300,
+              width: 300,
+              height: 225,
               title: `Pie Chart [${i + 1}, ${j + 1}]`
             };
           }
