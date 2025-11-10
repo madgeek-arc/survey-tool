@@ -90,20 +90,20 @@ export class WebsocketService {
   };
 
   WsLeave(action: string) { // {} is for headers
-    this.stompClient.then( client => client.send(`/app/leave/${this.type}/${this.surveyAnswerId}`, {}, action));
+    this.stompClient?.then( client => client.send(`/app/leave/${this.type}/${this.surveyAnswerId}`, {}, action));
   }
 
   WsJoin(action: string) {
-    this.stompClient.then( client => client.send(`/app/join/${this.type}/${this.surveyAnswerId}`, {}, action));
+    this.stompClient?.then( client => client.send(`/app/join/${this.type}/${this.surveyAnswerId}`, {}, action));
   }
 
   WsFocus(field?: string, value?: string) {
-    this.stompClient.then( client => client.send(`/app/focus/${this.type}/${this.surveyAnswerId}/${field}`, {}, value));
+    this.stompClient?.then( client => client.send(`/app/focus/${this.type}/${this.surveyAnswerId}/${field}`, {}, value));
   }
 
   WsEdit(value: { field: string; value: any; action?: Action; }) {
-    console.log(value);
-    this.stompClient.then( client => client.send(`/app/edit/${this.type}/${this.surveyAnswerId}`, {}, JSON.stringify(value)));
+    // console.log(value);
+    this.stompClient?.then( client => client.send(`/app/edit/${this.type}/${this.surveyAnswerId}`, {}, JSON.stringify(value)));
   }
 
   closeWs() {
