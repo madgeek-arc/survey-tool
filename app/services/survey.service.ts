@@ -19,6 +19,10 @@ export class SurveyService {
     return this.http.get<SurveyAnswer>(this.base + `/answers/latest?stakeholderId=${stakeHolderId}&surveyId=${surveyId}`, this.options);
   }
 
+  putAnswer(surveyAnswer: object, id: string) {
+    return this.http.put<SurveyAnswer>(this.base + `/answers/${id}/answer`, surveyAnswer, this.options);
+  }
+
   getAnswerWithVersion(surveyAnswerId: string, version: string) {
     return this.http.get<SurveyAnswer>(this.base + `/answers/${surveyAnswerId}/versions/${version}`, this.options);
   }

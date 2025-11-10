@@ -8,7 +8,8 @@
       <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
         <app-survey [payload]="surveyAnswer" [model]="survey" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"
                     [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType" [enableWebsocket]="true"
-                    [activeUsers]="activeUsers" (submit)="submitForm($event)"  (valid)="validateSurveyAnswer($event)">
+                    [activeUsers]="activeUsers" [successMessage]="successMessage" [errorMessage]="errorMessage"
+                    (submit)="submitForm($event)"  (valid)="validateSurveyAnswer($event)">
 
           <div *ngIf="survey" class="uk-grid form-top-section">
             <div class="uk-width-1-1 uk-flex uk-flex-middle uk-flex-right">

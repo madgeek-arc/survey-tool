@@ -11,6 +11,7 @@ import { WebsocketService } from "../../../../services/websocket.service";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
 import * as UIkit from 'uikit';
+import { UntypedFormGroup } from "@angular/forms";
 
 declare var require: any;
 const seedRandom = require('seedrandom');
@@ -23,9 +24,10 @@ const seedRandom = require('seedrandom');
 })
 
 export class SurveyFormComponent implements OnInit, OnDestroy {
+  private destroyRef = inject(DestroyRef);
+
   @ViewChild(SurveyComponent) child: SurveyComponent
 
-  private destroyRef = inject(DestroyRef);
   survey: Model = null;
   subType: string;
   surveyAnswer: SurveyAnswer = null;
@@ -41,6 +43,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   validate = false;
   ready = false;
   action: string = null;
+  successMessage = '';
+  errorMessage = '';
 
   constructor(private surveyService: SurveyService, private route: ActivatedRoute, private router: Router,
               private wsService: WebsocketService, private userService: UserService) {}
@@ -157,11 +161,38 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
       () => {});
   }
 
-  submitForm(value) {
+  submitForm(form: UntypedFormGroup) {
     if (this.freeView) {
       return;
     } else {
-      this.child.onSubmit();
+      // window.scrollTo({top: 0, behavior: 'smooth'});
+      // let postMethod = '';
+      // let firstParam = '';
+      // if (this.surveyAnswer?.id) {
+      //   postMethod = 'postItem';
+      //   firstParam = this.surveyAnswer.id;
+      // } else {
+      //   postMethod = 'postGenericItem'
+      //   firstParam = this.survey.resourceType;
+      // }
+      this.surveyService.putAnswer(form.value, this.surveyAnswer.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+        res => {
+          this.successMessage = 'Updated successfully!';
+          this.child.clearChapterChangesMap();
+          UIkit.modal('#unsaved-changes-modal').hide();
+          this.surveyAnswer.answer = res;
+        },
+        error => {
+          this.errorMessage = 'Something went bad, server responded: ' + JSON.stringify(error?.error?.message);
+          UIkit.modal('#unsaved-changes-modal').hide();
+          // this.showLoader = false;
+          // console.log(error);
+        },
+        () => {
+          this.child.closeSuccessAlert();
+          // this.showLoader = false;
+        }
+      );
     }
   }
 
