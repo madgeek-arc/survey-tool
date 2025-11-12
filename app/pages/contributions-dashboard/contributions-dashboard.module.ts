@@ -16,24 +16,24 @@ import { SurveyToolModule } from "../../survey-tool.module";
 import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
 import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
 import { WebsocketService } from "../../services/websocket.service";
-import {PageContentComponent} from "../../shared/page-content/page-content.component";
+import { PageContentComponent } from "../../shared/page-content/page-content.component";
 import {
-    SidebarMobileToggleComponent
+  SidebarMobileToggleComponent
 } from "../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
 
 @NgModule({
-    imports: [
-        CommonModule,
-        ContributionsDashboardRoutingModule,
-        ReusableComponentsModule,
-        FormsModule,
-        NgSelectModule,
-        CompareModule,
-        SurveyToolModule,
-        ReactiveFormsModule,
-        PageContentComponent,
-        SidebarMobileToggleComponent
-    ],
+  imports: [
+    CommonModule,
+    ContributionsDashboardRoutingModule,
+    ReusableComponentsModule,
+    FormsModule,
+    NgSelectModule,
+    CompareModule,
+    SurveyToolModule,
+    ReactiveFormsModule,
+    PageContentComponent,
+    SidebarMobileToggleComponent
+  ],
   declarations: [
     ContributionsHomeComponent,
     MySurveysComponent,
