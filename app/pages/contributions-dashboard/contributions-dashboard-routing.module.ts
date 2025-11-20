@@ -10,7 +10,6 @@ import { SurveysListComponent } from "./coordinators/surveys-list/surveys-list.c
 import { HistoryComponent } from "./survey-history/history.component";
 import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
 import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
-import { ReportCreationComponent } from "../../../../app/pages/report-creation/report-creation.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -99,15 +98,6 @@ const contributionsDashboardRoutes: Routes = [
         component: EditManagerComponent,
         canActivate: [AuthGuard]
       },
-      {
-        path: 'reportExport',
-        component: ReportCreationComponent,
-        canActivate: [AuthGuard],
-        data: {
-          hasSidebar: false,
-          showFooter: false,
-        }
-      }
     ]
   }
 ];
