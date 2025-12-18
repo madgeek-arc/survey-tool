@@ -78,7 +78,8 @@
             <li>
               <!--Card View-->
               <div class="uk-child-width-1-4@l uk-child-width-1-3@m uk-child-width-1-1@s uk-grid-match" data-uk-grid>
-                <div *ngFor="let stakeholder of stakeholders?.results">
+                <div *ngFor="let stakeholder of stakeholders?.results"
+                     [ngClass]="{'uk-width-1-1': stakeholders?.results?.length === 1}">
                   <div class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
                     <div class="uk-card-body">
                       <div>Name: {{stakeholder.name}}</div>
