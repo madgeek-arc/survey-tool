@@ -1,0 +1,106 @@
+<div page-content [fullWidth]="true">
+  <div actions class="uk-section-primary uk-preserve-color">
+    <sidebar-mobile-toggle class="uk-hidden@m uk-display-block uk-padding-small"></sidebar-mobile-toggle>
+  </div>
+
+  <div inner>
+    <div class="uk-container uk-container-expand uk-margin-top">
+      <div class="uk-card uk-card-default uk-card-body">
+
+        <!-- Add Button -->
+        <div class="uk-flex uk-flex-right">
+          <button
+            class="uk-button uk-button-primary"
+            type="button"
+            uk-toggle="target: #add-coordinator-modal">
+            Add Member
+          </button>
+        </div>
+
+        <div class="uk-overflow-auto uk-margin-medium-top" *ngIf="members && members.members?.length > 0">
+          <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let member of members?.members">
+              <td> {{ member.fullname }}</td>
+              <td> {{ member.email }}</td>
+              <td>
+              <span class="material-icons"
+                    style="cursor: pointer"
+                    (click)="openRemoveModal(member.id)">
+              delete
+            </span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Empty table -->
+        <div *ngIf="members && members.members?.length === 0"
+             class="uk-text-center uk-text-muted">
+          No coordinators found.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Coordinator modal -->
+<div id="add-coordinator-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4>Add Coordinator Member</h4>
+    <p *ngIf="errorMessage" class="uk-text-warning">
+      {{ errorMessage }}
+    </p>
+    <input
+      [(ngModel)]="selectedMemberEmail"
+      class="uk-input"
+      type="email"
+      placeholder="Coordinator member email"
+    />
+
+    <div class="uk-flex uk-flex-right uk-margin-top">
+      <button
+        class="uk-button uk-button-secondary uk-modal-close"
+        type="button">
+        Cancel
+      </button>
+      <button
+        class="uk-button uk-button-primary"
+        type="button"
+        (click)="addCoordinator()">
+        Add
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Coordinator modal -->
+<div id="remove-coordinator-modal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4>Remove Coordinator Member</h4>
+    <p>
+      Are you sure you want to remove this coodinator member?
+    </p>
+    <div class="uk-flex uk-flex-right">
+      <button
+        class="uk-button uk-button-secondary uk-modal-close">
+        Cancel
+      </button>
+      <button
+        class="uk-button uk-button-danger"
+        (click)="confirmRemoveCoordinator()">
+        Remove
+      </button>
+    </div>
+  </div>
+</div>
+
+
+

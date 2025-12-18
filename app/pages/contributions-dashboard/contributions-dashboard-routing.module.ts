@@ -10,6 +10,8 @@ import { SurveysListComponent } from "./coordinators/surveys-list/surveys-list.c
 import { HistoryComponent } from "./survey-history/history.component";
 import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
 import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
+import { NewCoordinatorComponent} from "./coordinators/add-coordinator/coordinators-list.component";
+import {AdminStakeholderComponent} from "./administrators/stakeholders/admin-stakeholder.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -98,6 +100,21 @@ const contributionsDashboardRoutes: Routes = [
         component: EditManagerComponent,
         canActivate: [AuthGuard]
       },
+      {
+        path: 'coordinators',
+        component: NewCoordinatorComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'stakeholders-admin',
+        component: AdminStakeholderComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'stakeholders-admin/:id',
+        component: EditManagerComponent,
+        canActivate: [AuthGuard]
+      }
     ]
   }
 ];
