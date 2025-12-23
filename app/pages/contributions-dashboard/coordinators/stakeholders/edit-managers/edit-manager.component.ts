@@ -27,6 +27,7 @@ export class EditManagerComponent implements OnInit, OnDestroy {
   email: string = null;
   errorMessage: string = null;
   title = 'copy to clipboard';
+  invitationType: 'invite' | 'add' | null = null;
 
   constructor(private userService: UserService, private route: ActivatedRoute, private surveyService: SurveyService,
               private stakeholderService: StakeholdersService) {
@@ -64,25 +65,44 @@ export class EditManagerComponent implements OnInit, OnDestroy {
 
   addManager(role: string = 'manager') {
     if (this.validateEmail(this.email)) {
-      this.subscriptions.push(
-        this.surveyService.getInvitationToken(this.email, role, this.stakeholder.id).subscribe(
-          next => {
-            this.invitationToken = location.origin + '/invitation/accept/' + next.toString();
-            this.errorMessage = null;
-            this.email = null;
-            // UIkit.modal('#add-manager-modal').hide();
-          },
-          error => {
-            console.error(error);
-            this.errorMessage = error.error.error;
-          },
-          () => {
-            this.errorMessage = null;
-            this.email = null;
-            // UIkit.modal('#add-manager-modal').hide();
-          }
-        )
-      );
+      if (this.invitationType === 'add')
+        // console.log('Adding');
+        this.subscriptions.push(
+          this.surveyService.addManagerToStakeholder(this.stakeholder.id, this.email).subscribe(
+            next => {
+              console.log('Manager added successfully', next);
+              this.getMembers();
+              this.email = null;
+              this.errorMessage = null;
+              UIkit.modal('#add-manager-modal').hide();
+            },
+            error => {
+              console.error(error);
+              this.errorMessage = error.error.error;
+            }
+          )
+        );
+
+      else if (this.invitationType === 'invite')
+        this.subscriptions.push(
+          this.surveyService.getInvitationToken(this.email, role, this.stakeholder.id).subscribe(
+            next => {
+              this.invitationToken = location.origin + '/invitation/accept/' + next.toString();
+              this.errorMessage = null;
+              this.email = null;
+               UIkit.modal('#invite-manager-modal').hide();
+            },
+            error => {
+              console.error(error);
+              this.errorMessage = error.error.error;
+            },
+            () => {
+              this.errorMessage = null;
+              this.email = null;
+               UIkit.modal('#invite-manager-modal').hide();
+            }
+          )
+        );
     } else {
       this.errorMessage = 'Please give a valid email address.'
     }
@@ -189,6 +209,7 @@ export class EditManagerComponent implements OnInit, OnDestroy {
     this.email = null;
     this.invitationToken = null;
     this.errorMessage = null;
+    this.invitationType = null;
   }
 
   validateEmail = (email) => {

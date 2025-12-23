@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Paging } from "../../catalogue-ui/domain/paging";
-import { Stakeholder, GroupMembers, Coordinator } from "../domain/userInfo";
+import {Stakeholder, GroupMembers, Coordinator, Administrator} from "../domain/userInfo";
 import { URLParameter } from "../domain/url-parameter";
+import {Observable} from "rxjs";
 
 
 const headerOptions = {
@@ -58,4 +59,39 @@ export class StakeholdersService {
     return this.httpClient.get<Coordinator>(this.base + `/coordinators/${id}`);
   }
 
+  getCoordinators(coordinatorType: string): Observable<Paging<Coordinator>> {
+    let params = new HttpParams().set('type', coordinatorType);
+
+    const apiUrl = this.base + `/coordinators`;
+    return this.httpClient.get<Paging<Coordinator>>(apiUrl, {params: params});
+  }
+
+  removeCoordinatorMember(coordinatorId: string, memberId: string): Observable<any> {
+    return this.httpClient.delete(this.base + `/coordinators/${coordinatorId}/members/${memberId}`);
+  }
+
+  addCoordinatorMember(coordinatorId: string, email: string) {
+    return this.httpClient.post(this.base + `/coordinators/${coordinatorId}/members`, email)
+  }
+
+  getCoordinatorUsers(id: string) {
+    return this.httpClient.get<GroupMembers>(this.base + `/coordinators/${id}/users`);
+  }
+  /** Administrators **/
+
+  getAdministratorById(id: string) {
+    return this.httpClient.get<Administrator>(this.base + `/administrators/${id}`);
+  }
+
+  getAdministrators(id: string) {
+    return this.httpClient.get<Administrator>(this.base + `/administrators/${id}`);
+  }
+
+  postStakeholderAdmin(administratorId: string) {
+    return this.httpClient.post<Administrator>(this.base + `/administrators/`, administratorId, {withCredentials: true});
+  }
+
+  putStakeholderAdmin(administrator: Administrator) {
+    return this.httpClient.put<Administrator>(this.base + `/administrators/${administrator.id}`, administrator, {withCredentials: true});
+  }
 }
