@@ -28,7 +28,6 @@ import {UserService} from "../../../../services/user.service";
     NgClass,
     RouterLink,
     ReactiveFormsModule,
-    JsonPipe
   ],
   providers: [StakeholdersService],
 })
