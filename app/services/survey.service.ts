@@ -108,4 +108,8 @@ export class SurveyService {
     return this.http.get<SurveyAnswerPublicMetadata>(this.base + `/answers/public/metadata?stakeholderId=${stakeHolderId}&surveyId=${surveyId}`, this.options);
   }
 
+  addManagerToStakeholder(stakeholderId: string, email: string) {
+    return this.http.post(this.base + `/stakeholders/${stakeholderId}/managers`,  email );
+  }
+
 }

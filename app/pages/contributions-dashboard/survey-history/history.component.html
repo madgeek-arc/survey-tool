@@ -3,76 +3,90 @@
     <div class="uk-padding-small uk-margin-top">Version History</div>
     <div class="uk-padding-small">
       <button class="uk-button uk-button-small uk-button-primary" [disabled]="selectedEntries.length !== 2"
-              (click)="showComparison()" title="Two versions must be selected">Compare versions
+        (click)="showComparison()" title="Two versions must be selected">Compare versions
       </button>
     </div>
     <hr>
-    <table class="uk-margin-top uk-table uk-table-striped uk-table-divider uk-table-small uk-table-middle history-table">
-<!--      <thead>-->
-<!--      </thead>-->
+      <table class="uk-margin-top uk-table uk-table-striped uk-table-divider uk-table-small uk-table-middle history-table">
+        <!--      <thead>-->
+      <!--      </thead>-->
       <tbody>
-        <tr *ngFor="let entry of surveyAnswerHistory?.entries; let i = index"
+        @for (entry of surveyAnswerHistory?.entries; track entry; let i = $index) {
+          <tr
             [ngClass]="{'uk-active': selectedVersion === entry}">
-          <div class="uk-flex uk-flex-between">
-            <div (click)="selectVersionToShow(entry)" style="cursor: pointer">
-              <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
-                {{entry.action.type | titlecase}} on
+            <div class="uk-flex uk-flex-between">
+              <div (click)="selectVersionToShow(entry)" style="cursor: pointer">
+                <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
+                  {{entry.action.type | titlecase}} on
+                </div>
+                <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
+                  {{entry.time | date:'medium'}}
+                </div>
+                @if (i==0) {
+                  <div class="uk-text-italic uk-text-small uk-text-margin-small-top">
+                    Current version
+                  </div>
+                }
+                @for (editor of entry.editors | unique: 'email'; track editor) {
+                  <div class="uk-margin-small-top uk-text-meta">
+                    <div>{{editor.fullname}}</div>
+                    <div>{{editor.email}}</div>
+                    @if (editor.role) {
+                      <div class="">({{editor.role}})</div>
+                    }
+                  </div>
+                }
               </div>
-              <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
-                {{entry.time | date:'medium'}}
-              </div>
-              <div *ngIf="i==0" class="uk-text-italic uk-text-small uk-text-margin-small-top">
-                Current version
-              </div>
-              <div *ngFor="let editor of entry.editors | unique: 'email'" class="uk-margin-small-top uk-text-meta">
-                <div>{{editor.fullname}}</div>
-                <div>{{editor.email}}</div>
-                <div *ngIf="editor.role" class="">({{editor.role}})</div>
+              <div class="">
+                <input type="checkbox" class="uk-checkbox" (change)="selectVersionsToCompare($event, entry)"
+                  [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
               </div>
             </div>
-            <div class="">
-              <input type="checkbox" class="uk-checkbox" (change)="selectVersionsToCompare($event, entry)"
-                     [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
-            </div>
-          </div>
-          <div *ngIf="entry.comment" class="uk-text-small uk-text-right uk-text-italic history-entry-comment">
-            "{{entry.comment}}"
-          </div>
-        </tr>
+            @if (entry.comment) {
+              <div class="uk-text-small uk-text-right uk-text-italic history-entry-comment">
+                "{{entry.comment}}"
+              </div>
+            }
+          </tr>
+        }
       </tbody>
     </table>
   </div>
 
 </div>
-<div *ngIf="!hide" class="history-content">
-  <div class="uk-section-default uk-section uk-section-small" style="min-height: 90vh;">
-    <div class="uk-container uk-container-expand">
-      <div class="uk-width-4-5">
-        <h5 class="uk-margin-medium-bottom uk-flex uk-flex-middle">
-<!--          <a [routerLink]="['/contributions/'+ currentStakeholderId +'/mySurveys']" class="uk-margin-small-right" title="Back">-->
-          <a [routerLink]="['../../../']" class="uk-margin-small-right" title="Back">
-            <span class="material-icons">keyboard_backspace</span>
-          </a>
-          <span>{{selectedVersion?.time | date:'medium'}}</span>
-          <button *ngIf="selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version"
-            class="uk-button uk-button-small uk-button-primary uk-margin-left" (click)="restoreVersion()">Restore this version
-          </button>
-        </h5>
-        <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="null" [tabsHeader]="tabsHeader"
-                             [entryA]="selectedEntries[0]" [entryB]="null">
-        </app-compare-surveys>
+@if (!hide) {
+  <div class="history-content">
+    <div class="uk-section-default uk-section uk-section-small" style="min-height: 90vh;">
+      <div class="uk-container uk-container-expand">
+        <div class="uk-width-4-5">
+          <h5 class="uk-margin-medium-bottom uk-flex uk-flex-middle">
+            <!--          <a [routerLink]="['/contributions/'+ currentStakeholderId +'/mySurveys']" class="uk-margin-small-right" title="Back">-->
+            <a [routerLink]="['../../../']" class="uk-margin-small-right" title="Back">
+              <span class="material-icons">keyboard_backspace</span>
+            </a>
+            <span>{{selectedVersion?.time | date:'medium'}}</span>
+            @if (selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version) {
+              <button
+                class="uk-button uk-button-small uk-button-primary uk-margin-left" (click)="restoreVersion()">Restore this version
+              </button>
+            }
+          </h5>
+          <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="null" [tabsHeader]="tabsHeader"
+            [entryA]="selectedEntries[0]" [entryB]="null">
+          </app-compare-surveys>
+        </div>
       </div>
-
     </div>
   </div>
-
-</div>
+}
 
 <a class="uk-hidden" id="scrollTop" href="#title" uk-scroll></a>
 
-<div *ngIf="loading" class="whiteFilm">
-  <i class="loader-big" aria-hidden="true"></i>
-</div>
+@if (loading) {
+  <div class="whiteFilm">
+    <i class="loader-big" aria-hidden="true"></i>
+  </div>
+}
 
 <!--Compare Modal-->
 <div id="modal-full" class="uk-modal-full" uk-modal>
@@ -80,7 +94,7 @@
     <button class="uk-modal-close-full uk-close-large uk-padding-small" type="button" (click)="showHistoryContent()" uk-close></button>
     <div class="uk-margin-top">
       <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB" [tabsHeader]="tabsHeader"
-                           [entryA]="selectedEntries[0]" [entryB]="selectedEntries[1]">
+        [entryA]="selectedEntries[0]" [entryB]="selectedEntries[1]">
       </app-compare-surveys>
     </div>
   </div>

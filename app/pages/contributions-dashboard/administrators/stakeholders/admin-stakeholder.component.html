@@ -5,11 +5,13 @@
   <div inner>
     <div class="uk-section uk-section-default uk-section-small">
       <div class="uk-container uk-container-expand">
-
         <div class="uk-flex uk-flex-right">
-          <button class="uk-button uk-button-primary" data-uk-toggle="target: #modal-center" (click)="openForAdd()">Add Stakeholder</button>
+          <button class="uk-button uk-button-primary"
+            data-uk-toggle="target: #modal-center"
+            (click)="openForAdd()">
+            Add Stakeholder
+          </button>
         </div>
-
         <div class="uk-grid uk-margin-medium-bottom uk-margin-medium-top">
           <div class="uk-width-1-1">
             <div class="uk-flex uk-flex-center">
@@ -21,8 +23,6 @@
             </div>
           </div>
         </div>
-
-
 
         @if (ready) {
           <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
@@ -64,7 +64,7 @@
           </div>
         }
 
-        <!--Tabs Buttons-->
+        <!--Tabs Buttons -->
         <div class="uk-flex uk-flex-center uk-margin">
           <ul data-uk-tab="connect: #my-switcher">
             <li><a href="#">Card</a></li>
@@ -74,9 +74,10 @@
 
         <!--button for csv-->
         <div class="uk-flex uk-flex-center">
-          <button class="uk-button uk-button-default uk-margin-small-right" type="button" (click)="exportData()">Export to CSV</button>
+          <button class="uk-button uk-button-default uk-margin-small-right" type="button" (click)="exportData()">
+            Export to CSV
+          </button>
         </div>
-
 
         <!--Switcher Content-->
         <div class="uk-flex uk-flex-center uk-margin">
@@ -91,7 +92,7 @@
                       <div class="uk-card-body">
                         <div>Name: {{stakeholder.name}}</div>
                         <div>Id: {{stakeholder.id}}</div>
-                        <div>Country: {{stakeholder.country}}</div>
+                        <!--                      <div>Country: {{stakeholder.country}}</div>-->
                       </div>
                       <div class="uk-card-footer uk-flex uk-flex-right">
                         <a class="uk-flex uk-flex-middle uk-margin-right" [routerLink]="[stakeholder.id]">
@@ -123,7 +124,7 @@
                     <tr>
                       <td>{{stakeholder.name}}</td>
                       <td>{{stakeholder.id}}</td>
-                      <td>{{stakeholder.country}}</td>
+                      <!--                  <td>{{stakeholder.country}}</td>-->
                       <td>@for (admin of stakeholder.admins; track admin; let i = $index) {
                         <span>{{(i === 0 ? '': ', ') + admin}} </span>
                       }</td>
@@ -138,20 +139,15 @@
           </ul>
         </div>
       </div>
-
     </div>
 
-
-    <!--<pre>{{stakeholders.results | json}}</pre> -->
-
     <!--    <pre>-->
-    <!--coordinator:-->
-    <!--      {{ coordinator | json }}-->
+    <!--administrator:-->
+    <!--      {{ administrator | json }}-->
 
     <!--      stakeholders:-->
     <!--      {{ stakeholders | json }}-->
   <!--</pre>-->
-
 
   @if (ready) {
     <div id="modal-center" class="uk-flex-top" data-uk-modal>
@@ -190,15 +186,14 @@
       </div>
       <div class="uk-text-right">
         @if (!edit) {
-          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="addStakeholder()">Add</button>
+          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="addStakeholderAdmin()">Add</button>
         }
         @if (edit) {
-          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="updateStakeholder()">Update</button>
+          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="updateStakeholderAdmin()">Update</button>
         }
       </div>
     </div>
   </div>
 }
-
 </div>
 </div>

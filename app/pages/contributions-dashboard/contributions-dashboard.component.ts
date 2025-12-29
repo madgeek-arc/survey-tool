@@ -8,7 +8,7 @@ import {
   MenuItem,
   MenuSection
 } from "../../shared/dashboard-side-menu/dashboard-side-menu.component";
-import { NgIf } from "@angular/common";
+
 import { SharedModule } from "../../../../app/shared/shared.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashboard-side-menu.service";
@@ -20,10 +20,9 @@ import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashb
   standalone: true,
   imports: [
     RouterOutlet,
-    NgIf,
     DashboardSideMenuComponent,
     SharedModule
-  ]
+]
 })
 
 export class ContributionsDashboardComponent implements OnInit, OnDestroy{
@@ -40,6 +39,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
   currentAdministrator: Administrator = null;
   isManager = false;
 
+  menuItems: MenuItem[] = [];
   menuSections: MenuSection[] = [];
   hasSidebar = true;
   hasAdminMenu = false;
@@ -188,6 +188,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
 
     setTimeout(() => {
       this.menuSections = [];
+      this.menuItems = [];
 
       this.menuSections.push({
         items: [new MenuItem('0', 'Home', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', {name: 'home'})]
@@ -207,25 +208,39 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
           items: [
             new MenuItem('4', 'Surveys', null, '/contributions/' + this.currentCoordinator?.id + '/surveys', null, {name: 'assignment'}),
             new MenuItem('5', 'Survey Templates', null, '/contributions/' + this.currentCoordinator?.id + '/surveyTemplates', null, {name: 'assignment'}),
-            new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'})
+            new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'}),
+            new MenuItem('7', 'Stakeholders', null, '/contributions/' + this.currentCoordinator?.id + '/stakeholders', null, {name: 'manage_accounts'}),
           ]
         });
       }
-      if (this.currentCoordinator || this.currentAdministrator) {
-        this.menuSections.push({
-          items: [
-            new MenuItem('7', 'Stakeholders', null, '/contributions/' + (this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/stakeholders', null, {name: 'manage_accounts'})
-          ]
-        });
-      }
+
       if (this.currentAdministrator) {
-        this.menuSections.push({
-          items: [
-            //todo replace icon
-            new MenuItem('11', 'Resources Registry', null, '/contributions/' + (this.currentAdministrator?.id) + '/resources-registry/search', null, {name: 'manage_accounts'})
-          ]
-        });
+
+        this.menuItems = [];
+        const groupIndex = 0;
+
+        this.menuItems.push(
+          new MenuItem('12', 'Stakeholders Group', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, {name: 'manage_accounts'})
+        );
+
+        this.menuItems[groupIndex].items.push(
+          new MenuItem('12-0', 'Coordinators', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, { name: ''}
+          )
+        );
+
+        this.menuItems[groupIndex].items.push(
+          new MenuItem('12-1', 'Stakeholders', null, '/contributions/' + this.currentAdministrator?.id + '/stakeholders-admin', null, { name: ''}
+          )
+        );
+
+        this.menuItems.push(
+          new MenuItem('11', 'Resources Registry', null, '/contributions/' + (this.currentAdministrator?.id) + '/resources-registry/search', null, {name: 'manage_accounts'})
+        );
+
+        this.menuSections.push({ items: this.menuItems });
       }
+
+      this.menuItems = [];
       this.menuSections.push({
         items: [
           new MenuItem('8', 'Support', 'mailto:stefania.martziou@athenarc.gr', null, null, {name: 'help'}),

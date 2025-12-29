@@ -4,14 +4,11 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ForbiddenPageComponent } from './403-forbidden-page.component';
-import { SideMenuDashboardComponent } from "../sidemenudashboard/side-menu-dashboard.component";
 
 @NgModule({ declarations: [
-        SideMenuDashboardComponent,
         ForbiddenPageComponent,
     ],
     exports: [
-        SideMenuDashboardComponent,
         ForbiddenPageComponent,
     ], imports: [CommonModule,
         RouterModule,
