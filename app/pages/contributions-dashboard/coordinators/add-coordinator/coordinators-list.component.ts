@@ -9,7 +9,7 @@ import {PageContentComponent} from "../../../../shared/page-content/page-content
 import {
   SidebarMobileToggleComponent
 } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
-import {NgForOf, NgIf} from "@angular/common";
+
 import {FormsModule} from "@angular/forms";
 import UIkit from "uikit";
 
@@ -20,10 +20,8 @@ import UIkit from "uikit";
   imports: [
     PageContentComponent,
     SidebarMobileToggleComponent,
-    NgIf,
-    NgForOf,
     FormsModule
-  ],
+],
   providers: [StakeholdersService]
 })
 export class NewCoordinatorComponent implements OnInit {

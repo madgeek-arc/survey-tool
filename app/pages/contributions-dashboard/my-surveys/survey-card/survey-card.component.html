@@ -2,22 +2,24 @@
 
   <div class="uk-card-body">
 
-    <div *ngIf="survey.creationDate" class="uk-flex uk-flex-right">
-      <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
-    </div>
-<!--    <div *ngIf="survey.creationDate" class="uk-card-badge">-->
-<!--      Published on {{survey.creationDate | date}}-->
-<!--    </div>-->
+    @if (survey.creationDate) {
+      <div class="uk-flex uk-flex-right">
+        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+      </div>
+    }
+    <!--    <div *ngIf="survey.creationDate" class="uk-card-badge">-->
+    <!--      Published on {{survey.creationDate | date}}-->
+  <!--    </div>-->
 
-    <div class="uk-margin-top">
-      <h5>{{survey.name}}</h5>
-      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
-    </div>
-
+  <div class="uk-margin-top">
+    <h5>{{survey.name}}</h5>
+    <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
   </div>
 
-  <div *ngIf="permissions" class="uk-card-footer uk-flex uk-flex-middle uk-flex-wrap">
+</div>
 
+@if (permissions) {
+  <div class="uk-card-footer uk-flex uk-flex-middle uk-flex-wrap">
     <div class="uk-margin-small-top">
       <a [routerLink]="['./', survey.id, 'answer', 'view']" class="uk-link-reset">
         <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
@@ -26,35 +28,37 @@
         </div>
       </a>
     </div>
-
     <div class="uk-margin-small-top">
-      <a [routerLink]="['./', survey.id, 'answer']" *ngIf="!surveyAnswer.validated && checkForPermission('write')" class="uk-link-reset">
-        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-          <span class="material-icons uk-margin-small-right">edit</span>
-          Edit
-        </div>
-      </a>
+      @if (!surveyAnswer.validated && checkForPermission('write')) {
+        <a [routerLink]="['./', survey.id, 'answer']" class="uk-link-reset">
+          <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+            <span class="material-icons uk-margin-small-right">edit</span>
+            Edit
+          </div>
+        </a>
+      }
     </div>
-
     <div class="uk-margin-small-top">
-      <a *ngIf="checkForPermission('manage')" (click)="changeValidStatus(surveyAnswer.id, surveyAnswer.validated)" class="uk-link-reset">
-        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-          <span class="material-icons uk-margin-small-right">
+      @if (checkForPermission('manage')) {
+        <a (click)="changeValidStatus(surveyAnswer.id, surveyAnswer.validated)" class="uk-link-reset">
+          <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+            <span class="material-icons uk-margin-small-right">
             {{surveyAnswer.validated ? 'lock_open' : 'task_alt'}}</span>{{surveyAnswer.validated ? 'Open' : 'Validate'}}
-        </div>
-      </a>
+          </div>
+        </a>
+      }
     </div>
-
     <div class="uk-margin-small-top">
-      <a *ngIf="checkForPermission('manage') && survey.configuration?.prefillable" href="#import-modal" uk-toggle
-         (click)="emitSurveyForImport()" class="uk-link-reset">
-        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up"
-             title="Import data from previous survey" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-          <span class="material-icons uk-margin-small-right">system_update_alt</span> Import
-        </div>
-      </a>
+      @if (checkForPermission('manage') && survey.configuration?.prefillable) {
+        <a href="#import-modal" uk-toggle
+          (click)="emitSurveyForImport()" class="uk-link-reset">
+          <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up"
+            title="Import data from previous survey" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+            <span class="material-icons uk-margin-small-right">system_update_alt</span> Import
+          </div>
+        </a>
+      }
     </div>
-
     <div class="uk-margin-small-top uk-float-right">
       <a [routerLink]="['./', surveyAnswer.surveyId, surveyAnswer.id, 'history']" class="uk-link-reset">
         <div class="uk-flex uk-flex-middle uk-animation-scale-up">
@@ -63,7 +67,7 @@
         </div>
       </a>
     </div>
-
   </div>
+}
 
 </div>

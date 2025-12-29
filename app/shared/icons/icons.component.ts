@@ -54,17 +54,23 @@ export interface StopRule {
   ],
   standalone: true,
   template: `
-    <ng-container *ngIf="icon">
-      <span #svgIcon *ngIf="icon.data" class="uk-icon" [class.uk-preserve]="gradient || icon.preserveColor"
-            [class.uk-flex]="flex" [ngClass]="customClass" [ngStyle]="style"
-            [innerHTML]="icon.data | safeUrl: 'html'"></span>
-      <span *ngIf="!icon.data && icon.name" [class.uk-flex]="flex" [ngClass]="customClass"
-            [class.uk-display-inline-block]="!flex">
-        <span class="material-icons" [ngClass]="type?type:icon.type" [ngStyle]="style">{{ icon.name }}</span>
-      </span>
-      <span *ngIf="visuallyHidden" class="visually-hidden">{{ visuallyHidden }}</span>
-    </ng-container>
-  `
+    @if (icon) {
+      @if (icon.data) {
+        <span #svgIcon class="uk-icon" [class.uk-preserve]="gradient || icon.preserveColor"
+          [class.uk-flex]="flex" [ngClass]="customClass" [ngStyle]="style"
+        [innerHTML]="icon.data | safeUrl: 'html'"></span>
+      }
+      @if (!icon.data && icon.name) {
+        <span [class.uk-flex]="flex" [ngClass]="customClass"
+          [class.uk-display-inline-block]="!flex">
+          <span class="material-icons" [ngClass]="type?type:icon.type" [ngStyle]="style">{{ icon.name }}</span>
+        </span>
+      }
+      @if (visuallyHidden) {
+        <span class="visually-hidden">{{ visuallyHidden }}</span>
+      }
+    }
+    `
 })
 export class IconsComponent implements AfterViewInit, OnChanges {
   private static DEFAULT_ICON_SIZE  = 20;

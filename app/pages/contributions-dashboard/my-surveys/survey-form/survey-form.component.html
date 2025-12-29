@@ -3,56 +3,64 @@
     <sidebar-mobile-toggle class="uk-hidden@m uk-display-block uk-padding-small"></sidebar-mobile-toggle>
   </div>
   <div inner>
-    <div *ngIf="ready" class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom"
-         style="min-height: 90vh;">
-      <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
-        <app-survey [payload]="surveyAnswer" [model]="survey" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"
-                    [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType" [enableWebsocket]="true"
-                    [activeUsers]="activeUsers" [successMessage]="successMessage" [errorMessage]="errorMessage"
-                    (submit)="submitForm($event)"  (valid)="validateSurveyAnswer($event)">
-
-          <div *ngIf="survey" class="uk-grid form-top-section">
-            <div class="uk-width-1-1 uk-flex uk-flex-middle uk-flex-right">
-              <ng-container *ngIf="!freeView">
-                <div *ngIf="activeUsers === null; else users" class="uk-margin-large-right">
-                  <div data-uk-spinner></div>
+    @if (ready) {
+      <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom"
+        style="min-height: 90vh;">
+        <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+          <app-survey [payload]="surveyAnswer" [model]="survey" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"
+            [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType" [enableWebsocket]="true"
+            [activeUsers]="activeUsers" [successMessage]="successMessage" [errorMessage]="errorMessage"
+            (submit)="submitForm($event)"  (valid)="validateSurveyAnswer($event)">
+            @if (survey) {
+              <div class="uk-grid form-top-section">
+                <div class="uk-width-1-1 uk-flex uk-flex-middle uk-flex-right">
+                  @if (!freeView) {
+                    @if (activeUsers === null) {
+                      <div class="uk-margin-large-right">
+                        <div data-uk-spinner></div>
+                      </div>
+                    } @else {
+                      <div class="uk-margin-medium-right">
+                        @for (user of activeUsers; track user) {
+                          <a class="uk-icon" aria-expanded="false"
+                            title="{{user.fullname + ' currently ' + actionTooltip(user.action)}}">
+                            <svg height="42" width="42">
+                              <circle cx="21" cy="21" r="18" stroke-width="1" [attr.fill]="user.color"></circle>
+                              <text dy=".4em" font-size="16" text-anchor="middle" x="50%" y="50%" fill="white" class="uk-text-bold">
+                                {{ getInitials(user.fullname) }}
+                              </text>
+                              <circle cx="34" cy="34" r="7" stroke-width="1" fill="white"></circle>
+                              <text x="28" y="40" fill="black" alignment-baseline="middle">
+                                <tspan class="material-icons" style="font-size: 12px"> {{ actionIcon(user.action) }}</tspan>
+                              </text>
+                            </svg>
+                          </a>
+                        }
+                      </div>
+                    }
+                  }
+                  @if (validate) {
+                    <button class="uk-float-right uk-button uk-button-primary" (click)="child.validateForm()">
+                      Validate
+                    </button>
+                  }
                 </div>
-                <ng-template #users id="concurrentEdit">
-                  <div class="uk-margin-medium-right">
-                    <a *ngFor="let user of activeUsers" class="uk-icon" aria-expanded="false"
-                       title="{{user.fullname + ' currently ' + actionTooltip(user.action)}}">
-                      <svg height="42" width="42">
-                        <circle cx="21" cy="21" r="18" stroke-width="1" [attr.fill]="user.color"></circle>
-                        <text dy=".4em" font-size="16" text-anchor="middle" x="50%" y="50%" fill="white" class="uk-text-bold">
-                          {{ getInitials(user.fullname) }}
-                        </text>
-                        <circle cx="34" cy="34" r="7" stroke-width="1" fill="white"></circle>
-                        <text x="28" y="40" fill="black" alignment-baseline="middle">
-                          <tspan class="material-icons" style="font-size: 12px"> {{ actionIcon(user.action) }}</tspan>
-                        </text>
-                      </svg>
-                    </a>
-                  </div>
-                </ng-template>
-              </ng-container>
-              <button *ngIf="validate" class="uk-float-right uk-button uk-button-primary" (click)="child.validateForm()">
-                Validate
-              </button>
+                <h5 class="uk-width-1-1 uk-margin-bottom">{{ survey.name }}</h5>
+                <p class="uk-margin-bottom" [innerHTML]="survey.notice"></p>
+              </div>
+            }
+            <div class="form-action-bar titleAndActionsBar uk-flex uk-flex-right" style="min-height: 40px">
+              <div>
+                @if (!readonly) {
+                  <button class="uk-button uk-button-secondary uk-margin-left" (click)="child.parentSubmit()">
+                    Save
+                  </button>
+                }
+              </div>
             </div>
-            <h5 class="uk-width-1-1 uk-margin-bottom">{{ survey.name }}</h5>
-            <p class="uk-margin-bottom" [innerHTML]="survey.notice"></p>
-          </div>
-
-          <div class="form-action-bar titleAndActionsBar uk-flex uk-flex-right" style="min-height: 40px">
-            <div>
-              <button *ngIf="!readonly" class="uk-button uk-button-secondary uk-margin-left" (click)="child.parentSubmit()">
-                Save
-              </button>
-            </div>
-          </div>
-
-        </app-survey>
+          </app-survey>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>

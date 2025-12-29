@@ -4,7 +4,7 @@ import {
   SidebarMobileToggleComponent
 } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
 import {FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
-import {JsonPipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import { JsonPipe, NgClass } from "@angular/common";
 import {Paging} from "../../../../../catalogue-ui/domain/paging";
 import {Administrator, Coordinator, Stakeholder, UserGroup} from "../../../../domain/userInfo";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
@@ -23,12 +23,10 @@ import {UserService} from "../../../../services/user.service";
     PageContentComponent,
     SidebarMobileToggleComponent,
     FormsModule,
-    NgForOf,
-    NgIf,
     NgClass,
     RouterLink,
-    ReactiveFormsModule,
-  ],
+    ReactiveFormsModule
+],
   providers: [StakeholdersService],
 })
 

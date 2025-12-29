@@ -16,7 +16,7 @@
               <div class="uk-inline">
                 <span class="uk-form-icon" data-uk-icon="icon: search"></span>
                 <input type="text" #searchInput class="uk-input menuSearch" placeholder="Search..."
-                       [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}"  style="border-radius: 20px;">
+                  [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}"  style="border-radius: 20px;">
               </div>
             </div>
           </div>
@@ -24,38 +24,45 @@
 
 
 
-        <div *ngIf="ready" class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
-          <div class="uk-width-1-1">
-
-            <div class="uk-flex uk-flex-between uk-flex-middle">
-
-              <p class="big-text uk-margin-remove">
-                <span class="uk-text-bold">{{stakeholders.total}}</span> Stakeholders, Page
-                <span class="uk-text-bold">{{this.currentPage}}</span> of {{this.totalPages}}
-              </p>
-
-              <ul class="uk-pagination uk-visible@m">
-                <li *ngIf="currentPage > 2 && totalPages > 5">
-                  <a (click)="goToPage(0)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a>
-                </li>
-                <li *ngIf="currentPage > 1">
-                  <a (click)="previousPage()"><span uk-pagination-previous></span></a>
-                </li>
-                <li *ngFor="let i of pages" [ngClass]="i === currentPage ? 'uk-active uk-animation-fade': ''">
-                  <a (click)="goToPage(i - 1)">{{i}}</a>
-                </li>
-                <li *ngIf="currentPage !== totalPages">
-                  <a (click)="nextPage()"><span uk-pagination-next></span></a>
-                </li>
-                <li *ngIf="currentPage < totalPages && totalPages > 5">
-                  <a (click)="goToPage(totalPages-1)"><span uk-pagination-next></span><span uk-pagination-next></span></a>
-                </li>
-              </ul>
-
+        @if (ready) {
+          <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
+            <div class="uk-width-1-1">
+              <div class="uk-flex uk-flex-between uk-flex-middle">
+                <p class="big-text uk-margin-remove">
+                  <span class="uk-text-bold">{{stakeholders.total}}</span> Stakeholders, Page
+                  <span class="uk-text-bold">{{this.currentPage}}</span> of {{this.totalPages}}
+                </p>
+                <ul class="uk-pagination uk-visible@m">
+                  @if (currentPage > 2 && totalPages > 5) {
+                    <li>
+                      <a (click)="goToPage(0)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a>
+                    </li>
+                  }
+                  @if (currentPage > 1) {
+                    <li>
+                      <a (click)="previousPage()"><span uk-pagination-previous></span></a>
+                    </li>
+                  }
+                  @for (i of pages; track i) {
+                    <li [ngClass]="i === currentPage ? 'uk-active uk-animation-fade': ''">
+                      <a (click)="goToPage(i - 1)">{{i}}</a>
+                    </li>
+                  }
+                  @if (currentPage !== totalPages) {
+                    <li>
+                      <a (click)="nextPage()"><span uk-pagination-next></span></a>
+                    </li>
+                  }
+                  @if (currentPage < totalPages && totalPages > 5) {
+                    <li>
+                      <a (click)="goToPage(totalPages-1)"><span uk-pagination-next></span><span uk-pagination-next></span></a>
+                    </li>
+                  }
+                </ul>
+              </div>
             </div>
-
           </div>
-        </div>
+        }
 
         <!--Tabs Buttons-->
         <div class="uk-flex uk-flex-center uk-margin">
@@ -77,46 +84,54 @@
             <li>
               <!--Card View-->
               <div class="uk-child-width-1-4@l uk-child-width-1-3@m uk-child-width-1-1@s uk-grid-match" data-uk-grid>
-                <div *ngFor="let stakeholder of stakeholders?.results"
-                     [ngClass]="{'uk-width-1-1': stakeholders?.results?.length === 1}">
-                  <div class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
-                    <div class="uk-card-body">
-                      <div>Name: {{stakeholder.name}}</div>
-                      <div>Id: {{stakeholder.id}}</div>
-                      <div>Country: {{stakeholder.country}}</div>
-                    </div>
-                    <div class="uk-card-footer uk-flex uk-flex-right">
-                      <a class="uk-flex uk-flex-middle uk-margin-right" [routerLink]="[stakeholder.id]">
-                        <span class="material-icons md-18 uk-margin-small-right">update</span>Update Managers
-                      </a>
-                      <a class="uk-flex uk-flex-middle" uk-toggle="target: #modal-center" (click)="openForEdit(stakeholder)">
-                        <span class="material-icons md-18 uk-margin-small-right">mode_edit</span>Edit
-                      </a>
+                @for (stakeholder of stakeholders?.results; track stakeholder) {
+                  <div
+                    [ngClass]="{'uk-width-1-1': stakeholders?.results?.length === 1}">
+                    <div class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
+                      <div class="uk-card-body">
+                        <div>Name: {{stakeholder.name}}</div>
+                        <div>Id: {{stakeholder.id}}</div>
+                        <div>Country: {{stakeholder.country}}</div>
+                      </div>
+                      <div class="uk-card-footer uk-flex uk-flex-right">
+                        <a class="uk-flex uk-flex-middle uk-margin-right" [routerLink]="[stakeholder.id]">
+                          <span class="material-icons md-18 uk-margin-small-right">update</span>Update Managers
+                        </a>
+                        <a class="uk-flex uk-flex-middle" uk-toggle="target: #modal-center" (click)="openForEdit(stakeholder)">
+                          <span class="material-icons md-18 uk-margin-small-right">mode_edit</span>Edit
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
+                }
               </div>
             </li>
             <li>
               <!--Table View-->
               <table class="uk-table uk-table-striped">
                 <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Id</th>
-                  <th>Country</th>
-                  <th>Managers</th>
-                  <th>Contributors</th>
-                </tr>
+                  <tr>
+                    <th>Name</th>
+                    <th>Id</th>
+                    <th>Country</th>
+                    <th>Managers</th>
+                    <th>Contributors</th>
+                  </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let stakeholder of stakeholders?.results">
-                  <td>{{stakeholder.name}}</td>
-                  <td>{{stakeholder.id}}</td>
-                  <td>{{stakeholder.country}}</td>
-                  <td><span *ngFor="let admin of stakeholder.admins; let i = index">{{(i === 0 ? '': ', ') + admin}} </span></td>
-                  <td><span *ngFor="let member of stakeholder.members; let i = index">{{(i === 0 ? '': ', ') + member}}</span></td>
-                </tr>
+                  @for (stakeholder of stakeholders?.results; track stakeholder) {
+                    <tr>
+                      <td>{{stakeholder.name}}</td>
+                      <td>{{stakeholder.id}}</td>
+                      <td>{{stakeholder.country}}</td>
+                      <td>@for (admin of stakeholder.admins; track admin; let i = $index) {
+                        <span>{{(i === 0 ? '': ', ') + admin}} </span>
+                      }</td>
+                      <td>@for (member of stakeholder.members; track member; let i = $index) {
+                        <span>{{(i === 0 ? '': ', ') + member}}</span>
+                      }</td>
+                    </tr>
+                  }
                 </tbody>
               </table>
             </li>
@@ -129,63 +144,61 @@
 
     <!--<pre>{{stakeholders.results | json}}</pre> -->
 
-<!--    <pre>-->
-<!--coordinator:-->
-<!--      {{ coordinator | json }}-->
+    <!--    <pre>-->
+    <!--coordinator:-->
+    <!--      {{ coordinator | json }}-->
 
-<!--      stakeholders:-->
-<!--      {{ stakeholders | json }}-->
-<!--</pre>-->
+    <!--      stakeholders:-->
+    <!--      {{ stakeholders | json }}-->
+  <!--</pre>-->
 
 
-    <div *ngIf="ready" id="modal-center" class="uk-flex-top" data-uk-modal>
+  @if (ready) {
+    <div id="modal-center" class="uk-flex-top" data-uk-modal>
       <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-
         <button class="uk-modal-close-default" type="button" data-uk-close></button>
-
         <!--    <div class="uk-modal-header">-->
         <div class="uk-text-center">
           <h2 class="uk-modal-title">{{edit ? 'Edit' : 'Add'}} Stakeholder</h2>
         </div>
-        <!--    </div>-->
-        <div class="uk-modal-body">
-          <form class="uk-margin-large" [formGroup]="stakeholderForm">
-
-            <div class="uk-margin" uk-grid>
-              <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Name</label>
-              <div class="uk-form-controls uk-width-4-5">
-                <input class="uk-input" [formControlName]="'name'" id="name" type="text" placeholder="Stakeholder name">
-              </div>
+      <!--    </div>-->
+      <div class="uk-modal-body">
+        <form class="uk-margin-large" [formGroup]="stakeholderForm">
+          <div class="uk-margin" uk-grid>
+            <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Name</label>
+            <div class="uk-form-controls uk-width-4-5">
+              <input class="uk-input" [formControlName]="'name'" id="name" type="text" placeholder="Stakeholder name">
             </div>
-
-            <div class="uk-margin" uk-grid>
-              <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Country</label>
-              <div class="uk-form-controls uk-width-4-5">
-                <input class="uk-input" id="country" formControlName="country" type="text" placeholder="Use alpha-2 code">
-              </div>
-              <div class="uk-margin-small uk-width-1-1 uk-text-italic uk-flex uk-flex-right">
-                <a href="https://www.iso.org/obp/ui/#search/code/" target="_blank">Alpha-2 code list</a>
-              </div>
+          </div>
+          <div class="uk-margin" uk-grid>
+            <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Country</label>
+            <div class="uk-form-controls uk-width-4-5">
+              <input class="uk-input" id="country" formControlName="country" type="text" placeholder="Use alpha-2 code">
             </div>
-
-            <div class="uk-margin" uk-grid>
-              <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Type</label>
-              <div class="uk-form-controls uk-width-4-5">
-                <input class="uk-input" id="subtype" formControlName="subType" type="text" placeholder="">
-              </div>
+            <div class="uk-margin-small uk-width-1-1 uk-text-italic uk-flex uk-flex-right">
+              <a href="https://www.iso.org/obp/ui/#search/code/" target="_blank">Alpha-2 code list</a>
             </div>
-
-          </form>
-
-          <!--      <pre>{{stakeholderForm.value | json}}</pre>-->
-        </div>
-        <div class="uk-text-right">
-          <button *ngIf="!edit" class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="addStakeholder()">Add</button>
-          <button *ngIf="edit" class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="updateStakeholder()">Update</button>
-        </div>
-
+          </div>
+          <div class="uk-margin" uk-grid>
+            <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Type</label>
+            <div class="uk-form-controls uk-width-4-5">
+              <input class="uk-input" id="subtype" formControlName="subType" type="text" placeholder="">
+            </div>
+          </div>
+        </form>
+        <!--      <pre>{{stakeholderForm.value | json}}</pre>-->
+      </div>
+      <div class="uk-text-right">
+        @if (!edit) {
+          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="addStakeholder()">Add</button>
+        }
+        @if (edit) {
+          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="updateStakeholder()">Update</button>
+        }
       </div>
     </div>
-
   </div>
+}
+
+</div>
 </div>

@@ -17,35 +17,41 @@
           </button>
         </div>
 
-        <div class="uk-overflow-auto uk-margin-medium-top" *ngIf="members && members.members?.length > 0">
-          <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
-            <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let member of members?.members">
-              <td> {{ member.fullname }}</td>
-              <td> {{ member.email }}</td>
-              <td>
-              <span class="material-icons"
-                    style="cursor: pointer"
-                    (click)="openRemoveModal(member.id)">
-              delete
-            </span>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
+        @if (members && members.members?.length > 0) {
+          <div class="uk-overflow-auto uk-margin-medium-top">
+            <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (member of members?.members; track member) {
+                  <tr>
+                    <td> {{ member.fullname }}</td>
+                    <td> {{ member.email }}</td>
+                    <td>
+                      <span class="material-icons"
+                        style="cursor: pointer"
+                        (click)="openRemoveModal(member.id)">
+                        delete
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
         <!-- Empty table -->
-        <div *ngIf="members && members.members?.length === 0"
-             class="uk-text-center uk-text-muted">
-          No coordinators found.
-        </div>
+        @if (members && members.members?.length === 0) {
+          <div
+            class="uk-text-center uk-text-muted">
+            No coordinators found.
+          </div>
+        }
       </div>
     </div>
   </div>
@@ -55,15 +61,17 @@
 <div id="add-coordinator-modal" uk-modal="esc-close: false; bg-close: false">
   <div class="uk-modal-dialog uk-modal-body">
     <h4>Add Coordinator Member</h4>
-    <p *ngIf="errorMessage" class="uk-text-warning">
-      {{ errorMessage }}
-    </p>
+    @if (errorMessage) {
+      <p class="uk-text-warning">
+        {{ errorMessage }}
+      </p>
+    }
     <input
       [(ngModel)]="selectedMemberEmail"
       class="uk-input"
       type="email"
       placeholder="Coordinator member email"
-    />
+      />
 
     <div class="uk-flex uk-flex-right uk-margin-top">
       <button

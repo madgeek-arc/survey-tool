@@ -8,7 +8,7 @@ import {
   MenuItem,
   MenuSection
 } from "../../shared/dashboard-side-menu/dashboard-side-menu.component";
-import { NgIf } from "@angular/common";
+
 import { SharedModule } from "../../../../app/shared/shared.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashboard-side-menu.service";
@@ -20,10 +20,9 @@ import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashb
   standalone: true,
   imports: [
     RouterOutlet,
-    NgIf,
     DashboardSideMenuComponent,
     SharedModule
-  ]
+]
 })
 
 export class ContributionsDashboardComponent implements OnInit, OnDestroy{
