@@ -1,7 +1,9 @@
-import { Injectable } from "@angular/core";
+import {inject, Injectable} from "@angular/core";
 import { environment } from "../../environments/environment";
 import { BehaviorSubject, Subject } from "rxjs";
 import { UserActivity } from "../domain/userInfo";
+import { HttpClient } from "@angular/common/http";
+import {XsrfTokenExtractor} from "../../catalogue-ui/services/xsrf-token-extractor.service";
 
 declare var SockJS;
 declare var Stomp;
@@ -28,6 +30,8 @@ export class WebsocketService {
   private dropConnection = false;
   private userSessionId: string | null = null;
 
+  private xsrf = inject(XsrfTokenExtractor);
+
   stompClient: Promise<typeof Stomp>;
   activeUsers: BehaviorSubject<UserActivity[]> = new BehaviorSubject<UserActivity[]>(null);
   edit: Subject<Revision> = new Subject<Revision>();
@@ -37,7 +41,7 @@ export class WebsocketService {
   constructor() {}
 
   initializeWebSocketConnection(id: string, resourceType: string) {
-    const ws = new SockJS(URL);
+    const ws = new SockJS(URL, undefined, {withCredentials: true});
     const that = this;
 
     this.dropConnection = false;
@@ -48,7 +52,7 @@ export class WebsocketService {
       let stomp = Stomp.over(ws);
 
       stomp.debug = null;
-      stomp.connect({}, function(frame) {
+      stomp.connect(this.xsrf.getHeader(), function (frame) {
         const timer = setInterval(() => {
           if (stomp.connected) {
             clearInterval(timer);
@@ -90,20 +94,20 @@ export class WebsocketService {
   };
 
   WsLeave(action: string) { // {} is for headers
-    this.stompClient?.then( client => client.send(`/app/leave/${this.type}/${this.surveyAnswerId}`, {}, action));
+    this.stompClient?.then(client => client.send(`/app/leave/${this.type}/${this.surveyAnswerId}`, {}, action));
   }
 
   WsJoin(action: string) {
-    this.stompClient?.then( client => client.send(`/app/join/${this.type}/${this.surveyAnswerId}`, {}, action));
+    this.stompClient?.then(client => client.send(`/app/join/${this.type}/${this.surveyAnswerId}`, {}, action));
   }
 
   WsFocus(field?: string, value?: string) {
-    this.stompClient?.then( client => client.send(`/app/focus/${this.type}/${this.surveyAnswerId}/${field}`, {}, value));
+    this.stompClient?.then(client => client.send(`/app/focus/${this.type}/${this.surveyAnswerId}/${field}`, {}, value));
   }
 
   WsEdit(value: { field: string; value: any; action?: Action; }) {
     // console.log(value);
-    this.stompClient?.then( client => client.send(`/app/edit/${this.type}/${this.surveyAnswerId}`, {}, JSON.stringify(value)));
+    this.stompClient?.then(client => client.send(`/app/edit/${this.type}/${this.surveyAnswerId}`, {}, JSON.stringify(value)));
   }
 
   closeWs() {
