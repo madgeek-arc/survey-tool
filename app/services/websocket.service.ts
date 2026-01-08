@@ -1,9 +1,8 @@
-import {inject, Injectable} from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { BehaviorSubject, Subject } from "rxjs";
 import { UserActivity } from "../domain/userInfo";
-import { HttpClient } from "@angular/common/http";
-import {XsrfTokenExtractor} from "../../catalogue-ui/services/xsrf-token-extractor.service";
+import { XsrfTokenExtractor } from "../../catalogue-ui/services/xsrf-token-extractor.service";
 
 declare var SockJS;
 declare var Stomp;
