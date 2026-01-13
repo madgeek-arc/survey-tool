@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { UntypedFormGroup } from "@angular/forms";
 import { zip } from "rxjs/internal/observable/zip";
 import { SurveyComponent } from "../../../../../catalogue-ui/pages/dynamic-form/survey.component";
 import { Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
@@ -10,11 +11,10 @@ import { Stakeholder, UserActivity, UserInfo } from "../../../../domain/userInfo
 import { WebsocketService } from "../../../../services/websocket.service";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
+import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
-import { UntypedFormGroup } from "@angular/forms";
 
-declare var require: any;
-const seedRandom = require('seedrandom');
+// declare var require: any;declare var require: any;
 
 @Component({
     selector: 'app-survey-form',
@@ -25,6 +25,11 @@ const seedRandom = require('seedrandom');
 
 export class SurveyFormComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
+  private surveyService = inject(SurveyService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private wsService = inject(WebsocketService);
+  private userService =  inject(UserService);
 
   @ViewChild(SurveyComponent) child: SurveyComponent
 
@@ -45,9 +50,6 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   action: string = null;
   successMessage = '';
   errorMessage = '';
-
-  constructor(private surveyService: SurveyService, private route: ActivatedRoute, private router: Router,
-              private wsService: WebsocketService, private userService: UserService) {}
 
   ngOnInit() {
     this.ready = false;
@@ -150,31 +152,20 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
   validateSurveyAnswer(valid: boolean) {
     console.log('Is valid: ', valid);
-    this.surveyService.changeAnswerValidStatus(this.surveyAnswer.id, !this.surveyAnswer.validated).subscribe(
-      next => {
+    this.surveyService.changeAnswerValidStatus(this.surveyAnswer.id, !this.surveyAnswer.validated).subscribe({
+      next: () => {
         UIkit.modal('#validation-modal').hide();
-        this.router.navigate([`/contributions/${this.stakeholderId}/mySurveys`]);
-      },
-      error => {
-        console.error(error);
-      },
-      () => {});
+        this.router.navigate([`/contributions/${this.stakeholderId}/mySurveys`]).then();
+      }, error: (error) => {
+        console.error(error)
+      }
+    });
   }
 
   submitForm(form: UntypedFormGroup) {
     if (this.freeView) {
       return;
     } else {
-      // window.scrollTo({top: 0, behavior: 'smooth'});
-      // let postMethod = '';
-      // let firstParam = '';
-      // if (this.surveyAnswer?.id) {
-      //   postMethod = 'postItem';
-      //   firstParam = this.surveyAnswer.id;
-      // } else {
-      //   postMethod = 'postGenericItem'
-      //   firstParam = this.survey.resourceType;
-      // }
       this.surveyService.putAnswer(form.value, this.surveyAnswer.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
         res => {
           this.successMessage = 'Updated successfully!';
@@ -253,18 +244,18 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  getRandomDarkColor(sessionId: string) { // (use for background with white/light font color)
+  getRandomDarkColor(sessionId: string) { // (use for a background with white/light font color)
     const rng = seedRandom(sessionId);
     const h = Math.floor(rng() * 1000 % 361),
       s = Math.floor(rng() * 80 + 20) + '%', // set s above 20 to avoid similar grayish tones
-      // max value of l is 100, but limit it from 15 to 70 in order to generate darker colors
+      // max value of l is 100, but limit it from 15 to 70 to generate darker colors
       l = Math.floor(rng() * 55 + 15) + '%';
     // console.log(`h= ${h}, s= ${s}, l= ${l}`);
     return `hsl(${h},${s},${l})`;
   };
 
 
-  /** Mark field as active --> **/
+  /** Mark the field as active --> **/
   addClass(users: UserActivity[]) {
     users?.forEach( user => {
       if (!user.position)
