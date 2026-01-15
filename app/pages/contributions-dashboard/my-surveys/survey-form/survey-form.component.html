@@ -10,7 +10,7 @@
                       [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType" [enableWebsocket]="true"
                       [enableCommenting]="true" [activeUsers]="activeUsers" [userId]="userInfo.user.email"
                       [successMessage]="successMessage" [errorMessage]="errorMessage"
-                      (submit)="submitForm($event)" (valid)="validateSurveyAnswer($event)">
+                      (submitForm)="submitForm($event)" (valid)="validateSurveyAnswer($event)">
 
             @if (survey) {
               <div class="uk-grid form-top-section">
