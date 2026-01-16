@@ -62,7 +62,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
       if (admin !== null) {
         if (!next) {
           this.userService.changeCurrentAdministrator(admin);
-          return; // Σταματάμε εδώ! Το subscription θα ξανατρέξει αυτόματα με τα σωστά δεδομένα.
+          return;
         }
 
         this.currentGroup = admin;
