@@ -217,20 +217,21 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       if (this.currentAdministrator) {
 
         this.menuItems = [];
-        const groupIndex = 0;
 
         this.menuItems.push(
-          new MenuItem('12', 'Stakeholders Group', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, {name: 'manage_accounts'})
+          new MenuItem('13', 'My Group', null, '/contributions/' + this.currentAdministrator?.id + '/my-group', null, {name: 'group'})
         );
 
-        this.menuItems[groupIndex].items.push(
-          new MenuItem('12-0', 'Coordinators', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, { name: ''}
-          )
+        this.menuItems.push(
+          new MenuItem('12', 'User Groups', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, {name: 'manage_accounts'})
         );
 
-        this.menuItems[groupIndex].items.push(
-          new MenuItem('12-1', 'Stakeholders', null, '/contributions/' + this.currentAdministrator?.id + '/stakeholders-admin', null, { name: ''}
-          )
+        this.menuItems[1].items.push(
+          new MenuItem('12-0', 'Coordinators', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, { name: ''})
+        );
+
+        this.menuItems[1].items.push(
+          new MenuItem('12-1', 'Stakeholders', null, '/contributions/' + this.currentAdministrator?.id + '/stakeholders-admin', null, { name: ''})
         );
 
         this.menuItems.push(
@@ -239,6 +240,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
 
         this.menuSections.push({ items: this.menuItems });
       }
+
 
       this.menuItems = [];
       this.menuSections.push({

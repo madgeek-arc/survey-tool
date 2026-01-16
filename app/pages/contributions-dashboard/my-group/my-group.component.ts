@@ -3,7 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
 import {UserService} from "../../../services/user.service";
-import {Stakeholder, GroupMembers} from "../../../domain/userInfo";
+import {Stakeholder, GroupMembers, UserGroup, Administrator} from "../../../domain/userInfo";
 import {SurveyService} from "../../../services/survey.service";
 import {StakeholdersService} from "../../../services/stakeholders.service";
 import * as UIkit from 'uikit';
@@ -18,7 +18,7 @@ import * as UIkit from 'uikit';
 export class MyGroupComponent implements OnInit, OnDestroy {
 
   private _destroyed: Subject<boolean> = new Subject();
-  currentGroup: Stakeholder = null;
+  currentGroup: UserGroup = null;
   members: GroupMembers = null
   // stakeholder: Stakeholder = null;
   contributorEmail: string = null;
@@ -44,15 +44,41 @@ export class MyGroupComponent implements OnInit, OnDestroy {
               this.stakeholdersService.getStakeholder(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
                 res => {
                   this.currentGroup = res;
+                  this.userService.changeCurrentStakeholder(res as Stakeholder);
                   this.getMembers();
-                  this.userService.changeCurrentStakeholder(this.currentGroup);
                 },
-                error => console.error(error),
-                ()=> {  }
+                error => console.error(error)
               );
             }
           }
         )
+      }
+    });
+
+    // ADMINISTRATOR
+    this.userService.currentAdministrator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+      const admin = !!next ? next : JSON.parse(sessionStorage.getItem('currentAdministrator'));
+
+      if (admin !== null) {
+        if (!next) {
+          this.userService.changeCurrentAdministrator(admin);
+          return; // Σταματάμε εδώ! Το subscription θα ξανατρέξει αυτόματα με τα σωστά δεδομένα.
+        }
+
+        this.currentGroup = admin;
+        this.getMembers();
+      } else {
+        this.route.params.pipe(takeUntil(this._destroyed)).subscribe(params => {
+          if (params['id']) {
+            this.stakeholdersService.getAdministratorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+              res => {
+                if (res) {
+                  this.userService.changeCurrentAdministrator(res);
+                }
+              },
+            );
+          }
+        });
       }
     });
 
@@ -64,16 +90,30 @@ export class MyGroupComponent implements OnInit, OnDestroy {
   }
 
   getMembers() {
-    this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
-      next => {
-        this.members = next;
-      }, error => {
-        console.error(error);
-      }, () => {
-        this.userEmail = this.userService.userId;
-        this.isManager = this.checkIfManager(this.userEmail);
-      }
-    );
+
+    if (this.userService.currentStakeholder.getValue()) {
+      this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+        next => {
+          this.members = next;
+        }, error => {
+          console.error(error);
+        }, () => {
+          this.userEmail = this.userService.userId;
+          this.isManager = this.checkIfManager(this.userEmail);
+        }
+      );
+    } else if (this.userService.currentAdministrator.getValue()) {
+      this.userService.getAdministratorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+        next => {
+          this.members = next;
+        }, error => {
+          console.error(error);
+        }, () => {
+          this.userEmail = this.userService.userId;
+          this.isManager = this.checkIfManager(this.userEmail);
+        }
+      );
+    }
   }
 
   addContributor(contributor: string = 'contributor') {

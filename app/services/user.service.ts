@@ -107,6 +107,10 @@ export class UserService implements OnDestroy {
     return this.http.get<GroupMembers>(this.base + `/stakeholders/${id}/users`, this.options);
   }
 
+  getAdministratorUsers(id: string) {
+    return this.http.get<GroupMembers>(this.base + `/administrators/${id}/users`);
+  }
+
   updateProfile(profile: Profile, id: string) {
     return this.http.put<User>(this.base + `/users/${id}/profile`, profile);
   }

@@ -81,6 +81,11 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'my-group',
+        component: MyGroupComponent,
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'surveys',
         component: CoordinatorsComponent,
         canActivate: [AuthGuard]
