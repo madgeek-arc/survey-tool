@@ -3,7 +3,7 @@ import {UserService} from "../../../../services/user.service";
 import {SurveyService} from "../../../../services/survey.service";
 import {StakeholdersService} from "../../../../services/stakeholders.service";
 import {Administrator, Coordinator, GroupMembers} from "../../../../domain/userInfo";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {PageContentComponent} from "../../../../shared/page-content/page-content.component";
 import {
@@ -20,7 +20,8 @@ import UIkit from "uikit";
   imports: [
     PageContentComponent,
     SidebarMobileToggleComponent,
-    FormsModule
+    FormsModule,
+    RouterLink
 ],
   providers: [StakeholdersService]
 })
@@ -38,6 +39,12 @@ export class NewCoordinatorComponent implements OnInit {
   private administratorId: string;
   coordinatorType: string;
   coordinatorId: string;
+
+  newCoordinatorId: string = '';
+  newCoordinatorName: string = '';
+  newCoordinatorType: string = '';
+
+  coordinators: Coordinator[] = [];
 
   constructor(
     private userService: UserService,
@@ -75,19 +82,15 @@ export class NewCoordinatorComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
-          if (!res?.results?.length) {
-            this.members = {members: [], admins: []};
-            return;
-          }
-
-          this.coordinatorId = res.results[0].id;
-          this.stakeholdersService
-            .getCoordinatorUsers(this.coordinatorId)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe({
-              next: data => this.members = data,
-              error: () => this.errorMessage = 'Failed to load coordinator members'
-            });
+          this.coordinators = res.results || [];
+          console.log('All Coordinators:', this.coordinators);
+          this.coordinators.forEach(coord => {
+            this.stakeholdersService.getCoordinatorUsers(coord.id)
+             .pipe(takeUntilDestroyed(this.destroyRef))
+             .subscribe(data => {
+               (coord as any).userList = data.members;
+             })
+          })
         },
         error: () => this.errorMessage = 'Failed to load coordinators'
       });
@@ -96,9 +99,19 @@ export class NewCoordinatorComponent implements OnInit {
   resetModal(): void {
     this.selectedMemberEmail = null;
     this.errorMessage = null;
+    this.newCoordinatorName = '';
+    this.newCoordinatorId = '';
+
   }
 
-  addCoordinator(): void {
+  openAddMemberModal(coordId: string) {
+    this.coordinatorId = coordId;
+    this.selectedMemberEmail = null;
+    this.errorMessage = null;
+    UIkit.modal('#add-coordinator-modal').show();
+  }
+
+  addCoordinatorMember(): void {
     if (!this.selectedMemberEmail || !this.coordinatorId) {
       this.errorMessage = 'Invalid email or coordinator';
       return;
@@ -132,9 +145,40 @@ export class NewCoordinatorComponent implements OnInit {
       });
   }
 
-  openRemoveModal(memberId: string): void {
+  openRemoveModal(coordId: string, memberId: string): void {
+    this.coordinatorId = coordId;
     this.selectedMemberId = memberId;
     UIkit.modal('#remove-coordinator-modal').show();
+  }
+
+  createCoordinatorGroup(): void {
+    if (!this.newCoordinatorId || !this.newCoordinatorName) {
+      this.errorMessage = 'Please provide ID and Name';
+      return;
+    }
+
+    const newCoord: Coordinator = {
+      id: this.newCoordinatorId,
+      name: this.newCoordinatorName,
+      type: this.newCoordinatorType,
+      admins: [],
+      members: []
+    } as Coordinator;
+
+    this.stakeholdersService.postCoordinator(newCoord)
+     .pipe(takeUntilDestroyed(this.destroyRef))
+     .subscribe({
+       next: (res) => {
+         this.coordinators.push(res);
+
+         UIkit.modal('#create-coordinator-modal').hide();
+         this.resetModal();
+       },
+       error: (error) => {
+         console.error(error);
+         this.errorMessage = 'Failed to create coordinator'
+       }
+     });
   }
 }
 

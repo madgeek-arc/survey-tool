@@ -77,6 +77,10 @@ export class StakeholdersService {
   getCoordinatorUsers(id: string) {
     return this.httpClient.get<GroupMembers>(this.base + `/coordinators/${id}/users`);
   }
+
+  postCoordinator(coordinator: Coordinator) {
+    return this.httpClient.post<Coordinator>(this.base + `/coordinators`,coordinator, {withCredentials: true});
+  }
   /** Administrators **/
 
   getAdministratorById(id: string) {
