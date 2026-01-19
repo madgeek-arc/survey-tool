@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from "@angular/core";
-import {SurveyAnswer, ResourcePermission} from "../../../../domain/survey";
-import {UserService} from "../../../../services/user.service";
-import {Stakeholder} from "../../../../domain/userInfo";
-import {SurveyService} from "../../../../services/survey.service";
-import {Router} from "@angular/router";
-import {Subscriber} from "rxjs";
-import {ImportSurveyData, Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
+import { ResourcePermission, SurveyAnswer } from "../../../../domain/survey";
+import { UserService } from "../../../../services/user.service";
+import { Stakeholder } from "../../../../domain/userInfo";
+import { SurveyService } from "../../../../services/survey.service";
+import { Router } from "@angular/router";
+import { Subscriber } from "rxjs";
+import { ImportSurveyData, Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
 
 @Component({
     selector: 'app-survey-card',
@@ -42,7 +42,7 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
                     })
                   );
                 },
-                error => {console.debug(JSON.stringify(error))})
+                error => {console.error(error)})
             );
           }
         },
