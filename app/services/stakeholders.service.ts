@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Paging } from "../../catalogue-ui/domain/paging";
-import {Stakeholder, GroupMembers, Coordinator, Administrator} from "../domain/userInfo";
+import {Stakeholder, GroupMembers, Coordinator, Administrator, User} from "../domain/userInfo";
 import { URLParameter } from "../domain/url-parameter";
 import {Observable} from "rxjs";
 
@@ -51,6 +51,10 @@ export class StakeholdersService {
 
   getStakeholderMembers(id: string) {
     return this.httpClient.get<GroupMembers>(this.base + `/stakeholders/${id}/users`);
+  }
+
+  getStakeholderManagersPublic(id: string) {
+    return this.httpClient.get<User[]>(this.base + `/stakeholders/${id}/managers/public`);
   }
 
   /** Coordinators **/
