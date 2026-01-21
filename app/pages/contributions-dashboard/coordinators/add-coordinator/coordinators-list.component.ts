@@ -43,6 +43,8 @@ export class NewCoordinatorComponent implements OnInit {
   newCoordinatorType: string = '';
 
   editingCoordinatorName: string = '';
+  private errorTimeout: any;
+  isSaving: boolean = false;
 
   coordinators: Coordinator[] = [];
   users: Map<string, User[]> = new Map();
@@ -125,6 +127,17 @@ export class NewCoordinatorComponent implements OnInit {
     this.newCoordinatorName = '';
     this.newCoordinatorId = '';
 
+  }
+
+  showError(message: string): void {
+    this.errorMessage = message;
+
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
+    }
+    this.errorTimeout = setTimeout(() => {
+      this.errorMessage = null;
+    }, 3000);
   }
 
   openAddMemberModal(coordId: string) {
@@ -215,10 +228,15 @@ export class NewCoordinatorComponent implements OnInit {
   }
 
   updateCoordinatorGroup(): void {
-    if (!this.editingCoordinatorName || this.editingCoordinatorName.trim() === '') {
-      this.errorMessage = 'Name cannot be empty';
+    if (this.isSaving) {
       return;
     }
+    if (!this.editingCoordinatorName || this.editingCoordinatorName.trim() === '') {
+      this.showError('Name cannot be empty');
+      return;
+    }
+
+    this.isSaving = true;
 
     const updatedCoord = {
       id: this.coordinatorId,
@@ -243,10 +261,12 @@ export class NewCoordinatorComponent implements OnInit {
             UIkit.modal(modalElement).hide();
           }
           this.resetModal();
+          this.isSaving = false;
         },
         error: (err) => {
           console.error(err);
-          this.errorMessage = 'Failed to update coordinator';
+          this.showError('Failed to update coordinator');
+          this.isSaving = false;
         }
       });
   }
