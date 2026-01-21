@@ -8,76 +8,95 @@
 
       <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
         <h3 class="uk-margin-remove">Coordinators</h3>
-        <button
-          class="uk-button uk-button-primary"
-          type="button"
-          uk-toggle="target: #create-coordinator-modal">
-          Add Coordinator
-        </button>
+
+        @if (coordinators.length === 0) {
+          <button
+            class="uk-button uk-button-primary"
+            type="button"
+            uk-toggle="target: #create-coordinator-modal">
+            Add Coordinator
+          </button>
+        }
       </div>
 
       @if (errorMessage) {
         <div class="uk-alert uk-alert-danger">{{ errorMessage }}</div>
       }
 
-      @for (coord of coordinators; track coord.id) {
+      @if (isLoading) {
 
-        <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom">
-
-          <div class="uk-flex uk-flex-between uk-flex-middle">
-            <div>
-              <h3 class="uk-card-title uk-margin-remove-bottom">{{ coord.name }}</h3>
-              <div class="uk-text-meta uk-text-small">{{ coord.id }}</div>
-            </div>
-
-            <button
-              class="uk-button uk-button-primary"
-              type="button"
-              (click)="openAddMemberModal(coord.id)">
-              Add Member
-            </button>
-          </div>
-
-          @if ($any(coord).userList && $any(coord).userList.length > 0) {
-            <div class="uk-overflow-auto uk-margin-medium-top">
-              <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
-                <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th class="uk-text-right">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                  @for (member of $any(coord).userList; track member.email) {
-                    <tr>
-                      <td> {{ member.fullname }}</td>
-                      <td> {{ member.email }}</td>
-                      <td class="uk-text-right">
-                        <span class="material-icons"
-                              style="cursor: pointer"
-                              (click)="openRemoveModal(coord.id, member.id)">
-                          delete
-                        </span>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          } @else {
-            <div class="uk-text-center uk-text-muted uk-padding uk-margin-top">
-              No members found in this group.
-            </div>
-          }
-
+        <div class="uk-flex uk-flex-center uk-margin-large-top">
+          <div uk-spinner="ratio: 2"></div>
         </div>
 
-      } @empty {
-        <div class="uk-alert uk-alert-warning">No coordinator groups found.</div>
-      }
+      } @else {
 
-    </div>
+        @for (coord of coordinators; track coord.id) {
+
+          <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom">
+
+            <div class="uk-flex uk-flex-between uk-flex-middle">
+              <div>
+                <h3 class="uk-card-title uk-margin-remove-bottom">{{ coord.name }}</h3>
+                <div class="uk-text-meta uk-text-small">{{ coord.id }}</div>
+              </div>
+
+              <div>
+                <button class="uk-button uk-button-primary uk-margin-small-right"
+                        type="button"
+                        (click)="openEditModal(coord)">
+                  Edit Coordinator
+                </button>
+                <button
+                  class="uk-button uk-button-primary"
+                  type="button"
+                  (click)="openAddMemberModal(coord.id)">
+                  Add Member
+                </button>
+              </div>
+            </div>
+
+            @let group = users.get(coord.id);
+
+            @if (group.length > 0) {
+              <div class="uk-overflow-auto uk-margin-medium-top">
+                <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
+                  <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th class="uk-text-right">Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (member of group; track member.email) {
+                      <tr>
+                        <td> {{ member.fullname }}</td>
+                        <td> {{ member.email }}</td>
+                        <td class="uk-text-right">
+                          <span class="material-icons" style="cursor: pointer"
+                                (click)="openRemoveModal(coord.id, member.email)">
+                            delete
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="uk-text-center uk-text-muted uk-padding uk-margin-top">
+                No members found in this group.
+              </div>
+            }
+
+          </div>
+
+        } @empty {
+          <div class="uk-alert uk-alert-warning">No coordinator groups found.</div>
+        }
+
+      } </div>
   </div>
 </div>
 
@@ -95,7 +114,8 @@
 
     <div class="uk-flex uk-flex-right uk-margin-top">
       <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
-      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="addCoordinatorMember()">Add</button>
+      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="addCoordinatorMember()">Add
+      </button>
     </div>
   </div>
 </div>
@@ -103,7 +123,7 @@
 <div id="remove-coordinator-modal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body">
     <h4>Remove Coordinator Member</h4>
-    <p>Are you sure you want to remove this coordinator member?</p>
+    <p>Are you sure you want to remove <b>{{ selectedMemberId }}</b> from this group?</p>
     <div class="uk-flex uk-flex-right">
       <button class="uk-button uk-button-secondary uk-modal-close">Cancel</button>
       <button class="uk-button uk-button-danger uk-margin-left" (click)="confirmRemoveCoordinator()">Remove</button>
@@ -116,28 +136,32 @@
     <h4>Create New Coordinator Group</h4>
 
     <div class="uk-margin">
-      <label class="uk-form-label">Group ID</label>
-      <input [(ngModel)]="newCoordinatorId" class="uk-input" type="text" placeholder="e.g. eosc-sb-greece">
-    </div>
-
-    <div class="uk-margin">
-      <label class="uk-form-label">Group Name</label>
+      <label class="uk-form-label">Name</label>
       <input [(ngModel)]="newCoordinatorName" class="uk-input" type="text" placeholder="e.g. Greek Node">
-    </div>
-
-    <div class="uk-margin">
-      <label class="uk-form-label">Coordinator Type</label>
-      <input
-        [(ngModel)]="newCoordinatorType"
-        class="uk-input"
-        type="text"
-        placeholder="e.g. country node">
     </div>
 
     <div class="uk-flex uk-flex-right uk-margin-top">
       <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
-      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="createCoordinatorGroup()">Create</button>
+      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="createCoordinatorGroup()">
+        Create
+      </button>
     </div>
   </div>
 </div>
 
+<div id="edit-coordinator-modal">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4>Edit Coordinator Group</h4>
+
+    <div class="uk-margin">
+      <label class="uk-form-label">Group Name</label>
+      <input [(ngModel)]="editingCoordinatorName" class="uk-input" type="text">
+    </div>
+
+    <div class="uk-flex uk-flex-right uk-margin-top">
+      <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
+      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="updateCoordinatorGroup()">Save
+      </button>
+    </div>
+  </div>
+</div>

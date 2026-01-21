@@ -1,15 +1,12 @@
 import {Component, DestroyRef, inject, OnInit} from "@angular/core";
-import {UserService} from "../../../../services/user.service";
-import {SurveyService} from "../../../../services/survey.service";
 import {StakeholdersService} from "../../../../services/stakeholders.service";
-import {Administrator, Coordinator, GroupMembers} from "../../../../domain/userInfo";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {Administrator, Coordinator, GroupMembers, User} from "../../../../domain/userInfo";
+import {ActivatedRoute} from "@angular/router";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {PageContentComponent} from "../../../../shared/page-content/page-content.component";
 import {
   SidebarMobileToggleComponent
 } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
-
 import {FormsModule} from "@angular/forms";
 import UIkit from "uikit";
 
@@ -20,14 +17,15 @@ import UIkit from "uikit";
   imports: [
     PageContentComponent,
     SidebarMobileToggleComponent,
-    FormsModule,
-    RouterLink
-],
+    FormsModule
+  ],
   providers: [StakeholdersService]
 })
 export class NewCoordinatorComponent implements OnInit {
 
   private destroyRef = inject(DestroyRef);
+  private stakeholdersService = inject(StakeholdersService);
+  private route = inject(ActivatedRoute);
 
   administrator: Administrator = null;
   members: GroupMembers = null;
@@ -44,15 +42,12 @@ export class NewCoordinatorComponent implements OnInit {
   newCoordinatorName: string = '';
   newCoordinatorType: string = '';
 
-  coordinators: Coordinator[] = [];
+  editingCoordinatorName: string = '';
 
-  constructor(
-    private userService: UserService,
-    private surveyService: SurveyService,
-    private stakeholdersService: StakeholdersService,
-    private route: ActivatedRoute
-  ) {
-  }
+  coordinators: Coordinator[] = [];
+  users: Map<string, User[]> = new Map();
+
+  isLoading: boolean = true;
 
   ngOnInit() {
     this.route.params
@@ -77,22 +72,50 @@ export class NewCoordinatorComponent implements OnInit {
   }
 
   loadCoordinatorMembers() {
+    this.isLoading = true;
+
     this.stakeholdersService
       .getCoordinators(this.coordinatorType)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
           this.coordinators = res.results || [];
+          this.coordinators.sort((a, b) => {
+            return a.name.localeCompare(b.name);
+          })
           console.log('All Coordinators:', this.coordinators);
+          if (this.coordinators.length === 0) {
+            this.isLoading = false;
+            return;
+          }
+
+          let loadedCount = 0;
+
           this.coordinators.forEach(coord => {
             this.stakeholdersService.getCoordinatorUsers(coord.id)
-             .pipe(takeUntilDestroyed(this.destroyRef))
-             .subscribe(data => {
-               (coord as any).userList = data.members;
-             })
-          })
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe({
+                next: value => {
+                  this.users.set(coord.id, value.members);
+                  loadedCount++;
+                  if (loadedCount === this.coordinators.length) {
+                    this.isLoading = false;
+                  }
+                },
+                error: () => {
+                  loadedCount++;
+                  if (loadedCount === this.coordinators.length) {
+                    this.isLoading = false;
+                  }
+                }
+              });
+          });
         },
-        error: () => this.errorMessage = 'Failed to load coordinators'
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = 'Failed to load coordinators';
+          this.isLoading = false;
+        }
       });
   }
 
@@ -160,25 +183,72 @@ export class NewCoordinatorComponent implements OnInit {
     const newCoord: Coordinator = {
       id: this.newCoordinatorId,
       name: this.newCoordinatorName,
-      type: this.newCoordinatorType,
+      type: this.coordinatorType,
       admins: [],
       members: []
     } as Coordinator;
 
     this.stakeholdersService.postCoordinator(newCoord)
-     .pipe(takeUntilDestroyed(this.destroyRef))
-     .subscribe({
-       next: (res) => {
-         this.coordinators.push(res);
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.coordinators.push(res);
+          const modalElement = document.getElementById('create-coordinator-modal');
+          if (modalElement) {
+            UIkit.modal(modalElement).hide();
+          }
 
-         UIkit.modal('#create-coordinator-modal').hide();
-         this.resetModal();
-       },
-       error: (error) => {
-         console.error(error);
-         this.errorMessage = 'Failed to create coordinator'
-       }
-     });
+          // UIkit.modal('#create-coordinator-modal').hide();
+          this.resetModal();
+        },
+        error: (error) => {
+          console.error(error);
+          this.errorMessage = 'Failed to create coordinator'
+        }
+      });
+  }
+
+  openEditModal(coord: Coordinator) {
+    this.coordinatorId = coord.id;
+    this.editingCoordinatorName = coord.name;
+    UIkit.modal('#edit-coordinator-modal').show();
+  }
+
+  updateCoordinatorGroup(): void {
+    if (!this.editingCoordinatorName || this.editingCoordinatorName.trim() === '') {
+      this.errorMessage = 'Name cannot be empty';
+      return;
+    }
+
+    const updatedCoord = {
+      id: this.coordinatorId,
+      name: this.editingCoordinatorName,
+      type: this.coordinatorType,
+      admins: [],
+      members: []
+    } as Coordinator;
+
+    this.stakeholdersService.putCoordinator(updatedCoord)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          const index = this.coordinators.findIndex(c => c.id === updatedCoord.id);
+
+          if (index !== -1) {
+            this.coordinators[index].name = res.name;
+            this.coordinators.sort((a, b) => a.name.localeCompare(b.name));
+          }
+          const modalElement = document.getElementById('edit-coordinator-modal');
+          if (modalElement) {
+            UIkit.modal(modalElement).hide();
+          }
+          this.resetModal();
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = 'Failed to update coordinator';
+        }
+      });
   }
 }
 
