@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { BehaviorSubject, Subject } from "rxjs";
 import { UserActivity } from "../domain/userInfo";
-import { XsrfTokenExtractor } from "../../catalogue-ui/services/xsrf-token-extractor.service";
+import { HttpXsrfTokenExtractor } from "@angular/common/http";
 
 declare var SockJS;
 declare var Stomp;
@@ -29,7 +29,7 @@ export class WebsocketService {
   private dropConnection = false;
   private userSessionId: string | null = null;
 
-  private xsrf = inject(XsrfTokenExtractor);
+  private xsrf = inject(HttpXsrfTokenExtractor);
 
   stompClient: Promise<typeof Stomp>;
   activeUsers: BehaviorSubject<UserActivity[]> = new BehaviorSubject<UserActivity[]>(null);
@@ -51,7 +51,7 @@ export class WebsocketService {
       let stomp = Stomp.over(ws);
 
       stomp.debug = null;
-      stomp.connect(this.xsrf.getHeader(), function (frame) {
+      stomp.connect({ 'X-XSRF-TOKEN': this.xsrf.getToken() }, function (frame) {
         const timer = setInterval(() => {
           if (stomp.connected) {
             clearInterval(timer);
