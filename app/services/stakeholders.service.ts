@@ -85,6 +85,10 @@ export class StakeholdersService {
   putCoordinator(coordinator: Coordinator) {
     return this.httpClient.put<Coordinator>(this.base + `/coordinators/${coordinator.id}`,coordinator, {withCredentials: true});
   }
+
+  deleteCoordinator(coordinatorId: string) {
+    return this.httpClient.delete(this.base + `/coordinators/${coordinatorId}`);
+  }
   /** Administrators **/
 
   getAdministratorById(id: string) {

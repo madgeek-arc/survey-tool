@@ -50,6 +50,7 @@ export class NewCoordinatorComponent implements OnInit {
   users: Map<string, User[]> = new Map();
 
   isLoading: boolean = true;
+  coordinatorToDeleteId: string | null = null;
 
   ngOnInit() {
     this.route.params
@@ -188,8 +189,8 @@ export class NewCoordinatorComponent implements OnInit {
   }
 
   createCoordinatorGroup(): void {
-    if (!this.newCoordinatorId || !this.newCoordinatorName) {
-      this.errorMessage = 'Please provide ID and Name';
+    if (!this.newCoordinatorName) {
+      this.errorMessage = 'Please provide Name';
       return;
     }
 
@@ -238,12 +239,14 @@ export class NewCoordinatorComponent implements OnInit {
 
     this.isSaving = true;
 
+    const existingCoord = this.coordinators.find(c => c.id ===  this.coordinatorId);
+
     const updatedCoord = {
       id: this.coordinatorId,
       name: this.editingCoordinatorName,
       type: this.coordinatorType,
-      admins: [],
-      members: []
+      admins: existingCoord.admins,
+      members: existingCoord.members
     } as Coordinator;
 
     this.stakeholdersService.putCoordinator(updatedCoord)
@@ -269,6 +272,37 @@ export class NewCoordinatorComponent implements OnInit {
           this.isSaving = false;
         }
       });
+  }
+
+  openDeleteCoordinatorModal(coord: Coordinator): void {
+    this.coordinatorToDeleteId = coord.id;
+    UIkit.modal('#delete-coordinator-group-modal').show();
+  }
+
+  deleteCoordinatorGroup(): void {
+    if (!this.coordinatorToDeleteId || this.isSaving) return;
+    this.isSaving = true;
+
+    this.stakeholdersService.deleteCoordinator(this.coordinatorToDeleteId)
+     .pipe(takeUntilDestroyed(this.destroyRef))
+     .subscribe({
+       next: () => {
+         this.coordinators = this.coordinators.filter(c => c.id !== this.coordinatorId);
+         this.users.delete(this.coordinatorToDeleteId);
+
+         const modalElement = document.getElementById('delete-coordinator-group-modal');
+         if (modalElement) {
+           UIkit.modal(modalElement).hide();
+         }
+         this.coordinatorToDeleteId = null;
+         this.isSaving = false;
+       },
+       error: (err) => {
+         console.error(err);
+         this.showError('Failed to delete coordinator');
+         this.isSaving = false;
+       }
+     });
   }
 }
 

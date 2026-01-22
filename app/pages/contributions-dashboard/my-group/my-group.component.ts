@@ -3,7 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
 import {UserService} from "../../../services/user.service";
-import {Stakeholder, GroupMembers, UserGroup, Administrator} from "../../../domain/userInfo";
+import {Stakeholder, GroupMembers, UserGroup, Administrator, Coordinator} from "../../../domain/userInfo";
 import {SurveyService} from "../../../services/survey.service";
 import {StakeholdersService} from "../../../services/stakeholders.service";
 import * as UIkit from 'uikit';
@@ -82,6 +82,32 @@ export class MyGroupComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Coordinator
+    this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+      const coord = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
+
+      if (coord !== null) {
+        if (!next) {
+          this.userService.changeCurrentCoordinator(coord);
+          return;
+        }
+        this.currentGroup = coord;
+        this.getMembers();
+      } else {
+        this.route.params.pipe(takeUntil(this._destroyed)).subscribe(params => {
+          if (params['id']) {
+            this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+              res => {
+                if (res) {
+                  this.userService.changeCurrentCoordinator(res);
+                }
+              }
+            )
+          }
+        })
+      }
+    })
+
   }
 
   ngOnDestroy() {
@@ -113,6 +139,17 @@ export class MyGroupComponent implements OnInit, OnDestroy {
           this.isManager = this.checkIfManager(this.userEmail);
         }
       );
+    } else if (this.userService.currentCoordinator.getValue()) {
+      this.userService.getCoordinatorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+        next => {
+          this.members = next;
+        }, error => {
+          console.error(error);
+        }, () => {
+          this.userEmail = this.userService.userId;
+          this.isManager = this.checkIfManager(this.userEmail);
+        }
+      )
     }
   }
 

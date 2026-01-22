@@ -34,7 +34,9 @@
         @for (coord of coordinators; track coord.id) {
 
           <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom">
-
+            <span class="material-symbols-outlined uk-position-top-right uk-position-small delete-icon uk-text-danger"
+                  style="cursor: pointer"
+                  uk-tooltip="Delete Coordinator" (click)="openDeleteCoordinatorModal(coord)">cancel</span>
             <div class="uk-flex uk-flex-between uk-flex-middle">
               <div>
                 <h3 class="uk-card-title uk-margin-remove-bottom">{{ coord.name }}</h3>
@@ -160,7 +162,37 @@
 
     <div class="uk-flex uk-flex-right uk-margin-top">
       <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
-      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="updateCoordinatorGroup()" [disabled]="isSaving">Save
+      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="updateCoordinatorGroup()"
+              [disabled]="isSaving">Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="delete-coordinator-group-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h2 class="uk-modal-title">Delete Coordinator Group</h2>
+
+    <div class="uk-alert uk-alert-warning">
+      <div class="uk-flex uk-flex-middle">
+        <span class="material-icons uk-margin-small-right">warning</span>
+        <span>Are you sure you want to delete the group <b>{{ coordinatorToDeleteId }}</b>?</span>
+      </div>
+      <p class="uk-text-small uk-margin-remove-bottom">This action cannot be undone. All members and data associated
+        with this group will be removed.</p>
+    </div>
+
+    <div class="uk-flex uk-flex-right uk-margin-top">
+      <button class="uk-button uk-button-secondary uk-modal-close" type="button" [disabled]="isSaving">Cancel</button>
+      <button
+        class="uk-button uk-button-danger uk-margin-left"
+        type="button"
+        (click)="deleteCoordinatorGroup()"
+        [disabled]="isSaving">
+        @if (isSaving) {
+          <div uk-spinner="ratio: 0.5"></div>
+        }
+        Delete Group
       </button>
     </div>
   </div>

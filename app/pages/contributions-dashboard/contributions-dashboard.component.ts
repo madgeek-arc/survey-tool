@@ -206,6 +206,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       if (this.currentCoordinator) {
         this.menuSections.push({
           items: [
+            new MenuItem('14', 'My Group', null, '/contributions/' + this.currentCoordinator?.id + '/group', null, {name: 'group'}),
             new MenuItem('4', 'Surveys', null, '/contributions/' + this.currentCoordinator?.id + '/surveys', null, {name: 'assignment'}),
             new MenuItem('5', 'Survey Templates', null, '/contributions/' + this.currentCoordinator?.id + '/surveyTemplates', null, {name: 'assignment'}),
             new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'}),

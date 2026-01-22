@@ -19,7 +19,9 @@
                     <th class="">Name</th>
                     <th class="">Email</th>
                     <th class="">Role</th>
-                    <th class="">Actions</th>
+                    @if (isManager) {
+                      <th class="">Actions</th>
+                    }
                   </tr>
                 </thead>
                 <tbody>
@@ -48,7 +50,7 @@
                         {{member.email}}
                       </td>
                       <td class="">
-                        Contributor
+                        Member
                       </td>
                       @if (members) {
                         <td class="uk-text-nowrap">
