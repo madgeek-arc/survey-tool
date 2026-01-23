@@ -1,13 +1,14 @@
-import {Component, DestroyRef, inject, OnInit} from "@angular/core";
-import {StakeholdersService} from "../../../../services/stakeholders.service";
-import {Administrator, Coordinator, GroupMembers, User} from "../../../../domain/userInfo";
-import {ActivatedRoute} from "@angular/router";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {PageContentComponent} from "../../../../shared/page-content/page-content.component";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { ActivatedRoute } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { Administrator, Coordinator, GroupMembers, User } from "../../../../domain/userInfo";
+import { PageContentComponent } from "../../../../shared/page-content/page-content.component";
+import { StakeholdersService } from "../../../../services/stakeholders.service";
 import {
   SidebarMobileToggleComponent
 } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
-import {FormsModule} from "@angular/forms";
+import { UserService } from "../../../../services/user.service";
 import UIkit from "uikit";
 
 @Component({
@@ -25,6 +26,7 @@ export class NewCoordinatorComponent implements OnInit {
 
   private destroyRef = inject(DestroyRef);
   private stakeholdersService = inject(StakeholdersService);
+  private userService = inject(UserService);
   private route = inject(ActivatedRoute);
 
   administrator: Administrator = null;
@@ -40,7 +42,6 @@ export class NewCoordinatorComponent implements OnInit {
 
   newCoordinatorId: string = '';
   newCoordinatorName: string = '';
-  newCoordinatorType: string = '';
 
   editingCoordinatorName: string = '';
   private errorTimeout: any;
@@ -162,6 +163,7 @@ export class NewCoordinatorComponent implements OnInit {
           this.resetModal();
           UIkit.modal('#add-coordinator-modal').hide();
           this.loadCoordinatorMembers();
+          this.userService.updateUserInfo();
         },
         error: () => this.errorMessage = 'Failed to add coordinator'
       });
@@ -265,6 +267,7 @@ export class NewCoordinatorComponent implements OnInit {
           }
           this.resetModal();
           this.isSaving = false;
+          this.userService.updateUserInfo();
         },
         error: (err) => {
           console.error(err);
@@ -296,6 +299,7 @@ export class NewCoordinatorComponent implements OnInit {
          }
          this.coordinatorToDeleteId = null;
          this.isSaving = false;
+         this.userService.updateUserInfo();
        },
        error: (err) => {
          console.error(err);
