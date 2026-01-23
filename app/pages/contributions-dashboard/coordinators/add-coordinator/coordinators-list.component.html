@@ -5,110 +5,195 @@
 
   <div inner>
     <div class="uk-container uk-container-expand uk-margin-top">
-      <div class="uk-card uk-card-default uk-card-body">
 
-        <!-- Add Button -->
-        <div class="uk-flex uk-flex-right">
+      <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
+        <h3 class="uk-margin-remove">Coordinators</h3>
+
+        @if (coordinators.length === 0) {
           <button
             class="uk-button uk-button-primary"
             type="button"
-            uk-toggle="target: #add-coordinator-modal">
-            Add Member
+            uk-toggle="target: #create-coordinator-modal">
+            Add Coordinator
           </button>
-        </div>
-
-        @if (members && members.members?.length > 0) {
-          <div class="uk-overflow-auto uk-margin-medium-top">
-            <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (member of members?.members; track member) {
-                  <tr>
-                    <td> {{ member.fullname }}</td>
-                    <td> {{ member.email }}</td>
-                    <td>
-                      <span class="material-icons"
-                        style="cursor: pointer"
-                        (click)="openRemoveModal(member.id)">
-                        delete
-                      </span>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        }
-        <!-- Empty table -->
-        @if (members && members.members?.length === 0) {
-          <div
-            class="uk-text-center uk-text-muted">
-            No coordinators found.
-          </div>
         }
       </div>
-    </div>
+
+      @if (errorMessage) {
+        <div class="uk-alert uk-alert-danger">{{ errorMessage }}</div>
+      }
+
+      @if (isLoading) {
+
+        <div class="uk-flex uk-flex-center uk-margin-large-top">
+          <div uk-spinner="ratio: 2"></div>
+        </div>
+
+      } @else {
+
+        @for (coord of coordinators; track coord.id) {
+
+          <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom">
+            <span class="material-symbols-outlined uk-position-top-right uk-position-small delete-icon uk-text-danger"
+                  style="cursor: pointer"
+                  uk-tooltip="Delete Coordinator" (click)="openDeleteCoordinatorModal(coord)">cancel</span>
+            <div class="uk-flex uk-flex-between uk-flex-middle">
+              <div>
+                <h3 class="uk-card-title uk-margin-remove-bottom">{{ coord.name }}</h3>
+                <div class="uk-text-meta uk-text-small">{{ coord.id }}</div>
+              </div>
+
+              <div>
+                <button class="uk-button uk-button-primary uk-margin-small-right"
+                        type="button"
+                        (click)="openEditModal(coord)">
+                  Edit Coordinator
+                </button>
+                <button
+                  class="uk-button uk-button-primary"
+                  type="button"
+                  (click)="openAddMemberModal(coord.id)">
+                  Add Member
+                </button>
+              </div>
+            </div>
+
+            @let group = users.get(coord.id);
+
+            @if (group.length > 0) {
+              <div class="uk-overflow-auto uk-margin-medium-top">
+                <table class="uk-table uk-table-hover uk-table-middle uk-table-divider">
+                  <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th class="uk-text-right">Actions</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (member of group; track member.email) {
+                      <tr>
+                        <td> {{ member.fullname }}</td>
+                        <td> {{ member.email }}</td>
+                        <td class="uk-text-right">
+                          <span class="material-icons" style="cursor: pointer"
+                                (click)="openRemoveModal(coord.id, member.email)">
+                            delete
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="uk-text-center uk-text-muted uk-padding uk-margin-top">
+                No members found in this group.
+              </div>
+            }
+
+          </div>
+
+        } @empty {
+          <div class="uk-alert uk-alert-warning">No coordinator groups found.</div>
+        }
+
+      } </div>
   </div>
 </div>
 
-<!-- Add Coordinator modal -->
 <div id="add-coordinator-modal" uk-modal="esc-close: false; bg-close: false">
   <div class="uk-modal-dialog uk-modal-body">
     <h4>Add Coordinator Member</h4>
-    @if (errorMessage) {
-      <p class="uk-text-warning">
-        {{ errorMessage }}
-      </p>
-    }
+    <p class="uk-text-meta">Adding to group: <b>{{ coordinatorId }}</b></p>
+
     <input
       [(ngModel)]="selectedMemberEmail"
       class="uk-input"
       type="email"
       placeholder="Coordinator member email"
-      />
+    />
 
     <div class="uk-flex uk-flex-right uk-margin-top">
-      <button
-        class="uk-button uk-button-secondary uk-modal-close"
-        type="button">
-        Cancel
-      </button>
-      <button
-        class="uk-button uk-button-primary"
-        type="button"
-        (click)="addCoordinator()">
-        Add
+      <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
+      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="addCoordinatorMember()">Add
       </button>
     </div>
   </div>
 </div>
 
-<!-- Remove Coordinator modal -->
 <div id="remove-coordinator-modal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body">
     <h4>Remove Coordinator Member</h4>
-    <p>
-      Are you sure you want to remove this coodinator member?
-    </p>
+    <p>Are you sure you want to remove <b>{{ selectedMemberId }}</b> from this group?</p>
     <div class="uk-flex uk-flex-right">
-      <button
-        class="uk-button uk-button-secondary uk-modal-close">
-        Cancel
-      </button>
-      <button
-        class="uk-button uk-button-danger"
-        (click)="confirmRemoveCoordinator()">
-        Remove
+      <button class="uk-button uk-button-secondary uk-modal-close">Cancel</button>
+      <button class="uk-button uk-button-danger uk-margin-left" (click)="confirmRemoveCoordinator()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div id="create-coordinator-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4>Create New Coordinator Group</h4>
+
+    <div class="uk-margin">
+      <label class="uk-form-label">Name</label>
+      <input [(ngModel)]="newCoordinatorName" class="uk-input" type="text" placeholder="e.g. Greek Node">
+    </div>
+
+    <div class="uk-flex uk-flex-right uk-margin-top">
+      <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
+      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="createCoordinatorGroup()">
+        Create
       </button>
     </div>
   </div>
 </div>
 
+<div id="edit-coordinator-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h4>Edit Coordinator Group</h4>
 
+    <div class="uk-margin">
+      <label class="uk-form-label">Group Name</label>
+      <input [(ngModel)]="editingCoordinatorName" class="uk-input" type="text">
+    </div>
 
+    <div class="uk-flex uk-flex-right uk-margin-top">
+      <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
+      <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="updateCoordinatorGroup()"
+              [disabled]="isSaving">Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="delete-coordinator-group-modal" uk-modal="esc-close: false; bg-close: false">
+  <div class="uk-modal-dialog uk-modal-body">
+    <h2 class="uk-modal-title">Delete Coordinator Group</h2>
+
+    <div class="uk-alert uk-alert-warning">
+      <div class="uk-flex uk-flex-middle">
+        <span class="material-icons uk-margin-small-right">warning</span>
+        <span>Are you sure you want to delete the group <b>{{ coordinatorToDeleteId }}</b>?</span>
+      </div>
+      <p class="uk-text-small uk-margin-remove-bottom">This action cannot be undone. All members and data associated
+        with this group will be removed.</p>
+    </div>
+
+    <div class="uk-flex uk-flex-right uk-margin-top">
+      <button class="uk-button uk-button-secondary uk-modal-close" type="button" [disabled]="isSaving">Cancel</button>
+      <button
+        class="uk-button uk-button-danger uk-margin-left"
+        type="button"
+        (click)="deleteCoordinatorGroup()"
+        [disabled]="isSaving">
+        @if (isSaving) {
+          <div uk-spinner="ratio: 0.5"></div>
+        }
+        Delete Group
+      </button>
+    </div>
+  </div>
+</div>
