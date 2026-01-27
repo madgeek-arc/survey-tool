@@ -20,94 +20,82 @@ export class MyGroupComponent implements OnInit, OnDestroy {
   private _destroyed: Subject<boolean> = new Subject();
   currentGroup: UserGroup = null;
   members: GroupMembers = null
-  // stakeholder: Stakeholder = null;
   contributorEmail: string = null;
   userEmail: string = null;
   invitationToken: string = null;
   isManager: boolean = null;
   errorMessage: string = null;
   title = 'copy to clipboard';
+  groupType: string | null = null;
 
   constructor(private userService: UserService, private surveyService: SurveyService, private route: ActivatedRoute,
               private stakeholdersService: StakeholdersService) {
   }
 
   ngOnInit() {
-    this.userService.currentStakeholder.pipe(takeUntil(this._destroyed)).subscribe(next => {
-      this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
-      if (this.currentGroup !== null) {
-        this.getMembers();
-      } else {
-        this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
-          params => {
-            if (params['id']) {
-              this.stakeholdersService.getStakeholder(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
-                res => {
-                  this.currentGroup = res;
-                  this.userService.changeCurrentStakeholder(res as Stakeholder);
-                  this.getMembers();
-                },
-                error => console.error(error)
-              );
-            }
-          }
-        )
-      }
-    });
-
-    // ADMINISTRATOR
-    this.userService.currentAdministrator.pipe(takeUntil(this._destroyed)).subscribe(next => {
-      const admin = !!next ? next : JSON.parse(sessionStorage.getItem('currentAdministrator'));
-
-      if (admin !== null) {
-        if (!next) {
-          this.userService.changeCurrentAdministrator(admin);
-          return;
-        }
-
-        this.currentGroup = admin;
-        this.getMembers();
-      } else {
-        this.route.params.pipe(takeUntil(this._destroyed)).subscribe(params => {
-          if (params['id']) {
-            this.stakeholdersService.getAdministratorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
-              res => {
-                if (res) {
-                  this.userService.changeCurrentAdministrator(res);
-                }
-              },
-            );
-          }
-        });
-      }
-    });
-
-    // Coordinator
-    this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
-      const coord = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
-
-      if (coord !== null) {
-        if (!next) {
-          this.userService.changeCurrentCoordinator(coord);
-          return;
-        }
-        this.currentGroup = coord;
-        this.getMembers();
-      } else {
-        this.route.params.pipe(takeUntil(this._destroyed)).subscribe(params => {
-          if (params['id']) {
-            this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
-              res => {
-                if (res) {
-                  this.userService.changeCurrentCoordinator(res);
-                }
+    this.route.params.pipe(takeUntil(this._destroyed)).subscribe({
+      next: params => {
+        this.groupType = params['group'];
+        switch (params['group']) {
+          case 'stakeholder':
+            this.userService.currentStakeholder.pipe(takeUntil(this._destroyed)).subscribe(next => {
+              this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
+              if (this.currentGroup !== null) {
+                this.getMembers(params['group']);
+              } else if (params['id']) {
+                this.stakeholdersService.getStakeholder(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+                  res => {
+                    this.currentGroup = res;
+                    this.userService.changeCurrentStakeholder(res as Stakeholder);
+                    // this.getMembers(params['group']);
+                  },
+                  error => console.error(error)
+                );
               }
-            )
-          }
-        })
-      }
-    })
+            });
+            break;
 
+            case 'coordinator':
+              console.log('coordinator');
+              this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+                this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
+                if (this.currentGroup !== null) {
+                  this.getMembers(params['group']);
+                } else if (params['id']) {
+                  this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+                    res => {
+                      this.currentGroup = res;
+                      this.userService.changeCurrentCoordinator(res as Coordinator);
+                    },
+                    error => console.error(error)
+                  );
+                }
+              });
+              break;
+
+            case 'administration':
+              console.log('administrator');
+              this.userService.currentAdministrator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+                this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentAdministrator'));
+                if (this.currentGroup !== null) {
+                  this.getMembers(params['group']);
+                } else if (params['id']) {
+                  this.stakeholdersService.getAdministrators(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+                    res => {
+                      this.currentGroup = res;
+                      this.userService.changeCurrentAdministrator(res as Administrator);
+                    },
+                    error => console.error(error)
+                  );
+                }
+              });
+
+              break;
+           default:
+
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -115,42 +103,54 @@ export class MyGroupComponent implements OnInit, OnDestroy {
     this._destroyed.complete();
   }
 
-  getMembers() {
+  getMembers(group: string) {
+    switch (group) {
+      case 'stakeholder':
+        this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+          next => {
+            this.members = next;
+          }, error => {
+            console.error(error);
+          }, () => {
+            this.userEmail = this.userService.userId;
+            this.isManager = this.checkIfManager(this.userEmail);
+          }
+        );
+        break;
 
-    if (this.userService.currentStakeholder.getValue()) {
-      this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
-        next => {
-          this.members = next;
-        }, error => {
-          console.error(error);
-        }, () => {
-          this.userEmail = this.userService.userId;
-          this.isManager = this.checkIfManager(this.userEmail);
-        }
-      );
-    } else if (this.userService.currentAdministrator.getValue()) {
-      this.userService.getAdministratorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
-        next => {
-          this.members = next;
-        }, error => {
-          console.error(error);
-        }, () => {
-          this.userEmail = this.userService.userId;
-          this.isManager = this.checkIfManager(this.userEmail);
-        }
-      );
-    } else if (this.userService.currentCoordinator.getValue()) {
-      this.userService.getCoordinatorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
-        next => {
-          this.members = next;
-        }, error => {
-          console.error(error);
-        }, () => {
-          this.userEmail = this.userService.userId;
-          this.isManager = this.checkIfManager(this.userEmail);
-        }
-      )
+      case 'administration':
+        this.userService.getAdministratorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+          next => {
+            this.members = next;
+          }, error => {
+            console.error(error);
+          }, () => {
+            this.userEmail = this.userService.userId;
+            this.isManager = this.checkIfManager(this.userEmail);
+          }
+        );
+
+        break;
+
+      case 'coordinator':
+        this.userService.getCoordinatorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+          next => {
+            this.members = next;
+          }, error => {
+            console.error(error);
+          }, () => {
+            this.userEmail = this.userService.userId;
+            this.isManager = this.checkIfManager(this.userEmail);
+          }
+        )
+        break
     }
+
+    // if (this.userService.currentStakeholder.getValue()) {
+    //
+    // }  else if (this.userService.currentCoordinator.getValue()) {
+    //
+    // }
   }
 
   addContributor(contributor: string = 'contributor') {
@@ -183,7 +183,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
     this.surveyService.removeContributor(this.currentGroup.id, this.contributorEmail).pipe(takeUntil(this._destroyed)).subscribe(
       next => {
         // this.members = next;
-        this.getMembers();
+        this.getMembers(this.groupType);
         this.errorMessage = null;
         this.contributorEmail = null;
         UIkit.modal('#remove-contributor-modal').hide();

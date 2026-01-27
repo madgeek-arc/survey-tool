@@ -61,9 +61,7 @@ export class NewCoordinatorComponent implements OnInit {
 
         this.administratorId = params['id'];
 
-        this.stakeholdersService
-          .getAdministrators(this.administratorId)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+        this.stakeholdersService.getAdministrators(this.administratorId).pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: admin => {
               this.administrator = admin;
