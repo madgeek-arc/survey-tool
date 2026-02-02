@@ -118,7 +118,6 @@ export class NewCoordinatorComponent implements OnInit {
           this.coordinators.sort((a, b) => {
             return a.name.localeCompare(b.name);
           })
-          console.log('All Coordinators:', this.coordinators);
           if (this.coordinators.length === 0) {
             this.isLoading = false;
             return;
