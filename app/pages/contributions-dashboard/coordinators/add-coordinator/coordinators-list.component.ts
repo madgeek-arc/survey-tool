@@ -54,12 +54,22 @@ export class NewCoordinatorComponent implements OnInit {
   coordinatorToDeleteId: string | null = null;
 
   ngOnInit() {
-    this.route.params
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(params => {
-        if (!params['id']) return;
+    this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      let id = params['id'];
+        if (id) {
+          this.administratorId = id;
+          this.initAdminGroup(id);
+        }
 
-        this.administratorId = params['id'];
+        else if (this.route.parent) {
+          this.route.parent.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(parentParams => {
+            id = parentParams['id'];
+            if (id) {
+              this.administratorId = id;
+              this.initAdminGroup(id);
+            }
+          })
+        }
 
         this.stakeholdersService.getAdministrators(this.administratorId).pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
@@ -71,6 +81,29 @@ export class NewCoordinatorComponent implements OnInit {
             error: () => this.errorMessage = 'Failed to load administrator'
           });
       });
+  }
+
+  initAdminGroup(id: string) {
+    const sessionAdmin = JSON.parse(sessionStorage.getItem('currentAdministrator'));
+    if (sessionAdmin && sessionAdmin.id === id) {
+      this.updateSidebarAndLoadData(sessionAdmin);
+    } else {
+      this.stakeholdersService.getAdministrators(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (res) => {
+            this.updateSidebarAndLoadData(res);
+          },
+          error: () => this.errorMessage = 'Failed to load administrator'
+        });
+    }
+  }
+
+  updateSidebarAndLoadData(admin: Administrator) {
+    this.userService.changeCurrentAdministrator(admin);
+    this.administrator = admin;
+    this.coordinatorType = admin.type;
+    this.loadCoordinatorMembers();
   }
 
   loadCoordinatorMembers() {
