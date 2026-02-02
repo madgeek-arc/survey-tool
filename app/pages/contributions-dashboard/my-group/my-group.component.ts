@@ -56,7 +56,6 @@ export class MyGroupComponent implements OnInit, OnDestroy {
             break;
 
             case 'coordinator':
-              console.log('coordinator');
               this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
                 this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
                 if (this.currentGroup !== null) {
@@ -74,7 +73,6 @@ export class MyGroupComponent implements OnInit, OnDestroy {
               break;
 
             case 'administration':
-              console.log('administrator');
               this.userService.currentAdministrator.pipe(takeUntil(this._destroyed)).subscribe(next => {
                 this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentAdministrator'));
                 if (this.currentGroup !== null) {
