@@ -12,7 +12,7 @@ const headerOptions = {
     .set('Accept', 'application/json'),
 };
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class StakeholdersService {
 
   base: string = environment.API_ENDPOINT;
