@@ -22,7 +22,6 @@ export class UserService implements OnDestroy {
   currentCoordinator = new BehaviorSubject<Coordinator>(null);
   currentAdministrator = new BehaviorSubject<Administrator>(null);
 
-
   constructor(public http: HttpClient) {
     this.intervalId = setInterval(() => {
       this.updateUserInfo();
