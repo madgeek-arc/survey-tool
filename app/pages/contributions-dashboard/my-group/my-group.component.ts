@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
+import {Component, DestroyRef, inject, OnDestroy, OnInit} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
@@ -7,6 +7,7 @@ import {Stakeholder, GroupMembers, UserGroup, Administrator, Coordinator} from "
 import {SurveyService} from "../../../services/survey.service";
 import {StakeholdersService} from "../../../services/stakeholders.service";
 import * as UIkit from 'uikit';
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
     selector: 'app-contributions-my-group',
@@ -15,9 +16,9 @@ import * as UIkit from 'uikit';
     standalone: false
 })
 
-export class MyGroupComponent implements OnInit, OnDestroy {
+export class MyGroupComponent implements OnInit {
 
-  private _destroyed: Subject<boolean> = new Subject();
+  private destroyRef = inject(DestroyRef);
   currentGroup: UserGroup = null;
   members: GroupMembers = null
   contributorEmail: string = null;
@@ -28,22 +29,26 @@ export class MyGroupComponent implements OnInit, OnDestroy {
   title = 'copy to clipboard';
   groupType: string | null = null;
 
-  constructor(private userService: UserService, private surveyService: SurveyService, private route: ActivatedRoute,
-              private stakeholdersService: StakeholdersService) {
+  private userService = inject(UserService);
+  private surveyService = inject(SurveyService);
+  private route = inject(ActivatedRoute);
+  private stakeholdersService = inject(StakeholdersService);
+
+  constructor() {
   }
 
   ngOnInit() {
-    this.route.params.pipe(takeUntil(this._destroyed)).subscribe({
+    this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: params => {
         this.groupType = params['group'];
         switch (params['group']) {
           case 'stakeholder':
-            this.userService.currentStakeholder.pipe(takeUntil(this._destroyed)).subscribe(next => {
+            this.userService.currentStakeholder.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
               this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentStakeholder'));
               if (this.currentGroup !== null) {
                 this.getMembers(params['group']);
               } else if (params['id']) {
-                this.stakeholdersService.getStakeholder(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+                this.stakeholdersService.getStakeholder(params['id']).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
                   res => {
                     this.currentGroup = res;
                     this.userService.changeCurrentStakeholder(res as Stakeholder);
@@ -56,12 +61,12 @@ export class MyGroupComponent implements OnInit, OnDestroy {
             break;
 
             case 'coordinator':
-              this.userService.currentCoordinator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+              this.userService.currentCoordinator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
                 this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentCoordinator'));
                 if (this.currentGroup !== null) {
                   this.getMembers(params['group']);
                 } else if (params['id']) {
-                  this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+                  this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
                     res => {
                       this.currentGroup = res;
                       this.userService.changeCurrentCoordinator(res as Coordinator);
@@ -73,12 +78,12 @@ export class MyGroupComponent implements OnInit, OnDestroy {
               break;
 
             case 'administration':
-              this.userService.currentAdministrator.pipe(takeUntil(this._destroyed)).subscribe(next => {
+              this.userService.currentAdministrator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
                 this.currentGroup = !!next ? next : JSON.parse(sessionStorage.getItem('currentAdministrator'));
                 if (this.currentGroup !== null) {
                   this.getMembers(params['group']);
                 } else if (params['id']) {
-                  this.stakeholdersService.getAdministrators(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
+                  this.stakeholdersService.getAdministrators(params['id']).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
                     res => {
                       this.currentGroup = res;
                       this.userService.changeCurrentAdministrator(res as Administrator);
@@ -96,15 +101,15 @@ export class MyGroupComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this._destroyed.next(true);
-    this._destroyed.complete();
-  }
+  // ngOnDestroy() {
+  //   this._destroyed.next(true);
+  //   this._destroyed.complete();
+  // }
 
   getMembers(group: string) {
     switch (group) {
       case 'stakeholder':
-        this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+        this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
           next => {
             this.members = next;
           }, error => {
@@ -117,7 +122,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
         break;
 
       case 'administration':
-        this.userService.getAdministratorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+        this.userService.getAdministratorUsers(this.currentGroup.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
           next => {
             this.members = next;
           }, error => {
@@ -131,7 +136,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
         break;
 
       case 'coordinator':
-        this.userService.getCoordinatorUsers(this.currentGroup.id).pipe(takeUntil(this._destroyed)).subscribe(
+        this.userService.getCoordinatorUsers(this.currentGroup.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
           next => {
             this.members = next;
           }, error => {
@@ -155,7 +160,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
     if (this.validateEmail(this.contributorEmail)) {
 
       this.surveyService.getInvitationToken(this.contributorEmail, contributor, this.currentGroup.id)
-        .pipe(takeUntil(this._destroyed)).subscribe(
+        .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
         next => {
           this.invitationToken = location.origin + '/invitation/accept/' + next.toString();
           this.errorMessage = null;
@@ -178,7 +183,7 @@ export class MyGroupComponent implements OnInit, OnDestroy {
   }
 
   removeContributor() {
-    this.surveyService.removeContributor(this.currentGroup.id, this.contributorEmail).pipe(takeUntil(this._destroyed)).subscribe(
+    this.surveyService.removeContributor(this.currentGroup.id, this.contributorEmail).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       next => {
         // this.members = next;
         this.getMembers(this.groupType);

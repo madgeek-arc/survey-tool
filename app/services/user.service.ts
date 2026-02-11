@@ -22,7 +22,6 @@ export class UserService implements OnDestroy {
   currentCoordinator = new BehaviorSubject<Coordinator>(null);
   currentAdministrator = new BehaviorSubject<Administrator>(null);
 
-
   constructor(public http: HttpClient) {
     this.intervalId = setInterval(() => {
       this.updateUserInfo();
@@ -36,6 +35,7 @@ export class UserService implements OnDestroy {
     sessionStorage.setItem('currentStakeholder', JSON.stringify(currentGroup));
     sessionStorage.removeItem('currentCoordinator');
     sessionStorage.removeItem('currentAdministrator');
+    // if (currentGroup === null) return;
     this.currentCoordinator.next(null);
     this.currentAdministrator.next(null);
   }
@@ -46,6 +46,7 @@ export class UserService implements OnDestroy {
     sessionStorage.setItem('currentCoordinator', JSON.stringify(currentCoordinator));
     sessionStorage.removeItem('currentStakeholder');
     sessionStorage.removeItem('currentAdministrator');
+    // if (currentCoordinator === null) return;
     this.currentStakeholder.next(null);
     this.currentAdministrator.next(null);
   }
@@ -56,6 +57,7 @@ export class UserService implements OnDestroy {
     sessionStorage.setItem('currentAdministrator', JSON.stringify(current));
     sessionStorage.removeItem('currentStakeholder');
     sessionStorage.removeItem('currentCoordinator');
+    // if (current === null) return;
     this.currentStakeholder.next(null);
     this.currentCoordinator.next(null);
   }

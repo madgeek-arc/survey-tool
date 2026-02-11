@@ -199,12 +199,11 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       this.menuSections = [];
       this.menuItems = [];
 
-      this.menuSections.push({
-        items: [new MenuItem('0', 'Home', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/home', {name: 'home'})]
-      });
+
       if (this.currentStakeholder) {
         this.menuSections.push({
           items: [
+            new MenuItem('0', 'Home', null, '/contributions/' + this.currentStakeholder.id + '/stakeholder', '/contributions/' + this.currentStakeholder.id + '/stakeholder', {name: 'home'}),
             new MenuItem('1', 'My Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/mySurveys', null, {name: 'assignment'}),
             new MenuItem('2', 'My Group', null, '/contributions/' + this.currentStakeholder?.id + '/my-group/stakeholder', null, {name: 'group'}),
             new MenuItem('3', this.currentStakeholder.type.toUpperCase() + ' Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/surveys', null, {name: 'assignment'}),
@@ -215,6 +214,7 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
       if (this.currentCoordinator) {
         this.menuSections.push({
           items: [
+            new MenuItem('0', 'Home', null, '/contributions/' + this.currentCoordinator.id + '/coordinator', '/contributions/' + this.currentCoordinator.id + '/coordinator', {name: 'home'}),
             new MenuItem('14', 'My Group', null, '/contributions/' + this.currentCoordinator?.id + '/my-group/coordinator', null, {name: 'group'}),
             new MenuItem('4', 'Surveys', null, '/contributions/' + this.currentCoordinator?.id + '/surveys', null, {name: 'assignment'}),
             new MenuItem('5', 'Survey Templates', null, '/contributions/' + this.currentCoordinator?.id + '/surveyTemplates', null, {name: 'assignment'}),
@@ -229,6 +229,10 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
         this.menuItems = [];
 
         this.menuItems.push(
+          new MenuItem('0', 'Home', null, '/contributions/' + this.currentAdministrator.id + '/administrator', '/contributions/' + this.currentAdministrator.id + '/administrator', {name: 'home'})
+        );
+
+        this.menuItems.push(
           new MenuItem('13', 'My Group', null, '/contributions/' + this.currentAdministrator?.id + '/my-group/administration', null, {name: 'group'})
         );
 
@@ -236,11 +240,11 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
           new MenuItem('12', 'User Groups', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, {name: 'manage_accounts'})
         );
 
-        this.menuItems[1].items.push(
+        this.menuItems[2].items.push(
           new MenuItem('12-0', 'Coordinators', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, { name: ''})
         );
 
-        this.menuItems[1].items.push(
+        this.menuItems[2].items.push(
           new MenuItem('12-1', 'Stakeholders', null, '/contributions/' + this.currentAdministrator?.id + '/stakeholders-admin', null, { name: ''})
         );
 
