@@ -12,6 +12,7 @@ import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.
 import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
 import { NewCoordinatorComponent} from "./coordinators/add-coordinator/coordinators-list.component";
 import {AdminStakeholderComponent} from "./administrators/stakeholders/admin-stakeholder.component";
+import {AdminSurveysListComponent} from "./administrators/admin-surveys-list/admin-surveys-list.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -39,6 +40,11 @@ const contributionsDashboardRoutes: Routes = [
       },
       {
         path: 'surveyTemplates/:surveyId/freeView',
+        component: SurveyFormComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'admin-surveyTemplates/:surveyId/freeView',
         component: SurveyFormComponent,
         canActivate: [AuthGuard]
       },
@@ -88,6 +94,11 @@ const contributionsDashboardRoutes: Routes = [
       {
         path: 'surveyTemplates',
         component: SurveysListComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'admin-surveyTemplates',
+        component: AdminSurveysListComponent,
         canActivate: [AuthGuard]
       },
       {

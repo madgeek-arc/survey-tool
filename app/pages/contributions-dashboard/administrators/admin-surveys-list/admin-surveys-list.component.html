@@ -1,0 +1,127 @@
+<div page-content [fullWidth]="true">
+  <div actions class="uk-section-primary uk-preserve-color">
+    <sidebar-mobile-toggle class="uk-hidden@m uk-display-block uk-padding-small"></sidebar-mobile-toggle>
+  </div>
+  <div inner>
+    <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
+      <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+
+        @if (draftSurveys.length > 0) {
+          <h3>Draft survey(s)</h3>
+          <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+            @for (survey of draftSurveys; track survey) {
+              <div class="uk-margin-remove-top">
+                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
+                  <div class="uk-card-body">
+                    @if (survey.creationDate) {
+                      <div class="uk-flex uk-flex-right">
+                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                      </div>
+                    }
+                    <div class="uk-margin-top">
+                      <h5>{{survey.name}}</h5>
+                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+                    </div>
+                  </div>
+                  <div class="uk-card-footer uk-flex uk-flex-wrap">
+                    <div class="uk-margin-small-top">
+                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                          <span class="material-icons uk-margin-small-right">visibility</span>View
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (currentSurveys.length > 0) {
+          <h3>Current survey(s)</h3>
+          <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+            @for (survey of currentSurveys; track survey) {
+              <div class="uk-margin-remove-top">
+                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
+                  <div class="uk-card-body">
+                    @if (survey.creationDate) {
+                      <div class="uk-flex uk-flex-right">
+                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                      </div>
+                    }
+                    <div class="uk-margin-top">
+                      <h5>{{survey.name}}</h5>
+                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+                    </div>
+                  </div>
+                  <div class="uk-card-footer uk-flex uk-flex-wrap">
+                    <div class="uk-margin-small-top">
+                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                          <span class="material-icons uk-margin-small-right">visibility</span>View
+                        </div>
+                      </a>
+                    </div>
+                    @if (surveyAnswersInfo[survey.id] === false) {
+                      <div class="uk-margin-small-top">
+                        <a class="uk-cursor-pointer uk-link-reset" (click)="generateAnswers(survey.id)">
+                          <div class="uk-flex uk-flex-middle uk-animation-scale-up">
+                            <span class="material-icons uk-margin-small-right">auto_fix_high</span>Generate
+                          </div>
+                        </a>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (previousSurveys.length > 0) {
+          <h3>Previous survey(s)</h3>
+          <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+            @for (survey of previousSurveys; track survey) {
+              <div class="uk-margin-remove-top">
+                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
+                  <div class="uk-card-body">
+                    @if (survey.creationDate) {
+                      <div class="uk-flex uk-flex-right">
+                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                      </div>
+                    }
+                    <div class="uk-margin-top">
+                      <h5>{{survey.name}}</h5>
+                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+                    </div>
+                  </div>
+                  <div class="uk-card-footer uk-flex uk-flex-wrap">
+                    <div class="uk-margin-small-top">
+                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                          <span class="material-icons uk-margin-small-right">visibility</span>View
+                        </div>
+                      </a>
+                    </div>
+
+                    @if (surveyAnswersInfo[survey.id] === false) {
+                      <div class="uk-margin-small-top">
+                        <a class="uk-cursor-pointer uk-link-reset" (click)="generateAnswers(survey.id)">
+                          <div class="uk-flex uk-flex-middle uk-animation-scale-up">
+                            <span class="material-icons uk-margin-small-right">auto_fix_high</span>Generate
+                          </div>
+                        </a>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+</div>
