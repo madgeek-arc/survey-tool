@@ -112,4 +112,8 @@ export class SurveyService {
     return this.http.post(this.base + `/stakeholders/${stakeholderId}/managers`,  email );
   }
 
+  generateAnswers(surveyId: string) {
+    return this.http.post(this.base + `/answers/generate/${surveyId}`, {}, this.options);
+  }
+
 }

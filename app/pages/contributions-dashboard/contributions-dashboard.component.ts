@@ -237,14 +237,18 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
         );
 
         this.menuItems.push(
+          new MenuItem('15', 'Survey Templates', null, '/contributions/' + this.currentAdministrator?.id + '/admin-surveyTemplates', null, {name: 'assignment'}),
+        )
+
+        this.menuItems.push(
           new MenuItem('12', 'User Groups', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, {name: 'manage_accounts'})
         );
 
-        this.menuItems[2].items.push(
+        this.menuItems[3].items.push(
           new MenuItem('12-0', 'Coordinators', null, '/contributions/' + this.currentAdministrator?.id + '/coordinators', null, { name: ''})
         );
 
-        this.menuItems[2].items.push(
+        this.menuItems[3].items.push(
           new MenuItem('12-1', 'Stakeholders', null, '/contributions/' + this.currentAdministrator?.id + '/stakeholders-admin', null, { name: ''})
         );
 
