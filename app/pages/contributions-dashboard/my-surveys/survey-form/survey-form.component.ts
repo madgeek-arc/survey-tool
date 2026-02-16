@@ -14,7 +14,6 @@ import { UserService } from "../../../../services/user.service";
 import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
 
-// declare var require: any;declare var require: any;
 
 @Component({
     selector: 'app-survey-form',
