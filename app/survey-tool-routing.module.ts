@@ -1,15 +1,16 @@
-import {NgModule} from "@angular/core";
-import {RouterModule, Routes} from "@angular/router";
-import {FormBuilderComponent} from "../catalogue-ui/pages/form-builder/form-builder.component";
-import {AcceptInvitationComponent} from "./pages/accept-invitation.component.ts/accept-invitation.component";
-import {AuthGuard} from "./services/auth-guard.service";
-import {UserProfileComponent} from "./pages/user-profile/user-profile.component";
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { FormBuilderComponent } from "../catalogue-ui/pages/form-builder/form-builder.component";
+import { AcceptInvitationComponent } from "./pages/accept-invitation.component.ts/accept-invitation.component";
+import { AuthGuard } from "./services/auth-guard.service";
+import { UserProfileComponent } from "./pages/user-profile/user-profile.component";
 
 const observatoryUiRoutes: Routes = [
 
   {
     path: 'fb',
-    component: FormBuilderComponent
+    component: FormBuilderComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'invitation/accept/:invitationToken',
