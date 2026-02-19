@@ -14,7 +14,6 @@ import { UserService } from "../../../../services/user.service";
 import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
 
-// declare var require: any;declare var require: any;
 
 @Component({
     selector: 'app-survey-form',
@@ -81,7 +80,6 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             error => {console.log(error)},
             () => {
               this.ready = true;
-              // this.wsService.initializeWebSocketEditConnection(this.surveyAnswer.id, this.surveyAnswer.type);
               this.wsService.initializeWebSocketConnection(this.surveyAnswer.id, this.surveyAnswer.type);
               if (this.router.url.includes('/view')) {
                 this.action = 'view';
@@ -94,6 +92,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             }
           );
         } else {
+
           this.activeUsers = [];
           this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
             next => {this.survey = next;},

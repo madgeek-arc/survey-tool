@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, signal, Signal } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { BehaviorSubject, Subject } from "rxjs";
 import { UserActivity } from "../domain/userInfo";
@@ -24,12 +24,12 @@ interface Action {
 
 @Injectable()
 export class WebsocketService {
+  private xsrf = inject(HttpXsrfTokenExtractor);
+
   private surveyAnswerId: string | null = null;
   private type: string | null = null;
   private dropConnection = false;
   private userSessionId: string | null = null;
-
-  private xsrf = inject(HttpXsrfTokenExtractor);
 
   stompClient: Promise<typeof Stomp>;
   activeUsers: BehaviorSubject<UserActivity[]> = new BehaviorSubject<UserActivity[]>(null);
