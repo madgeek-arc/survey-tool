@@ -11,6 +11,7 @@ import {
 import { SharedModule } from "../../../../app/shared/shared.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashboard-side-menu.service";
+import { NgStyle } from "@angular/common";
 
 
 @Component({
@@ -19,7 +20,8 @@ import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashb
   imports: [
     RouterOutlet,
     DashboardSideMenuComponent,
-    SharedModule
+    SharedModule,
+    NgStyle
   ]
 })
 
