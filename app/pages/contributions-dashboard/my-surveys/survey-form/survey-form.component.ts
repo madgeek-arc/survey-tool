@@ -13,6 +13,7 @@ import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
 import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
+import { DashboardSideMenuService } from "../../../../shared/dashboard-side-menu/dashboard-side-menu.service";
 
 
 @Component({
@@ -27,6 +28,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   private surveyService = inject(SurveyService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private layoutService = inject(DashboardSideMenuService);
   private wsService = inject(WebsocketService);
   private userService =  inject(UserService);
 
@@ -53,6 +55,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.ready = false;
     this.tabsHeader = 'Sections';
+    this.layoutService.setOpen(false);
 
     this.route.url.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
     next => {
@@ -72,7 +75,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         if (!this.freeView) {
           zip(
             this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(takeUntilDestroyed(this.destroyRef)),
-            this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef))).subscribe(
+            this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef))
+          ).subscribe(
             next => {
               this.surveyAnswer = next[0];
               this.survey = next[1];
@@ -80,7 +84,6 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             error => {console.log(error)},
             () => {
               this.ready = true;
-              // this.wsService.initializeWebSocketEditConnection(this.surveyAnswer.id, this.surveyAnswer.type);
               this.wsService.initializeWebSocketConnection(this.surveyAnswer.id, this.surveyAnswer.type);
               if (this.router.url.includes('/view')) {
                 this.action = 'view';
@@ -93,6 +96,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             }
           );
         } else {
+
           this.activeUsers = [];
           this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
             next => {this.survey = next;},
@@ -127,6 +131,12 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
             // console.log(sheet);
           }
+
+          setTimeout(()=> {
+            // Add user tool tip
+            UIkit.tooltip('#'+user.sessionId, {title: user.fullname + ' currently ' + this.actionTooltip(user.action), pos: 'bottom'});
+          });
+
         });
         this.addClass(this.activeUsers);
       }
@@ -134,6 +144,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.layoutService.setOpen(true);
     if (this.surveyAnswer?.id) {
       this.wsService.WsLeave(this.action);
     }

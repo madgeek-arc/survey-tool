@@ -1,58 +1,22 @@
-<!--<div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active" [class.sidebar_main_active]="openSideBar">-->
-<!--  <app-top-menu-dashboard></app-top-menu-dashboard>-->
-<!--&lt;!&ndash;  fixme removed since importing the eosc-obs theme on the parent project. Will need to do something for just survey tool&ndash;&gt;-->
-<!--&lt;!&ndash;  <div style="margin-top: 83px"></div>&ndash;&gt;-->
-<!--  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>-->
-
-<!--  <div id="page_content">-->
-<!--    <router-outlet></router-outlet>-->
-<!--  </div>-->
-
-<!--  <div *ngIf="showFooter" style="margin-left: 320px">-->
-<!--    <app-footer></app-footer>-->
-<!--  </div>-->
-
-<!--</div>-->
-
 <!--<app-top-menu-dashboard></app-top-menu-dashboard>-->
 
 <div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active"
-  [class.sidebar_main_active]="open && (hasSidebar || hasAdminMenu)"
-  [class.sidebar_mini]="!open && (hasSidebar || hasAdminMenu)"
-  [class.sidebar_hover]="hover">
+     [class.sidebar_main_active]="open && (hasSidebar || hasAdminMenu)"
+     [class.sidebar_mini]="!open && (hasSidebar || hasAdminMenu)"
+     [class.sidebar_hover]="hover">
   <!--  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>-->
   @if (hasSidebar) {
-    <dashboard-sidebar [menuSections]="menuSections">
-      <!--    <div class="sidebar-footer uk-padding uk-position-absolute uk-position-bottom uk-margin-large-bottom uk-text-xsmall">-->
-      <!--      <div class="uk-flex uk-flex-center uk-margin-bottom">-->
-      <!--        <a class="uk-link-reset uk-flex uk-flex-middle" href="mailto:stefania.martziou@athenarc.gr">-->
-      <!--          <span class="material-icons uk-margin-small-right" style="font-size: 18px;">help</span>Support-->
-    <!--        </a>-->
-  <!--      </div>-->
-  <!--      <div class="uk-grid uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-2@l">-->
-  <!--        <a class="uk-link-reset uk-flex uk-flex-middle" href="../assets/pdf/EOSC-SB%20Privacy%20Policy%20V2.0.pdf" target="_blank">-->
-  <!--&lt;!&ndash;          <span class="material-icons uk-margin-small-right" style="font-size: 18px;">policy</span>&ndash;&gt;-->
-  <!--          Privacy policy-->
-<!--        </a>-->
-<!--        <a class="uk-link-reset uk-flex uk-flex-middle" href="../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V1.0.pdf" target="_blank">-->
-<!--&lt;!&ndash;          <span class="material-icons uk-margin-small-right" style="font-size: 18px;">policy</span>&ndash;&gt;-->
-<!--          Use policy-->
-<!--        </a>-->
-<!--      </div>-->
-<!--    </div>-->
-</dashboard-sidebar>
-}
+    <dashboard-sidebar [menuSections]="menuSections"></dashboard-sidebar>
+  }
 
-<main class="uk-width-1-1">
-  <!--    <div id="page_content">-->
-  <router-outlet></router-outlet>
-<!--    </div>-->
-</main>
+  <main class="uk-width-1-1">
+    <router-outlet></router-outlet>
+  </main>
 
-@if (showFooter) {
-  <div style="margin-left: 280px">
-    <app-footer></app-footer>
-  </div>
-}
+  @if (showFooter) {
+    <div [ngStyle]="{'margin-left': open ? '280px' : '100px'}">
+      <app-footer></app-footer>
+    </div>
+  }
 
 </div>

@@ -1,8 +1,7 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { UserService } from "../../services/user.service";
 import { Administrator, Coordinator, Stakeholder, UserInfo } from "../../domain/userInfo";
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from "@angular/router";
-import { Subscriber } from "rxjs";
 import {
   DashboardSideMenuComponent,
   MenuItem,
@@ -12,32 +11,31 @@ import {
 import { SharedModule } from "../../../../app/shared/shared.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashboard-side-menu.service";
+import { NgStyle } from "@angular/common";
 
 
 @Component({
   selector: 'app-contributions-dashboard',
   templateUrl: 'contributions-dashboard.component.html',
-  standalone: true,
   imports: [
     RouterOutlet,
     DashboardSideMenuComponent,
-    SharedModule
-]
+    SharedModule,
+    NgStyle
+  ]
 })
 
-export class ContributionsDashboardComponent implements OnInit, OnDestroy{
-
+export class ContributionsDashboardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  protected cdr: ChangeDetectorRef;
 
-  subscriptions = [];
+  // subscriptions = [];
   showFooter: boolean = true;
 
   userInfo: UserInfo;
   currentStakeholder: Stakeholder = null;
   currentCoordinator: Coordinator = null;
   currentAdministrator: Administrator = null;
-  isManager = false;
+  // isManager = false;
 
   menuItems: MenuItem[] = [];
   menuSections: MenuSection[] = [];
@@ -47,9 +45,8 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
 
   constructor(public userService: UserService, public router: Router, public route: ActivatedRoute,
               private layoutService: DashboardSideMenuService) {
-    this.userService.getUserInfo().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+    this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       res => {
-        this.userService.setUserInfo(res);
         this.userInfo = res;
         this.userService.userId = this.userInfo.user.email;
         this.setGroup();
@@ -79,12 +76,6 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
         if (stakeholderChange || this.menuSections.length === 0) {
           this.createMenuItems();
         }
-        this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: value => {
-            if (value)
-              this.isManager = this.checkIfManager();
-          }
-        });
       }
     });
     this.userService.currentCoordinator.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
@@ -115,46 +106,37 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
     this.layoutService.setOpen(true);
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if (subscription instanceof Subscriber) {
-        subscription.unsubscribe();
-      }
-    });
-  }
-
   setGroup() {
     const routeParams = this.route.parent ? this.route.parent.params : this.route.params;
-    this.subscriptions.push(
-      routeParams.subscribe(params => {
-        let groupId = params['id'];
-        if (this.userInfo.stakeholders.length) {
-          for (const stakeholder of this.userInfo.stakeholders) {
-            if (groupId === stakeholder.id){
-              // console.log(stakeholder);
-              this.userService.changeCurrentStakeholder(stakeholder);
-              break;
-            }
+
+    routeParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      let groupId = params['id'];
+      if (this.userInfo.stakeholders.length) {
+        for (const stakeholder of this.userInfo.stakeholders) {
+          if (groupId === stakeholder.id){
+            // console.log(stakeholder);
+            this.userService.changeCurrentStakeholder(stakeholder);
+            break;
           }
         }
-        if (this.userInfo.coordinators.length) {
-          for (const coordinator of this.userInfo.coordinators) {
-            if (groupId === coordinator.id) {
-              this.userService.changeCurrentCoordinator(coordinator);
-              break;
-            }
+      }
+      if (this.userInfo.coordinators.length) {
+        for (const coordinator of this.userInfo.coordinators) {
+          if (groupId === coordinator.id) {
+            this.userService.changeCurrentCoordinator(coordinator);
+            break;
           }
         }
-        if (this.userInfo.administrators.length) {
-          for (const admin of this.userInfo.administrators) {
-            if (groupId === admin.id) {
-              this.userService.changeCurrentAdministrator(admin);
-              break;
-            }
+      }
+      if (this.userInfo.administrators.length) {
+        for (const admin of this.userInfo.administrators) {
+          if (groupId === admin.id) {
+            this.userService.changeCurrentAdministrator(admin);
+            break;
           }
         }
-      })
-    );
+      }
+    });
   }
 
   findChildRouteData() {
@@ -173,20 +155,6 @@ export class ContributionsDashboardComponent implements OnInit, OnDestroy{
         return null;
       }
     }
-  }
-
-  checkIfManager(): boolean {
-    if (this.currentStakeholder) {
-      let userInfo = this.userService.getCurrentUserInfo();
-
-      for (const manager of this.currentStakeholder.admins) {
-        if (userInfo.user.email === manager){
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
   }
 
   createMenuItems() {
