@@ -5,6 +5,7 @@ import { Paging } from "../../catalogue-ui/domain/paging";
 import {Stakeholder, GroupMembers, Coordinator, Administrator, User} from "../domain/userInfo";
 import { URLParameter } from "../domain/url-parameter";
 import {Observable} from "rxjs";
+import { MonthlyViewsResponse} from "../../../app/domain/analytics";
 
 
 const headerOptions = {
@@ -55,6 +56,15 @@ export class StakeholdersService {
 
   getStakeholderManagersPublic(id: string) {
     return this.httpClient.get<User[]>(this.base + `/stakeholders/${id}/managers/public`);
+  }
+
+  getMonthlyViews(id: string): Observable<MonthlyViewsResponse> {
+    const countryCode = id.split('-').pop();
+    const months = 6;
+
+    return this.httpClient.get<MonthlyViewsResponse>(
+      this.base + `/analytics/pageviews?country=${countryCode}&months=${months}`
+    );
   }
 
   /** Coordinators **/
