@@ -5,7 +5,7 @@ import { Paging } from "../../catalogue-ui/domain/paging";
 import {Stakeholder, GroupMembers, Coordinator, Administrator, User} from "../domain/userInfo";
 import { URLParameter } from "../domain/url-parameter";
 import {Observable} from "rxjs";
-import { MonthlyViewsResponse} from "../../../app/domain/analytics";
+import { MonthlyViewsResponse} from "../domain/analytics";
 
 
 const headerOptions = {
