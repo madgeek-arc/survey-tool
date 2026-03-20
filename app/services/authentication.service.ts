@@ -1,8 +1,7 @@
-import {Injectable} from "@angular/core";
-import {deleteCookie, getCookie} from "../../catalogue-ui/shared/reusable-components/cookie-management";
+import {inject, Injectable} from "@angular/core";
 import {environment} from "../../../environments/environment";
 import {Router} from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import {HttpClient, HttpXsrfTokenExtractor} from "@angular/common/http";
 import {UserService} from "./user.service";
 
 
@@ -11,7 +10,7 @@ export class AuthenticationService {
 
   base = environment.API_ENDPOINT;
   loginRoute = environment.API_LOGIN;
-  cookieName = 'AccessToken';
+  private xsrf = inject(HttpXsrfTokenExtractor);
 
   constructor(private router: Router, private http: HttpClient, private userService: UserService) {
     // setInterval( ()=> {
@@ -36,11 +35,22 @@ export class AuthenticationService {
     window.location.href = this.loginRoute;
   }
 
-  logout() {
-    sessionStorage.clear();
-    deleteCookie(this.cookieName);
+  async logout() {
+    console.debug("Logout: Calling Logout endpoint")
+    await fetch(this.base + '/logout', {
+      method: 'POST',
+      headers: {
+        'X-XSRF-TOKEN': this.xsrf.getToken()
+      },
+      redirect: 'manual'
+    });
+
+    console.debug("Logout: Clear user and session")
     this.userService.clearUserInfo();
-    window.location.href = this.base + '/logout';
+    sessionStorage.clear();
+
+    console.debug("Logout: Redirect to home")
+    await this.router.navigate(['/']);
   }
 
   get authenticated(): boolean {
