@@ -236,9 +236,12 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
 
         if (item.isActive) {
           if (item.items?.length > 0) {
+            let hasActiveSubItem = false;
+
             item.items.forEach(subItem => {
               subItem.isActive = this.isTheActiveMenuItem(item, subItem);
               if (subItem.isActive) {
+                hasActiveSubItem = true;
                 this.layoutService.setActiveSidebarItem({
                   name: item.title,
                   icon: item.icon,
@@ -248,6 +251,12 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
                 });
               }
             });
+            if (!hasActiveSubItem) {
+              this.layoutService.setActiveSidebarItem({
+                name: item.title,
+                icon: item.icon
+              });
+            }
           } else {
             this.layoutService.setActiveSidebarItem({
               name: item.title,
