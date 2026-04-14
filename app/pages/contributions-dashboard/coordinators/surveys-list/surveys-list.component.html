@@ -6,12 +6,12 @@
     <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
       <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
 
-        @if (draftSurveys.length > 0) {
+        @if (draftSurveys().length > 0) {
           <h3>Draft survey(s)</h3>
         }
-        @if (draftSurveys.length > 0) {
+        @if (draftSurveys().length > 0) {
           <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
-            @for (survey of draftSurveys; track survey) {
+            @for (survey of draftSurveys(); track survey) {
               <div class="uk-margin-remove-top">
                 <div class="uk-card uk-card-default survey-card uk-margin-bottom">
                   <div class="uk-card-body">
@@ -20,104 +20,160 @@
                         <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
                       </div>
                     }
-                    <!--            <div class="uk-card-badge">-->
-                    <!--              Published on {{survey.creationDate | date}}-->
-                  <!--            </div>-->
-                  <div class="uk-margin-top">
-                    <h5>{{survey.name}}</h5>
-                    <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+                    <div class="uk-margin-top">
+                      <h5>{{survey.name}}</h5>
+                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+                    </div>
+                  </div>
+                  <div class="uk-card-footer uk-flex uk-flex-wrap">
+                    <div class="uk-margin-small-top">
+                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                          <span class="material-icons uk-margin-small-right">visibility</span>View
+                        </div>
+                      </a>
+                    </div>
+                    <div class="uk-margin-small-top">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="activateSurvey(survey.id)">
+                        <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
+                          <span class="material-icons uk-margin-small-right">check_circle</span>Activate
+                        </div>
+                      </a>
+                    </div>
+                    <div class="uk-margin-small-top">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="openEditDatesModal(survey)">
+                        <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
+                          <span class="material-icons uk-margin-small-right">edit_calendar</span>Edit Dates
+                        </div>
+                      </a>
+                    </div>
                   </div>
                 </div>
-                <div class="uk-card-footer uk-flex uk-flex-wrap">
-                  <div class="uk-margin-small-top">
-                    <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                      <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-                        <span class="material-icons uk-margin-small-right">visibility</span>View
-                      </div>
-                    </a>
-                  </div>
-                </div>
               </div>
-            </div>
-          }
-        </div>
-      }
-
-      @if (currentSurveys.length > 0) {
-        <h3>Current survey(s)</h3>
-      }
-      @if (currentSurveys.length > 0) {
-        <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
-          @for (survey of currentSurveys; track survey) {
-            <div class="uk-margin-remove-top">
-              <div class="uk-card uk-card-default survey-card uk-margin-bottom">
-                <div class="uk-card-body">
-                  @if (survey.creationDate) {
-                    <div class="uk-flex uk-flex-right">
-                      <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
-                    </div>
-                  }
-                  <!--            <div class="uk-card-badge">-->
-                  <!--              Published on {{survey.creationDate | date}}-->
-                <!--            </div>-->
-                <div class="uk-margin-top">
-                  <h5>{{survey.name}}</h5>
-                  <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
-                </div>
-              </div>
-              <div class="uk-card-footer uk-flex uk-flex-wrap">
-                <div class="uk-margin-small-top">
-                  <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                    <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-                      <span class="material-icons uk-margin-small-right">visibility</span>View
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
+            }
           </div>
         }
-      </div>
-    }
 
-    @if (previousSurveys.length > 0) {
-      <h3>Previous survey(s)</h3>
-    }
-    @if (previousSurveys.length > 0) {
-      <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
-        @for (survey of previousSurveys; track survey) {
-          <div class="uk-margin-remove-top">
-            <div class="uk-card uk-card-default survey-card uk-margin-bottom">
-              <div class="uk-card-body">
-                @if (survey.creationDate) {
-                  <div class="uk-flex uk-flex-right">
-                    <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+        @if (currentSurveys().length > 0) {
+          <h3>Current survey(s)</h3>
+        }
+        @if (currentSurveys().length > 0) {
+          <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+            @for (survey of currentSurveys(); track survey) {
+              <div class="uk-margin-remove-top">
+                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
+                  <div class="uk-card-body">
+                    @if (survey.creationDate) {
+                      <div class="uk-flex uk-flex-right">
+                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                      </div>
+                    }
+                    <div class="uk-margin-top">
+                      <h5>{{survey.name}}</h5>
+                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+                    </div>
                   </div>
-                }
-                <!--            <div class="uk-card-badge">-->
-                <!--              Published on {{survey.creationDate | date}}-->
-              <!--            </div>-->
-              <div class="uk-margin-top">
-                <h5>{{survey.name}}</h5>
-                <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
-              </div>
-            </div>
-            <div class="uk-card-footer uk-flex uk-flex-wrap">
-              <div class="uk-margin-small-top">
-                <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                  <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-                    <span class="material-icons uk-margin-small-right">visibility</span>View
+                  <div class="uk-card-footer uk-flex uk-flex-wrap">
+                    <div class="uk-margin-small-top">
+                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                          <span class="material-icons uk-margin-small-right">visibility</span>View
+                        </div>
+                      </a>
+                    </div>
+                    @if (surveyAnswersMap()[survey.id] === false) {
+                      <div class="uk-margin-small-top">
+                        <a class="uk-cursor-pointer uk-link-reset" (click)="generateAnswers(survey.id)">
+                          <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
+                            <span class="material-icons uk-margin-small-right">auto_fix_high</span>Generate
+                          </div>
+                        </a>
+                      </div>
+                    }
+                    <div class="uk-margin-small-top">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="openEditDatesModal(survey)">
+                        <div class="uk-flex uk-flex-middle uk-animation-scale-up" [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
+                          <span class="material-icons uk-margin-small-right">edit_calendar</span>Edit Dates
+                        </div>
+                      </a>
+                    </div>
                   </div>
-                </a>
+                </div>
               </div>
-            </div>
+            }
           </div>
-        </div>
-      }
-    </div>
-  }
+        }
 
+        @if (previousSurveys().length > 0) {
+          <h3>Previous survey(s)</h3>
+        }
+        @if (previousSurveys().length > 0) {
+          <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+            @for (survey of previousSurveys(); track survey) {
+              <div class="uk-margin-remove-top">
+                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
+                  <div class="uk-card-body">
+                    @if (survey.creationDate) {
+                      <div class="uk-flex uk-flex-right">
+                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                      </div>
+                    }
+                    <div class="uk-margin-top">
+                      <h5>{{survey.name}}</h5>
+                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+                    </div>
+                  </div>
+                  <div class="uk-card-footer uk-flex uk-flex-wrap">
+                    <div class="uk-margin-small-top">
+                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                          <span class="material-icons uk-margin-small-right">visibility</span>View
+                        </div>
+                      </a>
+                    </div>
+                    @if (surveyAnswersMap()[survey.id] === false) {
+                      <div class="uk-margin-small-top">
+                        <a class="uk-cursor-pointer uk-link-reset" (click)="generateAnswers(survey.id)">
+                          <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
+                            <span class="material-icons uk-margin-small-right">auto_fix_high</span>Generate
+                          </div>
+                        </a>
+                      </div>
+                    }
+                    <div class="uk-margin-small-top">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="activateSurvey(survey.id)">
+                        <div class="uk-flex uk-flex-middle uk-animation-scale-up" [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
+                          <span class="material-icons uk-margin-small-right">check_circle</span>Activate
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-</div>
+
+<div id="editDatesModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Edit Submission Dates</h3>
+    <div class="uk-margin">
+      <label class="uk-form-label">Start Date</label>
+      <input class="uk-input" type="date" [(ngModel)]="editStartDate">
+    </div>
+    <div class="uk-margin">
+      <label class="uk-form-label">Close Date</label>
+      <input class="uk-input" type="date" [(ngModel)]="editCloseDate">
+    </div>
+    <div class="uk-margin uk-flex uk-flex-right">
+      <button class="uk-button uk-button-default uk-modal-close uk-margin-right">Cancel</button>
+      <button class="uk-button uk-button-primary" (click)="confirmEditDates()">Confirm</button>
+    </div>
+  </div>
 </div>
