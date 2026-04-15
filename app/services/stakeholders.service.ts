@@ -103,6 +103,14 @@ export class StakeholdersService {
   deleteCoordinator(coordinatorId: string) {
     return this.httpClient.delete(this.base + `/coordinators/${coordinatorId}`);
   }
+
+  getExplorePageViews(months: number): Observable<any> {
+    return this.httpClient.get<any>(this.base + `/analytics/pageviews/explore?months=${months}`);
+  }
+
+  getCountryPageViews(country: string, months: number): Observable<any> {
+    return this.httpClient.get<any>(this.base + `/analytics/pageviews?country=${country}&months=${months}`);
+  }
   /** Administrators **/
 
   getAdministratorById(id: string) {
