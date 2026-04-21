@@ -1,85 +1,47 @@
-import {Component, OnInit} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
-import {takeUntil} from "rxjs/operators";
-import {Subject} from "rxjs";
-import {Paging} from "../../../../../catalogue-ui/domain/paging";
-import {Model} from "../../../../../catalogue-ui/domain/dynamic-form-model";
-import {UserService} from "../../../../services/user.service";
-import {SurveyService} from "../../../../services/survey.service";
-import {Coordinator} from "../../../../domain/userInfo";
-import {StakeholdersService} from "../../../../services/stakeholders.service";
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { CoordinatorSurveysFacade } from './coordinator-surveys.facade';
+import { Model } from '../../../../../catalogue-ui/domain/dynamic-form-model';
+
+declare var UIkit: any;
 
 @Component({
     selector: 'app-survey-lists',
     templateUrl: 'surveys-list.component.html',
-    providers: [StakeholdersService],
     standalone: false
 })
 
-export class SurveysListComponent implements OnInit{
+export class SurveysListComponent {
+  private facade = inject(CoordinatorSurveysFacade);
 
-  private _destroyed: Subject<boolean> = new Subject();
-  coordinator: Coordinator = null;
-  surveys: Paging<Model> = null;
-  currentSurveys: Model[] = [];
-  previousSurveys: Model[] = [];
-  draftSurveys: Model[] = [];
+  readonly surveys = toSignal(this.facade.surveys$, {initialValue: null});
+  readonly surveyAnswersMap = toSignal(this.facade.surveyAnswersMap$, {initialValue: {}});
 
-  constructor(private surveyService: SurveyService, private route: ActivatedRoute,
-              private stakeholdersService: StakeholdersService, private userService: UserService) {
+  readonly draftSurveys = computed(() => this.surveys()?.results?.filter(s => !s.locked) ?? []);
+  readonly currentSurveys = computed(() => this.surveys()?.results?.filter(s => s.locked && s.active) ?? []);
+  readonly previousSurveys = computed(() => this.surveys()?.results?.filter(s => s.locked && !s.active) ?? []);
+
+  selectedSurvey: Model | null = null;
+  editStartDate: string | null = null;
+  editCloseDate: string | null = null;
+
+  generateAnswers(surveyId: string) {
+    this.facade.generateAnswersAndRefresh(surveyId);
   }
 
-  ngOnInit() {
-    this.coordinator = JSON.parse(sessionStorage.getItem('currentCoordinator'));
-    if (!this.coordinator) {
-      this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
-        params => {
-          if (params['id']) {
-            this.stakeholdersService.getCoordinatorById(params['id']).pipe(takeUntil(this._destroyed)).subscribe(
-              res => {
-                this.coordinator = res;
-                this.userService.changeCurrentCoordinator(this.coordinator);
-              },
-              error => console.error(error),
-              ()=> {
-                this.getSurveys();
-              }
-            );
-          }
-        }
-      )
-    } else {
-      this.getSurveys();
-    }
-
+  activateSurvey(surveyId: string) {
+    this.facade.activateAndRefresh(surveyId);
   }
 
-  ngOnDestroy() {
-    this._destroyed.next(true);
-    this._destroyed.complete();
+  openEditDatesModal(survey: Model) {
+    this.selectedSurvey = survey;
+    this.editStartDate = survey.submissionStartAt;
+    this.editCloseDate = survey.submissionCloseAt;
+    UIkit.modal('#editDatesModal').show();
   }
 
-  getSurveys() {
-    this.surveyService.getSurveys('type', this.coordinator.type).subscribe(
-      next => {
-        this.surveys = next;
-        this.surveys.results.forEach(model => {
-          if (!model.locked) {
-            this.draftSurveys.push(model);
-            return;
-          }
-          if (model.locked && model.active){
-            this.currentSurveys.push(model);
-            return;
-          }
-          if (model.locked && !model.active){
-            this.previousSurveys.push(model);
-            return;
-          }
-        });
-      },
-      error => {console.error(error);}
-    );
+  confirmEditDates() {
+    this.facade.updateDatesAndRefresh(this.selectedSurvey, this.editStartDate, this.editCloseDate);
+    UIkit.modal('#editDatesModal').hide();
   }
-
 }
