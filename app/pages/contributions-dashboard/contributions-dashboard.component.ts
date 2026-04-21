@@ -175,6 +175,7 @@ export class ContributionsDashboardComponent implements OnInit {
             new MenuItem('1', 'My Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/mySurveys', null, {name: 'assignment'}),
             new MenuItem('2', 'My Group', null, '/contributions/' + this.currentStakeholder?.id + '/my-group/stakeholder', null, {name: 'group'}),
             new MenuItem('3', this.currentStakeholder.type.toUpperCase() + ' Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/surveys', null, {name: 'assignment'}),
+            new MenuItem('16', 'News & Stories', null, '/contributions/' + this.currentStakeholder?.id + '/news-and-stories', null, {name: 'article'}),
             new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'})
           ]
         });

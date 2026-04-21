@@ -116,4 +116,8 @@ export class SurveyService {
     return this.http.post(this.base + `/answers/generate/${surveyId}`, {}, this.options);
   }
 
+  updateSurvey(id: string, model: Model) {
+    return this.http.put<Model>(this.base + `/surveys/${id}`, model, this.options);
+  }
+
 }
