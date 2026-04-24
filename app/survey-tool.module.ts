@@ -3,6 +3,8 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { HomeComponent } from "../../app/pages/home/home.component";
 import { CatalogueUiModule } from "../catalogue-ui/catalogue-ui.module";
+import { MentionableUsersProvider } from "../catalogue-ui/domain/mentionable-user";
+import { StakeholderMentionableUsersProvider } from "./services/stakeholder-mentionable-users.service";
 import { SurveyFormComponent } from "./pages/contributions-dashboard/my-surveys/survey-form/survey-form.component";
 import { ReusableComponentsModule } from "./shared/reusablecomponents/reusable-components.module";
 import { AuthenticationService } from "./services/authentication.service";
@@ -44,7 +46,8 @@ import {
   providers: [
     AuthenticationService,
     // AuthGuard,
-    SurveyService
+    SurveyService,
+    { provide: MentionableUsersProvider, useClass: StakeholderMentionableUsersProvider }
   ],
   exports: [
     SurveyFormComponent,
