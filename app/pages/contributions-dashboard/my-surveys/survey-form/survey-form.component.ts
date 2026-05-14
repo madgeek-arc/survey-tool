@@ -7,19 +7,19 @@ import { SurveyComponent } from "../../../../../catalogue-ui/pages/dynamic-form/
 import { Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
 import { SurveyService } from "../../../../services/survey.service";
 import { SurveyAnswer } from "../../../../domain/survey";
-import { Stakeholder, UserActivity, UserInfo } from "../../../../domain/userInfo";
-import { WebsocketService } from "../../../../services/websocket.service";
+import { Stakeholder, UserInfo } from "../../../../domain/userInfo";
+import { UserActivity, WebsocketService } from "../../../../../catalogue-ui/services/websocket.service";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
+import { DashboardSideMenuService } from "../../../../shared/dashboard-side-menu/dashboard-side-menu.service";
 import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
-import { DashboardSideMenuService } from "../../../../shared/dashboard-side-menu/dashboard-side-menu.service";
 
 
 @Component({
     selector: 'app-survey-form',
     templateUrl: 'survey-form.component.html',
-    providers: [SurveyService, StakeholdersService],
+    providers: [SurveyService, StakeholdersService, WebsocketService],
     standalone: false
 })
 
