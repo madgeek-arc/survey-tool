@@ -232,7 +232,8 @@ export class ContributionsDashboardComponent implements OnInit {
       this.menuItems = [];
       this.menuSections.push({
         items: [
-          new MenuItem('8', 'Support', 'mailto:stefania.martziou@athenarc.gr', null, null, {name: 'help'}),
+          new MenuItem('8', 'Support', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/support', null, {name:
+              'help'}),
           new MenuItem('9', 'Privacy policy', '../assets/pdf/EOSC-SB%20Privacy%20Policy%20V3.0.pdf', null, null, {name: 'policy'}),
           new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V2.pdf', null, null, {name: 'policy'})
         ]

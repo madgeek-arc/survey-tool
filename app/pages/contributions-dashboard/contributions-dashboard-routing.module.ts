@@ -13,6 +13,7 @@ import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/
 import { NewCoordinatorComponent} from "./coordinators/add-coordinator/coordinators-list.component";
 import {AdminStakeholderComponent} from "./administrators/stakeholders/admin-stakeholder.component";
 import {AdminSurveysListComponent} from "./administrators/admin-surveys-list/admin-surveys-list.component";
+import {SupportPageComponent} from "./support-page/support-page.component";
 
 const contributionsDashboardRoutes: Routes = [
   {
@@ -124,6 +125,11 @@ const contributionsDashboardRoutes: Routes = [
       {
         path: 'stakeholders-admin/:id',
         component: EditManagerComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'support',
+        component: SupportPageComponent,
         canActivate: [AuthGuard]
       }
     ]
