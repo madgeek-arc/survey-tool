@@ -108,8 +108,9 @@ export class StakeholdersService {
     return this.httpClient.get<any>(this.base + `/analytics/pageviews/explore?months=${months}`);
   }
 
-  getCountryPageViews(country: string, months: number): Observable<any> {
-    return this.httpClient.get<any>(this.base + `/analytics/pageviews?country=${country}&months=${months}`);
+  getCountryPageViews(country: string | null, months: number): Observable<any> {
+    const countryParam = country ? `&country=${country}` : '';
+    return this.httpClient.get<any>(this.base + `/analytics/pageviews?months=${months}${countryParam}`);
   }
   /** Administrators **/
 
