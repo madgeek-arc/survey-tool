@@ -15,7 +15,6 @@ import { CompareModule } from "../../../catalogue-ui/pages/dynamic-form/compare-
 import { SurveyToolModule } from "../../survey-tool.module";
 import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
 import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
-import { WebsocketService } from "../../services/websocket.service";
 import { PageContentComponent } from "../../shared/page-content/page-content.component";
 import {
   SidebarMobileToggleComponent
@@ -44,8 +43,7 @@ import {
     HistoryComponent,
     StakeholdersComponent,
     EditManagerComponent
-  ],
-  providers: [WebsocketService],
+  ]
 })
 
 export class ContributionsDashboardModule {}
