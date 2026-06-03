@@ -169,4 +169,45 @@ export class AdminSurveysFacade {
       }
     });
   }
+
+  activateSurvey$(surveyId: string) {
+    return this.surveyService.getSurvey(surveyId).pipe(
+      switchMap((model: Model) => {
+        model.active = true;
+        return this.surveyService.updateSurvey(surveyId, model);
+      }),
+      tap(() => this.refresh()),
+      catchError(err => {
+        throw err;
+      })
+    );
+  }
+
+  activateAndRefresh(surveyId: string): void {
+    this.activateSurvey$(surveyId).subscribe({
+      next: () => {},
+      error: (err) => {
+        console.error('Failed to activate survey', surveyId, err);
+      }
+    });
+  }
+
+  updateDates$(survey: Model, startDate: string | null, closeDate: string | null) {
+    const updated = Object.assign(new Model(), survey, { submissionStartAt: startDate, submissionCloseAt: closeDate });
+    return this.surveyService.updateSurvey(survey.id, updated).pipe(
+      tap(() => this.refresh()),
+      catchError(err => {
+        throw err;
+      })
+    );
+  }
+
+  updateDatesAndRefresh(survey: Model, startDate: string | null, closeDate: string | null): void {
+    this.updateDates$(survey, startDate, closeDate).subscribe({
+      next: () => {},
+      error: (err) => {
+        console.error('Failed to update dates for survey', survey.id, err);
+      }
+    });
+  }
 }
