@@ -157,6 +157,19 @@ export class CoordinatorSurveysFacade {
     );
   }
 
+  deactivateSurvey$(surveyId: string) {
+    return this.surveyService.getSurvey(surveyId).pipe(
+      switchMap((model: Model) => {
+        model.active = false;
+        return this.surveyService.updateSurvey(surveyId, model);
+      }),
+      tap(() => this.refresh()),
+      catchError(err => {
+        throw  err;
+      })
+    )
+  }
+
   activateAndRefresh(surveyId: string): void {
     this.activateSurvey$(surveyId).subscribe({
       next: () => {},
@@ -164,6 +177,15 @@ export class CoordinatorSurveysFacade {
         console.error('Failed to activate survey', surveyId, err);
       }
     });
+  }
+
+  deactivateAndRefresh(surveyId: string): void {
+    this.deactivateSurvey$(surveyId).subscribe({
+      next: () => {},
+      error: (err) => {
+        console.error('Failed to deactivate survey', err);
+      }
+    })
   }
 
   updateDates$(survey: Model, startDate: string | null, closeDate: string | null) {

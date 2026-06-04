@@ -17,18 +17,19 @@
                   <div class="uk-card-body">
                     @if (survey.creationDate) {
                       <div class="uk-flex uk-flex-right">
-                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                        <div class="uk-label uk-label-primary">Published on {{ survey.creationDate | date }}</div>
                       </div>
                     }
                     <div class="uk-margin-top">
-                      <h5>{{survey.name}}</h5>
+                      <h5>{{ survey.name }}</h5>
                       <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
                     </div>
                   </div>
                   <div class="uk-card-footer uk-flex uk-flex-wrap">
                     <div class="uk-margin-small-top">
                       <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up"
+                             style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
                           <span class="material-icons uk-margin-small-right">visibility</span>View
                         </div>
                       </a>
@@ -65,18 +66,19 @@
                   <div class="uk-card-body">
                     @if (survey.creationDate) {
                       <div class="uk-flex uk-flex-right">
-                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                        <div class="uk-label uk-label-primary">Published on {{ survey.creationDate | date }}</div>
                       </div>
                     }
                     <div class="uk-margin-top">
-                      <h5>{{survey.name}}</h5>
+                      <h5>{{ survey.name }}</h5>
                       <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
                     </div>
                   </div>
                   <div class="uk-card-footer uk-flex uk-flex-wrap">
                     <div class="uk-margin-small-top">
                       <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up"
+                             style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
                           <span class="material-icons uk-margin-small-right">visibility</span>View
                         </div>
                       </a>
@@ -92,8 +94,16 @@
                     }
                     <div class="uk-margin-small-top">
                       <a class="uk-cursor-pointer uk-link-reset" (click)="openEditDatesModal(survey)">
-                        <div class="uk-flex uk-flex-middle uk-animation-scale-up" [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
+                        <div class="uk-flex uk-flex-middle uk-animation-scale-up"
+                             [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
                           <span class="material-icons uk-margin-small-right">edit_calendar</span>Edit Dates
+                        </div>
+                      </a>
+                    </div>
+                    <div class="uk-margin-small-top">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="deactivateSurvey(survey.id)">
+                        <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
+                          <span class="material-icons uk-margin-small-right">label_off</span>Deactivate
                         </div>
                       </a>
                     </div>
@@ -115,18 +125,19 @@
                   <div class="uk-card-body">
                     @if (survey.creationDate) {
                       <div class="uk-flex uk-flex-right">
-                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+                        <div class="uk-label uk-label-primary">Published on {{ survey.creationDate | date }}</div>
                       </div>
                     }
                     <div class="uk-margin-top">
-                      <h5>{{survey.name}}</h5>
+                      <h5>{{ survey.name }}</h5>
                       <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
                     </div>
                   </div>
                   <div class="uk-card-footer uk-flex uk-flex-wrap">
                     <div class="uk-margin-small-top">
                       <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
+                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up"
+                             style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
                           <span class="material-icons uk-margin-small-right">visibility</span>View
                         </div>
                       </a>
@@ -142,7 +153,8 @@
                     }
                     <div class="uk-margin-small-top">
                       <a class="uk-cursor-pointer uk-link-reset" (click)="activateSurvey(survey.id)">
-                        <div class="uk-flex uk-flex-middle uk-animation-scale-up" [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
+                        <div class="uk-flex uk-flex-middle uk-animation-scale-up"
+                             [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
                           <span class="material-icons uk-margin-small-right">check_circle</span>Activate
                         </div>
                       </a>

@@ -33,10 +33,14 @@ export class SurveysListComponent {
     this.facade.activateAndRefresh(surveyId);
   }
 
+  deactivateSurvey(surveyId: string) {
+    this.facade.deactivateAndRefresh(surveyId);
+  }
+
   openEditDatesModal(survey: Model) {
     this.selectedSurvey = survey;
-    this.editStartDate = survey.submissionStartAt;
-    this.editCloseDate = survey.submissionCloseAt;
+    this.editStartDate = survey.submissionStartAt?.slice(0, 10) ?? null;
+    this.editCloseDate = survey.submissionCloseAt?.slice(0, 10) ?? null;
     UIkit.modal('#editDatesModal').show();
   }
 
