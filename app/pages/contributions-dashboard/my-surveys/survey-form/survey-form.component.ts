@@ -12,6 +12,7 @@ import { UserActivity, WebsocketService } from "../../../../../catalogue-ui/serv
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { UserService } from "../../../../services/user.service";
 import { DashboardSideMenuService } from "../../../../shared/dashboard-side-menu/dashboard-side-menu.service";
+import { MentionableUsersProvider } from "../../../../../catalogue-ui/domain/mentionable-user";
 import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
 
@@ -31,6 +32,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   private layoutService = inject(DashboardSideMenuService);
   private wsService = inject(WebsocketService);
   private userService =  inject(UserService);
+  private mentionableUsersProvider = inject(MentionableUsersProvider);
 
   @ViewChild(SurveyComponent) child: SurveyComponent
 
@@ -70,6 +72,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         } else {
           this.stakeholderId = params['id'];
         }
+        this.mentionableUsersProvider.contextId = this.stakeholderId;
         this.updateUserInfo();
 
         if (!this.freeView) {

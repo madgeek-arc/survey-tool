@@ -10,6 +10,7 @@ export class StakeholderMentionableUsersProvider extends MentionableUsersProvide
   private cache = new Map<string, Observable<MentionableUser[]>>();
 
   getUsers(stakeholderId: string): Observable<MentionableUser[]> {
+    console.log("Stakeholder Mentionable user");
     if (!this.cache.has(stakeholderId)) {
       const obs$ = combineLatest([
         this.stakeholdersService.getStakeholderMembers(stakeholderId),
