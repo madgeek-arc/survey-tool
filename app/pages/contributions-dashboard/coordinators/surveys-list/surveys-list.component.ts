@@ -25,16 +25,26 @@ export class SurveysListComponent {
   editStartDate: string | null = null;
   editCloseDate: string | null = null;
 
+  pendingAction: 'activate' | 'deactivate' | null = null;
+  pendingSurveyId: string | null = null;
+
   generateAnswers(surveyId: string) {
     this.facade.generateAnswersAndRefresh(surveyId);
   }
 
-  activateSurvey(surveyId: string) {
-    this.facade.activateAndRefresh(surveyId);
+  openConfirmModal(action: 'activate' | 'deactivate', surveyId: string) {
+    this.pendingAction = action;
+    this.pendingSurveyId = surveyId;
+    UIkit.modal('#confirmActionModal').show();
   }
 
-  deactivateSurvey(surveyId: string) {
-    this.facade.deactivateAndRefresh(surveyId);
+  confirmAction() {
+    if (this.pendingAction === 'activate') {
+      this.facade.activateAndRefresh(this.pendingSurveyId!);
+    } else {
+      this.facade.deactivateAndRefresh(this.pendingSurveyId!);
+    }
+    UIkit.modal('#confirmActionModal').hide();
   }
 
   openEditDatesModal(survey: Model) {
