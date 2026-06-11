@@ -35,7 +35,7 @@
                       </a>
                     </div>
                     <div class="uk-margin-small-top">
-                      <a class="uk-cursor-pointer uk-link-reset" (click)="activateSurvey(survey.id)">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="openConfirmModal('activate', survey.id)">
                         <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
                           <span class="material-icons uk-margin-small-right">check_circle</span>Activate
                         </div>
@@ -101,7 +101,7 @@
                       </a>
                     </div>
                     <div class="uk-margin-small-top">
-                      <a class="uk-cursor-pointer uk-link-reset" (click)="deactivateSurvey(survey.id)">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="openConfirmModal('deactivate', survey.id)">
                         <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
                           <span class="material-icons uk-margin-small-right">label_off</span>Deactivate
                         </div>
@@ -152,7 +152,7 @@
                       </div>
                     }
                     <div class="uk-margin-small-top">
-                      <a class="uk-cursor-pointer uk-link-reset" (click)="activateSurvey(survey.id)">
+                      <a class="uk-cursor-pointer uk-link-reset" (click)="openConfirmModal('activate', survey.id)">
                         <div class="uk-flex uk-flex-middle uk-animation-scale-up"
                              [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
                           <span class="material-icons uk-margin-small-right">check_circle</span>Activate
@@ -167,6 +167,18 @@
         }
 
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="confirmActionModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Confirm Action</h3>
+    <p>Are you sure you want to <strong>{{ pendingAction }}</strong> this survey?</p>
+    <div class="uk-margin uk-flex uk-flex-right">
+      <button class="uk-button uk-button-default uk-modal-close uk-margin-right">Cancel</button>
+      <button class="uk-button uk-button-primary" (click)="confirmAction()">Confirm</button>
     </div>
   </div>
 </div>
