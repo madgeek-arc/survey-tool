@@ -54,9 +54,12 @@ export class User {
   policiesAccepted: PolicyAccepted[];
   profile: Profile;
   id: string
+  settings: Settings;
+
 
   constructor() {
     this.profile = new Profile();
+    this.settings = new Settings();
   }
 }
 
@@ -66,6 +69,30 @@ export class PolicyAccepted {
   acceptedDate: number;
 }
 
+export class NotificationPreferences {
+  emailNotifications: boolean;
+  contactFormMessages: boolean;
+  surveyMentions: boolean;
+  surveyUpdates: boolean;
+  forwardEmails: string[];
+
+  constructor() {
+    this.emailNotifications = true;
+    this.contactFormMessages = true;
+    this.surveyMentions = true;
+    this.surveyUpdates = false;
+    this.forwardEmails = [];
+  }
+}
+
+export class Settings {
+  notificationPreferences: NotificationPreferences;
+
+  constructor() {
+    this.notificationPreferences = new NotificationPreferences();
+  }
+}
+
 export class Profile {
   picture: string | ArrayBuffer;
   position: string;
@@ -73,10 +100,10 @@ export class Profile {
   webpage: string;
 
   constructor() {
-    this.picture = null
-    this.position = null
-    this.affiliation = null
-    this.webpage = null
+    this.picture = null;
+    this.position = null;
+    this.affiliation = null;
+    this.webpage = null;
   }
 }
 

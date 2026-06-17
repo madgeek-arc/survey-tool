@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { Administrator, Coordinator, GroupMembers, Profile, Stakeholder, User, UserInfo } from "../domain/userInfo";
 import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import {Settings} from "node:http2";
 
 @Injectable()
 export class UserService implements OnDestroy {
@@ -123,6 +124,10 @@ export class UserService implements OnDestroy {
 
   updateProfilePicture(picture: string | ArrayBuffer, id: string) {
     return this.http.post(this.base + `/users/${id}/profile/picture`, {picture});
+  }
+
+  updateSettings(settings: Settings, id: string) {
+    return this.http.put<User>(this.base + `/users/${id}/settings`, settings);
   }
 
 
