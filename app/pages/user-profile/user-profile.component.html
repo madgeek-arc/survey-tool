@@ -29,6 +29,12 @@
           <!-- Name + Email + selected file name -->
           <div class="profile-info">
             <div class="profile-name">{{ userInfo.user.surname + ' ' + userInfo.user.name }}</div>
+            @if (edit) {
+              <div class="profile-name-locked">
+                <span class="material-icons">lock</span>
+                <span class="uk-text-small">Name can't be changed</span>
+              </div>
+            }
             @if (!edit) {
               <div class="uk-text-muted uk-text-small">{{ userInfo.user.email }}</div>
             }
@@ -44,18 +50,20 @@
           </div>
 
           <!-- Edit / Save / Cancel -->
-          <div class="profile-actions">
-            @if (!edit) {
-              <button class="btn-edit-profile" (click)="edit = true">
-                <span class="material-icons">edit</span>
-                Edit profile
-              </button>
-            }
-            @if (edit) {
-              <button class="btn-profile-cancel" (click)="edit = false">Cancel</button>
-              <button class="btn-banner-save" (click)="updateProfile()">Save changes</button>
-            }
-          </div>
+          @if (activeTab === 'profile') {
+            <div class="profile-actions">
+              @if (!edit) {
+                <button class="btn-edit-profile" (click)="edit = true">
+                  <span class="material-icons">edit</span>
+                  Edit profile
+                </button>
+              }
+              @if (edit) {
+                <button class="btn-profile-cancel" (click)="edit = false">Cancel</button>
+                <button class="btn-banner-save" (click)="updateProfile()">Save changes</button>
+              }
+            </div>
+          }
         </div>
 
         <!-- Hidden file input (preserved) -->
@@ -134,33 +142,131 @@
             </div>
           }
 
-          <!-- TODO: Notifications tab content -->
+          <!-- Notifications tab content -->
           @if (activeTab === 'notifications') {
-            <div class="notificationas-content">
-              <!-- Section 1 -->
+            <div class="notifications-content">
+
+              <!-- Section 1: Email notifications -->
               <div class="notif-section">
                 <div class="notif-section-header">
-                  <div class="uk-flex uk-flex-between uk-flex-middle">
-                    <div>
-                      <div class="uk-text-bold">Email notifications</div>
-                      <div class="uk-text-muted uk-text-small">
-                        Choose which emails land in your inbox at {{ userInfo.user.email }}.
-                        You can change these anytime.
-                      </div>
+                  <div>
+                    <div class="uk-text-bold">Email notifications</div>
+                    <div class="uk-text-muted uk-text-small">Choose which emails land in your inbox at {{ userInfo.user.email }}.</div>
+                    <div class="uk-text-muted uk-text-small">You can change these anytime.</div>
+                  </div>
+                  <div class="notif-all-pill">
+                    <span class="uk-text-small uk-text-bold">All notifications</span>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="emailNotifications()"
+                             (ngModelChange)="toggleAllNotifications($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="notif-toggle-card">
+
+                  <!-- Contact form messages -->
+                  <div class="notif-row">
+                    <span class="notif-row-icon"><span class="material-symbols-outlined">mail</span></span>
+                    <div class="notif-row-text">
+                      <div class="uk-text-bold">Contact form messages</div>
+                      <div class="notif-row-desc">When an external visitor sends you a message through the contact form.</div>
                     </div>
-                    <div class="uk-flex uk-flex-middle" style="gap: 8px">
-                      <span class="uk-text-small">All notifications</span>
-                      <label class="toggle-switch">
-                        <input type="checkbox"
-                               [ngModel]="emailNotifications()"
-                               (ngModelChange)="toggleAllNotifications($event)">
-                        <span class="toggle-slider"></span>
-                      </label>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="contactFormMessages()"
+                             (ngModelChange)="contactFormMessages.set($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="notif-row-divider"></div>
+
+                  <!-- Survey mentions -->
+                  <div class="notif-row">
+                    <span class="notif-row-icon"><span class="material-symbols-outlined">alternate_email</span></span>
+                    <div class="notif-row-text">
+                      <div class="uk-text-bold">Survey mentions</div>
+                      <div class="notif-row-desc">When someone mentions you in a survey.</div>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="surveyMentions()"
+                             (ngModelChange)="surveyMentions.set($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="notif-row-divider"></div>
+
+                  <!-- Survey updates -->
+                  <div class="notif-row">
+                    <span class="notif-row-icon"><span class="material-symbols-outlined">notifications</span></span>
+                    <div class="notif-row-text">
+                      <div class="uk-text-bold">Survey updates</div>
+                      <div class="notif-row-desc">Deadline reminders, extensions and other changes to surveys you're part of.</div>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="surveyUpdates()"
+                             (ngModelChange)="surveyUpdates.set($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Section 2: Forward to -->
+              <div class="notif-section">
+                <div class="notif-section-header">
+                  <div>
+                    <div class="uk-text-bold">Forward to</div>
+                    <div class="uk-text-muted uk-text-small">
+                      Notifications always go to your account email. Add other addresses to receive copies.
                     </div>
                   </div>
                 </div>
+
+                <div class="notif-toggle-card">
+
+                  <!-- Primary email row -->
+                  <div class="notif-row">
+                    <span class="material-symbols-outlined">mail</span>
+                    <div class="notif-row-text">
+                      <div class="notif-row-title">{{ userInfo.user.email }}</div>
+                    </div>
+                    <span class="forward-primary-badge">PRIMARY</span>
+                  </div>
+
+                  @for (email of forwardEmails(); track email) {
+                    <div class="notif-row-divider"></div>
+                    <div class="notif-row">
+                      <div class="notif-row-text">
+                        <div class="notif-row-title">{{ email }}</div>
+                      </div>
+                      <button class="forward-remove-btn" (click)="removeForwardEmail(email)">
+                        <span class="material-symbols-outlined" uk-tooltip="Remove this email">delete</span>
+                      </button>
+                    </div>
+                  }
+
+                </div>
+
+                <div class="forward-add-row">
+                  <input class="uk-input forward-input"
+                         type="email"
+                         placeholder="name@example.com"
+                         [(ngModel)]="newForwardEmail"
+                         (keydown.enter)="addForwardEmail()">
+                  <button class="btn-forward-add" (click)="addForwardEmail()">
+                   + Add
+                  </button>
+                </div>
               </div>
-              <div class="notif-section"></div>
+
             </div>
           }
         </div>

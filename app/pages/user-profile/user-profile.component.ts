@@ -88,4 +88,19 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.surveyMentions.set(enabled);
   }
 
+  forwardEmails = signal<string[]>([]);
+
+  addForwardEmail() {
+    const email = this.newForwardEmail.trim();
+    if (!email || this.forwardEmails().includes(email) || email === this.userInfo?.user?.email) {
+      return;
+    }
+    this.forwardEmails.update(list => [...list, email]);
+    this.newForwardEmail = '';
+  }
+
+  removeForwardEmail(email: string) {
+    this.forwardEmails.update(list => list.filter(e => e !== email));
+  }
+
 }
