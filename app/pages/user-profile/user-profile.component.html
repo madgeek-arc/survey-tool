@@ -159,7 +159,7 @@
                     <label class="toggle-switch">
                       <input type="checkbox"
                              [ngModel]="emailNotifications()"
-                             (ngModelChange)="toggleAllNotifications($event)">
+                             (ngModelChange)="emailNotifications.set($event); saveNotificationPreferences()">
                       <span class="toggle-slider"></span>
                     </label>
                   </div>
@@ -168,7 +168,7 @@
                 <div class="notif-toggle-card">
 
                   <!-- Contact form messages -->
-                  <div class="notif-row">
+                  <div class="notif-row" [class.notif-row--disabled]="!emailNotifications()">
                     <span class="notif-row-icon"><span class="material-symbols-outlined">mail</span></span>
                     <div class="notif-row-text">
                       <div class="uk-text-bold">Contact form messages</div>
@@ -177,6 +177,7 @@
                     <label class="toggle-switch">
                       <input type="checkbox"
                              [ngModel]="contactFormMessages()"
+                             [disabled]="!emailNotifications()"
                              (ngModelChange)="contactFormMessages.set($event); saveNotificationPreferences()">
                       <span class="toggle-slider"></span>
                     </label>
@@ -185,7 +186,7 @@
                   <div class="notif-row-divider"></div>
 
                   <!-- Survey mentions -->
-                  <div class="notif-row">
+                  <div class="notif-row" [class.notif-row--disabled]="!emailNotifications()">
                     <span class="notif-row-icon"><span class="material-symbols-outlined">alternate_email</span></span>
                     <div class="notif-row-text">
                       <div class="uk-text-bold">Survey mentions</div>
@@ -194,6 +195,7 @@
                     <label class="toggle-switch">
                       <input type="checkbox"
                              [ngModel]="surveyMentions()"
+                             [disabled]="!emailNotifications()"
                              (ngModelChange)="surveyMentions.set($event); saveNotificationPreferences()">
                       <span class="toggle-slider"></span>
                     </label>
@@ -202,7 +204,7 @@
                   <div class="notif-row-divider"></div>
 
                   <!-- Survey updates -->
-                  <div class="notif-row">
+                  <div class="notif-row" [class.notif-row--disabled]="!emailNotifications()">
                     <span class="notif-row-icon"><span class="material-symbols-outlined">notifications</span></span>
                     <div class="notif-row-text">
                       <div class="uk-text-bold">Survey updates</div>
@@ -211,6 +213,7 @@
                     <label class="toggle-switch">
                       <input type="checkbox"
                              [ngModel]="surveyUpdates()"
+                             [disabled]="!emailNotifications()"
                              (ngModelChange)="surveyUpdates.set($event); saveNotificationPreferences()">
                       <span class="toggle-slider"></span>
                     </label>

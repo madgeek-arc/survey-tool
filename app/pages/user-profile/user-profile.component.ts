@@ -41,6 +41,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         if (isFirstLoad) {
           const prefs = this.userInfo?.user?.settings?.notificationPreferences;
           if (prefs) {
+            this.emailNotifications.set(prefs.emailNotifications ?? true);
             this.contactFormMessages.set(prefs.contactFormEmailNotifications ?? false);
             this.surveyMentions.set(prefs.mentionEmailNotifications ?? false);
             this.surveyUpdates.set(prefs.surveyEmailNotifications ?? false);
@@ -86,20 +87,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     );
   }
 
-  emailNotifications = computed(() =>
-    this.contactFormMessages() && this.surveyMentions() && this.surveyUpdates()
-  );
+  emailNotifications = signal(true);
 
   activeNotificationsCount = computed(() =>
-  [this.contactFormMessages(), this.surveyMentions(), this.surveyUpdates()].filter(Boolean).length
+    !this.emailNotifications() ? 0 : [this.contactFormMessages(), this.surveyMentions(), this.surveyUpdates()].filter(Boolean).length
   );
-
-  toggleAllNotifications(enabled: boolean) {
-    this.contactFormMessages.set(enabled);
-    this.surveyUpdates.set(enabled);
-    this.surveyMentions.set(enabled);
-    this.saveNotificationPreferences();
-  }
 
 
 
