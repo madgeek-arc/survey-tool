@@ -1,81 +1,277 @@
 <div class="uk-section-default uk-section uk-section-small" style="min-height: calc(100svh - var(--header-height));">
   @if (userInfo) {
     <div class="uk-container uk-container-small">
-      <div class="uk-card uk-card-body uk-card-default">
-        <h5 class="uk-flex uk-flex-middle">My profile
-          @if (!edit) {
-            <a class="material-icons uk-margin-small-left" title="Edit details" (click)="edit = true;">mode_edit</a>
-          }
-          @if (edit) {
-            <a class="material-icons uk-margin-small-left" title="Save changes" (click)="updateProfile()">save</a>
-          }
-          <div class="uk-width-expand uk-flex uk-flex-right ">
+      <div class="uk-card uk-card-default profile-card">
+
+        <!-- 1. BANNER -->
+        <div class="profile-banner"></div>
+
+        <!-- 2. AVATAR + NAME + ACTIONS ROW -->
+        <div class="profile-header">
+
+          <!-- Avatar -->
+          <div class="profile-avatar-wrapper">
+            @if (userInfo.user?.profile?.picture) {
+              <img class="profile-avatar"
+                   [src]="'data:image;base64,' + userInfo.user.profile.picture | safeUrl: 'resourceUrl'"
+                   alt="Profile picture">
+            }
+            @if (!userInfo.user?.profile?.picture) {
+              <div class="profile-avatar-initials">
+                {{ userInfo.user.name[0] | uppercase }}{{ userInfo.user.surname[0] | uppercase }}
+              </div>
+            }
             @if (edit) {
-              <a class="material-icons uk-margin-small-left" title="Save changes" (click)="edit = false;">close</a>
+              <span class="camera-overlay material-symbols-outlined" (click)="fileSelect.click()">photo_camera</span>
             }
           </div>
-        </h5>
-        <div class="uk-animation-scale-up" uk-grid>
-          <div class="uk-width-1-4">
+
+          <!-- Name + Email + selected file name -->
+          <div class="profile-info">
+            <div class="profile-name">{{ userInfo.user.surname + ' ' + userInfo.user.name }}</div>
+            @if (edit) {
+              <div class="profile-name-locked">
+                <span class="material-icons">lock</span>
+                <span class="uk-text-small">Name can't be changed</span>
+              </div>
+            }
             @if (!edit) {
-              <img class="uk-align-right circular-square"
-                [src]="'data:image;base64,' + userInfo.user?.profile?.picture | safeUrl: 'resourceUrl'">
+              <div class="uk-text-muted uk-text-small">{{ userInfo.user.email }}</div>
             }
             @if (edit) {
-              <div class="uk-margin-top">
-                <span class="">Upload a profile picture</span>
-                <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/webp" #fileSelect
-                  (change)="onFileSelect($event)" style="display: none">
-                <div class="uk-margin-small-left ">
-                  <a class="material-icons md-36" (click)="fileSelect.click()">upload_file</a>
-                  <span>{{image?.name ? image.name : 'No file selected.'}}</span>
+              <div class="profile-email-locked">
+                <span class="material-icons">lock</span>
+                <span class="uk-text-small">{{ userInfo.user.email }} — sign-in email can't be changed</span>
+              </div>
+              @if (image) {
+                <div class="uk-text-small uk-text-muted uk-margin-small-top">{{ image.name }}</div>
+              }
+            }
+          </div>
+
+          <!-- Edit / Save / Cancel -->
+          @if (activeTab === 'profile') {
+            <div class="profile-actions">
+              @if (!edit) {
+                <button class="btn-edit-profile" (click)="edit = true">
+                  <span class="material-icons">edit</span>
+                  Edit profile
+                </button>
+              }
+              @if (edit) {
+                <button class="btn-profile-cancel" (click)="edit = false">Cancel</button>
+                <button class="btn-banner-save" (click)="updateProfile()">Save changes</button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Hidden file input (preserved) -->
+        <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg, image/webp" #fileSelect
+               (change)="onFileSelect($event)" style="display: none">
+
+        <!-- 3. TABS + CONTENT -->
+        <div class="profile-content">
+          <ul class="profile-tabs">
+            <li>
+              <a class="tab-item" [class.active]="activeTab === 'profile'"
+                 (click)="activeTab = 'profile'">Profile details</a>
+            </li>
+            <li>
+              <a class="tab-item" [class.active]="activeTab === 'notifications'"
+                 (click)="activeTab = 'notifications'">Notifications
+                  @if (activeNotificationsCount() > 0) {
+                    <span class="tab-badge">{{ activeNotificationsCount() }} on</span>
+                }
+              </a>
+            </li>
+          </ul>
+
+          <!-- 4. PROFILE DETAILS CONTENT -->
+          @if (activeTab === 'profile') {
+            <div class="profile-fields">
+              <div uk-grid>
+
+                <!-- Affiliation -->
+                <div class="uk-width-1-2@s">
+                  <div class="field-label">Affiliation</div>
+                  @if (!edit) {
+                    <div>{{ userInfo.user?.profile?.affiliation || '—' }}</div>
+                  }
+                  @if (edit) {
+                    <input class="uk-input field-input"
+                           name="affiliation" id="affiliation" type="text"
+                           placeholder="e.g. Athena Research Center"
+                           [(ngModel)]="userInfo.user.profile.affiliation">
+                  }
+                </div>
+
+                <!-- Position -->
+                <div class="uk-width-1-2@s">
+                  <div class="field-label">Position</div>
+                  @if (!edit) {
+                    <div>{{ userInfo.user?.profile?.position || '—' }}</div>
+                  }
+                  @if (edit) {
+                    <input class="uk-input field-input"
+                           name="position" id="position" type="text"
+                           placeholder="e.g. Research Engineer"
+                           [(ngModel)]="userInfo.user.profile.position">
+                  }
+                </div>
+
+                <!-- Webpage -->
+                <div class="uk-width-1-1">
+                  <div class="field-label">Webpage</div>
+                  @if (!edit) {
+                    <a [href]="userInfo.user?.profile?.webpage"
+                       [ngClass]="{'uk-disabled': !userInfo.user?.profile?.webpage}"
+                       target="_blank">
+                      {{ userInfo.user?.profile?.webpage || '—' }}
+                    </a>
+                  }
+                  @if (edit) {
+                    <input class="uk-input field-input"
+                           name="webpage" id="webpage" type="text"
+                           placeholder="https://"
+                           [(ngModel)]="userInfo.user.profile.webpage">
+                  }
+                </div>
+
+              </div>
+            </div>
+          }
+
+          <!-- Notifications tab content -->
+          @if (activeTab === 'notifications') {
+            <div class="notifications-content">
+
+              <!-- Section 1: Email notifications -->
+              <div class="notif-section">
+                <div class="notif-section-header">
+                  <div>
+                    <div class="uk-text-bold">Email notifications</div>
+                    <div class="uk-text-muted uk-text-small">Choose which emails land in your inbox at {{ userInfo.user.email }}.</div>
+                    <div class="uk-text-muted uk-text-small">You can change these anytime.</div>
+                  </div>
+                  <div class="notif-all-pill">
+                    <span class="uk-text-small uk-text-bold">All notifications</span>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="emailNotifications()"
+                             (ngModelChange)="toggleAllNotifications($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="notif-toggle-card">
+
+                  <!-- Contact form messages -->
+                  <div class="notif-row">
+                    <span class="notif-row-icon"><span class="material-symbols-outlined">mail</span></span>
+                    <div class="notif-row-text">
+                      <div class="uk-text-bold">Contact form messages</div>
+                      <div class="notif-row-desc">When an external visitor sends you a message through the contact form.</div>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="contactFormMessages()"
+                             (ngModelChange)="contactFormMessages.set($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="notif-row-divider"></div>
+
+                  <!-- Survey mentions -->
+                  <div class="notif-row">
+                    <span class="notif-row-icon"><span class="material-symbols-outlined">alternate_email</span></span>
+                    <div class="notif-row-text">
+                      <div class="uk-text-bold">Survey mentions</div>
+                      <div class="notif-row-desc">When someone mentions you in a survey.</div>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="surveyMentions()"
+                             (ngModelChange)="surveyMentions.set($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="notif-row-divider"></div>
+
+                  <!-- Survey updates -->
+                  <div class="notif-row">
+                    <span class="notif-row-icon"><span class="material-symbols-outlined">notifications</span></span>
+                    <div class="notif-row-text">
+                      <div class="uk-text-bold">Survey updates</div>
+                      <div class="notif-row-desc">Deadline reminders, extensions and other changes to surveys you're part of.</div>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox"
+                             [ngModel]="surveyUpdates()"
+                             (ngModelChange)="surveyUpdates.set($event)">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
                 </div>
               </div>
-            }
-          </div>
-          <div class="uk-width-3-4 uk-margin-top">
-            <div class="uk-margin-small">
-              <span class="uk-text-bold">{{userInfo.user.surname + ' ' + userInfo.user.name}}</span>
-              <div class="uk-text-muted">{{userInfo.user.email}}</div>
+
+              <!-- Section 2: Forward to -->
+              <div class="notif-section">
+                <div class="notif-section-header">
+                  <div>
+                    <div class="uk-text-bold">Forward to</div>
+                    <div class="uk-text-muted uk-text-small">
+                      Notifications always go to your account email. Add other addresses to receive copies.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="notif-toggle-card">
+
+                  <!-- Primary email row -->
+                  <div class="notif-row">
+                    <span class="material-symbols-outlined">mail</span>
+                    <div class="notif-row-text">
+                      <div class="notif-row-title">{{ userInfo.user.email }}</div>
+                    </div>
+                    <span class="forward-primary-badge">PRIMARY</span>
+                  </div>
+
+                  @for (email of forwardEmails(); track email) {
+                    <div class="notif-row-divider"></div>
+                    <div class="notif-row">
+                      <div class="notif-row-text">
+                        <div class="notif-row-title">{{ email }}</div>
+                      </div>
+                      <button class="forward-remove-btn" (click)="removeForwardEmail(email)">
+                        <span class="material-symbols-outlined" uk-tooltip="Remove this email">delete</span>
+                      </button>
+                    </div>
+                  }
+
+                </div>
+
+                <div class="forward-add-row">
+                  <input class="uk-input forward-input"
+                         type="email"
+                         placeholder="name@example.com"
+                         [(ngModel)]="newForwardEmail"
+                         (keydown.enter)="addForwardEmail()">
+                  <button class="btn-forward-add" (click)="addForwardEmail()">
+                   + Add
+                  </button>
+                </div>
+              </div>
+
             </div>
-            <div class="uk-margin-top" uk-grid>
-              <div class="uk-width-1-2">
-                <span class="uk-text-muted uk-flex uk-flex-bottom">Affiliation </span>
-                @if (!edit) {
-                  <div>{{userInfo.user?.profile?.affiliation ? userInfo.user?.profile?.affiliation : '--'}}</div>
-                }
-                @if (edit) {
-                  <input class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
-                    name="affiliation" id="affiliation" type="text" [(ngModel)]="userInfo.user.profile.affiliation">
-                }
-              </div>
-              <div class="uk-width-1-2">
-                <span class="uk-text-muted uk-flex uk-flex-bottom">Position </span>
-                @if (!edit) {
-                  <div>{{userInfo.user?.profile?.position ? userInfo.user?.profile?.position : '--'}}</div>
-                }
-                @if (edit) {
-                  <input class="uk-input uk-form-blank uk-animation-slide-left-small uk-width-small"
-                    name="position" id="position" type="text" [(ngModel)]="userInfo.user.profile.position">
-                }
-              </div>
-              <div class="uk-width-1-1">
-                <span class="uk-text-muted uk-flex uk-flex-bottom">Webpage </span>
-                @if (!edit) {
-                  <a [href]="userInfo.user?.profile?.webpage" [ngClass]="{'uk-disabled': !userInfo.user?.profile?.webpage}" target="_blank">
-                    {{userInfo.user?.profile?.webpage ? userInfo.user?.profile?.webpage : '--'}}
-                  </a>
-                }
-                @if (edit) {
-                  <input class="uk-input uk-form-blank uk-animation-slide-left-small"
-                    name="position" id="webpage" type="text" [(ngModel)]="userInfo.user.profile.webpage">
-                }
-              </div>
-            </div>
-          </div>
+          }
         </div>
+
       </div>
-      <!--    <pre>{{userInfo.user | json}}</pre>-->
     </div>
   }
 </div>

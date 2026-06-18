@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import {Component, computed, OnDestroy, OnInit, signal} from "@angular/core";
 import { Profile, UserInfo } from "../../domain/userInfo";
 import { UserService } from "../../services/user.service";
 import { CompressImageService } from "../../services/compress-image.service";
@@ -20,6 +20,12 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   userInfo: UserInfo = null;
   edit: boolean = false;
   image: File = null;
+  activeTab: 'profile' | 'notifications' = 'profile';
+  newForwardEmail: string = '';
+
+  contactFormMessages = signal(false);
+  surveyMentions = signal(false);
+  surveyUpdates = signal(false);
 
   constructor(private userService: UserService, private compressImage: CompressImageService) {}
 
@@ -66,6 +72,35 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.edit = false;
       }
     );
+  }
+
+  emailNotifications = computed(() =>
+    this.contactFormMessages() && this.surveyMentions() && this.surveyUpdates()
+  );
+
+  activeNotificationsCount = computed(() =>
+  [this.contactFormMessages(), this.surveyMentions(), this.surveyUpdates()].filter(Boolean).length
+  );
+
+  toggleAllNotifications(enabled: boolean) {
+    this.contactFormMessages.set(enabled);
+    this.surveyUpdates.set(enabled);
+    this.surveyMentions.set(enabled);
+  }
+
+  forwardEmails = signal<string[]>([]);
+
+  addForwardEmail() {
+    const email = this.newForwardEmail.trim();
+    if (!email || this.forwardEmails().includes(email) || email === this.userInfo?.user?.email) {
+      return;
+    }
+    this.forwardEmails.update(list => [...list, email]);
+    this.newForwardEmail = '';
+  }
+
+  removeForwardEmail(email: string) {
+    this.forwardEmails.update(list => list.filter(e => e !== email));
   }
 
 }
