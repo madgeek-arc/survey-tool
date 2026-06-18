@@ -177,7 +177,7 @@
                     <label class="toggle-switch">
                       <input type="checkbox"
                              [ngModel]="contactFormMessages()"
-                             (ngModelChange)="contactFormMessages.set($event)">
+                             (ngModelChange)="contactFormMessages.set($event); saveNotificationPreferences()">
                       <span class="toggle-slider"></span>
                     </label>
                   </div>
@@ -194,7 +194,7 @@
                     <label class="toggle-switch">
                       <input type="checkbox"
                              [ngModel]="surveyMentions()"
-                             (ngModelChange)="surveyMentions.set($event)">
+                             (ngModelChange)="surveyMentions.set($event); saveNotificationPreferences()">
                       <span class="toggle-slider"></span>
                     </label>
                   </div>
@@ -211,7 +211,7 @@
                     <label class="toggle-switch">
                       <input type="checkbox"
                              [ngModel]="surveyUpdates()"
-                             (ngModelChange)="surveyUpdates.set($event)">
+                             (ngModelChange)="surveyUpdates.set($event); saveNotificationPreferences()">
                       <span class="toggle-slider"></span>
                     </label>
                   </div>

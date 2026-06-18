@@ -26,15 +26,27 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   contactFormMessages = signal(false);
   surveyMentions = signal(false);
   surveyUpdates = signal(false);
+  forwardEmails = signal<string[]>([]);
 
   constructor(private userService: UserService, private compressImage: CompressImageService) {}
 
   ngOnInit() {
     this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe({
       next: value => {
+        const isFirstLoad = !this.userInfo;
         this.userInfo = value;
         if (this.userInfo?.user.profile === null)
           this.userInfo.user.profile = new Profile();
+
+        if (isFirstLoad) {
+          const prefs = this.userInfo?.user?.settings?.notificationPreferences;
+          if (prefs) {
+            this.contactFormMessages.set(prefs.contactFormEmailNotifications ?? false);
+            this.surveyMentions.set(prefs.mentionEmailNotifications ?? false);
+            this.surveyUpdates.set(prefs.surveyEmailNotifications ?? false);
+            this.forwardEmails.set(prefs.forwardEmails ?? []);
+          }
+        }
       }
     });
   }
@@ -86,9 +98,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.contactFormMessages.set(enabled);
     this.surveyUpdates.set(enabled);
     this.surveyMentions.set(enabled);
+    this.saveNotificationPreferences();
   }
 
-  forwardEmails = signal<string[]>([]);
+
 
   addForwardEmail() {
     const email = this.newForwardEmail.trim();
@@ -97,10 +110,31 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
     this.forwardEmails.update(list => [...list, email]);
     this.newForwardEmail = '';
+    this.saveNotificationPreferences();
   }
 
   removeForwardEmail(email: string) {
     this.forwardEmails.update(list => list.filter(e => e !== email));
+    this.saveNotificationPreferences();
+  }
+
+  saveNotificationPreferences() {
+    this.userService.updateSettings({
+      notificationPreferences: {
+        emailNotifications: this.emailNotifications(),
+        contactFormEmailNotifications: this.contactFormMessages(),
+        mentionEmailNotifications: this.surveyMentions(),
+        surveyEmailNotifications: this.surveyUpdates(),
+        forwardEmails: this.forwardEmails()
+      }
+    }, this.userInfo.user.id)
+    .pipe(take(1))
+    .subscribe({
+      next: updatedUser => {
+        this.userInfo.user = updatedUser;
+        this.userService.setUserInfo(this.userInfo);
+      }
+    });
   }
 
 }

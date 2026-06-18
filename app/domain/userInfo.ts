@@ -71,16 +71,16 @@ export class PolicyAccepted {
 
 export class NotificationPreferences {
   emailNotifications: boolean;
-  contactFormMessages: boolean;
-  surveyMentions: boolean;
-  surveyUpdates: boolean;
+  contactFormEmailNotifications: boolean;
+  mentionEmailNotifications: boolean;
+  surveyEmailNotifications: boolean;
   forwardEmails: string[];
 
   constructor() {
     this.emailNotifications = true;
-    this.contactFormMessages = true;
-    this.surveyMentions = true;
-    this.surveyUpdates = false;
+    this.contactFormEmailNotifications = true;
+    this.mentionEmailNotifications = true;
+    this.surveyEmailNotifications = false;
     this.forwardEmails = [];
   }
 }

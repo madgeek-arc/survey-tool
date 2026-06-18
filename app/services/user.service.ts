@@ -1,10 +1,9 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { Administrator, Coordinator, GroupMembers, Profile, Stakeholder, User, UserInfo } from "../domain/userInfo";
+import { Administrator, Coordinator, GroupMembers, Profile, Settings, Stakeholder, User, UserInfo } from "../domain/userInfo";
 import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import {Settings} from "node:http2";
 
 @Injectable()
 export class UserService implements OnDestroy {
