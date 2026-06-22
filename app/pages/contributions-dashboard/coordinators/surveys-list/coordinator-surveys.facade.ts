@@ -22,7 +22,8 @@ import { Coordinator } from '../../../../domain/userInfo';
 import { URLParameter } from '../../../../domain/url-parameter';
 import { SurveyInfo } from '../../../../domain/survey';
 
-type AnswersMap = Record<string, boolean | null>;
+export type ResponseCounts = { responded: number; total: number };
+type AnswersMap = Record<string, ResponseCounts | null>;
 
 @Injectable({ providedIn: 'root' })
 export class CoordinatorSurveysFacade {
@@ -102,16 +103,19 @@ export class CoordinatorSurveysFacade {
             return this.surveyService.getSurveyEntries(params).pipe(
               map((res: Paging<SurveyInfo>) => ({
                 id: model.id,
-                hasAnswers: !!res?.total
+                counts: res ? {
+                  responded: res.results?.filter(s => s.validated || s.published).length ?? 0,
+                  total: res.total ?? 0
+                } : null
               })),
-              catchError(() => of({ id: model.id, hasAnswers: null }))
+              catchError(() => of({ id: model.id, counts: null as ResponseCounts | null }))
             );
           });
 
           return forkJoin(calls).pipe(
             map(results =>
               results.reduce((acc, cur) => {
-                acc[cur.id] = cur.hasAnswers;
+                acc[cur.id] = cur.counts;
                 return acc;
               }, {} as AnswersMap)
             )

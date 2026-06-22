@@ -19,6 +19,8 @@ import { PageContentComponent } from "../../shared/page-content/page-content.com
 import {
   SidebarMobileToggleComponent
 } from "../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
+import { SurveyTemplateCardComponent } from "./survey-template-card/survey-template-card.component";
+import { SurveyTemplateTableComponent } from "./survey-template-table/survey-template-table.component";
 
 @NgModule({
   imports: [
@@ -31,7 +33,9 @@ import {
     SurveyToolModule,
     ReactiveFormsModule,
     PageContentComponent,
-    SidebarMobileToggleComponent
+    SidebarMobileToggleComponent,
+    SurveyTemplateCardComponent,
+    SurveyTemplateTableComponent
   ],
   declarations: [
     ContributionsHomeComponent,

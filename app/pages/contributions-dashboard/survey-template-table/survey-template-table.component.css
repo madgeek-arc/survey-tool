@@ -1,0 +1,239 @@
+/* ── wrapper ─────────────────────────────────────────────── */
+.stt-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  margin-bottom: 20px;
+}
+
+/* ── table base ──────────────────────────────────────────── */
+.stt {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ── header ──────────────────────────────────────────────── */
+.stt__th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e5e5e5;
+  background: #f4f5f6;
+  white-space: nowrap;
+}
+
+.stt__th--actions {
+  text-align: right;
+}
+
+/* ── rows ────────────────────────────────────────────────── */
+.stt__row {
+  border-bottom: 1px solid #e5e5e5;
+  transition: background 0.15s;
+}
+
+.stt__row:last-child {
+  border-bottom: none;
+}
+
+.stt__row:hover {
+  background: #fafafa;
+}
+
+/* teal left-border accent for active surveys */
+.stt__row--active {
+  box-shadow: inset 3px 0 0 #008792;
+}
+
+/* ── cells ───────────────────────────────────────────────── */
+.stt__td {
+  padding: 16px;
+  vertical-align: middle;
+}
+
+.stt__td--survey {
+  min-width: 200px;
+}
+
+.stt__td--deadline {
+  min-width: 150px;
+}
+
+.stt__td--responses {
+  min-width: 140px;
+}
+
+.stt__td--actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ── cell content ────────────────────────────────────────── */
+.stt__name {
+  display: block;
+  font-weight: 700;
+  color: #333;
+  font-size: 14px;
+}
+
+.stt__published {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.stt__date {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stt__resp-count {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.stt__empty {
+  color: #bbb;
+  font-size: 14px;
+}
+
+/* narrow progress bar under response count */
+.stt__progress {
+  margin-top: 6px;
+  max-width: 120px;
+}
+
+/* ── badge styles (mirrored from survey-template-card) ───── */
+.stc__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.stc__badge--active {
+  background: #bffafa;
+  color: #008792;
+}
+
+.stc__badge--closed {
+  background: #f4f5f6;
+  color: #666;
+}
+
+.stc__badge--draft {
+  background: #cdf3f6;
+  color: #008792;
+}
+
+.stc__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #008792;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.stc__badge-icon {
+  font-size: 13px;
+}
+
+/* ── days-left pill (mirrored from survey-template-card) ─── */
+.stc__days-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 10px;
+  padding: 2px 8px;
+  margin-top: 4px;
+}
+
+.stc__days-icon {
+  font-size: 12px;
+}
+
+/* ── progress bar (mirrored from survey-template-card) ───── */
+.stc__progress-bar {
+  height: 4px;
+  background: #e5e5e5;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stc__progress-fill {
+  height: 100%;
+  background: #008792;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ── action icon buttons ─────────────────────────────────── */
+.stt__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.stt__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.stt__icon-btn:hover {
+  background: #f4f5f6;
+  color: #333;
+  text-decoration: none;
+}
+
+.stt__icon-btn .material-icons {
+  font-size: 16px;
+}
+
+.stt__icon-btn--danger {
+  color: #c62828;
+}
+
+.stt__icon-btn--danger:hover {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.stt__icon-btn--primary {
+  color: #008792;
+}
+
+.stt__icon-btn--primary:hover {
+  background: #bffafa;
+  color: #008792;
+}

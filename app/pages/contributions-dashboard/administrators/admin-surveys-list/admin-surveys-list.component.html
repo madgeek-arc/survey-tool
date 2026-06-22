@@ -6,146 +6,130 @@
     <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
       <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
 
+        <!-- Page header -->
+        <div class="uk-flex uk-flex-between uk-flex-middle uk-flex-wrap uk-margin-bottom" style="gap: 12px;">
+          <div>
+            <h3 class="uk-margin-remove">Surveys</h3>
+            <p class="uk-text-muted uk-margin-remove-top">Manage survey cycles, deadlines and stakeholder notifications.</p>
+          </div>
+          <div class="uk-flex uk-flex-middle" style="gap: 10px;">
+            <div class="uk-button-group">
+              <button
+                type="button"
+                class="uk-button uk-button-small"
+                [class.uk-button-primary]="viewMode() === 'cards'"
+                [class.uk-button-default]="viewMode() === 'table'"
+                (click)="viewMode.set('cards')">Cards</button>
+              <button
+                type="button"
+                class="uk-button uk-button-small"
+                [class.uk-button-primary]="viewMode() === 'table'"
+                [class.uk-button-default]="viewMode() === 'cards'"
+                (click)="viewMode.set('table')">Table</button>
+            </div>
+            <button class="uk-button uk-button-primary uk-button-small" type="button" disabled>+ Create new survey</button>
+          </div>
+        </div>
+
+        <!-- Draft surveys -->
         @if (draftSurveys().length > 0) {
-          <h3>Draft survey(s)</h3>
-          <div class="uk-grid uk-child-width-1-2" data-uk-grid="masonry: true">
-            @for (survey of draftSurveys(); track survey.id) {
-              <div class="uk-margin-remove-top">
-                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
-                  <div class="uk-card-body">
-                    @if (survey.creationDate) {
-                      <div class="uk-flex uk-flex-right">
-                        <div class="uk-label uk-label-primary">Published on {{ survey.creationDate | date }}</div>
-                      </div>
-                    }
-                    <div class="uk-margin-top">
-                      <h5>{{ survey.name }}</h5>
-                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
-                    </div>
-                  </div>
-                  <div class="uk-card-footer uk-flex uk-flex-wrap">
-                    <div class="uk-margin-small-top">
-                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-                          <span class="material-icons uk-margin-small-right">visibility</span>View
-                        </div>
-                      </a>
-                    </div>
-                    <div class="uk-margin-small-top">
-                      <a class="uk-cursor-pointer uk-link-reset" (click)="activateSurvey(survey.id)">
-                        <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
-                          <span class="material-icons uk-margin-small-right">check_circle</span>Activate
-                        </div>
-                      </a>
-                    </div>
-                    <div class="uk-margin-small-top">
-                      <a class="uk-cursor-pointer uk-link-reset" (click)="openEditDatesModal(survey)">
-                        <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
-                          <span class="material-icons uk-margin-small-right">edit_calendar</span>Edit Dates
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
+          <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
+            <h4 class="uk-margin-remove">Draft surveys</h4>
+            <span class="section-badge">{{ draftSurveys().length }} DRAFT</span>
           </div>
+          @if (viewMode() === 'cards') {
+            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" uk-grid>
+              @for (survey of draftSurveys(); track survey.id) {
+                <div class="uk-margin-remove-top">
+                  <app-survey-template-card
+                    [survey]="survey"
+                    category="draft"
+                    [responses]="surveyAnswersMap()[survey.id]"
+                    (activate)="openConfirmModal('activate', $event)"
+                    (generate)="generateAnswers($event)"
+                    (editDates)="openEditDatesModal($event)"
+                  />
+                </div>
+              }
+            </div>
+          } @else {
+            <app-survey-template-table
+              [surveys]="draftSurveys()"
+              category="draft"
+              [responsesMap]="surveyAnswersMap()"
+              (activate)="openConfirmModal('activate', $event)"
+              (generate)="generateAnswers($event)"
+              (editDates)="openEditDatesModal($event)"
+            />
+          }
         }
 
+        <!-- Current surveys -->
         @if (currentSurveys().length > 0) {
-          <h3>Current survey(s)</h3>
-          <div class="uk-grid uk-child-width-1-2" data-uk-grid="masonry: true">
-            @for (survey of currentSurveys(); track survey.id) {
-              <div class="uk-margin-remove-top">
-                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
-                  <div class="uk-card-body">
-                    @if (survey.creationDate) {
-                      <div class="uk-flex uk-flex-right">
-                        <div class="uk-label uk-label-primary">Published on {{ survey.creationDate | date }}</div>
-                      </div>
-                    }
-                    <div class="uk-margin-top">
-                      <h5>{{ survey.name }}</h5>
-                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
-                    </div>
-                  </div>
-                  <div class="uk-card-footer uk-flex uk-flex-wrap">
-                    <div class="uk-margin-small-top">
-                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-                          <span class="material-icons uk-margin-small-right">visibility</span>View
-                        </div>
-                      </a>
-                    </div>
-                    @if (surveyAnswersMap()[survey.id] === false) {
-                      <div class="uk-margin-small-top">
-                        <a class="uk-cursor-pointer uk-link-reset" (click)="generateAnswers(survey.id)">
-                          <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
-                            <span class="material-icons uk-margin-small-right">auto_fix_high</span>Generate
-                          </div>
-                        </a>
-                      </div>
-                    }
-                    <div class="uk-margin-small-top">
-                      <a class="uk-cursor-pointer uk-link-reset" (click)="openEditDatesModal(survey)">
-                        <div class="uk-flex uk-flex-middle uk-animation-scale-up" [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
-                          <span class="material-icons uk-margin-small-right">edit_calendar</span>Edit Dates
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
+          <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
+            <h4 class="uk-margin-remove">Current survey</h4>
+            <span class="section-badge">{{ currentSurveys().length }} RUNNING</span>
           </div>
+          @if (viewMode() === 'cards') {
+            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" uk-grid>
+              @for (survey of currentSurveys(); track survey.id) {
+                <div class="uk-margin-remove-top">
+                  <app-survey-template-card
+                    [survey]="survey"
+                    category="current"
+                    [responses]="surveyAnswersMap()[survey.id]"
+                    (activate)="openConfirmModal('activate', $event)"
+                    (deactivate)="openConfirmModal('deactivate', $event)"
+                    (generate)="generateAnswers($event)"
+                    (editDates)="openEditDatesModal($event)"
+                  />
+                </div>
+              }
+            </div>
+          } @else {
+            <app-survey-template-table
+              [surveys]="currentSurveys()"
+              category="current"
+              [responsesMap]="surveyAnswersMap()"
+              (activate)="openConfirmModal('activate', $event)"
+              (deactivate)="openConfirmModal('deactivate', $event)"
+              (generate)="generateAnswers($event)"
+              (editDates)="openEditDatesModal($event)"
+            />
+          }
         }
 
+        <!-- Previous surveys -->
         @if (previousSurveys().length > 0) {
-          <h3>Previous survey(s)</h3>
-          <div class="uk-grid uk-child-width-1-2" data-uk-grid="masonry: true">
-            @for (survey of previousSurveys(); track survey.id) {
-              <div class="uk-margin-remove-top">
-                <div class="uk-card uk-card-default survey-card uk-margin-bottom">
-                  <div class="uk-card-body">
-                    @if (survey.creationDate) {
-                      <div class="uk-flex uk-flex-right">
-                        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
-                      </div>
-                    }
-                    <div class="uk-margin-top">
-                      <h5>{{survey.name}}</h5>
-                      <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
-                    </div>
-                  </div>
-                  <div class="uk-card-footer uk-flex uk-flex-wrap">
-                    <div class="uk-margin-small-top">
-                      <a [routerLink]="['./', survey.id, 'freeView']" class="uk-link-reset">
-                        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-                          <span class="material-icons uk-margin-small-right">visibility</span>View
-                        </div>
-                      </a>
-                    </div>
-                    @if (surveyAnswersMap()[survey.id] === false) {
-                      <div class="uk-margin-small-top">
-                        <a class="uk-cursor-pointer uk-link-reset" (click)="generateAnswers(survey.id)">
-                          <div class="uk-flex uk-flex-middle uk-animation-scale-up vertical-divider">
-                            <span class="material-icons uk-margin-small-right">auto_fix_high</span>Generate
-                          </div>
-                        </a>
-                      </div>
-                    }
-                    <div class="uk-margin-small-top">
-                      <a class="uk-cursor-pointer uk-link-reset" (click)="activateSurvey(survey.id)">
-                        <div class="uk-flex uk-flex-middle uk-animation-scale-up" [class.vertical-divider]="surveyAnswersMap()[survey.id] === false">
-                          <span class="material-icons uk-margin-small-right">check_circle</span>Activate
-                        </div>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
+          <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
+            <h4 class="uk-margin-remove">Previous surveys</h4>
+            <span class="section-badge">{{ previousSurveys().length }} ARCHIVED</span>
           </div>
+          @if (viewMode() === 'cards') {
+            <div class="uk-grid uk-child-width-1-2@m uk-margin-bottom" uk-grid>
+              @for (survey of previousSurveys(); track survey.id) {
+                <div class="uk-margin-remove-top">
+                  <app-survey-template-card
+                    [survey]="survey"
+                    category="previous"
+                    [responses]="surveyAnswersMap()[survey.id]"
+                    (activate)="openConfirmModal('activate', $event)"
+                    (generate)="generateAnswers($event)"
+                    (editDates)="openEditDatesModal($event)"
+                  />
+                </div>
+              }
+            </div>
+          } @else {
+            <app-survey-template-table
+              [surveys]="previousSurveys()"
+              category="previous"
+              [responsesMap]="surveyAnswersMap()"
+              (activate)="openConfirmModal('activate', $event)"
+              (generate)="generateAnswers($event)"
+              (editDates)="openEditDatesModal($event)"
+            />
+          }
         }
 
       </div>
@@ -153,7 +137,21 @@
   </div>
 </div>
 
-<div id="editDatesModal" uk-modal>
+<!-- Confirm action modal  -->
+<div id="adminConfirmActionModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Confirm Action</h3>
+    <p>Are you sure you want to <strong>{{ pendingAction }}</strong> this survey?</p>
+    <div class="uk-margin uk-flex uk-flex-right">
+      <button class="uk-button uk-button-default uk-modal-close uk-margin-right" type="button">Cancel</button>
+      <button class="uk-button uk-button-primary" type="button" (click)="confirmAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit dates modal -->
+<div id="adminEditDatesModal" uk-modal>
   <div class="uk-modal-dialog uk-modal-body">
     <button class="uk-modal-close-default" type="button" uk-close></button>
     <h3 class="uk-modal-title">Edit Submission Dates</h3>
@@ -166,8 +164,8 @@
       <input class="uk-input" type="date" [(ngModel)]="editCloseDate">
     </div>
     <div class="uk-margin uk-flex uk-flex-right">
-      <button class="uk-button uk-button-default uk-modal-close uk-margin-right">Cancel</button>
-      <button class="uk-button uk-button-primary" (click)="confirmEditDates()">Confirm</button>
+      <button class="uk-button uk-button-default uk-modal-close uk-margin-right" type="button">Cancel</button>
+      <button class="uk-button uk-button-primary" type="button" (click)="confirmEditDates()">Confirm</button>
     </div>
   </div>
 </div>

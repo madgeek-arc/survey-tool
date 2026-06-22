@@ -1,6 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CoordinatorSurveysFacade } from './coordinator-surveys.facade';
+import { CoordinatorSurveysFacade, ResponseCounts } from './coordinator-surveys.facade';
 import { Model } from '../../../../../catalogue-ui/domain/dynamic-form-model';
 
 declare var UIkit: any;
@@ -15,11 +15,13 @@ export class SurveysListComponent {
   private facade = inject(CoordinatorSurveysFacade);
 
   readonly surveys = toSignal(this.facade.surveys$, {initialValue: null});
-  readonly surveyAnswersMap = toSignal(this.facade.surveyAnswersMap$, {initialValue: {}});
+  readonly surveyAnswersMap = toSignal(this.facade.surveyAnswersMap$, {initialValue: {} as Record<string, ResponseCounts | null>});
 
   readonly draftSurveys = computed(() => this.surveys()?.results?.filter(s => !s.locked) ?? []);
   readonly currentSurveys = computed(() => this.surveys()?.results?.filter(s => s.locked && s.active) ?? []);
   readonly previousSurveys = computed(() => this.surveys()?.results?.filter(s => s.locked && !s.active) ?? []);
+
+  readonly viewMode = signal<'cards' | 'table'>('cards');
 
   selectedSurvey: Model | null = null;
   editStartDate: string | null = null;

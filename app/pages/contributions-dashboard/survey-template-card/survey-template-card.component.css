@@ -1,0 +1,267 @@
+.stc {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e5e5e5;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.stc--current {
+  border-top: 3px solid #008792;
+}
+
+/* Header */
+.stc__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 20px 0;
+}
+
+.stc__header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stc__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.stc__badge--active {
+  background: #bffafa;
+  color: #008792;
+}
+
+.stc__badge--closed {
+  background: #f4f5f6;
+  color: #666;
+}
+
+.stc__badge--draft {
+  background: #cdf3f6;
+  color: #008792;
+}
+
+.stc__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #008792;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.stc__badge-icon {
+  font-size: 13px;
+}
+
+.stc__published {
+  font-size: 12px;
+  color: #888;
+}
+
+.stc__notif-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border: 1px solid #e5e5e5;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #555;
+}
+
+.stc__notif-icon {
+  font-size: 14px;
+}
+
+/* Body */
+.stc__body {
+  padding: 14px 20px;
+}
+
+.stc__title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #333;
+}
+
+/* Stat tiles */
+.stc__tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 20px 16px;
+}
+
+.stc__tile {
+  background: #f4f5f6;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stc__tile--deadline {
+  background: #fdf6e3;
+}
+
+.stc__tile-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.stc__tile-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+}
+
+.stc__tile-sub {
+  font-size: 11px;
+  color: #888;
+}
+
+.stc__tile-empty {
+  font-size: 14px;
+  color: #bbb;
+}
+
+.stc__days-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 10px;
+  padding: 2px 8px;
+  align-self: flex-start;
+}
+
+.stc__days-icon {
+  font-size: 12px;
+}
+
+.stc__progress-bar {
+  height: 4px;
+  background: #e5e5e5;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.stc__progress-fill {
+  height: 100%;
+  background: #008792;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Compact (previous) */
+.stc__compact {
+  padding: 0 20px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.stc__compact-resp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #008792;
+}
+
+.stc__compact-resp .material-icons {
+  font-size: 16px;
+}
+
+.stc__compact-closed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #888;
+}
+
+.stc__compact-closed .material-icons {
+  font-size: 14px;
+}
+
+/* Footer actions */
+.stc__footer {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  border-top: 1px solid #e5e5e5;
+}
+
+.stc__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 11px 16px;
+  font-size: 13px;
+  color: #333;
+  background: none;
+  border: none;
+  border-right: 1px solid #e5e5e5;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.stc__action:hover {
+  background: #f4f5f6;
+  color: #333;
+  text-decoration: none;
+}
+
+.stc__action .material-icons {
+  font-size: 17px;
+}
+
+.stc__action--danger {
+  color: #c62828;
+}
+
+.stc__action--danger:hover {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.stc__action--primary {
+  color: #008792;
+}
+
+.stc__action--primary:hover {
+  background: #bffafa;
+  color: #008792;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .stc__tiles {
+    grid-template-columns: 1fr 1fr;
+  }
+}
