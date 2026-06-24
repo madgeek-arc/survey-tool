@@ -1,0 +1,133 @@
+<div id="notificationSettingsOffcanvas" uk-offcanvas="mode: slide; flip: true; overlay: true">
+  <div class="uk-offcanvas-bar nsd-bar">
+
+    <!-- Header -->
+    <div class="nsd-header">
+      <div class="nsd-header-title">
+        <span class="material-symbols-outlined nsd-bell-icon">notifications</span>
+        <span>Notification settings</span>
+      </div>
+      <button type="button" class="nsd-close" (click)="svc.cancel()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <p class="nsd-subtitle">Applies to all surveys · sent to all stakeholders</p>
+
+    <!-- Info box -->
+    <div class="nsd-info-box">
+      <span class="material-symbols-outlined nsd-info-icon">info</span>
+      These are global defaults — they apply to every survey, current and future.
+    </div>
+
+    <!-- SCHEDULE section -->
+    <div class="nsd-section-label">SCHEDULE</div>
+    <div class="nsd-toggle-card">
+
+      <!-- Survey published -->
+      <div class="nsd-row">
+        <div class="nsd-row-text">
+          <div class="uk-text-bold">Survey published</div>
+          <div class="nsd-row-desc">Email everyone when the survey opens.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox"
+                 [ngModel]="svc.draftNotifyOnStart()"
+                 (ngModelChange)="svc.draftNotifyOnStart.set($event)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="nsd-row-divider"></div>
+
+      <!-- Reminder before deadline -->
+      <div class="nsd-row">
+        <div class="nsd-row-text">
+          <div class="uk-text-bold">Reminder before deadline</div>
+          <div class="nsd-row-desc">A heads-up ahead of the closing date.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox"
+                 [ngModel]="svc.draftNotifyOnDeadlineApproaching()"
+                 (ngModelChange)="svc.draftNotifyOnDeadlineApproaching.set($event)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      @if (svc.showDaysStepper()) {
+        <div class="nsd-stepper-row">
+          <span class="nsd-stepper-label">Send</span>
+          <button type="button" class="nsd-stepper-btn" (click)="svc.decrementDays()">−</button>
+          <span class="nsd-stepper-value">{{ svc.draftDeadlineApproachingDays() }}</span>
+          <button type="button" class="nsd-stepper-btn" (click)="svc.incrementDays()">+</button>
+          <span class="nsd-stepper-label">days before</span>
+        </div>
+      }
+
+      <div class="nsd-row-divider"></div>
+
+      <!-- Final reminder on deadline day -->
+      <div class="nsd-row">
+        <div class="nsd-row-text">
+          <div class="uk-text-bold">Final reminder on deadline day</div>
+          <div class="nsd-row-desc">Last call on the morning it closes.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox"
+                 [ngModel]="svc.draftNotifyOnEnd()"
+                 (ngModelChange)="svc.draftNotifyOnEnd.set($event)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+
+    </div>
+
+    <!-- CHANGES section -->
+    <div class="nsd-section-label">CHANGES</div>
+    <div class="nsd-toggle-card">
+
+      <!-- Deadline changed -->
+      <div class="nsd-row">
+        <div class="nsd-row-text">
+          <div class="uk-text-bold">Deadline changed</div>
+          <div class="nsd-row-desc">Notify stakeholders when dates are updated.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox"
+                 [ngModel]="svc.draftNotifyOnDeadlineChange()"
+                 (ngModelChange)="svc.draftNotifyOnDeadlineChange.set($event)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- STATUS section -->
+    <div class="nsd-section-label">STATUS</div>
+    <div class="nsd-toggle-card">
+
+      <!-- Survey reopened -->
+      <div class="nsd-row">
+        <div class="nsd-row-text">
+          <div class="uk-text-bold">Survey reopened</div>
+          <div class="nsd-row-desc">Notify when a previously closed survey becomes active again.</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox"
+                 [ngModel]="svc.draftNotifyOnReopened()"
+                 (ngModelChange)="svc.draftNotifyOnReopened.set($event)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="nsd-footer">
+      <button type="button" class="nsd-btn-cancel" (click)="svc.cancel()">Cancel</button>
+      <button type="button" class="nsd-btn-save" (click)="svc.save()">Save changes</button>
+    </div>
+
+  </div>
+</div>

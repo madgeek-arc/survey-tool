@@ -26,6 +26,7 @@ export class SurveyTemplateCardComponent {
   readonly deactivate = output<string>();
   readonly generate = output<string>();
   readonly editDates = output<Model>();
+  readonly openNotifications = output<void>();
 
   readonly statusBadge = computed(() => getStatusBadge(this.survey()));
   readonly daysLeft = computed(() => getDaysLeft(this.survey()));

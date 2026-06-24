@@ -98,6 +98,9 @@
                 <button type="button" class="stt__icon-btn stt__icon-btn--danger" (click)="deactivate.emit(survey.id)" title="Deactivate">
                   <span class="material-icons">label_off</span>
                 </button>
+                <button type="button" class="stt__icon-btn" (click)="openNotifications.emit()" title="Notification settings">
+                  <span class="material-icons">notifications</span>
+                </button>
               }
 
               @if (category() === 'previous') {

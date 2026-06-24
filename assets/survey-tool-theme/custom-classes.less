@@ -37,11 +37,9 @@
   padding-left: 16px;
 }
 
-// Section count pill — used next to survey list section headings
+// Section count pills — used next to survey list section headings
 .section-badge {
   display: inline-block;
-  background: rgba(0, 135, 146, 0.12); // #008792 at 12% opacity
-  color: #008792;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -49,4 +47,54 @@
   padding: 3px 10px;
   border-radius: 50px;
   line-height: 1.4;
+}
+
+.section-badge--draft {
+  background: rgba(227, 222, 222, 0.12);
+  color: #008792;
+}
+
+.section-badge--running {
+  background: #d9efed;
+  color: #117a82;
+}
+
+.section-badge--archived {
+  background: #e9edf1;
+  color: #5b6b7c;
+}
+
+.view-toggle {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    color: #555;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    .material-symbols-outlined { font-size: 18px; }
+
+    &--active {
+      background: #008792;
+      color: #fff;
+    }
+
+    &:hover:not(.view-toggle__btn--active) {
+      background: #f5f5f5;
+    }
+  }
 }

@@ -1,8 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { toSignal } from "@angular/core/rxjs-interop";
 import { AdminSurveysFacade, ResponseCounts } from "./admin-surveys.facade";
+import { NotificationSettingsService } from '../../../../services/notification-settings.service';
 import { Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
 declare var UIkit: any;
+import { filter, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { Administrator } from '../../../../domain/userInfo';
 import { SurveyToolModule } from "../../../../survey-tool.module";
 import {
   SidebarMobileToggleComponent
@@ -11,6 +15,7 @@ import { PageContentComponent } from "../../../../shared/page-content/page-conte
 import { FormsModule } from "@angular/forms";
 import { SurveyTemplateCardComponent } from "../../survey-template-card/survey-template-card.component";
 import { SurveyTemplateTableComponent } from "../../survey-template-table/survey-template-table.component";
+import { NotificationSettingsDrawerComponent } from "../../notification-settings-drawer/notification-settings-drawer.component";
 
 @Component({
   selector: 'app-admin-surveys-list',
@@ -22,11 +27,13 @@ import { SurveyTemplateTableComponent } from "../../survey-template-table/survey
     PageContentComponent,
     FormsModule,
     SurveyTemplateCardComponent,
-    SurveyTemplateTableComponent
+    SurveyTemplateTableComponent,
+    NotificationSettingsDrawerComponent
   ]
 })
-export class AdminSurveysListComponent {
+export class AdminSurveysListComponent implements OnInit {
   private facade = inject(AdminSurveysFacade);
+  protected readonly notifSettings = inject(NotificationSettingsService);
 
   readonly administrator = toSignal(this.facade.administrator$, {initialValue: null});
   readonly surveys = toSignal(this.facade.surveys$, {initialValue: null});
@@ -44,6 +51,18 @@ export class AdminSurveysListComponent {
 
   pendingAction: 'activate' | 'deactivate' | null = null;
   pendingSurveyId: string | null = null;
+
+  ngOnInit(): void {
+    (this.facade.administrator$ as Observable<Administrator>).pipe(
+      filter(c => !!c?.type),
+      take(1)
+    ).subscribe(c => this.notifSettings.initialize(c.type));
+  }
+
+  openNotificationSettings(): void {
+    const type = this.administrator()?.type;
+    if (type) this.notifSettings.open(type);
+  }
 
   generateAnswers(surveyId: string) {
     this.facade.generateAnswersAndRefresh(surveyId);

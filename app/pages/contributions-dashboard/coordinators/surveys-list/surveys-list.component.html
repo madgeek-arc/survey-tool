@@ -14,18 +14,22 @@
           </div>
           <div class="uk-flex uk-flex-middle" style="gap: 10px;">
             <div class="uk-button-group">
-              <button
-                type="button"
-                class="uk-button uk-button-small"
-                [class.uk-button-primary]="viewMode() === 'cards'"
-                [class.uk-button-default]="viewMode() === 'table'"
-                (click)="viewMode.set('cards')">Cards</button>
-              <button
-                type="button"
-                class="uk-button uk-button-small"
-                [class.uk-button-primary]="viewMode() === 'table'"
-                [class.uk-button-default]="viewMode() === 'cards'"
-                (click)="viewMode.set('table')">Table</button>
+              <div class="view-toggle">
+                <button
+                  type="button"
+                  class="view-toggle__btn"
+                  [class.view-toggle__btn--active]="viewMode() === 'cards'"
+                  (click)="viewMode.set('cards')">
+                  <span class="material-symbols-outlined">cards_stack</span>Cards
+                </button>
+                <button
+                  type="button"
+                  class="view-toggle__btn"
+                  [class.view-toggle__btn--active]="viewMode() === 'table'"
+                  (click)="viewMode.set('table')">
+                  <span class="material-symbols-outlined">table_view</span>Table
+                </button>
+              </div>
             </div>
             <button class="uk-button uk-button-primary uk-button-small" type="button" disabled>+ Create new survey</button>
           </div>
@@ -35,19 +39,21 @@
         @if (draftSurveys().length > 0) {
           <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
             <h4 class="uk-margin-remove">Draft surveys</h4>
-            <span class="section-badge">{{ draftSurveys().length }} DRAFT</span>
+            <span class="section-badge section-badge--draft">{{ draftSurveys().length }} DRAFT</span>
           </div>
           @if (viewMode() === 'cards') {
-            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" uk-grid>
+            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" style="row-gap: 20px" uk-grid>
               @for (survey of draftSurveys(); track survey.id) {
                 <div class="uk-margin-remove-top">
                   <app-survey-template-card
                     [survey]="survey"
                     category="draft"
                     [responses]="surveyAnswersMap()[survey.id]"
+                    [notificationsCount]="notifSettings.activeNotificationsCount()"
                     (activate)="openConfirmModal('activate', $event)"
                     (generate)="generateAnswers($event)"
                     (editDates)="openEditDatesModal($event)"
+                    (openNotifications)="openNotificationSettings()"
                   />
                 </div>
               }
@@ -68,20 +74,22 @@
         @if (currentSurveys().length > 0) {
           <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
             <h4 class="uk-margin-remove">Current survey</h4>
-            <span class="section-badge">{{ currentSurveys().length }} RUNNING</span>
+            <span class="section-badge section-badge--running">{{ currentSurveys().length }} RUNNING</span>
           </div>
           @if (viewMode() === 'cards') {
-            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" uk-grid>
+            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" style="row-gap: 20px" uk-grid>
               @for (survey of currentSurveys(); track survey.id) {
                 <div class="uk-margin-remove-top">
                   <app-survey-template-card
                     [survey]="survey"
                     category="current"
                     [responses]="surveyAnswersMap()[survey.id]"
+                    [notificationsCount]="notifSettings.activeNotificationsCount()"
                     (activate)="openConfirmModal('activate', $event)"
                     (deactivate)="openConfirmModal('deactivate', $event)"
                     (generate)="generateAnswers($event)"
                     (editDates)="openEditDatesModal($event)"
+                    (openNotifications)="openNotificationSettings()"
                   />
                 </div>
               }
@@ -95,6 +103,7 @@
               (deactivate)="openConfirmModal('deactivate', $event)"
               (generate)="generateAnswers($event)"
               (editDates)="openEditDatesModal($event)"
+              (openNotifications)="openNotificationSettings()"
             />
           }
         }
@@ -103,19 +112,21 @@
         @if (previousSurveys().length > 0) {
           <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
             <h4 class="uk-margin-remove">Previous surveys</h4>
-            <span class="section-badge">{{ previousSurveys().length }} ARCHIVED</span>
+            <span class="section-badge section-badge--archived">{{ previousSurveys().length }} ARCHIVED</span>
           </div>
           @if (viewMode() === 'cards') {
-            <div class="uk-grid uk-child-width-1-2@m uk-margin-bottom" uk-grid>
+            <div class="uk-grid uk-child-width-1-2@m uk-margin-bottom uk-grid-match" style="row-gap: 20px" uk-grid>
               @for (survey of previousSurveys(); track survey.id) {
                 <div class="uk-margin-remove-top">
                   <app-survey-template-card
                     [survey]="survey"
                     category="previous"
                     [responses]="surveyAnswersMap()[survey.id]"
+                    [notificationsCount]="notifSettings.activeNotificationsCount()"
                     (activate)="openConfirmModal('activate', $event)"
                     (generate)="generateAnswers($event)"
                     (editDates)="openEditDatesModal($event)"
+                    (openNotifications)="openNotificationSettings()"
                   />
                 </div>
               }
@@ -136,6 +147,9 @@
     </div>
   </div>
 </div>
+
+<!-- Notification settings drawer -->
+<app-notification-settings-drawer />
 
 <!-- Confirm action modal -->
 <div id="confirmActionModal" uk-modal>

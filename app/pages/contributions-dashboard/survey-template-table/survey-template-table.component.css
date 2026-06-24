@@ -127,8 +127,8 @@
 }
 
 .stc__badge--active {
-  background: #bffafa;
-  color: #008792;
+  background: #d8f0de;
+  color: #1c8b4b;
 }
 
 .stc__badge--closed {
@@ -145,7 +145,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #008792;
+  background: #1aa251;
   display: inline-block;
   flex-shrink: 0;
 }

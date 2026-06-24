@@ -24,11 +24,12 @@
       }
     </div>
 
-    @if (notificationsCount() !== null) {
-      <span class="stc__notif-pill">
+
+    @if (category() !== 'previous') {
+      <button type="button" class="stc__notif-pill" (click)="openNotifications.emit()">
         <span class="material-icons stc__notif-icon">notifications</span>
-        Notifications &middot; {{ notificationsCount() }} on
-      </span>
+        {{ notificationsCount() ?? 0 }} on
+      </button>
     }
   </div>
 

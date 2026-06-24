@@ -21,6 +21,7 @@ export class SurveyTemplateTableComponent {
   readonly deactivate = output<string>();
   readonly generate = output<string>();
   readonly editDates = output<Model>();
+  readonly openNotifications = output<void>();
 
   readonly getStatusBadge = getStatusBadge;
   readonly getDaysLeft = getDaysLeft;

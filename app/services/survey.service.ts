@@ -1,7 +1,14 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { DisplayHistory, ResourcePermission, SurveyAnswer, SurveyAnswerPublicMetadata, SurveyInfo } from "../domain/survey";
+import {
+  DisplayHistory,
+  ResourcePermission,
+  SurveyAnswer,
+  SurveyAnswerPublicMetadata,
+  SurveyInfo,
+  SurveyNotifications
+} from "../domain/survey";
 import { Paging } from "../../catalogue-ui/domain/paging";
 import { GroupMembers } from "../domain/userInfo";
 import { URLParameter } from "../domain/url-parameter";
@@ -13,7 +20,8 @@ export class SurveyService {
   options = {withCredentials: true};
   base = environment.API_ENDPOINT;
 
-  constructor(public http: HttpClient) {}
+  constructor(public http: HttpClient) {
+  }
 
   getLatestAnswer(stakeHolderId: string, surveyId: string) {
     return this.http.get<SurveyAnswer>(this.base + `/answers/latest?stakeholderId=${stakeHolderId}&surveyId=${surveyId}`, this.options);
@@ -68,7 +76,7 @@ export class SurveyService {
   }
 
   getInvitationToken(inviteeEmail: string, inviteeRole: string, stakeholder: string) {
-    return this.http.get(this.base + `/invitation?inviteeEmail=${inviteeEmail}&inviteeRole=${inviteeRole}&stakeholder=${stakeholder}`, { responseType: 'text'});
+    return this.http.get(this.base + `/invitation?inviteeEmail=${inviteeEmail}&inviteeRole=${inviteeRole}&stakeholder=${stakeholder}`, {responseType: 'text'});
   }
 
   acceptInvitation(token: string) {
@@ -109,7 +117,7 @@ export class SurveyService {
   }
 
   addManagerToStakeholder(stakeholderId: string, email: string) {
-    return this.http.post(this.base + `/stakeholders/${stakeholderId}/managers`,  email );
+    return this.http.post(this.base + `/stakeholders/${stakeholderId}/managers`, email);
   }
 
   generateAnswers(surveyId: string) {
@@ -118,6 +126,14 @@ export class SurveyService {
 
   updateSurvey(id: string, model: Model) {
     return this.http.put<Model>(this.base + `/surveys/${id}`, model, this.options);
+  }
+
+  getNotificationSettings(surveyType: string) {
+    return this.http.get<SurveyNotifications>(this.base + `/surveys/types/${surveyType}/settings`);
+  }
+
+  upsertNotificationSettings(surveyType: string, settings: SurveyNotifications) {
+    return this.http.put<SurveyNotifications>(this.base + `/surveys/types/${surveyType}/settings`, settings, this.options);
   }
 
 }

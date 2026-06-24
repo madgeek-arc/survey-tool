@@ -1,7 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CoordinatorSurveysFacade, ResponseCounts } from './coordinator-surveys.facade';
+import { NotificationSettingsService } from '../../../../services/notification-settings.service';
 import { Model } from '../../../../../catalogue-ui/domain/dynamic-form-model';
+import { filter, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { Coordinator } from '../../../../domain/userInfo';
 
 declare var UIkit: any;
 
@@ -11,9 +15,11 @@ declare var UIkit: any;
     standalone: false
 })
 
-export class SurveysListComponent {
+export class SurveysListComponent implements OnInit {
   private facade = inject(CoordinatorSurveysFacade);
+  protected readonly notifSettings = inject(NotificationSettingsService);
 
+  private readonly coordinator = toSignal(this.facade.coordinator$, {initialValue: null});
   readonly surveys = toSignal(this.facade.surveys$, {initialValue: null});
   readonly surveyAnswersMap = toSignal(this.facade.surveyAnswersMap$, {initialValue: {} as Record<string, ResponseCounts | null>});
 
@@ -29,6 +35,18 @@ export class SurveysListComponent {
 
   pendingAction: 'activate' | 'deactivate' | null = null;
   pendingSurveyId: string | null = null;
+
+  ngOnInit(): void {
+    (this.facade.coordinator$ as Observable<Coordinator>).pipe(
+      filter(c => !!c?.type),
+      take(1)
+    ).subscribe(c => this.notifSettings.initialize(c.type));
+  }
+
+  openNotificationSettings(): void {
+    const type = this.coordinator()?.type;
+    if (type) this.notifSettings.open(type);
+  }
 
   generateAnswers(surveyId: string) {
     this.facade.generateAnswersAndRefresh(surveyId);
