@@ -123,7 +123,7 @@
                     category="previous"
                     [responses]="surveyAnswersMap()[survey.id]"
                     [notificationsCount]="notifSettings.activeNotificationsCount()"
-                    (activate)="openConfirmModal('activate', $event)"
+                    (activate)="openReactivateModal($event)"
                     (generate)="generateAnswers($event)"
                     (editDates)="openEditDatesModal($event)"
                     (openNotifications)="openNotificationSettings()"
@@ -136,7 +136,7 @@
               [surveys]="previousSurveys()"
               category="previous"
               [responsesMap]="surveyAnswersMap()"
-              (activate)="openConfirmModal('activate', $event)"
+              (activate)="openReactivateModal($event)"
               (generate)="generateAnswers($event)"
               (editDates)="openEditDatesModal($event)"
             />
@@ -160,6 +160,23 @@
     <div class="uk-margin uk-flex uk-flex-right">
       <button class="uk-button uk-button-default uk-modal-close uk-margin-right" type="button">Cancel</button>
       <button class="uk-button uk-button-primary" type="button" (click)="confirmAction()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reactivate previous survey modal -->
+<div id="adminReactivateSurveyModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Reactivate Survey</h3>
+    <p>Are you sure you want to reactivate this survey? Please set a new close date.</p>
+    <div class="uk-margin">
+      <label class="uk-form-label">Close Date</label>
+      <input class="uk-input" type="date" [(ngModel)]="activateCloseDate">
+    </div>
+    <div class="uk-margin uk-flex uk-flex-right">
+      <button class="uk-button uk-button-default uk-modal-close uk-margin-right" type="button">Cancel</button>
+      <button class="uk-button uk-button-primary" type="button" (click)="confirmReactivate()" [disabled]="!activateCloseDate">Confirm</button>
     </div>
   </div>
 </div>

@@ -52,6 +52,9 @@ export class AdminSurveysListComponent implements OnInit {
   pendingAction: 'activate' | 'deactivate' | null = null;
   pendingSurveyId: string | null = null;
 
+  pendingActivateSurveyId: string | null = null;
+  activateCloseDate: string | null = null;
+
   ngOnInit(): void {
     (this.facade.administrator$ as Observable<Administrator>).pipe(
       filter(c => !!c?.type),
@@ -81,6 +84,17 @@ export class AdminSurveysListComponent implements OnInit {
       this.facade.deactivateAndRefresh(this.pendingSurveyId!);
     }
     UIkit.modal('#adminConfirmActionModal').hide();
+  }
+
+  openReactivateModal(surveyId: string) {
+    this.pendingActivateSurveyId = surveyId;
+    this.activateCloseDate = null;
+    UIkit.modal('#adminReactivateSurveyModal').show();
+  }
+
+  confirmReactivate() {
+    this.facade.activateAndRefresh(this.pendingActivateSurveyId!, this.activateCloseDate);
+    UIkit.modal('#adminReactivateSurveyModal').hide();
   }
 
   openEditDatesModal(survey: Model) {

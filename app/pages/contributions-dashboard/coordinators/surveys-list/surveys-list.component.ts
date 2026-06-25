@@ -36,6 +36,9 @@ export class SurveysListComponent implements OnInit {
   pendingAction: 'activate' | 'deactivate' | null = null;
   pendingSurveyId: string | null = null;
 
+  pendingActivateSurveyId: string | null = null;
+  activateCloseDate: string | null = null;
+
   ngOnInit(): void {
     (this.facade.coordinator$ as Observable<Coordinator>).pipe(
       filter(c => !!c?.type),
@@ -65,6 +68,17 @@ export class SurveysListComponent implements OnInit {
       this.facade.deactivateAndRefresh(this.pendingSurveyId!);
     }
     UIkit.modal('#confirmActionModal').hide();
+  }
+
+  openReactivateModal(surveyId: string) {
+    this.pendingActivateSurveyId = surveyId;
+    this.activateCloseDate = null;
+    UIkit.modal('#reactivateSurveyModal').show();
+  }
+
+  confirmReactivate() {
+    this.facade.activateAndRefresh(this.pendingActivateSurveyId!, this.activateCloseDate);
+    UIkit.modal('#reactivateSurveyModal').hide();
   }
 
   openEditDatesModal(survey: Model) {

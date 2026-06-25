@@ -173,10 +173,11 @@ export class AdminSurveysFacade {
     });
   }
 
-  activateSurvey$(surveyId: string) {
+  activateSurvey$(surveyId: string, closeDate?: string | null) {
     return this.surveyService.getSurvey(surveyId).pipe(
       switchMap((model: Model) => {
         model.active = true;
+        if (closeDate) model.submissionCloseAt = closeDate;
         return this.surveyService.updateSurvey(surveyId, model);
       }),
       tap(() => this.refresh()),
@@ -186,8 +187,8 @@ export class AdminSurveysFacade {
     );
   }
 
-  activateAndRefresh(surveyId: string): void {
-    this.activateSurvey$(surveyId).subscribe({
+  activateAndRefresh(surveyId: string, closeDate?: string | null): void {
+    this.activateSurvey$(surveyId, closeDate).subscribe({
       next: () => {},
       error: (err) => {
         console.error('Failed to activate survey', surveyId, err);
