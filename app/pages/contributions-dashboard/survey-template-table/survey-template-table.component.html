@@ -1,0 +1,123 @@
+<div class="stt-wrapper">
+  <table class="stt">
+    <thead>
+      <tr>
+        <th class="stt__th">Survey</th>
+        <th class="stt__th">Status</th>
+        <th class="stt__th">Deadline</th>
+        <th class="stt__th">Responses</th>
+        <th class="stt__th stt__th--actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (survey of surveys(); track survey.id) {
+        <tr class="stt__row" [class.stt__row--active]="getStatusBadge(survey) === 'active'">
+
+          <!-- SURVEY -->
+          <td class="stt__td stt__td--survey">
+            <span class="stt__name">{{ survey.name }}</span>
+            @if (survey.creationDate) {
+              <span class="stt__published">Published {{ survey.creationDate | date }}</span>
+            }
+          </td>
+
+          <!-- STATUS -->
+          <td class="stt__td">
+            @switch (getStatusBadge(survey)) {
+              @case ('active') {
+                <span class="stc__badge stc__badge--active">
+                  <span class="stc__badge-dot"></span>ACTIVE
+                </span>
+              }
+              @case ('closed') {
+                <span class="stc__badge stc__badge--closed">
+                  <span class="material-icons stc__badge-icon">lock</span>CLOSED
+                </span>
+              }
+              @default {
+                <span class="stc__badge stc__badge--draft">DRAFT</span>
+              }
+            }
+          </td>
+
+          <!-- DEADLINE -->
+          <td class="stt__td stt__td--deadline">
+            @if (survey.submissionCloseAt) {
+              <span class="stt__date">{{ survey.submissionCloseAt | date }}</span>
+              @if (getStatusBadge(survey) === 'active' && getDaysLeft(survey) !== null) {
+                <span class="stc__days-pill">
+                  <span class="material-icons stc__days-icon">schedule</span>
+                  {{ getDaysLeft(survey) }} days left
+                </span>
+              }
+            } @else {
+              <span class="stt__empty">—</span>
+            }
+          </td>
+
+          <!-- RESPONSES -->
+          <td class="stt__td stt__td--responses">
+            @if (responsesMap()[survey.id]) {
+              <span class="stt__resp-count">
+                {{ responsesMap()[survey.id]!.responded }} / {{ responsesMap()[survey.id]!.total }}
+              </span>
+              @if (getStatusBadge(survey) === 'active') {
+                <div class="stc__progress-bar stt__progress">
+                  <div class="stc__progress-fill"
+                       [style.width.%]="getResponsePercent(responsesMap()[survey.id])">
+                  </div>
+                </div>
+              }
+            } @else {
+              <span class="stt__empty">—</span>
+            }
+          </td>
+
+          <!-- ACTIONS -->
+          <td class="stt__td stt__td--actions">
+            <div class="stt__actions">
+
+              @if (category() === 'draft') {
+                <button type="button" class="stt__icon-btn" (click)="editDates.emit(survey)" title="Edit dates">
+                  <span class="material-icons">edit_calendar</span>
+                </button>
+                <button type="button" class="stt__icon-btn stt__icon-btn--primary" (click)="activate.emit(survey.id)" title="Activate">
+                  <span class="material-icons">check_circle</span>
+                </button>
+              }
+
+              @if (category() === 'current') {
+                <button type="button" class="stt__icon-btn" (click)="editDates.emit(survey)" title="Edit dates">
+                  <span class="material-icons">edit_calendar</span>
+                </button>
+                @if (showGenerate(survey.id)) {
+                  <button type="button" class="stt__icon-btn" (click)="generate.emit(survey.id)" title="Generate">
+                    <span class="material-icons">auto_fix_high</span>
+                  </button>
+                }
+                <button type="button" class="stt__icon-btn stt__icon-btn--danger" (click)="deactivate.emit(survey.id)" title="Deactivate">
+                  <span class="material-icons">label_off</span>
+                </button>
+                <button type="button" class="stt__icon-btn" (click)="openNotifications.emit()" title="Notification settings">
+                  <span class="material-icons">notifications</span>
+                </button>
+              }
+
+              @if (category() === 'previous') {
+                <button type="button" class="stt__icon-btn stt__icon-btn--primary" (click)="activate.emit(survey.id)" title="Activate">
+                  <span class="material-icons">check_circle</span>
+                </button>
+              }
+
+              <a [routerLink]="['./', survey.id, 'freeView']" class="stt__icon-btn" title="View">
+                <span class="material-icons">visibility</span>
+              </a>
+
+            </div>
+          </td>
+
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

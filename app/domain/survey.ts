@@ -89,3 +89,15 @@ export class SurveyAnswerPublicMetadata {
   lastUpdate: Date;
   editors: User[];
 }
+
+export class SurveyNotifications {
+  id: string;
+  surveyType: string;
+  notifyOnStart: boolean;
+  notifyOnEnd: boolean;
+  notifyOnDeadlineChange: boolean;
+  notifyOnDeadlineApproaching: boolean;
+  notifyOnDeadlineDay: boolean;
+  notifyOnReopened: boolean;
+  deadlineApproachingDays: number;
+}

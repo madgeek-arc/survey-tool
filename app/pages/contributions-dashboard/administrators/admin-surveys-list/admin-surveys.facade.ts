@@ -21,7 +21,8 @@ import { Administrator } from '../../../../domain/userInfo';
 import { URLParameter } from '../../../../domain/url-parameter';
 import { SurveyInfo } from '../../../../domain/survey';
 
-type AnswersMap = Record<string, boolean | null>;
+export type ResponseCounts = { responded: number; total: number };
+type AnswersMap = Record<string, ResponseCounts | null>;
 
 @Injectable({ providedIn: 'root' })
 export class AdminSurveysFacade {
@@ -111,17 +112,19 @@ export class AdminSurveysFacade {
             return this.surveyService.getSurveyEntries(params).pipe(
               map((res: Paging<SurveyInfo>) => ({
                 id: model.id,
-                hasAnswers: !!res?.total
+                counts: res ? {
+                  responded: res.results?.filter(s => s.validated || s.published).length ?? 0,
+                  total: res.total ?? 0
+                } : null
               })),
-              // If survey entries fail, set hasAnswers to null to differentiate from empty paging
-              catchError(() => of({ id: model.id, hasAnswers: null }))
+              catchError(() => of({ id: model.id, counts: null as ResponseCounts | null }))
             );
           });
 
           return forkJoin(calls).pipe(
             map(results =>
               results.reduce((acc, cur) => {
-                acc[cur.id] = cur.hasAnswers;
+                acc[cur.id] = cur.counts;
                 return acc;
               }, {} as AnswersMap)
             )
@@ -170,10 +173,11 @@ export class AdminSurveysFacade {
     });
   }
 
-  activateSurvey$(surveyId: string) {
+  activateSurvey$(surveyId: string, closeDate?: string | null) {
     return this.surveyService.getSurvey(surveyId).pipe(
       switchMap((model: Model) => {
         model.active = true;
+        if (closeDate) model.submissionCloseAt = closeDate;
         return this.surveyService.updateSurvey(surveyId, model);
       }),
       tap(() => this.refresh()),
@@ -183,11 +187,33 @@ export class AdminSurveysFacade {
     );
   }
 
-  activateAndRefresh(surveyId: string): void {
-    this.activateSurvey$(surveyId).subscribe({
+  activateAndRefresh(surveyId: string, closeDate?: string | null): void {
+    this.activateSurvey$(surveyId, closeDate).subscribe({
       next: () => {},
       error: (err) => {
         console.error('Failed to activate survey', surveyId, err);
+      }
+    });
+  }
+
+  deactivateSurvey$(surveyId: string) {
+    return this.surveyService.getSurvey(surveyId).pipe(
+      switchMap((model: Model) => {
+        model.active = false;
+        return this.surveyService.updateSurvey(surveyId, model);
+      }),
+      tap(() => this.refresh()),
+      catchError(err => {
+        throw err;
+      })
+    );
+  }
+
+  deactivateAndRefresh(surveyId: string): void {
+    this.deactivateSurvey$(surveyId).subscribe({
+      next: () => {},
+      error: (err) => {
+        console.error('Failed to deactivate survey', surveyId, err);
       }
     });
   }

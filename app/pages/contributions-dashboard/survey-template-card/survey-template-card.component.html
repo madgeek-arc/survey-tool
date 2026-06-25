@@ -1,0 +1,149 @@
+<div class="stc" [class.stc--current]="statusBadge() === 'active'">
+
+  <div class="stc__header">
+    <div class="stc__header-left">
+
+      @switch (statusBadge()) {
+        @case ('active') {
+          <span class="stc__badge stc__badge--active">
+            <span class="stc__badge-dot"></span>ACTIVE
+          </span>
+        }
+        @case ('closed') {
+          <span class="stc__badge stc__badge--closed">
+            <span class="material-icons stc__badge-icon">lock</span>CLOSED
+          </span>
+        }
+        @default {
+          <span class="stc__badge stc__badge--draft">DRAFT</span>
+        }
+      }
+
+      @if (survey().creationDate) {
+        <span class="stc__published">Published {{ survey().creationDate | date }}</span>
+      }
+    </div>
+
+
+    @if (category() !== 'previous') {
+      <button type="button" class="stc__notif-pill" (click)="openNotifications.emit()">
+        <span class="material-icons stc__notif-icon">notifications</span>
+        {{ notificationsCount() ?? 0 }} on
+      </button>
+    }
+  </div>
+
+  <!-- Title + description -->
+  <div class="stc__body">
+    <h4 class="stc__title">{{ survey().name }}</h4>
+    <read-more-text [maxHeight]="80" [text]="survey().description"></read-more-text>
+  </div>
+
+
+  @if (category() !== 'previous') {
+    <div class="stc__tiles">
+
+      <!-- DEADLINE -->
+      <div class="stc__tile stc__tile--deadline">
+        <span class="stc__tile-label">DEADLINE</span>
+        @if (survey().submissionCloseAt) {
+          <span class="stc__tile-value">{{ survey().submissionCloseAt | date }}</span>
+          @if (daysLeft() !== null) {
+            <span class="stc__days-pill">
+              <span class="material-icons stc__days-icon">schedule</span>
+              {{ daysLeft() }} days left
+            </span>
+          }
+        } @else {
+          <span class="stc__tile-empty">—</span>
+        }
+      </div>
+
+      <!-- OPENED -->
+      <div class="stc__tile">
+        <span class="stc__tile-label">OPENED</span>
+        @if (survey().submissionStartAt) {
+          <span class="stc__tile-value">{{ survey().submissionStartAt | date }}</span>
+          @if (survey().series) {
+            <span class="stc__tile-sub">Cycle {{ survey().series.name }} {{ survey().series.referenceYear }}</span>
+          }
+        } @else {
+          <span class="stc__tile-empty">—</span>
+        }
+      </div>
+
+      <!-- RESPONSES -->
+      <div class="stc__tile">
+        <span class="stc__tile-label">RESPONSES</span>
+        @if (responses()) {
+          <span class="stc__tile-value">{{ responses()!.responded }} / {{ responses()!.total }} countries</span>
+          <div class="stc__progress-bar">
+            <div class="stc__progress-fill" [style.width.%]="responsePercent()"></div>
+          </div>
+        } @else {
+          <span class="stc__tile-empty">—</span>
+        }
+      </div>
+
+    </div>
+  }
+
+  @if (category() === 'previous') {
+    <div class="stc__compact">
+      @if (responses()) {
+        <span class="stc__compact-resp">
+          <span class="material-icons">check_circle</span>
+          {{ responses()!.responded }} / {{ responses()!.total }} responses
+        </span>
+      }
+      @if (survey().submissionCloseAt) {
+        <span class="stc__compact-closed">
+          <span class="material-icons">lock</span>
+          Closed {{ survey().submissionCloseAt | date }}
+        </span>
+      }
+    </div>
+  }
+
+  <div class="stc__footer">
+
+    <a [routerLink]="['./', survey().id, 'freeView']" class="stc__action">
+      <span class="material-icons">visibility</span>View
+    </a>
+
+    @if (category() === 'draft') {
+      <button type="button" class="stc__action" (click)="activate.emit(survey().id)">
+        <span class="material-icons">check_circle</span>Activate
+      </button>
+      <button type="button" class="stc__action" (click)="editDates.emit(survey())">
+        <span class="material-icons">edit_calendar</span>Edit dates
+      </button>
+    }
+
+    @if (category() === 'current') {
+      @if (showGenerate()) {
+        <button type="button" class="stc__action" (click)="generate.emit(survey().id)">
+          <span class="material-icons">auto_fix_high</span>Generate
+        </button>
+      }
+      <button type="button" class="stc__action" (click)="editDates.emit(survey())">
+        <span class="material-icons">edit_calendar</span>Edit dates
+      </button>
+      <button type="button" class="stc__action stc__action--danger" (click)="deactivate.emit(survey().id)">
+        <span class="material-icons">label_off</span>Deactivate
+      </button>
+    }
+
+    @if (category() === 'previous') {
+      @if (showGenerate()) {
+        <button type="button" class="stc__action" (click)="generate.emit(survey().id)">
+          <span class="material-icons">auto_fix_high</span>Generate
+        </button>
+      }
+      <button type="button" class="stc__action stc__action--primary" (click)="activate.emit(survey().id)">
+        <span class="material-icons">check_circle</span>Activate
+      </button>
+    }
+
+  </div>
+</div>
