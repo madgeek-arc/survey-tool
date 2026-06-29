@@ -13,23 +13,17 @@
             <p class="uk-text-muted uk-margin-remove-top">Manage survey cycles, deadlines and stakeholder notifications.</p>
           </div>
           <div class="uk-flex uk-flex-middle" style="gap: 10px;">
-            <div class="uk-button-group">
-              <div class="view-toggle">
-                <button
-                  type="button"
-                  class="view-toggle__btn"
-                  [class.view-toggle__btn--active]="viewMode() === 'cards'"
-                  (click)="viewMode.set('cards')">
-                  <span class="material-symbols-outlined">cards_stack</span>Cards
-                </button>
-                <button
-                  type="button"
-                  class="view-toggle__btn"
-                  [class.view-toggle__btn--active]="viewMode() === 'table'"
-                  (click)="viewMode.set('table')">
-                  <span class="material-symbols-outlined">table_view</span>Table
-                </button>
-              </div>
+            <div class="uk-seg">
+              <button type="button"
+                [class]="viewMode() === 'cards' ? 'uk-seg__btn uk-seg__btn--active' : 'uk-seg__btn'"
+                (click)="viewMode.set('cards')">
+                <span class="material-symbols-outlined">cards_stack</span>Cards
+              </button>
+              <button type="button"
+                [class]="viewMode() === 'table' ? 'uk-seg__btn uk-seg__btn--active' : 'uk-seg__btn'"
+                (click)="viewMode.set('table')">
+                <span class="material-symbols-outlined">table_view</span>Table
+              </button>
             </div>
             <button class="uk-button uk-button-primary uk-button-small" type="button" disabled>+ Create new survey</button>
           </div>

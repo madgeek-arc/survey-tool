@@ -1,4 +1,4 @@
-<div class="uk-card uk-card-default" [class.uk-card-active]="statusBadge() === 'active'">
+<div class="uk-card uk-card-default contributions-layout" [class.uk-card-active]="statusBadge() === 'active'">
 
   <!-- Body -->
   <div class="uk-card-body">
@@ -27,8 +27,8 @@
       @if (category() !== 'previous') {
         <button type="button" class="uk-button uk-button-pill" (click)="openNotifications.emit()">
           <span class="material-icons" style="font-size: 14px">notifications</span>
-          Notifications
-          {{ notificationsCount() ?? 0 }} on
+          <span>Notifications ·</span>
+          <span class="uk-text-primary">{{ notificationsCount() ?? 0 }} on</span>
         </button>
       }
     </div>

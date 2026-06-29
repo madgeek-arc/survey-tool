@@ -64,37 +64,3 @@
   color: #5b6b7c;
 }
 
-.view-toggle {
-  display: inline-flex;
-  gap: 3px;
-  padding: 3px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #fff;
-
-  &__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    border: none;
-    background: transparent;
-    color: #555;
-    font-size: 0.85rem;
-    padding: 6px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease;
-
-    .material-symbols-outlined { font-size: 18px; }
-
-    &--active {
-      background: #008792;
-      color: #fff;
-    }
-
-    &:hover:not(.view-toggle__btn--active) {
-      background: #f5f5f5;
-    }
-  }
-}
