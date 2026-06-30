@@ -1,6 +1,6 @@
 <div class="contributions-layout uk-survey-table">
   <div class="uk-overflow-auto">
-    <table class="uk-table uk-table-divider uk-table-hover uk-table-middle">
+    <table class="uk-table uk-table-divider uk-table-middle">
       <thead>
         <tr>
           <th>Survey</th>
@@ -12,7 +12,7 @@
       </thead>
       <tbody>
         @for (survey of surveys(); track survey.id) {
-          <tr [class.stt__row--active]="getStatusBadge(survey) === 'active'">
+          <tr [class.uk-table-row-active]="getStatusBadge(survey) === 'active'">
 
             <!-- SURVEY -->
             <td class="uk-table-expand">
@@ -30,7 +30,7 @@
                 }
                 @case ('closed') {
                   <span class="uk-label uk-label-closed">
-                    <span class="material-icons" style="font-size: 13px">lock</span>CLOSED
+                    <span class="material-symbols-outlined" style="font-size: 13px">lock</span>CLOSED
                   </span>
                 }
                 @default {
@@ -42,12 +42,9 @@
             <!-- DEADLINE -->
             <td>
               @if (survey.submissionCloseAt) {
-                <span class="uk-text-bold uk-display-block">{{ survey.submissionCloseAt | date }}</span>
+                <span class="uk-text-bold uk-display-block uk-text-nowrap">{{ survey.submissionCloseAt | date }}</span>
                 @if (getStatusBadge(survey) === 'active' && getDaysLeft(survey) !== null) {
-                  <span class="uk-label uk-label-warning uk-margin-small-top">
-                    <span class="material-icons">schedule</span>
-                    {{ getDaysLeft(survey) }} days left
-                  </span>
+                  <span class="uk-text-small uk-text-warning uk-display-block">{{ getDaysLeft(survey) }} days left</span>
                 }
               } @else {
                 <span class="uk-text-muted">—</span>
@@ -73,42 +70,42 @@
 
             <!-- ACTIONS -->
             <td class="uk-text-right uk-text-nowrap">
-              <div class="uk-flex uk-flex-right uk-flex-middle" style="gap: 4px">
+              <div class="uk-flex uk-flex-right uk-flex-middle">
 
                 @if (category() === 'draft') {
-                  <button type="button" class="stt__icon-btn" (click)="editDates.emit(survey)" title="Edit dates">
-                    <span class="material-icons">edit_calendar</span>
+                  <button type="button" class="uk-button-icon" (click)="editDates.emit(survey)" title="Edit dates">
+                    <span class="material-symbols-outlined">edit_calendar</span>
                   </button>
-                  <button type="button" class="stt__icon-btn stt__icon-btn--primary" (click)="activate.emit(survey.id)" title="Activate">
-                    <span class="material-icons">check_circle</span>
+                  <button type="button" class="uk-button-icon uk-button-icon--primary" (click)="activate.emit(survey.id)" title="Activate">
+                    <span class="material-symbols-outlined">check_circle</span>
                   </button>
                 }
 
                 @if (category() === 'current') {
-                  <button type="button" class="stt__icon-btn" (click)="editDates.emit(survey)" title="Edit dates">
-                    <span class="material-icons">edit_calendar</span>
+                  <button type="button" class="uk-button-icon" (click)="editDates.emit(survey)" title="Edit dates">
+                    <span class="material-symbols-outlined">edit_calendar</span>
                   </button>
                   @if (showGenerate(survey.id)) {
-                    <button type="button" class="stt__icon-btn" (click)="generate.emit(survey.id)" title="Generate">
-                      <span class="material-icons">auto_fix_high</span>
+                    <button type="button" class="uk-button-icon" (click)="generate.emit(survey.id)" title="Generate">
+                      <span class="material-symbols-outlined">auto_fix_high</span>
                     </button>
                   }
-                  <button type="button" class="stt__icon-btn stt__icon-btn--danger" (click)="deactivate.emit(survey.id)" title="Deactivate">
-                    <span class="material-icons">label_off</span>
+                  <button type="button" class="uk-button-icon uk-button-icon--danger" (click)="deactivate.emit(survey.id)" title="Deactivate">
+                    <span class="material-symbols-outlined">label_off</span>
                   </button>
-                  <button type="button" class="stt__icon-btn" (click)="openNotifications.emit()" title="Notification settings">
-                    <span class="material-icons">notifications</span>
+                  <button type="button" class="uk-button-icon" (click)="openNotifications.emit()" title="Notification settings">
+                    <span class="material-symbols-outlined">notifications</span>
                   </button>
                 }
 
                 @if (category() === 'previous') {
-                  <button type="button" class="stt__icon-btn stt__icon-btn--primary" (click)="activate.emit(survey.id)" title="Activate">
-                    <span class="material-icons">check_circle</span>
+                  <button type="button" class="uk-button-icon uk-button-icon--primary" (click)="activate.emit(survey.id)" title="Activate">
+                    <span class="material-symbols-outlined">check_circle</span>
                   </button>
                 }
 
-                <a [routerLink]="['./', survey.id, 'freeView']" class="stt__icon-btn" title="View">
-                  <span class="material-icons">visibility</span>
+                <a [routerLink]="['./', survey.id, 'freeView']" class="uk-button-icon" title="View">
+                  <span class="material-symbols-outlined">visibility</span>
                 </a>
 
               </div>

@@ -8,7 +8,6 @@ import { getStatusBadge, getDaysLeft, getResponsePercent } from '../survey-templ
 @Component({
   selector: 'app-survey-template-table',
   templateUrl: './survey-template-table.component.html',
-  styleUrl: './survey-template-table.component.css',
   standalone: true,
   imports: [RouterLink, DatePipe]
 })
