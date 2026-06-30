@@ -1,0 +1,60 @@
+<!-- Confirm action modal -->
+<div id="surveyConfirmModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body contributions-layout">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Confirm Action</h3>
+    <p>Are you sure you want to <strong>{{ svc.pendingAction() }}</strong> this survey?</p>
+    <div class="uk-flex uk-flex-right uk-margin-top" style="gap: 10px">
+      <button type="button" class="uk-button uk-button-default uk-modal-close">Cancel</button>
+      <button type="button" class="uk-button uk-button-primary" (click)="svc.confirm()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reactivate previous survey modal -->
+<div id="surveyReactivateModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body contributions-layout">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Reactivate Survey</h3>
+    <p>Are you sure you want to reactivate this survey? Please set a new close date.</p>
+    <div class="uk-margin">
+      <label class="uk-form-label">Close Date</label>
+      <input class="uk-input"
+             type="date"
+             [ngModel]="svc.activateCloseDate()"
+             (ngModelChange)="svc.activateCloseDate.set($event)">
+    </div>
+    <div class="uk-flex uk-flex-right uk-margin-top" style="gap: 10px">
+      <button type="button" class="uk-button uk-button-default uk-modal-close">Cancel</button>
+      <button type="button" class="uk-button uk-button-primary"
+              (click)="svc.confirmReactivate()"
+              [disabled]="!svc.activateCloseDate()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit dates modal -->
+<div id="surveyEditDatesModal" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body contributions-layout">
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h3 class="uk-modal-title">Edit Submission Dates</h3>
+    <div class="uk-margin">
+      <label class="uk-form-label">Start Date</label>
+      <input class="uk-input"
+             type="date"
+             [ngModel]="svc.editStartDate()"
+             (ngModelChange)="svc.editStartDate.set($event)">
+    </div>
+    <div class="uk-margin">
+      <label class="uk-form-label">Close Date</label>
+      <input class="uk-input"
+             type="date"
+             [ngModel]="svc.editCloseDate()"
+             (ngModelChange)="svc.editCloseDate.set($event)">
+    </div>
+    <div class="uk-flex uk-flex-right uk-margin-top" style="gap: 10px">
+      <button type="button" class="uk-button uk-button-default uk-modal-close">Cancel</button>
+      <button type="button" class="uk-button uk-button-primary" (click)="svc.confirmEditDates()">Confirm</button>
+    </div>
+  </div>
+</div>

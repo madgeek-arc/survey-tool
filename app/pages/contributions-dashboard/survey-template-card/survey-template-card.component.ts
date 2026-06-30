@@ -11,7 +11,6 @@ export type ResponseCounts = { responded: number; total: number };
 @Component({
   selector: 'app-survey-template-card',
   templateUrl: './survey-template-card.component.html',
-  styleUrl: './survey-template-card.component.css',
   standalone: true,
   imports: [RouterLink, DatePipe, CatalogueUiReusableComponentsModule]
 })

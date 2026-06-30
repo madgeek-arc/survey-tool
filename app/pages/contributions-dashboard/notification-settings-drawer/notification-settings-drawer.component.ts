@@ -5,7 +5,6 @@ import { NotificationSettingsService } from '../../../services/notification-sett
 @Component({
   selector: 'app-notification-settings-drawer',
   templateUrl: './notification-settings-drawer.component.html',
-  styleUrl: './notification-settings-drawer.component.css',
   standalone: true,
   imports: [FormsModule]
 })

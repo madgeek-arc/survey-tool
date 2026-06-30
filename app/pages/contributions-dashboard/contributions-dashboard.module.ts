@@ -22,6 +22,7 @@ import {
 import { SurveyTemplateCardComponent } from "./survey-template-card/survey-template-card.component";
 import { SurveyTemplateTableComponent } from "./survey-template-table/survey-template-table.component";
 import { NotificationSettingsDrawerComponent } from "./notification-settings-drawer/notification-settings-drawer.component";
+import { SurveyModalsComponent } from "./survey-modals/survey-modals.component";
 
 @NgModule({
   imports: [
@@ -37,7 +38,8 @@ import { NotificationSettingsDrawerComponent } from "./notification-settings-dra
     SidebarMobileToggleComponent,
     SurveyTemplateCardComponent,
     SurveyTemplateTableComponent,
-    NotificationSettingsDrawerComponent
+    NotificationSettingsDrawerComponent,
+    SurveyModalsComponent
   ],
   declarations: [
     ContributionsHomeComponent,

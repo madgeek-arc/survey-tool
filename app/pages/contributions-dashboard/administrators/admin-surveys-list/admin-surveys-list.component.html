@@ -13,23 +13,17 @@
             <p class="uk-text-muted uk-margin-remove-top">Manage survey cycles, deadlines and stakeholder notifications.</p>
           </div>
           <div class="uk-flex uk-flex-middle" style="gap: 10px;">
-            <div class="uk-button-group">
-              <div class="view-toggle">
-                <button
-                  type="button"
-                  class="view-toggle__btn"
-                  [class.view-toggle__btn--active]="viewMode() === 'cards'"
-                  (click)="viewMode.set('cards')">
-                  <span class="material-symbols-outlined">cards_stack</span>Cards
-                </button>
-                <button
-                  type="button"
-                  class="view-toggle__btn"
-                  [class.view-toggle__btn--active]="viewMode() === 'table'"
-                  (click)="viewMode.set('table')">
-                  <span class="material-symbols-outlined">table_view</span>Table
-                </button>
-              </div>
+            <div class="uk-seg">
+              <button type="button"
+                [class]="viewMode() === 'cards' ? 'uk-seg__btn uk-seg__btn--active' : 'uk-seg__btn'"
+                (click)="viewMode.set('cards')">
+                <span class="material-symbols-outlined">cards_stack</span>Cards
+              </button>
+              <button type="button"
+                [class]="viewMode() === 'table' ? 'uk-seg__btn uk-seg__btn--active' : 'uk-seg__btn'"
+                (click)="viewMode.set('table')">
+                <span class="material-symbols-outlined">table_view</span>Table
+              </button>
             </div>
             <button class="uk-button uk-button-primary uk-button-small" type="button" disabled>+ Create new survey</button>
           </div>
@@ -117,7 +111,7 @@
           @if (viewMode() === 'cards') {
             <div class="uk-grid uk-child-width-1-2@m uk-margin-bottom uk-grid-match" style="row-gap: 20px" uk-grid>
               @for (survey of previousSurveys(); track survey.id) {
-                <div class="uk-margin-remove-top">
+                <div>
                   <app-survey-template-card
                     [survey]="survey"
                     category="previous"
@@ -151,52 +145,5 @@
 <!-- Notification settings drawer -->
 <app-notification-settings-drawer />
 
-<!-- Confirm action modal  -->
-<div id="adminConfirmActionModal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body">
-    <button class="uk-modal-close-default" type="button" uk-close></button>
-    <h3 class="uk-modal-title">Confirm Action</h3>
-    <p>Are you sure you want to <strong>{{ pendingAction }}</strong> this survey?</p>
-    <div class="uk-margin uk-flex uk-flex-right">
-      <button class="uk-button uk-button-default uk-modal-close uk-margin-right" type="button">Cancel</button>
-      <button class="uk-button uk-button-primary" type="button" (click)="confirmAction()">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<!-- Reactivate previous survey modal -->
-<div id="adminReactivateSurveyModal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body">
-    <button class="uk-modal-close-default" type="button" uk-close></button>
-    <h3 class="uk-modal-title">Reactivate Survey</h3>
-    <p>Are you sure you want to reactivate this survey? Please set a new close date.</p>
-    <div class="uk-margin">
-      <label class="uk-form-label">Close Date</label>
-      <input class="uk-input" type="date" [(ngModel)]="activateCloseDate">
-    </div>
-    <div class="uk-margin uk-flex uk-flex-right">
-      <button class="uk-button uk-button-default uk-modal-close uk-margin-right" type="button">Cancel</button>
-      <button class="uk-button uk-button-primary" type="button" (click)="confirmReactivate()" [disabled]="!activateCloseDate">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit dates modal -->
-<div id="adminEditDatesModal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body">
-    <button class="uk-modal-close-default" type="button" uk-close></button>
-    <h3 class="uk-modal-title">Edit Submission Dates</h3>
-    <div class="uk-margin">
-      <label class="uk-form-label">Start Date</label>
-      <input class="uk-input" type="date" [(ngModel)]="editStartDate">
-    </div>
-    <div class="uk-margin">
-      <label class="uk-form-label">Close Date</label>
-      <input class="uk-input" type="date" [(ngModel)]="editCloseDate">
-    </div>
-    <div class="uk-margin uk-flex uk-flex-right">
-      <button class="uk-button uk-button-default uk-modal-close uk-margin-right" type="button">Cancel</button>
-      <button class="uk-button uk-button-primary" type="button" (click)="confirmEditDates()">Confirm</button>
-    </div>
-  </div>
-</div>
+<!-- Survey action modals (shared component) -->
+<app-survey-modals />
