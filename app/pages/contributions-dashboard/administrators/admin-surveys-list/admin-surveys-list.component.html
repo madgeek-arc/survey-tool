@@ -13,14 +13,14 @@
             <p class="uk-text-muted uk-margin-remove-top">Manage survey cycles, deadlines and stakeholder notifications.</p>
           </div>
           <div class="uk-flex uk-flex-middle" style="gap: 10px;">
-            <div class="uk-seg">
+            <div class="uk-button-group">
               <button type="button"
-                [class]="viewMode() === 'cards' ? 'uk-seg__btn uk-seg__btn--active' : 'uk-seg__btn'"
+                [class]="viewMode() === 'cards' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
                 (click)="viewMode.set('cards')">
                 <span class="material-symbols-outlined">cards_stack</span>Cards
               </button>
               <button type="button"
-                [class]="viewMode() === 'table' ? 'uk-seg__btn uk-seg__btn--active' : 'uk-seg__btn'"
+                [class]="viewMode() === 'table' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
                 (click)="viewMode.set('table')">
                 <span class="material-symbols-outlined">table_view</span>Table
               </button>
@@ -36,7 +36,7 @@
             <span class="section-badge section-badge--draft">{{ draftSurveys().length }} DRAFT</span>
           </div>
           @if (viewMode() === 'cards') {
-            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" style="row-gap: 20px" uk-grid>
+            <div class="uk-grid uk-grid-cards uk-child-width-1-1 uk-margin-bottom" uk-grid>
               @for (survey of draftSurveys(); track survey.id) {
                 <div class="uk-margin-remove-top">
                   <app-survey-template-card
@@ -71,9 +71,9 @@
             <span class="section-badge section-badge--running">{{ currentSurveys().length }} RUNNING</span>
           </div>
           @if (viewMode() === 'cards') {
-            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" style="row-gap: 20px" uk-grid>
+            <div class="uk-grid uk-grid-small uk-child-width-1-1 uk-margin-bottom" uk-grid>
               @for (survey of currentSurveys(); track survey.id) {
-                <div class="uk-margin-remove-top">
+                <div>
                   <app-survey-template-card
                     [survey]="survey"
                     category="current"

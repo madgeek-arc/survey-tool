@@ -103,6 +103,10 @@ export class SurveyService {
     return this.http.get<Paging<SurveyInfo>>(this.base + `/answers/info`, {params: searchQuery});
   }
 
+  getSurveyInfoByGroup(groupId: string) {
+    return this.http.get<Paging<SurveyInfo>>(this.base + `/answers/info?groupId=${groupId}`, this.options);
+  }
+
   exportToCsv(surveyId: string) {
     // return this.http.get(this.base + `/csv/export/answers/${surveyId}`, { responseType: 'text'});
     window.open(this.base + `/csv/export/answers/${surveyId}`, '_blank');

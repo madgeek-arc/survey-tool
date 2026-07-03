@@ -10,9 +10,9 @@
           <h3>Current survey(s)</h3>
         }
         @if (currentSurveys.length > 0) {
-          <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+          <div class="uk-grid uk-grid-small uk-child-width-1-1" uk-grid>
             @for (survey of currentSurveys; track survey) {
-              <div class="uk-margin-remove-top">
+              <div>
                 @if (survey.locked && survey.active) {
                   <app-survey-card [survey]="survey" (selectedSurvey)="getSurveysForImport($event)"></app-survey-card>
                 }
@@ -25,11 +25,11 @@
           <h3>Previous survey(s)</h3>
         }
         @if (previousSurveys.length > 0) {
-          <div class="uk-grid uk-child-width-1-2" uk-grid="masonry: true">
+          <div class="uk-grid uk-grid-cards uk-child-width-1-2 uk-margin-bottom" uk-grid>
             @for (survey of previousSurveys; track survey) {
-              <div class="uk-margin-remove-top">
+              <div>
                 @if (survey.locked && !survey.active) {
-                  <app-survey-card [survey]="survey"></app-survey-card>
+                  <app-survey-card class="uk-display-block uk-height-1-1" [survey]="survey"></app-survey-card>
                 }
               </div>
             }

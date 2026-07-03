@@ -1,4 +1,4 @@
-<div class="uk-card uk-card-default contributions-layout uk-height-1-1" [class.uk-card-active]="statusBadge() === 'active'">
+<div class="uk-card uk-card-default uk-height-1-1" [class.uk-card-active]="statusBadge() === 'active'">
 
   <!-- Body -->
   <div class="uk-card-body">
@@ -44,8 +44,8 @@
 
         <!-- DEADLINE -->
         <div>
-          <div class="uk-stat-deadline">
-            <span class="uk-text-uppercase uk-text-muted uk-display-block" style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px">DEADLINE</span>
+          <div class="eos-stat eos-stat--amber">
+            <span class="eos-stat__label">DEADLINE</span>
             @if (survey().submissionCloseAt) {
               <span class="uk-text-bold uk-display-block">{{ survey().submissionCloseAt | date }}</span>
               @if (daysLeft() !== null) {
@@ -62,8 +62,8 @@
 
         <!-- OPENED -->
         <div>
-          <div class="uk-stat">
-            <span class="uk-text-uppercase uk-text-muted uk-display-block" style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px">OPENED</span>
+          <div class="eos-stat">
+            <span class="eos-stat__label">OPENED</span>
             @if (survey().submissionStartAt) {
               <span class="uk-text-bold uk-display-block">{{ survey().submissionStartAt | date }}</span>
               @if (survey().series) {
@@ -77,8 +77,8 @@
 
         <!-- RESPONSES -->
         <div>
-          <div class="uk-stat">
-            <span class="uk-text-uppercase uk-text-muted uk-display-block" style="font-size: 10px; font-weight: 700; letter-spacing: 0.5px">RESPONSES</span>
+          <div class="eos-stat">
+            <span class="eos-stat__label">RESPONSES</span>
             @if (responses()) {
               <span class="uk-text-bold uk-display-block">{{ responses()!.responded }} / {{ responses()!.total }} countries</span>
               <progress class="uk-progress uk-margin-remove-bottom" [value]="responsePercent()" max="100"></progress>
@@ -110,41 +110,41 @@
   </div>
 
   <!-- Footer -->
-  <div class="uk-card-footer">
-    <a [routerLink]="['./', survey().id, 'freeView']" class="uk-button uk-button-action">
+  <div class="uk-card-footer uk-flex uk-flex-middle">
+    <a [routerLink]="['./', survey().id, 'freeView']" class="uk-button eos-btn--neutral">
       <span class="material-symbols-outlined">visibility</span>View
     </a>
 
     @if (category() === 'draft') {
-      <button type="button" class="uk-button uk-button-action" (click)="activate.emit(survey().id)">
+      <button type="button" class="uk-button eos-btn--neutral" (click)="activate.emit(survey().id)">
         <span class="material-symbols-outlined">check_circle</span>Activate
       </button>
-      <button type="button" class="uk-button uk-button-action" (click)="editDates.emit(survey())">
+      <button type="button" class="uk-button eos-btn--neutral" (click)="editDates.emit(survey())">
         <span class="material-symbols-outlined">edit_calendar</span>Edit dates
       </button>
     }
 
     @if (category() === 'current') {
       @if (showGenerate()) {
-        <button type="button" class="uk-button uk-button-action" (click)="generate.emit(survey().id)">
+        <button type="button" class="uk-button eos-btn--neutral" (click)="generate.emit(survey().id)">
           <span class="material-symbols-outlined">auto_fix_high</span>Generate
         </button>
       }
-      <button type="button" class="uk-button uk-button-action" (click)="editDates.emit(survey())">
+      <button type="button" class="uk-button eos-btn--neutral" (click)="editDates.emit(survey())">
         <span class="material-symbols-outlined">edit_calendar</span>Edit dates
       </button>
-      <button type="button" class="uk-button uk-button-action uk-button-action--danger" (click)="deactivate.emit(survey().id)">
+      <button type="button" class="uk-button eos-btn--neutral eos-btn--danger" (click)="deactivate.emit(survey().id)">
         <span class="material-symbols-outlined">label_off</span>Deactivate
       </button>
     }
 
     @if (category() === 'previous') {
       @if (showGenerate()) {
-        <button type="button" class="uk-button uk-button-action" (click)="generate.emit(survey().id)">
+        <button type="button" class="uk-button eos-btn--neutral" (click)="generate.emit(survey().id)">
           <span class="material-symbols-outlined">auto_fix_high</span>Generate
         </button>
       }
-      <button type="button" class="uk-button uk-button-action uk-button-action--primary" (click)="activate.emit(survey().id)">
+      <button type="button" class="uk-button eos-btn--neutral" (click)="activate.emit(survey().id)">
         <span class="material-symbols-outlined">check_circle</span>Activate
       </button>
     }
