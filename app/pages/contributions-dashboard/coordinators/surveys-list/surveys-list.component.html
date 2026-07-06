@@ -29,14 +29,15 @@
           </div>
         </div>
 
-        <!-- Draft surveys -->
-        @if (draftSurveys().length > 0) {
-          <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
-            <h4 class="uk-margin-remove">Draft surveys</h4>
-            <span class="section-badge section-badge--draft">{{ draftSurveys().length }} DRAFT</span>
-          </div>
-          @if (viewMode() === 'cards') {
-            <div class="uk-grid uk-grid-cards uk-child-width-1-1 uk-margin-bottom" uk-grid>
+        @if (viewMode() === 'cards') {
+
+          <!-- Draft surveys -->
+          @if (draftSurveys().length > 0) {
+            <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
+              <h4 class="uk-margin-remove">Draft surveys</h4>
+              <span class="uk-label uk-label-primary">{{ draftSurveys().length }} DRAFT</span>
+            </div>
+            <div class="uk-grid uk-child-width-1-1 uk-margin-bottom" uk-grid>
               @for (survey of draftSurveys(); track survey.id) {
                 <div class="uk-margin-remove-top">
                   <app-survey-template-card
@@ -52,25 +53,14 @@
                 </div>
               }
             </div>
-          } @else {
-            <app-survey-template-table
-              [surveys]="draftSurveys()"
-              category="draft"
-              [responsesMap]="surveyAnswersMap()"
-              (activate)="openConfirmModal('activate', $event)"
-              (generate)="generateAnswers($event)"
-              (editDates)="openEditDatesModal($event)"
-            />
           }
-        }
 
-        <!-- Current surveys -->
-        @if (currentSurveys().length > 0) {
-          <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
-            <h4 class="uk-margin-remove">Current survey</h4>
-            <span class="section-badge section-badge--running">{{ currentSurveys().length }} RUNNING</span>
-          </div>
-          @if (viewMode() === 'cards') {
+          <!-- Current surveys -->
+          @if (currentSurveys().length > 0) {
+            <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
+              <h4 class="uk-margin-remove">Current survey(s)</h4>
+              <span class="uk-label uk-label-count">{{ currentSurveys().length }} RUNNING</span>
+            </div>
             <div class="uk-grid uk-grid-small uk-child-width-1-1 uk-margin-bottom" uk-grid>
               @for (survey of currentSurveys(); track survey.id) {
                 <div>
@@ -88,27 +78,14 @@
                 </div>
               }
             </div>
-          } @else {
-            <app-survey-template-table
-              [surveys]="currentSurveys()"
-              category="current"
-              [responsesMap]="surveyAnswersMap()"
-              (activate)="openConfirmModal('activate', $event)"
-              (deactivate)="openConfirmModal('deactivate', $event)"
-              (generate)="generateAnswers($event)"
-              (editDates)="openEditDatesModal($event)"
-              (openNotifications)="openNotificationSettings()"
-            />
           }
-        }
 
-        <!-- Previous surveys -->
-        @if (previousSurveys().length > 0) {
-          <div class="uk-flex uk-flex-middle uk-margin-small-bottom" style="gap: 10px;">
-            <h4 class="uk-margin-remove">Previous surveys</h4>
-            <span class="section-badge section-badge--archived">{{ previousSurveys().length }} ARCHIVED</span>
-          </div>
-          @if (viewMode() === 'cards') {
+          <!-- Previous surveys -->
+          @if (previousSurveys().length > 0) {
+            <div class="uk-flex uk-flex-middle uk-margin-small-bottom uk-margin-large-top" style="gap: 10px;">
+              <h4 class="uk-margin-remove">Previous survey(s)</h4>
+              <span class="uk-label uk-label-closed">{{ previousSurveys().length }} ARCHIVED</span>
+            </div>
             <div class="uk-grid uk-grid-small uk-child-width-1-2@m uk-margin-bottom uk-grid-match" uk-grid>
               @for (survey of previousSurveys(); track survey.id) {
                 <div>
@@ -126,16 +103,18 @@
                 </div>
               }
             </div>
-          } @else {
-            <app-survey-template-table
-              [surveys]="previousSurveys()"
-              category="previous"
-              [responsesMap]="surveyAnswersMap()"
-              (activate)="openReactivateModal($event)"
-              (generate)="generateAnswers($event)"
-              (editDates)="openEditDatesModal($event)"
-            />
           }
+
+        } @else {
+          <app-survey-template-table
+            [surveys]="surveys()?.results ?? []"
+            [responsesMap]="surveyAnswersMap()"
+            (activate)="onActivate($event)"
+            (deactivate)="openConfirmModal('deactivate', $event)"
+            (generate)="generateAnswers($event)"
+            (editDates)="openEditDatesModal($event)"
+            (openNotifications)="openNotificationSettings()"
+          />
         }
 
       </div>

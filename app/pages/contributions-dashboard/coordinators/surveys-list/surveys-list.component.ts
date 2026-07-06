@@ -53,7 +53,10 @@ export class SurveysListComponent implements OnInit {
 
   openNotificationSettings(): void {
     const type = this.coordinator()?.type;
-    if (type) this.notifSettings.open(type);
+    if (!type) return;
+    const deadline = this.currentSurveys()[0]?.submissionCloseAt ?? null;
+    this.notifSettings.currentSurveyDeadline.set(deadline);
+    this.notifSettings.open(type);
   }
 
   generateAnswers(surveyId: string): void {
@@ -66,6 +69,15 @@ export class SurveysListComponent implements OnInit {
 
   openReactivateModal(surveyId: string): void {
     this.modals.openReactivateModal(surveyId);
+  }
+
+  /** Unified table has one 'activate' output shared by draft and previous rows */
+  onActivate(surveyId: string): void {
+    if (this.previousSurveys().some(s => s.id === surveyId)) {
+      this.openReactivateModal(surveyId);
+    } else {
+      this.openConfirmModal('activate', surveyId);
+    }
   }
 
   openEditDatesModal(survey: Model): void {

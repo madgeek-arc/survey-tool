@@ -2,7 +2,7 @@ import { Component, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Model } from '../../../../catalogue-ui/domain/dynamic-form-model';
-import { SurveyCategory, ResponseCounts } from '../survey-template-card/survey-template-card.component';
+import { ResponseCounts } from '../survey-template-card/survey-template-card.component';
 import { getStatusBadge, getDaysLeft, getResponsePercent } from '../survey-template-card/survey-card.utils';
 
 @Component({
@@ -13,7 +13,6 @@ import { getStatusBadge, getDaysLeft, getResponsePercent } from '../survey-templ
 })
 export class SurveyTemplateTableComponent {
   readonly surveys = input.required<Model[]>();
-  readonly category = input.required<SurveyCategory>();
   readonly responsesMap = input<Record<string, ResponseCounts | null | undefined>>({});
 
   readonly activate = output<string>();

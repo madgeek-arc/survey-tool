@@ -25,7 +25,7 @@
           <h3>Previous survey(s)</h3>
         }
         @if (previousSurveys.length > 0) {
-          <div class="uk-grid uk-grid-cards uk-child-width-1-2 uk-margin-bottom" uk-grid>
+          <div class="uk-grid uk-child-width-1-2 uk-margin-bottom" uk-grid>
             @for (survey of previousSurveys; track survey) {
               <div>
                 @if (survey.locked && !survey.active) {
