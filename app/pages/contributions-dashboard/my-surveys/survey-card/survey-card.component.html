@@ -1,73 +1,152 @@
-<div class="uk-card uk-card-default survey-card uk-margin-bottom">
+<div class="uk-card uk-card-default uk-height-1-1">
 
+  <!-- Body -->
   <div class="uk-card-body">
 
-    @if (survey.creationDate) {
-      <div class="uk-flex uk-flex-right">
-        <div class="uk-label uk-label-primary">Published on {{survey.creationDate | date}}</div>
+    <!-- Top row: badge + date + days left -->
+    <div class="uk-flex uk-flex-between uk-flex-middle uk-flex-wrap uk-margin-small-bottom" style="gap: 8px">
+      <div class="uk-flex uk-flex-middle uk-flex-wrap" style="gap: 10px">
+        @if (survey.active) {
+          <span class="uk-label uk-label-active">ACCEPTING RESPONSES</span>
+          @if (survey.submissionStartAt) {
+            <span class="uk-text-small uk-text-muted">Opened {{ survey.submissionStartAt | date }}</span>
+          }
+        } @else {
+          <span class="uk-label uk-label-validated">
+            <span class="material-symbols-outlined" style="font-size: 13px">check_circle</span>VALIDATED
+          </span>
+          @if (surveyInfo?.lastUpdate) {
+            <span class="uk-text-small uk-text-muted">Submitted {{ surveyInfo.lastUpdate | date }}</span>
+          }
+        }
+        @if (survey.active && survey.submissionCloseAt) {
+          <span class="uk-text-small uk-text-warning uk-flex uk-flex-middle" style="gap: 4px">
+            <span class="material-symbols-outlined" style="font-size: 14px">schedule</span>
+            {{ daysLeft() }} days left
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h4 class="uk-card-title uk-margin-small-bottom">{{ survey.name }}</h4>
+
+    <!-- Description (current only) -->
+    @if (survey.active) {
+      <read-more-text [maxHeight]="80" [text]="survey.description"></read-more-text>
+    }
+
+    <!-- Stats grid (current only) -->
+    @if (survey.active && surveyInfo) {
+      <div class="uk-grid uk-grid-small uk-child-width-1-4 uk-margin-top uk-grid-match" uk-grid>
+
+        <!-- DEADLINE -->
+        <div>
+          <div class="eos-stat eos-stat--amber">
+            <span class="eos-stat__label">DEADLINE</span>
+            @if (survey.submissionCloseAt) {
+              <span class="uk-text-bold uk-display-block">{{ survey.submissionCloseAt | date }}</span>
+              <span class="uk-label uk-label-warning">
+                <span class="material-symbols-outlined">schedule</span>
+                {{ daysLeft() }} days left
+              </span>
+            } @else {
+              <span class="uk-text-muted">—</span>
+            }
+          </div>
+        </div>
+
+        <!-- YOUR PROGRESS -->
+        <div>
+          <div class="eos-stat">
+            <span class="eos-stat__label">YOUR PROGRESS</span>
+            <span class="uk-text-bold uk-display-block">
+              {{ surveyInfo.progressTotal.current }} / {{ surveyInfo.progressTotal.total }} answered
+            </span>
+            <progress class="uk-progress uk-margin-remove-bottom"
+                      [value]="surveyInfo.progressTotal.current"
+                      [max]="surveyInfo.progressTotal.total">
+            </progress>
+          </div>
+        </div>
+
+        <!-- MANDATORY LEFT -->
+        <div>
+          <div class="eos-stat eos-stat--red">
+            <span class="eos-stat__label">MANDATORY LEFT</span>
+            <span class="uk-text-bold uk-display-block">
+              {{ surveyInfo.progressRequired.total - surveyInfo.progressRequired.current }} required fields
+            </span>
+            @if (surveyInfo.progressRequired.current < surveyInfo.progressRequired.total) {
+              <span class="uk-text-small uk-text-danger">Must be filled to validate</span>
+            }
+          </div>
+        </div>
+
+        <!-- LAST EDITED -->
+        <div>
+          <div class="eos-stat">
+            <span class="eos-stat__label">LAST EDITED</span>
+            <span class="uk-text-bold uk-display-block">{{ surveyInfo.lastUpdate | date:'MMM d, HH:mm' }}</span>
+            @if (surveyInfo.editedBy?.length > 0) {
+              <span class="uk-text-small uk-text-muted">by {{ surveyInfo.editedBy[0] }}</span>
+            }
+          </div>
+        </div>
+
       </div>
     }
-    <!--    <div *ngIf="survey.creationDate" class="uk-card-badge">-->
-    <!--      Published on {{survey.creationDate | date}}-->
-  <!--    </div>-->
 
-  <div class="uk-margin-top">
-    <h5>{{survey.name}}</h5>
-    <read-more-text [maxHeight]="260" [text]="survey.description"></read-more-text>
+    <!-- Previous survey info -->
+    @if (!survey.active && surveyInfo) {
+      <div class="uk-flex uk-flex-wrap uk-margin-top" style="gap: 16px; font-size: 13px">
+        <span class="uk-flex uk-flex-middle uk-text-primary" style="gap: 4px">
+          <span class="material-symbols-outlined" style="font-size: 16px">check_circle</span>
+          {{ surveyInfo.progressTotal.current }} / {{ surveyInfo.progressTotal.total }} answered
+        </span>
+        @if (survey.submissionCloseAt) {
+          <span class="uk-flex uk-flex-middle uk-text-muted" style="gap: 4px">
+            <span class="material-symbols-outlined" style="font-size: 14px">lock</span>
+            Submitted {{ survey.submissionCloseAt | date }}
+          </span>
+        }
+      </div>
+    }
+
   </div>
 
-</div>
-
-@if (permissions) {
-  <div class="uk-card-footer uk-flex uk-flex-middle uk-flex-wrap">
-    <div class="uk-margin-small-top">
-      <a [routerLink]="['./', survey.id, 'answer', 'view']" class="uk-link-reset">
-        <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-          <span class="material-icons uk-margin-small-right">visibility</span>
-          View
-        </div>
-      </a>
-    </div>
-    <div class="uk-margin-small-top">
-      @if (!surveyAnswer.validated && checkForPermission('write')) {
-        <a [routerLink]="['./', survey.id, 'answer']" class="uk-link-reset">
-          <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-            <span class="material-icons uk-margin-small-right">edit</span>
-            Edit
-          </div>
+  <!-- Footer -->
+  @if (permissions) {
+    <div class="uk-card-footer uk-flex uk-flex-between uk-flex-middle">
+      <div class="uk-flex uk-flex-middle">
+        <a [routerLink]="['./', survey.id, 'answer', 'view']" class="uk-button eos-btn--neutral">
+          <span class="material-symbols-outlined">visibility</span>View
         </a>
-      }
-    </div>
-    <div class="uk-margin-small-top">
-      @if (checkForPermission('manage')) {
-        <a (click)="changeValidStatus(surveyAnswer.id, surveyAnswer.validated)" class="uk-link-reset">
-          <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-            <span class="material-icons uk-margin-small-right">
-            {{surveyAnswer.validated ? 'lock_open' : 'task_alt'}}</span>{{surveyAnswer.validated ? 'Open' : 'Validate'}}
-          </div>
+        <a [routerLink]="['./', surveyAnswer.surveyId, surveyAnswer.id, 'history']" class="uk-button eos-btn--neutral">
+          <span class="material-symbols-outlined">manage_history</span>History
         </a>
-      }
+        @if (checkForPermission('manage') && survey.configuration?.prefillable) {
+          <a href="#import-modal" uk-toggle (click)="emitSurveyForImport()" class="uk-button eos-btn--neutral">
+            <span class="material-symbols-outlined">system_update_alt</span>Import answers
+          </a>
+        }
+      </div>
+      <div class="uk-flex uk-flex-middle" style="gap: 8px">
+        @if (!surveyAnswer.validated && checkForPermission('write')) {
+          <a [routerLink]="['./', survey.id, 'answer']" class="uk-button uk-button-secondary uk-button-small uk-flex uk-flex-middle">
+            <span class="material-symbols-outlined" style="font-size: 16px">edit</span>Edit answers
+          </a>
+        }
+        @if (checkForPermission('manage')) {
+          <button type="button" class="uk-button uk-button-primary uk-button-small uk-flex uk-flex-middle"
+                  style="gap: 6px"
+                  (click)="changeValidStatus(surveyAnswer.id, surveyAnswer.validated)">
+            <span class="material-symbols-outlined" style="font-size: 16px">{{ surveyAnswer.validated ? 'lock_open' : 'task_alt' }}</span>
+            {{ surveyAnswer.validated ? 'Open' : 'Validate & publish' }}
+          </button>
+        }
+      </div>
     </div>
-    <div class="uk-margin-small-top">
-      @if (checkForPermission('manage') && survey.configuration?.prefillable) {
-        <a href="#import-modal" uk-toggle
-          (click)="emitSurveyForImport()" class="uk-link-reset">
-          <div class="uk-margin-right uk-flex uk-flex-middle uk-animation-scale-up"
-            title="Import data from previous survey" style="border-right: 1px solid #e5e5e5; padding-right: 20px;">
-            <span class="material-icons uk-margin-small-right">system_update_alt</span> Import
-          </div>
-        </a>
-      }
-    </div>
-    <div class="uk-margin-small-top uk-float-right">
-      <a [routerLink]="['./', surveyAnswer.surveyId, surveyAnswer.id, 'history']" class="uk-link-reset">
-        <div class="uk-flex uk-flex-middle uk-animation-scale-up">
-          <span class="material-icons uk-margin-small-right">manage_history</span>
-          History
-        </div>
-      </a>
-    </div>
-  </div>
-}
+  }
 
 </div>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
-import { ResourcePermission, SurveyAnswer } from "../../../../domain/survey";
+import { ResourcePermission, SurveyAnswer, SurveyInfo } from "../../../../domain/survey";
 import { UserService } from "../../../../services/user.service";
 import { Stakeholder } from "../../../../domain/userInfo";
 import { SurveyService } from "../../../../services/survey.service";
@@ -20,7 +20,8 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
 
   subscriptions = [];
   currentGroup: Stakeholder = null;
-  surveyAnswer: SurveyAnswer = null
+  surveyAnswer: SurveyAnswer = null;
+  surveyInfo: SurveyInfo = null;
   permissions: ResourcePermission[] = null;
 
   constructor(private userService: UserService, private surveyService: SurveyService, private router: Router) {
@@ -44,6 +45,13 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
                 },
                 error => {console.error(error)})
             );
+            this.subscriptions.push(
+              this.surveyService.getSurveyInfoByGroup(this.currentGroup.id).subscribe(
+                next => {
+                  this.surveyInfo = next.results.find(info => info.surveyId === this.survey.id) ?? null;
+                },
+                error => {console.error(error)})
+            );
           }
         },
         error => {console.error(error)},
@@ -57,6 +65,12 @@ export class SurveyCardComponent implements OnChanges, OnDestroy {
         subscription.unsubscribe();
       }
     });
+  }
+
+  daysLeft(): number | null {
+    if (!this.survey?.submissionCloseAt) return null;
+    const diff = new Date(this.survey.submissionCloseAt).getTime() - Date.now();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
   }
 
   checkForPermission(right: string): boolean {
