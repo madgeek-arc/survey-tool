@@ -189,6 +189,7 @@ export class ContributionsDashboardComponent implements OnInit {
             new MenuItem('5', 'Survey Templates', null, '/contributions/' + this.currentCoordinator?.id + '/surveyTemplates', null, {name: 'assignment'}),
             new MenuItem('6', 'Messages', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/messages', null, {name: 'chat'}),
             new MenuItem('7', 'Stakeholders', null, '/contributions/' + this.currentCoordinator?.id + '/stakeholders', null, {name: 'manage_accounts'}),
+            ...(this.currentCoordinator.type === 'eosc-sb' ? [new MenuItem('17', 'Country Pages Configuration', null, '/country/EU/configuration', null, {name: 'tune'})] : []),
           ]
         });
       }
@@ -224,6 +225,12 @@ export class ContributionsDashboardComponent implements OnInit {
         this.menuItems.push(
           new MenuItem('11', 'Resources Registry', null, '/contributions/' + (this.currentAdministrator?.id) + '/resources-registry/search', null, {name: 'manage_accounts'})
         );
+
+        if (this.currentAdministrator.type === 'eosc-sb') {
+          this.menuItems.push(
+            new MenuItem('18', 'Country Pages Configuration', null, '/country/EU/configuration', null, {name: 'tune'})
+          );
+        }
 
         this.menuSections.push({ items: this.menuItems });
       }
