@@ -1,6 +1,6 @@
 <!-- Confirm action modal -->
 <div id="surveyConfirmModal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body contributions-layout">
+  <div class="uk-modal-dialog uk-modal-body">
     <button class="uk-modal-close-default" type="button" uk-close></button>
     <h3 class="uk-modal-title">Confirm Action</h3>
     <p>Are you sure you want to <strong>{{ svc.pendingAction() }}</strong> this survey?</p>
@@ -13,7 +13,7 @@
 
 <!-- Reactivate previous survey modal -->
 <div id="surveyReactivateModal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body contributions-layout">
+  <div class="uk-modal-dialog uk-modal-body">
     <button class="uk-modal-close-default" type="button" uk-close></button>
     <h3 class="uk-modal-title">Reactivate Survey</h3>
     <p>Are you sure you want to reactivate this survey? Please set a new close date.</p>
@@ -35,26 +35,30 @@
 
 <!-- Edit dates modal -->
 <div id="surveyEditDatesModal" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body contributions-layout">
+  <div class="uk-modal-dialog uk-modal-body">
     <button class="uk-modal-close-default" type="button" uk-close></button>
-    <h3 class="uk-modal-title">Edit Submission Dates</h3>
+    <h3 class="uk-modal-title">Edit survey dates</h3>
     <div class="uk-margin">
-      <label class="uk-form-label">Start Date</label>
+      <label class="uk-form-label">Opening date</label>
       <input class="uk-input"
              type="date"
              [ngModel]="svc.editStartDate()"
              (ngModelChange)="svc.editStartDate.set($event)">
     </div>
     <div class="uk-margin">
-      <label class="uk-form-label">Close Date</label>
+      <label class="uk-form-label">Deadline</label>
       <input class="uk-input"
              type="date"
              [ngModel]="svc.editCloseDate()"
              (ngModelChange)="svc.editCloseDate.set($event)">
     </div>
+    <div class="eos-info-box uk-margin-top">
+      <span class="material-symbols-outlined">notifications</span>
+      <span>Stakeholders will be notified of the deadline change.</span>
+    </div>
     <div class="uk-flex uk-flex-right uk-margin-top" style="gap: 10px">
       <button type="button" class="uk-button uk-button-default uk-modal-close">Cancel</button>
-      <button type="button" class="uk-button uk-button-primary" (click)="svc.confirmEditDates()">Confirm</button>
+      <button type="button" class="uk-button uk-button-primary" (click)="svc.confirmEditDates()">Save dates</button>
     </div>
   </div>
 </div>

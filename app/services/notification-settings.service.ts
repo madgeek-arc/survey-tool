@@ -36,6 +36,17 @@ export class NotificationSettingsService {
 
   readonly showDaysStepper = computed(() => this.draftNotifyOnDeadlineApproaching());
 
+  readonly currentSurveyDeadline = signal<string | null>(null);
+
+  readonly exampleDeadlineDate = computed(() => {
+    const deadline = this.currentSurveyDeadline();
+    const days = this.draftDeadlineApproachingDays();
+    if (!deadline) return null;
+    const date = new Date(deadline);
+    date.setDate(date.getDate() - days);
+    return date;
+  });
+
   // Drawer lifecycle
 
   initialize(surveyType: string): void {

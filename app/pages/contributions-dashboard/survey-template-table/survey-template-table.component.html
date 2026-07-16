@@ -1,4 +1,4 @@
-<div class="contributions-layout uk-survey-table">
+<div class="uk-card uk-card-default">
   <div class="uk-overflow-auto">
     <table class="uk-table uk-table-divider uk-table-middle">
       <thead>
@@ -72,36 +72,38 @@
             <td class="uk-text-right uk-text-nowrap">
               <div class="uk-flex uk-flex-right uk-flex-middle">
 
-                @if (category() === 'draft') {
-                  <button type="button" class="uk-button-icon" (click)="editDates.emit(survey)" title="Edit dates">
-                    <span class="material-symbols-outlined">edit_calendar</span>
-                  </button>
-                  <button type="button" class="uk-button-icon uk-button-icon--primary" (click)="activate.emit(survey.id)" title="Activate">
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </button>
-                }
-
-                @if (category() === 'current') {
-                  <button type="button" class="uk-button-icon" (click)="editDates.emit(survey)" title="Edit dates">
-                    <span class="material-symbols-outlined">edit_calendar</span>
-                  </button>
-                  @if (showGenerate(survey.id)) {
-                    <button type="button" class="uk-button-icon" (click)="generate.emit(survey.id)" title="Generate">
-                      <span class="material-symbols-outlined">auto_fix_high</span>
+                @switch (getStatusBadge(survey)) {
+                  @case ('draft') {
+                    <button type="button" class="uk-button-icon" (click)="editDates.emit(survey)" title="Edit dates">
+                      <span class="material-symbols-outlined">edit_calendar</span>
+                    </button>
+                    <button type="button" class="uk-button-icon uk-button-icon--primary" (click)="activate.emit(survey.id)" title="Activate">
+                      <span class="material-symbols-outlined">check_circle</span>
                     </button>
                   }
-                  <button type="button" class="uk-button-icon uk-button-icon--danger" (click)="deactivate.emit(survey.id)" title="Deactivate">
-                    <span class="material-symbols-outlined">label_off</span>
-                  </button>
-                  <button type="button" class="uk-button-icon" (click)="openNotifications.emit()" title="Notification settings">
-                    <span class="material-symbols-outlined">notifications</span>
-                  </button>
-                }
 
-                @if (category() === 'previous') {
-                  <button type="button" class="uk-button-icon uk-button-icon--primary" (click)="activate.emit(survey.id)" title="Activate">
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </button>
+                  @case ('active') {
+                    <button type="button" class="uk-button-icon" (click)="editDates.emit(survey)" title="Edit dates">
+                      <span class="material-symbols-outlined">edit_calendar</span>
+                    </button>
+                    @if (showGenerate(survey.id)) {
+                      <button type="button" class="uk-button-icon" (click)="generate.emit(survey.id)" title="Generate">
+                        <span class="material-symbols-outlined">auto_fix_high</span>
+                      </button>
+                    }
+                    <button type="button" class="uk-button-icon uk-button-icon--danger" (click)="deactivate.emit(survey.id)" title="Deactivate">
+                      <span class="material-symbols-outlined">label_off</span>
+                    </button>
+                    <button type="button" class="uk-button-icon" (click)="openNotifications.emit()" title="Notification settings">
+                      <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                  }
+
+                  @case ('closed') {
+                    <button type="button" class="uk-button-icon uk-button-icon--primary" (click)="activate.emit(survey.id)" title="Activate">
+                      <span class="material-symbols-outlined">check_circle</span>
+                    </button>
+                  }
                 }
 
                 <a [routerLink]="['./', survey.id, 'freeView']" class="uk-button-icon" title="View">
