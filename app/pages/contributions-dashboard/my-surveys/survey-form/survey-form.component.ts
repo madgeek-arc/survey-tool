@@ -53,6 +53,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   action: string = null;
   successMessage = '';
   errorMessage = '';
+  hasHeader = true;
+  backRoute: any[] = null;
 
   ngOnInit() {
     this.ready = false;
@@ -64,13 +66,18 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
       this.validate = (next[next.length - 1].path === 'validate');
       this.freeView = (next[next.length - 1].path === 'freeView');
       this.readonly = (next[next.length - 1].path === 'view');
+      // First segment of this route's own path, e.g. 'mySurveys', 'surveyTemplates', 'admin-surveyTemplates', 'stakeholder'.
+      const routeRoot = next[0]?.path;
 
       this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
         this.surveyId = params['surveyId'];
         if (params['stakeholderId']) {
           this.stakeholderId = params['stakeholderId'];
+          // Coordinator/admin viewing a specific stakeholder's survey answer -> back to the coordinator's surveys list.
+          this.backRoute = ['/contributions', params['id'], 'surveys'];
         } else {
           this.stakeholderId = params['id'];
+          this.backRoute = ['/contributions', this.stakeholderId, routeRoot];
         }
         this.mentionableUsersProvider.contextId = this.stakeholderId;
         this.updateUserInfo();
@@ -110,6 +117,10 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
       });
     });
 
+
+    this.layoutService.hasHeader.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(hasHeader => {
+      this.hasHeader = hasHeader;
+    });
 
     this.wsService.activeUsers.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       next => {

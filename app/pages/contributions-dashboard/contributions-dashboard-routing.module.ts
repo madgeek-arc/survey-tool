@@ -37,32 +37,62 @@ const contributionsDashboardRoutes: Routes = [
       {
         path: 'mySurveys/:surveyId/answer',
         component: SurveyFormComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: {
+          hasSidebar: false,
+          hasHeader: false,
+          showFooter: false
+        }
       },
       {
         path: 'surveyTemplates/:surveyId/freeView',
         component: SurveyFormComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: {
+          hasSidebar: false,
+          hasHeader: false,
+          showFooter: false
+        }
       },
       {
         path: 'admin-surveyTemplates/:surveyId/freeView',
         component: SurveyFormComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: {
+          hasSidebar: false,
+          hasHeader: false,
+          showFooter: false
+        }
       },
       {
         path: 'mySurveys/:surveyId/answer/view',
         component: SurveyFormComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: {
+          hasSidebar: false,
+          hasHeader: false,
+          showFooter: false
+        }
       },
       {
         path: 'stakeholder/:stakeholderId/survey/:surveyId/view',
         component: SurveyFormComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: {
+          hasSidebar: false,
+          hasHeader: false,
+          showFooter: false
+        }
       },
       {
         path: 'mySurveys/:surveyId/answer/validate',
         component: SurveyFormComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        data: {
+          hasSidebar: false,
+          hasHeader: false,
+          showFooter: false
+        }
       },
       {
         path: 'mySurveys/:surveyId/:answerId/history',
@@ -70,6 +100,7 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           hasSidebar: false,
+          hasHeader: false,
           showFooter: false
         }
       },
@@ -79,6 +110,7 @@ const contributionsDashboardRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           hasSidebar: false,
+          hasHeader: false,
           showFooter: false
         }
       },

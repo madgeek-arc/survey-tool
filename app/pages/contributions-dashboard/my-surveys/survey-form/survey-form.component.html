@@ -45,7 +45,14 @@
                     </button>
                   }
                 </div>
-                <h5 class="uk-width-1-1 uk-margin-bottom">{{ survey.name }}</h5>
+                <h5 class="uk-width-1-1 uk-margin-bottom uk-flex uk-flex-middle">
+                  @if (!hasHeader) {
+                    <a [routerLink]="backRoute" class="uk-margin-small-right" title="Back">
+                      <span class="material-icons">keyboard_backspace</span>
+                    </a>
+                  }
+                  {{ survey.name }}
+                </h5>
                 <p class="uk-margin-bottom" [innerHTML]="survey.notice"></p>
               </div>
             }
