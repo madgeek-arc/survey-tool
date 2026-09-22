@@ -42,6 +42,11 @@ export class DashboardSideMenuService {
   private hasHeaderSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   /**
+   *  Add showFooter: false on data of route config, if footer is not needed.
+   */
+  private showFooterSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+
+  /**
    *  Add hasAdminMenu: true on data of route config, if global sidebar should be used.
    */
   private hasAdminMenuSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -183,6 +188,12 @@ export class DashboardSideMenuService {
           document.documentElement.style.setProperty('--header-height', DashboardSideMenuService.HEADER_HEIGHT);
         }
       }
+      if (data['showFooter'] !== undefined &&
+        data['showFooter'] === false) {
+        this.setShowFooter(false);
+      } else {
+        this.setShowFooter(true);
+      }
       if (data['hasAdminMenu'] !== undefined &&
         data['hasAdminMenu'] === true) {
         this.setHasAdminMenu(true);
@@ -280,6 +291,14 @@ export class DashboardSideMenuService {
 
   setHasHeader(value: boolean) {
     this.hasHeaderSubject.next(value);
+  }
+
+  get showFooter(): Observable<boolean> {
+    return this.showFooterSubject.asObservable();
+  }
+
+  setShowFooter(value: boolean) {
+    this.showFooterSubject.next(value);
   }
 
   get hasAdminMenu(): Observable<boolean> {
