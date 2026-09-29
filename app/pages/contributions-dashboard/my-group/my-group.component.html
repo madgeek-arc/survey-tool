@@ -9,7 +9,8 @@
           <div class="uk-card uk-card-default uk-card-body">
             @if (isManager) {
               <div class="uk-flex uk-flex-right">
-                <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #add-contributor-modal">Invite new contributor</button>
+                <button class="uk-button uk-button-default uk-margin-small-right" type="button" uk-toggle="target: #add-member-modal">Add {{memberLabel}}</button>
+                <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #add-contributor-modal">Invite new {{memberLabel}}</button>
               </div>
             }
             <div class="uk-overflow-auto uk-margin-medium-top">
@@ -34,7 +35,7 @@
                         {{member.email}}
                       </td>
                       <td class="">
-                        Manager
+                        {{adminLabel}}
                       </td>
                       <td class="uk-text-nowrap">
                         <!--<span class="material-icons">delete</span>-->
@@ -50,7 +51,7 @@
                         {{member.email}}
                       </td>
                       <td class="">
-                        Contributor
+                        {{memberLabel | titlecase}}
                       </td>
                       @if (members) {
                         <td class="uk-text-nowrap">
@@ -73,13 +74,13 @@
     <!-- add contributor modal -->
     <div id="add-contributor-modal" uk-modal="esc-close: false; bg-close: false">
       <div class="uk-modal-dialog uk-modal-body">
-        <h4 class="uk-modal-title">Add contributor</h4>
+        <h4 class="uk-modal-title">Invite {{memberLabel}}</h4>
         <p>By giving the email you consent for storing the data</p>
         @if (errorMessage) {
           <p class="uk-text-warning">{{errorMessage}}</p>
         }
         @if (!invitationToken) {
-          <input [(ngModel)]="contributorEmail" class="uk-input" type="email" placeholder="New contributor email">
+          <input [(ngModel)]="contributorEmail" class="uk-input" type="email" [placeholder]="'New ' + memberLabel + ' email'">
         } @else {
           <p [class]="emailSent ? 'uk-text-success' : 'uk-text-warning'">
           {{ emailSent ? 'The invitation was emailed to the invitee. You can also share the link below.' : 'The invitation email could not be sent. Please share the link below with the invitee.' }}
@@ -99,11 +100,27 @@
       </div>
     </div>
 
+    <!-- add member modal -->
+    <div id="add-member-modal" uk-modal="esc-close: false; bg-close: false">
+      <div class="uk-modal-dialog uk-modal-body">
+        <h4 class="uk-modal-title">Add {{memberLabel}}</h4>
+        <p>The user is added immediately, without an invitation email.</p>
+        @if (errorMessage) {
+          <p class="uk-text-warning">{{errorMessage}}</p>
+        }
+        <input [(ngModel)]="contributorEmail" class="uk-input" type="email" [placeholder]="'Existing ' + memberLabel + ' email'">
+        <div class="uk-flex uk-flex-right uk-flex-middle uk-margin-top">
+          <button class="uk-button uk-button-secondary uk-modal-close" (click)="closeModal()" type="button">Close</button>
+          <button class="uk-button uk-button-primary uk-margin-left" (click)="addMember()" type="button">Add</button>
+        </div>
+      </div>
+    </div>
+
     <!-- remove contributor modal -->
     <div id="remove-contributor-modal" uk-modal="esc-close: false; bg-close: false">
       <div class="uk-modal-dialog uk-modal-body">
-        <h4 class="uk-modal-title">Remove contributor</h4>
-        <p>The contributor with email {{contributorEmail}} will be removed.</p>
+        <h4 class="uk-modal-title">Remove {{memberLabel}}</h4>
+        <p>The {{memberLabel}} with email {{contributorEmail}} will be removed.</p>
         @if (errorMessage) {
           <p class="uk-text-warning">{{errorMessage}}</p>
         }

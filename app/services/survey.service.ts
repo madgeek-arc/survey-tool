@@ -87,6 +87,20 @@ export class SurveyService {
     return this.http.delete<GroupMembers>(this.base + `/stakeholders/${stakeholderId}/managers/${email}`, this.options);
   }
 
+  addGroupMember(groupType: string, groupId: string, email: string) {
+    const path = groupType === 'stakeholder' ? 'contributors' : 'members';
+    return this.http.post(this.base + `/${this.groupPath(groupType)}/${groupId}/${path}`, email, {headers: {'Content-Type': 'text/plain'}});
+  }
+
+  removeGroupMember(groupType: string, groupId: string, email: string) {
+    const path = groupType === 'stakeholder' ? 'contributors' : 'members';
+    return this.http.delete(this.base + `/${this.groupPath(groupType)}/${groupId}/${path}/${email}`, this.options);
+  }
+
+  private groupPath(groupType: string) {
+    return groupType === 'administration' ? 'administrators' : groupType === 'coordinator' ? 'coordinators' : 'stakeholders';
+  }
+
   removeContributor(stakeholderId: string, email: string) {
     return this.http.delete<GroupMembers>(this.base + `/stakeholders/${stakeholderId}/contributors/${email}`, this.options);
   }

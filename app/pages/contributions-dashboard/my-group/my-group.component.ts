@@ -28,6 +28,14 @@ export class MyGroupComponent implements OnInit {
   isManager: boolean = null;
   errorMessage: string = null;
   title = 'copy to clipboard';
+
+  get memberLabel(): string {
+    return this.groupType === 'stakeholder' ? 'contributor' : 'member';
+  }
+
+  get adminLabel(): string {
+    return this.groupType === 'stakeholder' ? 'Manager' : 'Admin';
+  }
   groupType: string | null = null;
 
   private userService = inject(UserService);
@@ -160,7 +168,9 @@ export class MyGroupComponent implements OnInit {
   addContributor(contributor: string = 'contributor') {
     if (this.validateEmail(this.contributorEmail)) {
 
-      this.surveyService.getInvitationToken(this.contributorEmail, contributor, this.currentGroup.id)
+      const isStakeholder = this.groupType === 'stakeholder';
+      const apiGroup = this.groupType === 'administration' ? 'administrator' : this.groupType;
+      this.surveyService.getInvitationToken(this.contributorEmail, isStakeholder ? contributor : 'member', this.currentGroup.id, apiGroup)
         .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
         next => {
           this.invitationToken = location.origin + '/invitation/accept/' + next.token;
@@ -184,8 +194,27 @@ export class MyGroupComponent implements OnInit {
     }
   }
 
+  addMember() {
+    if (!this.validateEmail(this.contributorEmail)) {
+      this.errorMessage = 'Please give a valid email address.';
+      return;
+    }
+    this.surveyService.addGroupMember(this.groupType, this.currentGroup.id, this.contributorEmail)
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.getMembers(this.groupType);
+        this.closeModal();
+        UIkit.modal('#add-member-modal').hide();
+      },
+      error: error => {
+        console.error(error);
+        this.errorMessage = error.error?.error ?? error.message;
+      }
+    });
+  }
+
   removeContributor() {
-    this.surveyService.removeContributor(this.currentGroup.id, this.contributorEmail).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+    this.surveyService.removeGroupMember(this.groupType, this.currentGroup.id, this.contributorEmail).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       next => {
         // this.members = next;
         this.getMembers(this.groupType);
@@ -251,12 +280,10 @@ export class MyGroupComponent implements OnInit {
   }
 
   checkIfManager(email: string): boolean {
-    for (let i = 0; i < this.members.admins.length; i++) {
-      if (this.members.admins[i].email === email) {
-        return true;
-      }
-    }
-    return false;
+    const managers = this.groupType === 'administration'
+      ? [...this.members.admins, ...this.members.members]
+      : this.members.admins;
+    return managers.some(member => member.email === email);
   }
 
   closeModal() {
