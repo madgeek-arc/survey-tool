@@ -24,6 +24,7 @@ export class MyGroupComponent implements OnInit {
   contributorEmail: string = null;
   userEmail: string = null;
   invitationToken: string = null;
+  emailSent = false;
   isManager: boolean = null;
   errorMessage: string = null;
   title = 'copy to clipboard';
@@ -162,7 +163,8 @@ export class MyGroupComponent implements OnInit {
       this.surveyService.getInvitationToken(this.contributorEmail, contributor, this.currentGroup.id)
         .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
         next => {
-          this.invitationToken = location.origin + '/invitation/accept/' + next.toString();
+          this.invitationToken = location.origin + '/invitation/accept/' + next.token;
+              this.emailSent = next.emailSent;
           this.errorMessage = null;
           this.contributorEmail = null;
           // UIkit.modal('#add-contributor-modal').hide();

@@ -81,12 +81,15 @@
         @if (!invitationToken) {
           <input [(ngModel)]="contributorEmail" class="uk-input" type="email" placeholder="New contributor email">
         } @else {
-          <textarea class="uk-form-controls uk-textarea" type="textarea" [(ngModel)]="invitationToken" disabled></textarea>
+          <p [class]="emailSent ? 'uk-text-success' : 'uk-text-warning'">
+          {{ emailSent ? 'The invitation was emailed to the invitee. You can also share the link below.' : 'The invitation email could not be sent. Please share the link below with the invitee.' }}
+        </p>
+        <textarea class="uk-form-controls uk-textarea" type="textarea" [(ngModel)]="invitationToken" disabled></textarea>
         }
         <div class="uk-flex uk-flex-right uk-flex-middle uk-margin-top">
           <button class="uk-button uk-button-secondary uk-modal-close" (click)="closeModal()" type="button">Close</button>
           @if (!invitationToken) {
-            <button class="uk-button uk-button-primary" (click)="addContributor()" type="button">Get invitation token</button>
+            <button class="uk-button uk-button-primary" (click)="addContributor()" type="button">Send invitation</button>
           } @else {
             <a class="uk-margin-left" (click)="copyToClipboard()" [title]="title" type="button">
               <span class="material-icons">content_copy</span>

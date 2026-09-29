@@ -75,12 +75,12 @@ export class SurveyService {
     return this.http.get<DisplayHistory>(this.base + `/answers/${answerId}/history`, this.options);
   }
 
-  getInvitationToken(inviteeEmail: string, inviteeRole: string, stakeholder: string) {
-    return this.http.get(this.base + `/invitation?inviteeEmail=${inviteeEmail}&inviteeRole=${inviteeRole}&stakeholder=${stakeholder}`, {responseType: 'text'});
+  getInvitationToken(inviteeEmail: string, role: string, groupId: string, group: string = 'stakeholder') {
+    return this.http.post<{ token: string, emailSent: boolean }>(this.base + `/invitation`, {inviteeEmail, role, group, groupId});
   }
 
   acceptInvitation(token: string) {
-    return this.http.get(this.base + `/invitation/accept?invitationToken=${token}`);
+    return this.http.post<void>(this.base + `/invitation/accept`, {token});
   }
 
   removeManager(stakeholderId: string, email: string) {
