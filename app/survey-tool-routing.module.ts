@@ -16,12 +16,14 @@ const observatoryUiRoutes: Routes = [
   {
     path: 'fb/new-form',
     component: FormBuilderComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: { showFooter: false }
   },
   {
     path: 'fb/:id/edit',
     component: FormBuilderComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: { showFooter: false }
   },
   {
     path: 'invitation/accept/:invitationToken',
