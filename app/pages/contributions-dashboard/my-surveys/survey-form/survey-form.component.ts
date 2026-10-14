@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { UntypedFormGroup } from "@angular/forms";
 import { zip } from "rxjs/internal/observable/zip";
+import { shareReplay } from "rxjs/operators";
 import { SurveyComponent } from "../../../../../catalogue-ui/pages/dynamic-form/survey.component";
 import { Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
 import { SurveyService } from "../../../../services/survey.service";
@@ -83,8 +84,32 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         this.updateUserInfo();
 
         if (!this.freeView) {
+          // Shared so the websocket connect below and the zip() further down both trigger off
+          // the same HTTP response instead of firing getLatestAnswer twice.
+          const latestAnswer$ = this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            shareReplay(1)
+          );
+
+          // Open the websocket connection as soon as the answer id/type are known, instead of
+          // also waiting on getSurvey() (needed only to render the form, not to open the socket).
+          latestAnswer$.subscribe(
+            answer => {
+              this.wsService.initializeWebSocketConnection(answer.id, answer.type);
+              if (this.router.url.includes('/view')) {
+                this.action = 'view';
+              } else if (this.router.url.includes('/validate')) {
+                this.action = 'validate';
+              } else {
+                this.action = 'edit';
+              }
+              this.wsService.WsJoin(this.action);
+            },
+            error => {console.log(error)}
+          );
+
           zip(
-            this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(takeUntilDestroyed(this.destroyRef)),
+            latestAnswer$,
             this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef))
           ).subscribe(
             next => {
@@ -94,15 +119,6 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             error => {console.log(error)},
             () => {
               this.ready = true;
-              this.wsService.initializeWebSocketConnection(this.surveyAnswer.id, this.surveyAnswer.type);
-              if (this.router.url.includes('/view')) {
-                this.action = 'view';
-              } else if (this.router.url.includes('/validate')) {
-                this.action = 'validate';
-              } else {
-                this.action = 'edit';
-              }
-              this.wsService.WsJoin(this.action);
             }
           );
         } else {

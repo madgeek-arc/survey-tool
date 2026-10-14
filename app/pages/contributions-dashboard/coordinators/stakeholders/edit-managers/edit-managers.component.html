@@ -79,6 +79,9 @@
         <input [(ngModel)]="email" class="uk-input" type="email"
           placeholder="New manager email">
       } @else {
+        <p [class]="emailSent ? 'uk-text-success' : 'uk-text-warning'">
+          {{ emailSent ? 'The invitation was emailed to the invitee. You can also share the link below.' : 'The invitation email could not be sent. Please share the link below with the invitee.' }}
+        </p>
         <textarea class="uk-form-controls uk-textarea" type="textarea" [(ngModel)]="invitationToken"
         disabled></textarea>
       }
@@ -86,7 +89,7 @@
         <button class="uk-button uk-button-primary uk-modal-close" (click)="closeModal()" type="button">Close</button>
         @if (!invitationToken) {
           <button class="uk-button uk-button-primary" (click)="addManager()"
-            type="button">Get invitation token
+            type="button">Send invitation
           </button>
         } @else {
           <a class="uk-margin-left" (click)="copyToClipboard()" [title]="title" type="button">

@@ -22,6 +22,7 @@ export class EditManagerComponent implements OnInit, OnDestroy {
   subscriptions = [];
   stakeholderId: string = null;
   invitationToken: string = null;
+  emailSent = false;
   stakeholder: Stakeholder = null;
   members: GroupMembers = null
   email: string = null;
@@ -87,7 +88,8 @@ export class EditManagerComponent implements OnInit, OnDestroy {
         this.subscriptions.push(
           this.surveyService.getInvitationToken(this.email, role, this.stakeholder.id).subscribe(
             next => {
-              this.invitationToken = location.origin + '/invitation/accept/' + next.toString();
+              this.invitationToken = location.origin + '/invitation/accept/' + next.token;
+              this.emailSent = next.emailSent;
               this.errorMessage = null;
               this.email = null;
                UIkit.modal('#invite-manager-modal').hide();
