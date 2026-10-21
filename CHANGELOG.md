@@ -1,0 +1,170 @@
+# Changelog
+
+All notable changes to survey-tool are documented here, newest first. Entries were compiled from the Git history
+between release tags (`feat`, `fix`, `refactor`/`perf`/`build` commits); chores, style and submodule bumps are omitted.
+
+## Unreleased
+
+### Added
+
+- **drawer-survey-table:** Rewrite notification drawer and survey-template-table with UIkit classes
+- **survey-template-card:** Restyle and also extract edit-dates modal into shared survey-modals component
+- Replace custom classes with uikit classes
+- Redesign cards, table, modals and notifications
+- Change the routing for country pages configuration
+- **survey-form:** Hide chrome on dynamic form routes and add back navigation
+- **invitations:** Send invitations by email and accept them via POST
+
+### Changed
+
+- **survey-template-card:** Migrate to UIKit theme variants, remove custom CSS
+
+### Fixed
+
+- **websocket:** Open the websocket connection as soon as the survey answer is known
+- **my-group:** Support invite, add and remove for administrator groups
+
+## 3.2.0 - 2026-06-25
+
+### Added
+
+- Public stakeholder managers api call.
+- **admin:** Implement My Group page and update sidebar structure
+- **security:** Introduces csrf protection.
+- **coordinators-list:** Refactor coordinator view to display a list of cards and implement nested API calls to fetch members for each coordinator dynamically
+- **coordinators-list:** Add edit functionality and fix loading logic
+- **coordinators-list:** Implement secure edit functionality and UI improvement
+- **coordinators-list:** Enable My Group view and user info on menu click
+- **admin-surveys:** Add answer generation logic and template preview routing
+- **survey-service:** Add generateAnswers POST method
+- Add authentication guard to form builder.
+- Auto minimize side menu when in survey form page.
+- Add getMonthlyViews API call to StakeholdersService
+- **contributions-dashboard:** Add News entry to stakeholder sidebar
+- **coordinator:** Add generate, activate and edit dates functionality
+- **stakeholders.service:** Add getExplorePageViews and getCountryPageViews methods
+- **comments:** Update survey-form for mention functionality
+- **support-page:** Add support page with downloadable guides, FAQ accordion and contact section
+- **stakeholders.service.ts:** Make country param optional in getCountryPageViews
+- **administrator:** Add lock, unlock, generate answers and edit dates actions to survey templates
+- **coordinator-surveys:** Add survey deactivation and pre-fill edit dates modal.
+- **surveys:** Add confirmation modal
+- **user-profile:** Complete profile details tab, set up notifications tab signals
+- **user-profile:** Complete notifications tab UI
+- **user-profile:** Wire notifications preferences to backend API
+- **user-profile:** Rework email notifications master toggle behaviour
+- **survey-templates:** Redesign survey list with shared card and table views
+- Redesign survey cards and add notification settings
+- **surveys:** Require close date when reactivating previous surveys
+
+### Changed
+
+- Angular upgrade to v20.
+- Control-flow migration.
+- **My-Group:** Remove unnecessary API calls
+- **my-group:** Remove unnecessary logs
+- Update dashboard menu home paths
+- Add eu flag round image, rename eu flag image to eu-flag-square.
+- Update admin surveys list component and move business logic to admin surveys facade.
+- Split form builder page to two components and two corresponding paths.
+- **mentions:** Implement stakeholder provider and update catalogue-ui submodule
+- **websocket:** Centralize websocket service and clean up imports
+
+### Fixed
+
+- Replace injection of custom implementation with abstract class
+- Update user info on coordinator crud action.
+- **coordinators:** Ensure sidebar loads and admin context initializes correctly
+- Change footer width to match side menu when collapses.
+- Moves analytics.ts from parent project to remove backward reference
+- **explore:** Add mobile navigation for explore subpages
+- **pdf-generate:** Skip paused questions when generating PDF
+- **comments:** Cache mentionable users to prevent duplicate API calls
+- **comments:** Fix anchor positioning, mention context and extraction
+
+## 3.1.0 - 2025-12-23
+
+### Added
+
+- **side-menu:** Add Stakeholders group with sub-menus
+
+### Fixed
+
+- **stakeholders:** Full-width card when only one stakeholder
+
+## 3.0.0 - 2025-12-01
+
+### Added
+
+- Side bar css theme change
+- Move side bar component to survey-tool submodule and utilize it for contributions dashboard
+- Menu section functionality
+- Pass logo and footer TemplateRef to dashboard side menu component
+- Initial report service component
+- Report generation service now can handle images
+- Dynamic categorized map chart creation for report
+- Calculate question percentages
+- Resources registry admin pages
+- Column ranges chart for report creation
+- Stacked column data for report
+- Bar and total investment charts for report doc
+
+### Changed
+
+- Consolidate reused content to one component
+- Remove static inputs from mobile sidebar toggle component
+- Removed old/unsused styles, better theming structure
+- Changes for new http client module
+- Stand alone migration for angular v19
+- Move Icons service and component to shared folder
+- Move survey answer submission logic from catalogue-ui to survey-tool
+- Move report creation functionality from survey-tool to outer repository
+
+### Fixed
+
+- Display side menu after refresh
+- Don't show menu items for multiple roles, external links now work properly
+- Stop side menu items reinitialization when user group does not change at contributions dashboard
+- In both mobile and desktop view sidebar menu toggle now works on refresh
+- Uikit import
+- Modal opens when pressing Add Stakeholder button
+- User activity icon size change
+- Canvas and blob URL cleanup after image generation 1. Revoke the blob URL to ensure the browser’s blob URL pool is not exhausted. 2. Clean up each canvas element to free the DOM node so element‑count limits are not hit.
+- Import pie chart as standalone
+- Set report chart colors to match primary and secondary
+- Remove export report button from survey pages.
+
+## 2.8.0 - 2025-05-09
+
+### Breaking changes
+
+- Change url parameter query to keyword
+- Change orderField url param to sort
+
+### Added
+
+- Show more/less functionality for text area fields
+- Initial support for sankey chart
+- Duplicate xAxis support for bar chart
+- Form builder main info section
+- Display stakeholders in table form, export all stakeholders to CSV
+
+### Changed
+
+- Moving code to proper location
+- Moved form top section and action bar outside of dynamic catalogue (fixes infinite user loading)
+- Replaced custom css class uk-display-none with uk-hidden
+- Safe url pipe refactor
+
+### Fixed
+
+- Properly hide text areas when visible parameter is set to false
+- Bar chart now properly displays negative values
+
+## 2.7.0 - 2024-07-17
+
+Release history is not itemised: the commits between `v2.6.4` and `2.7.0` do not follow the conventional-commit format. See `git log v2.6.4..2.7.0`.
+
+## v2.6.4 - 2024-03-14
+
+First tagged release. Earlier history is not itemised.
