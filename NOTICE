@@ -1,0 +1,18 @@
+survey-tool
+
+This product is licensed under the Apache License, Version 2.0. See LICENSE.
+
+Third-party scripts kept in assets/js and loaded by the host application
+(observatory-ui, through angular.json "scripts"):
+
+  sockjs-client v1.0.2 (sockjs.min.js)
+    MIT license. http://sockjs.org
+
+  Stomp Over WebSocket (stomp.min.js)
+    Apache License, Version 2.0.
+    http://www.jmesnil.net/stomp-websocket/doc/
+    Copyright (C) 2010-2013 Jeff Mesnil (http://jmesnil.net/)
+    Copyright (C) 2012 FuseSource, Inc. (http://fusesource.com)
+
+The npm packages used by the host application keep their own licences. The
+host's production build lists them in 3rdpartylicenses.txt.

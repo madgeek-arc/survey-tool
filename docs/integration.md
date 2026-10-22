@@ -1,8 +1,8 @@
 # Integration
 
 survey-tool calls the Observatory backend through `API_ENDPOINT`, embeds catalogue-ui for forms, and is hosted by
-observatory-ui. Endpoint paths, parameters and schemas are owned by the backend's Swagger/OpenAPI documentation
-(TODO(backend maintainers): link); this document lists the endpoint **groups** the module depends on.
+observatory-ui. Endpoint paths, parameters and schemas are owned by the backend's Swagger/OpenAPI documentation;
+this document lists the endpoint **groups** the module depends on.
 
 ```mermaid
 flowchart LR
