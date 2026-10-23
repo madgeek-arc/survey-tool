@@ -118,7 +118,7 @@ export class SurveyService {
   }
 
   getSurveyInfoByGroup(groupId: string) {
-    return this.http.get<Paging<SurveyInfo>>(this.base + `/answers/info?groupId=${groupId}`, this.options);
+    return this.http.get<Paging<SurveyInfo>>(this.base + `/answers/info?groupId=${groupId}&stakeholderId=${groupId}&quantity=100`, this.options);
   }
 
   exportToCsv(surveyId: string) {
