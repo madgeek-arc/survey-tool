@@ -42,11 +42,14 @@
     <!-- Import Modal -->
     <div id="import-modal" uk-modal #importModal>
       <div class="uk-modal-dialog uk-modal-body">
-        <button class="uk-modal-close-default" type="button" uk-close (click)="clearModal()"></button>
-        <h4 class="uk-modal-title uk-margin-small-top">Import data from previous survey</h4>
-        <p>You can use a previous survey answer to prefill the current one. Keep in mind that this selection will overwrite
-          any changes that you may have previously made on the current survey. Select the survey that you want to use as a
-        prefill choice from the list below:</p>
+        <h4 class="uk-modal-title">Import data from previous survey</h4>
+        <p class="uk-margin-small-bottom">You can use a previous survey answer to prefill the current one.
+          Select the survey that you want to use as a prefill choice from the list below:</p>
+        <div class="uk-alert uk-alert-warning uk-flex uk-text-small uk-margin-bottom">
+          <span class="uk-flex-none uk-margin-small-right" uk-icon="icon: warning"></span>
+          <span>Keep in mind that this selection will overwrite any changes that you may have previously made on the
+            current survey.</span>
+        </div>
 
         @if (showAlert) {
           <div class="uk-alert-warning" uk-alert>
@@ -56,21 +59,27 @@
         }
 
         @if (importFromData) {
+          @let progressBySurvey = importProgress$ | async;
           <div>
             @for (modelId of importFromData.importFrom; track modelId; let i = $index) {
-              <div class="uk-margin-small-bottom">
-                <label [for]="modelId">
-                  <input type="radio" [id]="modelId" name="surveyToImport" class="uk-radio" [value]="modelId" [(ngModel)]="importSelection">
-                  {{' '+importFromData.importFromNames[i]}}
-                </label>
-              </div>
+              <label class="eos-option uk-display-block uk-position-relative uk-padding-small uk-border-rounded uk-margin-small-bottom"
+                     [for]="modelId" [class.eos-option--selected]="importSelection === modelId">
+                <input type="radio" [id]="modelId" name="surveyToImport" class="visually-hidden" [value]="modelId" [(ngModel)]="importSelection">
+                <span class="uk-display-block uk-text-emphasis">{{ importFromData.importFromNames[i] }}</span>
+                @if (progressBySurvey?.[modelId]; as progress) {
+                  <span class="uk-flex uk-flex-middle uk-margin-small-top uk-text-meta">
+                    <progress class="uk-progress uk-width-expand uk-margin-remove-bottom" [value]="progress.current" [max]="progress.total"></progress>
+                    <span class="uk-margin-small-left uk-text-nowrap">{{ progress.current }} / {{ progress.total }} answered</span>
+                  </span>
+                }
+              </label>
             }
           </div>
         }
 
         <p class="uk-text-right">
           <button class="uk-button uk-button-default uk-modal-close" type="button" (click)="clearModal()">Cancel</button>
-          <button class="uk-button uk-button-primary" [ngClass]="{'uk-modal-close': !!importSelection}"
+          <button class="uk-button uk-button-primary uk-margin-small-left" [ngClass]="{'uk-modal-close': !!importSelection}"
             type="button" [title]="!importSelection ? 'Select survey to import from' : 'Click to import'"
           (click)="importSurveyAnswer()">Import</button>
         </p>

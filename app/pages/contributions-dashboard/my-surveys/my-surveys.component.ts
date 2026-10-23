@@ -4,10 +4,11 @@ import {UserService} from "../../../services/user.service";
 import {Paging} from "../../../../catalogue-ui/domain/paging";
 import {SurveyService} from "../../../services/survey.service";
 import {ImportSurveyData, Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
-import {Subject} from "rxjs";
-import {filter, take, takeUntil} from "rxjs/operators";
+import {Observable, of, Subject} from "rxjs";
+import {catchError, filter, map, take, takeUntil} from "rxjs/operators";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StakeholdersService} from "../../../services/stakeholders.service";
+import {Progress} from "../../../domain/survey";
 
 @Component({
     selector: 'app-contributions-my-surveys',
@@ -24,6 +25,7 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   surveys: Paging<Model>;
   importFromData: ImportSurveyData = null;
   importSelection: string = '';
+  importProgress$: Observable<Record<string, Progress>> = null;
   showAlert= false;
   currentSurveys: Model[] = [];
   previousSurveys: Model[] = [];
@@ -97,11 +99,19 @@ export class MySurveysComponent implements OnInit, OnDestroy{
       });
     }
 
+    this.importProgress$ = this.surveyService.getSurveyInfoByGroup(this.stakeholder.id).pipe(
+      map(info => Object.fromEntries(info.results.map(result => [result.surveyId, result.progressTotal]))),
+      catchError(error => {
+        console.error(error);
+        return of({} as Record<string, Progress>);
+      })
+    );
   }
 
   clearModal() {
     this.importFromData = null;
     this.importSelection = '';
+    this.importProgress$ = null;
   }
 
   clearError() {
