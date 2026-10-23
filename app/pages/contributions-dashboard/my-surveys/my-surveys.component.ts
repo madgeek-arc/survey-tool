@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Stakeholder, UserInfo} from "../../../domain/userInfo";
+import {Component, ElementRef, OnDestroy, OnInit, viewChild} from "@angular/core";
+import {Stakeholder} from "../../../domain/userInfo";
 import {UserService} from "../../../services/user.service";
 import {Paging} from "../../../../catalogue-ui/domain/paging";
 import {SurveyService} from "../../../services/survey.service";
 import {ImportSurveyData, Model} from "../../../../catalogue-ui/domain/dynamic-form-model";
 import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
+import {filter, take, takeUntil} from "rxjs/operators";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StakeholdersService} from "../../../services/stakeholders.service";
 
@@ -27,6 +27,7 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   showAlert= false;
   currentSurveys: Model[] = [];
   previousSurveys: Model[] = [];
+  importModal = viewChild<ElementRef<HTMLElement>>('importModal');
 
   constructor(private userService: UserService, private surveyService: SurveyService, private router: Router,
               private route: ActivatedRoute, private stakeholdersService: StakeholdersService) {
@@ -49,28 +50,25 @@ export class MySurveysComponent implements OnInit, OnDestroy{
       () => {}
     );
 
-    let userInfo: UserInfo = this.userService.getCurrentUserInfo();
-    if (userInfo) {
-      userInfo.stakeholders.forEach(sh => {
-        if (sh.id === this.id)
-          this.stakeholder = sh;
+    // after a page reload the user info is only available once its request returns
+    this.userService.getUserObservable().pipe(filter(userInfo => !!userInfo), take(1), takeUntil(this._destroyed))
+      .subscribe(userInfo => {
+        const stakeholder = userInfo.stakeholders.find(sh => sh.id === this.id);
+        if (stakeholder) {
+          this.stakeholder = stakeholder;
+          this.getSurveys();
+        }
       });
-    }
+  }
 
-    if (this.stakeholder) {
-      this.userService.currentStakeholder.next(this.stakeholder);
-      this.surveyService.getSurveys('stakeholderId', this.stakeholder.id).pipe(takeUntil(this._destroyed))
-        .subscribe(next => {
-          this.surveys = next;
-          this.surveys.results.forEach(model => {
-            if (model.locked && model.active)
-              this.currentSurveys.push(model);
-            if (model.locked && !model.active)
-              this.previousSurveys.push(model);
-          });
-        });
-    }
-
+  getSurveys() {
+    this.userService.currentStakeholder.next(this.stakeholder);
+    this.surveyService.getSurveys('stakeholderId', this.stakeholder.id).pipe(takeUntil(this._destroyed))
+      .subscribe(next => {
+        this.surveys = next;
+        this.currentSurveys = next.results.filter(model => model.locked && model.active);
+        this.previousSurveys = next.results.filter(model => model.locked && !model.active);
+      });
   }
 
   importSurveyAnswer() {
@@ -115,6 +113,8 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   ngOnDestroy() {
     this._destroyed.next(true);
     this._destroyed.complete();
+    // UIkit moves the modal to <body> when it is first shown, so it outlives the component unless removed here
+    this.importModal()?.nativeElement.remove();
   }
 
 }
