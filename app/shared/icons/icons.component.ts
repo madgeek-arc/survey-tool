@@ -6,7 +6,8 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
-  ViewChild
+  ViewChild,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { IconsService } from "./icons.service";
 import { Icon } from "./icons";
@@ -53,6 +54,7 @@ export interface StopRule {
     SafeUrlPipe
   ],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (icon) {
       @if (icon.data) {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminSurveysFacade, ResponseCounts } from './admin-surveys.facade';
 import { NotificationSettingsService } from '../../../../services/notification-settings.service';
@@ -20,6 +20,7 @@ import { SurveyModalsComponent } from '../../survey-modals/survey-modals.compone
   selector: 'app-admin-surveys-list',
   templateUrl: 'admin-surveys-list.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     SurveyToolModule,
     SidebarMobileToggleComponent,

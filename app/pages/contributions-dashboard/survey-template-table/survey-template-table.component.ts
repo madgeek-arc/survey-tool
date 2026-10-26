@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Model } from '../../../../catalogue-ui/domain/dynamic-form-model';
@@ -9,6 +9,7 @@ import { getStatusBadge, getDaysLeft, getResponsePercent } from '../survey-templ
   selector: 'app-survey-template-table',
   templateUrl: './survey-template-table.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, DatePipe]
 })
 export class SurveyTemplateTableComponent {

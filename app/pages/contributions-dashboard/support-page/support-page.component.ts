@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { PageContentComponent } from "../../../shared/page-content/page-content.component";
 
 interface Guide {
@@ -25,6 +25,7 @@ export interface FaqCategory {
   selector: 'app-support-page',
   templateUrl: './support-page.component.html',
   imports: [PageContentComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true
 })
 export class SupportPageComponent {

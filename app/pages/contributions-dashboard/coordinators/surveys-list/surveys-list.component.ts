@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, OnInit } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CoordinatorSurveysFacade, ResponseCounts } from './coordinator-surveys.facade';
@@ -12,6 +12,7 @@ import { Coordinator } from '../../../../domain/userInfo';
 @Component({
     selector: 'app-survey-lists',
     templateUrl: 'surveys-list.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SurveysListComponent implements OnInit {

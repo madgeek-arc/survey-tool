@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, viewChild} from "@angular/core";
+import {Component, ElementRef, OnDestroy, OnInit, viewChild, ChangeDetectionStrategy} from "@angular/core";
 import {Stakeholder} from "../../../domain/userInfo";
 import {UserService} from "../../../services/user.service";
 import {Paging} from "../../../../catalogue-ui/domain/paging";
@@ -14,6 +14,7 @@ import {Progress} from "../../../domain/survey";
     selector: 'app-contributions-my-surveys',
     templateUrl: './my-surveys.component.html',
     providers: [SurveyService, StakeholdersService],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

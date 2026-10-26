@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { UserService } from "../../services/user.service";
 import { Administrator, Coordinator, Stakeholder, UserInfo } from "../../domain/userInfo";
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from "@angular/router";
@@ -17,6 +17,7 @@ import { NgStyle } from "@angular/common";
 @Component({
   selector: 'app-contributions-dashboard',
   templateUrl: 'contributions-dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     RouterOutlet,
     DashboardSideMenuComponent,

@@ -10,7 +10,8 @@ import {
   OnInit, Output,
   PLATFORM_ID, QueryList,
   SimpleChanges, TemplateRef,
-  ViewChild, ViewChildren
+  ViewChild, ViewChildren,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, QueryParamsHandling, Router, RouterLink } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -106,6 +107,7 @@ export interface MenuSection {
   selector: 'dashboard-sidebar',
   templateUrl: 'dashboard-side-menu.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     CommonModule,
     RouterLink,

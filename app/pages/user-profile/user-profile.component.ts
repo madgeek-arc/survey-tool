@@ -1,4 +1,4 @@
-import {Component, computed, OnDestroy, OnInit, signal} from "@angular/core";
+import {Component, computed, OnDestroy, OnInit, signal, ChangeDetectionStrategy} from "@angular/core";
 import { Profile, UserInfo } from "../../domain/userInfo";
 import { UserService } from "../../services/user.service";
 import { CompressImageService } from "../../services/compress-image.service";
@@ -10,6 +10,7 @@ import { Subject } from "rxjs";
     templateUrl: 'user-profile.component.html',
     styleUrls: ['user-profile.component.scss'],
     providers: [CompressImageService],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

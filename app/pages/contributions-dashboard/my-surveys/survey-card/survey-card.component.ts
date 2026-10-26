@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ChangeDetectionStrategy } from "@angular/core";
 import { ResourcePermission, SurveyAnswer, SurveyInfo } from "../../../../domain/survey";
 import { UserService } from "../../../../services/user.service";
 import { Stakeholder } from "../../../../domain/userInfo";
@@ -11,6 +11,7 @@ import { ImportSurveyData, Model } from "../../../../../catalogue-ui/domain/dyna
     selector: 'app-survey-card',
     templateUrl: './survey-card.component.html',
     providers: [SurveyService],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

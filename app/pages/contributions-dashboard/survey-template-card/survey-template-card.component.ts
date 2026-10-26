@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CatalogueUiReusableComponentsModule } from '../../../../catalogue-ui/shared/reusable-components/catalogue-ui-reusable-components.module';
@@ -12,6 +12,7 @@ export type ResponseCounts = { responded: number; total: number };
   selector: 'app-survey-template-card',
   templateUrl: './survey-template-card.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [RouterLink, DatePipe, CatalogueUiReusableComponentsModule]
 })
 export class SurveyTemplateCardComponent {

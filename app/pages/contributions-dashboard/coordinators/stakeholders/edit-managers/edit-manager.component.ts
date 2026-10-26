@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { UserService } from "../../../../../services/user.service";
 import { Stakeholder, GroupMembers } from "../../../../../domain/userInfo";
 import { SurveyService } from "../../../../../services/survey.service";
@@ -12,6 +12,7 @@ import * as UIkit from 'uikit';
     selector: 'app-edit-managers',
     templateUrl: 'edit-managers.component.html',
     providers: [SurveyService, StakeholdersService],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 
