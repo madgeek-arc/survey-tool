@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy} from "@angular/core";
 import {PageContentComponent} from "../../../../shared/page-content/page-content.component";
 import {
   SidebarMobileToggleComponent
@@ -27,6 +27,7 @@ import {UserService} from "../../../../services/user.service";
     RouterLink,
     ReactiveFormsModule
 ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [StakeholdersService],
 })
 

@@ -14,7 +14,7 @@ import {
 import {
   CookieLawService,
 } from './cookie-law.service';
-import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { animate, AnimationEvent, state, style, transition, trigger } from '@angular/animations';
 
 // import {
@@ -27,6 +27,7 @@ export type CookieLawTarget = '_blank' | '_self';
 
 @Component({
   selector: 'cookie-law',
+  changeDetection: ChangeDetectionStrategy.Eager,
   // encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('state', [

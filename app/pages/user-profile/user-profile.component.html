@@ -124,7 +124,7 @@
                 <div class="uk-width-1-1">
                   <div class="field-label">Webpage</div>
                   @if (!edit) {
-                    <a [href]="userInfo.user?.profile?.webpage"
+                    <a [href]="$safeNavigationMigration(userInfo.user?.profile?.webpage)"
                        [ngClass]="{'uk-disabled': !userInfo.user?.profile?.webpage}"
                        target="_blank">
                       {{ userInfo.user?.profile?.webpage || '—' }}

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SurveyModalsService } from '../../../services/survey-modals.service';
 
@@ -6,6 +6,7 @@ import { SurveyModalsService } from '../../../services/survey-modals.service';
   selector: 'app-survey-modals',
   templateUrl: './survey-modals.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule]
 })
 export class SurveyModalsComponent {

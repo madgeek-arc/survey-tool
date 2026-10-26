@@ -64,7 +64,7 @@
             <a [routerLink]="['../../../']" class="uk-margin-small-right" title="Back">
               <span class="material-icons">keyboard_backspace</span>
             </a>
-            <span>{{selectedVersion?.time | date:'medium'}}</span>
+            <span>{{$safeNavigationMigration(selectedVersion?.time) | date:'medium'}}</span>
             @if (selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version) {
               <button
                 class="uk-button uk-button-small uk-button-primary uk-margin-left" (click)="restoreVersion()">Restore this version

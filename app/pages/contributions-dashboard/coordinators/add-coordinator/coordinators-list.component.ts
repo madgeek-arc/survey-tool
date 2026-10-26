@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
@@ -20,6 +20,7 @@ import UIkit from "uikit";
     SidebarMobileToggleComponent,
     FormsModule
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [StakeholdersService]
 })
 export class NewCoordinatorComponent implements OnInit {

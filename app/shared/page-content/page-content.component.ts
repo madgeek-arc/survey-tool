@@ -8,7 +8,8 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
-  ViewChild
+  ViewChild,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { NgClass } from "@angular/common";
 import { DashboardSideMenuService } from "../dashboard-side-menu/dashboard-side-menu.service";
@@ -21,6 +22,7 @@ declare var UIkit;
     NgClass
   ],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div id="page_content">
       <div [class.uk-hidden]="!isBrowser" id="page_content_sticky_footer" #sticky_footer

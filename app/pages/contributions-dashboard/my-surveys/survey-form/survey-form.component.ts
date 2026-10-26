@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { UntypedFormGroup } from "@angular/forms";
@@ -22,6 +22,7 @@ import * as UIkit from 'uikit';
     selector: 'app-survey-form',
     templateUrl: 'survey-form.component.html',
     providers: [SurveyService, StakeholdersService, WebsocketService],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

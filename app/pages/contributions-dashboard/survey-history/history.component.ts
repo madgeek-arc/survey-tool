@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { SurveyService } from "../../../services/survey.service";
 import { DisplayEntries, DisplayHistory, Editor, SurveyAnswer } from "../../../domain/survey";
@@ -11,6 +11,7 @@ import * as UIkit from 'uikit';
     selector: 'app-survey-history',
     templateUrl: 'history.component.html',
     styleUrls: ['./history.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

@@ -1,8 +1,9 @@
-import {Component} from "@angular/core";
+import {Component, ChangeDetectionStrategy} from "@angular/core";
 
 @Component({
     selector: 'app-contributions-home',
     templateUrl: './contributions-home.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from "@angular/core";
 import { Paging } from "../../../../../catalogue-ui/domain/paging";
 import { Coordinator, Stakeholder } from "../../../../domain/userInfo";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
@@ -15,6 +15,7 @@ declare var UIkit;
     selector: 'app-stakeholders',
     templateUrl: 'stakeholders.component.html',
     providers: [StakeholdersService],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

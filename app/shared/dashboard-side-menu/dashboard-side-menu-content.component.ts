@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 import { DashboardSideMenuService } from "./dashboard-side-menu.service";
 
 
@@ -6,6 +6,7 @@ import { DashboardSideMenuService } from "./dashboard-side-menu.service";
   selector: '[sidebar-content]',
   imports: [],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (collapsible) {
       <div id="sidebar_toggle" (click)="toggleOpen()"></div>

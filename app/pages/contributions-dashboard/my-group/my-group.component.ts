@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnDestroy, OnInit} from "@angular/core";
+import {Component, DestroyRef, inject, OnDestroy, OnInit, ChangeDetectionStrategy} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
@@ -13,6 +13,7 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
     selector: 'app-contributions-my-group',
     templateUrl: './my-group.component.html',
     providers: [SurveyService, StakeholdersService],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

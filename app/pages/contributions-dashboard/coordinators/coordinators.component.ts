@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SurveyService } from "../../../services/survey.service";
 import { UserService } from "../../../services/user.service";
@@ -13,6 +13,7 @@ import { FacetValue } from "../../../../catalogue-ui/domain/facet";
 @Component({
     selector: 'app-coordinator-dashboard',
     templateUrl: './coordinators.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

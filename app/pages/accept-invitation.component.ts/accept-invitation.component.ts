@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SurveyService } from "../../services/survey.service";
 import { UserService } from "../../services/user.service";
@@ -9,6 +9,7 @@ import { takeUntil } from "rxjs/operators";
 @Component({
     selector: 'app-accept-invitation',
     templateUrl: 'accept-invitation.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

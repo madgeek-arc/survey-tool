@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
 
 import { DashboardSideMenuService, SidebarItem } from "../dashboard-side-menu.service";
 import { Subscription } from "rxjs";
@@ -8,6 +8,7 @@ import { IconsComponent } from "../../icons/icons.component";
   imports: [IconsComponent],
   selector: 'sidebar-mobile-toggle',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (activeSidebarItem) {
       <a href="#sidebar_offcanvas"
