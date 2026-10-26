@@ -9,7 +9,7 @@ notification settings, accept invitations and edit their profile. It also holds 
 Component:     survey-tool
 Type:          Frontend module (Angular source, consumed as a Git submodule)
 Status:        Production (embedded in observatory-ui)
-Technology:    Angular 20 / TypeScript / RxJS, UIkit, ng-select; forms rendered by catalogue-ui
+Technology:    Angular 22 / TypeScript / RxJS, UIkit, ng-select; forms rendered by catalogue-ui
 API:           Consumes the Observatory API (/api); exposes none
 Swagger:       n/a (frontend)
 Deployment:    Not independently deployable; compiled into observatory-ui (see observatory-ui/docs/deployment.md)
