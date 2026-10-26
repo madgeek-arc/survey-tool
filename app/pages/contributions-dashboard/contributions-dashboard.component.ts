@@ -8,7 +8,7 @@ import {
   MenuSection
 } from "../../shared/dashboard-side-menu/dashboard-side-menu.component";
 
-import { SharedModule } from "../../../../app/shared/shared.module";
+import { SharedModule } from "src/app/shared/shared.module";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashboard-side-menu.service";
 import { NgStyle } from "@angular/common";
@@ -49,8 +49,11 @@ export class ContributionsDashboardComponent implements OnInit {
     this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       res => {
         this.userInfo = res;
-        this.userService.userId = this.userInfo.user.email;
-        this.setGroup();
+        // The service emits null until /user/info answers, and again when the user info is cleared.
+        if (this.userInfo) {
+          this.userService.userId = this.userInfo.user.email;
+          this.setGroup();
+        }
       }, error => {
         console.error(error);
       }
