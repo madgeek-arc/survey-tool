@@ -17,6 +17,9 @@ import { MentionableUsersProvider } from "../../../../../catalogue-ui/domain/men
 import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
 
+// Parts below the element whose id is the focus position that draw the field's visible border: the element itself
+// (inputs, textarea, date wrapper), ng-select's container, the rich text editor's toolbar and surface, and the radios of a group.
+const HIGHLIGHT_BORDER_TARGETS = ['', ' .ng-select-container', ' .rte__toolbar', ' .rte__surface', ' .uk-radio'];
 
 @Component({
     selector: 'app-survey-form',
@@ -58,8 +61,14 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   hasHeader = true;
   backRoute: any[] = null;
 
+  // Holds the per-user `.user-<sessionId>` border rules. Adopted sheets sort after every <link>/<style>
+  // sheet, so these rules win over the global `.uk-input { border: ... !important }` regardless of build output order.
+  private userHighlightSheet = new CSSStyleSheet();
+  private highlightedSessions = new Set<string>();
+
   ngOnInit() {
     this.ready = false;
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, this.userHighlightSheet];
     this.tabsHeader = 'Sections';
     this.layoutService.setOpen(false);
 
@@ -145,22 +154,12 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         this.activeUsers = next;
         this.activeUsers?.forEach( user => {
           user.color = this.getRandomDarkColor(user.sessionId);
-          if(user.position) {
-            let sheet = window.document.styleSheets[0];
-
-            let styleExists = false;
-            for (let i = 0; i < sheet.cssRules.length; i++) {
-              if(sheet.cssRules[i] instanceof CSSStyleRule) {
-                if((sheet.cssRules[i] as CSSStyleRule).selectorText === `.user-${user.sessionId}`) {
-                  styleExists = true;
-                  break;
-                }
-              }
-            }
-            if (!styleExists)
-              sheet.insertRule(`.user-${user.sessionId} { border-color: ${this.getRandomDarkColor(user.sessionId)} !important}`, sheet.cssRules.length);
-
-            // console.log(sheet);
+          if (user.position && !this.isCurrentUser(user) && !this.highlightedSessions.has(user.sessionId)) {
+            // UIkit override attempted: UIkit has no per-session dynamic colour utility, and the global
+            // .uk-input border in overrides.less is !important, so the highlight is injected as a last-in-cascade adopted stylesheet.
+            const selector = HIGHLIGHT_BORDER_TARGETS.map(target => `.user-${user.sessionId}${target}`).join(', ');
+            this.userHighlightSheet.insertRule(`${selector} { border-color: ${user.color} !important}`, this.userHighlightSheet.cssRules.length);
+            this.highlightedSessions.add(user.sessionId);
           }
 
           setTimeout(()=> {
@@ -175,6 +174,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    document.adoptedStyleSheets = document.adoptedStyleSheets.filter(sheet => sheet !== this.userHighlightSheet);
     this.layoutService.setOpen(true);
     if (this.surveyAnswer?.id) {
       this.wsService.WsLeave(this.action);
@@ -296,10 +296,14 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   };
 
 
+  isCurrentUser(user: UserActivity): boolean {
+    return user.sessionId === this.wsService.userId;
+  }
+
   /** Mark the field as active --> **/
   addClass(users: UserActivity[]) {
     users?.forEach( user => {
-      if (!user.position)
+      if (!user.position || this.isCurrentUser(user)) // only other users get a colored field, mine keeps the default
         return;
 
       const htmlElement = document.getElementById(user.position);
