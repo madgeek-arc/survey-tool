@@ -36,9 +36,9 @@ same `environment` object: `{ provide: APP_ENV, useValue: environment }`.
 |---|---|
 | `provideHttpClient(withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }))` | XSRF header on state-changing requests |
 | `APP_ENV` | catalogue-ui configuration |
-| `UserService`, `MessagingSystemService` | `UserService` is provided in `AppModule` so a single instance serves guards, menus and the dashboard |
+| `UserService`, `MessagingSystemService` | `UserService` is provided in the host's `app.config.ts` so a single instance serves guards, menus and the dashboard |
 | `HTTP_INTERCEPTORS` (optional) | The host's interceptor handles `401`/`403` globally |
-| Router and animations | `RouterModule.forRoot`, `BrowserAnimationsModule` |
+| Router and animations | `provideRouter`, `provideAnimations` |
 
 `SurveyToolModule` itself provides `AuthenticationService`, `SurveyService` and the `MentionableUsersProvider`
 implementation.
