@@ -105,8 +105,8 @@ role-based menu and screens are conveniences on top of backend enforcement. See 
 
 ## Constraints and decisions
 
-- **Not independently buildable.** It imports from the host: `../../environments/environment` and `SharedModule`
-  from `src/app`, and observatory-ui imports from it in turn. Any
+- **Not independently buildable.** It imports from the host: `../../environments/environment` and the footer
+  component from `src/app/shared`, and observatory-ui imports from it in turn. Any
   host must provide equivalents at the same relative paths, or the imports need to be refactored.
 - Route components are standalone and import the standalone catalogue-ui components directly.
   New code should use standalone components with signals.

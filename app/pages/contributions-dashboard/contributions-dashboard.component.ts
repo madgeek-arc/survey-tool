@@ -8,7 +8,7 @@ import {
   MenuSection
 } from "../../shared/dashboard-side-menu/dashboard-side-menu.component";
 
-import { SharedModule } from "src/app/shared/shared.module";
+import { FooterComponent } from "src/app/shared/footer/footer.component";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashboard-side-menu.service";
 import { NgStyle } from "@angular/common";
@@ -21,7 +21,7 @@ import { NgStyle } from "@angular/common";
   imports: [
     RouterOutlet,
     DashboardSideMenuComponent,
-    SharedModule,
+    FooterComponent,
     NgStyle
   ]
 })

@@ -38,7 +38,7 @@ same `environment` object: `{ provide: APP_ENV, useValue: environment }`.
 | `APP_ENV` | catalogue-ui configuration |
 | `UserService`, `MessagingSystemService` | `UserService` is provided in the host's `app.config.ts` so a single instance serves guards, menus and the dashboard |
 | `HTTP_INTERCEPTORS` (optional) | The host's interceptor handles `401`/`403` globally |
-| Router and animations | `provideRouter`, `provideAnimations` |
+| Router | `provideRouter`. The unused `cookie-law` component is the only code here that needs `provideAnimations()` |
 
 The host provides `AuthenticationService`, `SurveyService` and the `MentionableUsersProvider` implementation
 (`StakeholderMentionableUsersProvider`); observatory-ui does it in `app.config.ts`, because the routes do not.
@@ -47,7 +47,7 @@ The host provides `AuthenticationService`, `SurveyService` and the `MentionableU
 
 | Import | From the host |
 |---|---|
-| `SharedModule` | `src/app/shared/shared.module` (top menu and footer) |
+| `FooterComponent` | `src/app/shared/footer` |
 | `environment` | `src/environments/environment` |
 
 A different host must provide equivalents at the same relative paths.

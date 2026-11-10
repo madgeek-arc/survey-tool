@@ -35,7 +35,7 @@ home page component and the shared header/footer module (see [docs/architecture.
 |---|---|
 | Observatory backend (`/api`) | Users, groups, surveys, answers, invitations, permissions, analytics |
 | [catalogue-ui](https://github.com/madgeek-arc/catalogue-ui) (nested) | Form rendering, form builder, comments, rich text editor |
-| observatory-ui (host) | `environments/environment`, `HomeComponent`, `SharedModule` (top menu and footer), build configuration |
+| observatory-ui (host) | `environments/environment`, `FooterComponent`, build configuration |
 
 ## Prerequisites and local start
 
