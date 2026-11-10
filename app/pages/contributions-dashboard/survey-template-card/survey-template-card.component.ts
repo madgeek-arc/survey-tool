@@ -1,7 +1,7 @@
 import { Component, computed, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { CatalogueUiReusableComponentsModule } from '../../../../catalogue-ui/shared/reusable-components/catalogue-ui-reusable-components.module';
+import { ReadMoreTextComponent } from '../../../../catalogue-ui/shared/reusable-components/read-more.component';
 import { Model } from '../../../../catalogue-ui/domain/dynamic-form-model';
 import { getStatusBadge, getDaysLeft, getResponsePercent } from './survey-card.utils';
 
@@ -13,7 +13,7 @@ export type ResponseCounts = { responded: number; total: number };
   templateUrl: './survey-template-card.component.html',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [RouterLink, DatePipe, CatalogueUiReusableComponentsModule]
+  imports: [RouterLink, DatePipe, ReadMoreTextComponent]
 })
 export class SurveyTemplateCardComponent {
   readonly survey = input.required<Model>();

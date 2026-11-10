@@ -18,7 +18,6 @@ import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
 import { PageContentComponent } from "../../../../shared/page-content/page-content.component";
 import { SidebarMobileToggleComponent } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
-import { DynamicFormModule } from "../../../../../catalogue-ui/pages/dynamic-form/dynamic-form.module";
 
 // Parts below the element whose id is the focus position that draw the field's visible border: the element itself
 // (inputs, textarea, date wrapper), ng-select's container, the rich text editor's toolbar and surface, and the radios of a group.
@@ -29,7 +28,7 @@ const HIGHLIGHT_BORDER_TARGETS = ['', ' .ng-select-container', ' .rte__toolbar',
     templateUrl: 'survey-form.component.html',
     providers: [SurveyService, StakeholdersService, WebsocketService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [PageContentComponent, SidebarMobileToggleComponent, DynamicFormModule, RouterLink]
+    imports: [PageContentComponent, SidebarMobileToggleComponent, SurveyComponent, RouterLink]
 })
 
 export class SurveyFormComponent implements OnInit, OnDestroy {

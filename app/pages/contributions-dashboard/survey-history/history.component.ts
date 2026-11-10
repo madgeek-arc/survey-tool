@@ -7,15 +7,15 @@ import { zip } from "rxjs/internal/observable/zip";
 
 import * as UIkit from 'uikit';
 import { NgClass, TitleCasePipe, DatePipe } from "@angular/common";
-import { CompareModule } from "../../../../catalogue-ui/pages/dynamic-form/compare-versions/compare.module";
-import { CatalogueUiSharedModule } from "../../../../catalogue-ui/shared/catalogue-ui-shared.module";
+import { CompareSurveysComponent } from "../../../../catalogue-ui/pages/dynamic-form/compare-versions/surveys/compare-surveys.component";
+import { UniquePipe } from "../../../../catalogue-ui/shared/pipes/uniquePipe.pipe";
 
 @Component({
     selector: 'app-survey-history',
     templateUrl: 'history.component.html',
     styleUrls: ['./history.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [NgClass, RouterLink, CompareModule, TitleCasePipe, DatePipe, CatalogueUiSharedModule]
+    imports: [NgClass, RouterLink, CompareSurveysComponent, TitleCasePipe, DatePipe, UniquePipe]
 })
 
 export class HistoryComponent implements OnInit {

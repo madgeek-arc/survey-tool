@@ -6,7 +6,7 @@ import { SurveyService } from "../../../../services/survey.service";
 import { Router, RouterLink } from "@angular/router";
 import { Subscriber } from "rxjs";
 import { ImportSurveyData, Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
-import { CatalogueUiReusableComponentsModule } from "../../../../../catalogue-ui/shared/reusable-components/catalogue-ui-reusable-components.module";
+import { ReadMoreTextComponent } from "../../../../../catalogue-ui/shared/reusable-components/read-more.component";
 import { DatePipe } from "@angular/common";
 
 @Component({
@@ -14,7 +14,7 @@ import { DatePipe } from "@angular/common";
     templateUrl: './survey-card.component.html',
     providers: [SurveyService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [CatalogueUiReusableComponentsModule, RouterLink, DatePipe]
+    imports: [ReadMoreTextComponent, RouterLink, DatePipe]
 })
 
 export class SurveyCardComponent implements OnChanges, OnDestroy {

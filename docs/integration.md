@@ -28,7 +28,7 @@ flowchart LR
 | Observatory backend | survey-tool → backend | Session discovery, groups, surveys, answers, invitations, analytics, profile | REST/JSON | `API_ENDPOINT` | Session cookie; XSRF header on state-changing calls |
 | Identity provider | Browser → backend → IdP | Login | Full-page redirect to `API_LOGIN`, then back to the stored path | `API_LOGIN` | Handled by the backend |
 | catalogue-ui | survey-tool → library | Render and build forms, comments, presence, PDF | Angular component inputs/outputs, DI tokens | `APP_ENV` | none; the library reuses the session |
-| observatory-ui (host) | Host → survey-tool and back | Routing shell, environment, `HomeComponent`, `SharedModule`; the host imports the module and survey-tool components | Angular modules and imports | `angular.json` | none |
+| observatory-ui (host) | Host → survey-tool and back | Routing shell, environment, `SharedModule`; the host mounts `SURVEY_TOOL_ROUTES` and imports survey-tool components | Lazy routes and TypeScript imports | `angular.json` | none |
 | messaging-system-ui | Shares services | Uses `UserService` and the `URLParameter` model from this module | TypeScript imports | none | none |
 
 ## Backend endpoint groups used
