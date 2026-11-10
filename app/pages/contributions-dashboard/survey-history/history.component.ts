@@ -1,18 +1,21 @@
 import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { SurveyService } from "../../../services/survey.service";
 import { DisplayEntries, DisplayHistory, Editor, SurveyAnswer } from "../../../domain/survey";
 import { Model } from "../../../../catalogue-ui/domain/dynamic-form-model";
 import { zip } from "rxjs/internal/observable/zip";
 
 import * as UIkit from 'uikit';
+import { NgClass, TitleCasePipe, DatePipe } from "@angular/common";
+import { CompareModule } from "../../../../catalogue-ui/pages/dynamic-form/compare-versions/compare.module";
+import { CatalogueUiSharedModule } from "../../../../catalogue-ui/shared/catalogue-ui-shared.module";
 
 @Component({
     selector: 'app-survey-history',
     templateUrl: 'history.component.html',
     styleUrls: ['./history.component.css'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [NgClass, RouterLink, CompareModule, TitleCasePipe, DatePipe, CatalogueUiSharedModule]
 })
 
 export class HistoryComponent implements OnInit {

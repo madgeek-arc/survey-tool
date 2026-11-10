@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { SurveyService } from "../../../services/survey.service";
 import { UserService } from "../../../services/user.service";
 import { SurveyInfo } from "../../../domain/survey";
@@ -9,12 +9,26 @@ import { URLParameter } from "../../../domain/url-parameter";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { FacetValue } from "../../../../catalogue-ui/domain/facet";
+import { PageContentComponent } from "../../../shared/page-content/page-content.component";
+import { SidebarMobileToggleComponent } from "../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
+import { NgSelectComponent, NgOptionComponent } from "@ng-select/ng-select";
+import { FormsModule } from "@angular/forms";
+import { NgClass, DatePipe } from "@angular/common";
 
 @Component({
     selector: 'app-coordinator-dashboard',
     templateUrl: './coordinators.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [
+        PageContentComponent,
+        SidebarMobileToggleComponent,
+        NgSelectComponent,
+        FormsModule,
+        NgOptionComponent,
+        NgClass,
+        RouterLink,
+        DatePipe
+    ]
 })
 
 export class CoordinatorsComponent implements OnInit, OnDestroy{

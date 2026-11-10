@@ -3,16 +3,18 @@ import { ResourcePermission, SurveyAnswer, SurveyInfo } from "../../../../domain
 import { UserService } from "../../../../services/user.service";
 import { Stakeholder } from "../../../../domain/userInfo";
 import { SurveyService } from "../../../../services/survey.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { Subscriber } from "rxjs";
 import { ImportSurveyData, Model } from "../../../../../catalogue-ui/domain/dynamic-form-model";
+import { CatalogueUiReusableComponentsModule } from "../../../../../catalogue-ui/shared/reusable-components/catalogue-ui-reusable-components.module";
+import { DatePipe } from "@angular/common";
 
 @Component({
     selector: 'app-survey-card',
     templateUrl: './survey-card.component.html',
     providers: [SurveyService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [CatalogueUiReusableComponentsModule, RouterLink, DatePipe]
 })
 
 export class SurveyCardComponent implements OnChanges, OnDestroy {

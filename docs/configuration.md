@@ -40,14 +40,13 @@ same `environment` object: `{ provide: APP_ENV, useValue: environment }`.
 | `HTTP_INTERCEPTORS` (optional) | The host's interceptor handles `401`/`403` globally |
 | Router and animations | `provideRouter`, `provideAnimations` |
 
-`SurveyToolModule` itself provides `AuthenticationService`, `SurveyService` and the `MentionableUsersProvider`
-implementation.
+The host provides `AuthenticationService`, `SurveyService` and the `MentionableUsersProvider` implementation
+(`StakeholderMentionableUsersProvider`); observatory-ui does it in `app.config.ts`, because the routes do not.
 
-## 4. Host code the module imports
+## 4. Host code survey-tool imports
 
 | Import | From the host |
 |---|---|
-| `HomeComponent` | `src/app/pages/home/home.component` (declared in `SurveyToolModule`) |
 | `SharedModule` | `src/app/shared/shared.module` (top menu and footer) |
 | `environment` | `src/environments/environment` |
 

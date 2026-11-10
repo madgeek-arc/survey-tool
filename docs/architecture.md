@@ -22,8 +22,8 @@ permissions: the backend does.
 
 | Area | Location | Notes |
 |---|---|---|
-| Module and routes | `app/survey-tool.module.ts`, `app/survey-tool-routing.module.ts` | `SurveyToolModule` provides `AuthenticationService`, `SurveyService` and the mentionable-users provider; routes `fb`, `fb/new-form`, `fb/:id/edit`, `invitation/accept/:invitationToken`, `profile`, lazy `contributions/:id` |
-| Dashboard shell | `app/pages/contributions-dashboard` | `ContributionsDashboardComponent` builds the side menu per role; lazy `ContributionsDashboardModule` |
+| Routes | `app/survey-tool.routes.ts` | `SURVEY_TOOL_ROUTES`, mounted by the host as its last-resort empty-path route; the host provides `AuthenticationService`, `SurveyService` and the mentionable-users provider. Routes `fb`, `fb/new-form`, `fb/:id/edit`, `invitation/accept/:invitationToken`, `profile`, lazy `contributions/:id` |
+| Dashboard shell | `app/pages/contributions-dashboard` | `ContributionsDashboardComponent` builds the side menu per role; lazy `CONTRIBUTIONS_DASHBOARD_ROUTES` (`contributions-dashboard.routes.ts`) |
 | Dashboard pages | same folder | `home`, `my-surveys` (cards and `survey-form`), `survey-history`, `my-group`, `coordinators` (members, surveys), `administrators` (surveys, stakeholders), `support-page`, `survey-template-card`/`-table`, `survey-modals`, `notification-settings-drawer` |
 | Invitations and profile | `app/pages/accept-invitation.component.ts`, `app/pages/user-profile` | |
 | Services | `app/services` | See below |
@@ -55,7 +55,7 @@ permissions: the backend does.
 | `fb`, `fb/new-form`, `fb/:id/edit` | catalogue-ui `FormsListComponent`, `FormBuilderComponent` | `AuthGuard` |
 | `invitation/accept/:invitationToken` | `AcceptInvitationComponent` | `AuthGuard` |
 | `profile` | `UserProfileComponent` | none |
-| `contributions/:id/**` | Lazy `ContributionsDashboardModule`: `home`, `mySurveys[/:surveyId/answer[/view\|/validate]]`, `mySurveys/:surveyId/:answerId/history`, `surveys[/:surveyId/:answerId/history]`, `surveyTemplates[/:surveyId/freeView]`, `admin-surveyTemplates[/:surveyId/freeView]`, `stakeholder/:stakeholderId/survey/:surveyId/view`, `my-group/:group`, `stakeholders[/:id]`, `stakeholders-admin[/:id]`, `coordinators`, `support` | `AuthGuard` on every route |
+| `contributions/:id/**` | Lazy `CONTRIBUTIONS_DASHBOARD_ROUTES`: `home`, `mySurveys[/:surveyId/answer[/view\|/validate]]`, `mySurveys/:surveyId/:answerId/history`, `surveys[/:surveyId/:answerId/history]`, `surveyTemplates[/:surveyId/freeView]`, `admin-surveyTemplates[/:surveyId/freeView]`, `stakeholder/:stakeholderId/survey/:surveyId/view`, `my-group/:group`, `stakeholders[/:id]`, `stakeholders-admin[/:id]`, `coordinators`, `support` | `AuthGuard` on every route |
 
 The host (observatory-ui) adds the role homes (`stakeholder`, `coordinator`, `administrator`, `news-and-stories`) and mounts
 this module under an empty path as the fallback.
@@ -105,10 +105,10 @@ role-based menu and screens are conveniences on top of backend enforcement. See 
 
 ## Constraints and decisions
 
-- **Not independently buildable.** It imports from the host: `../../environments/environment`, `HomeComponent`
-  (declared in `SurveyToolModule`) and `SharedModule` from `src/app`, and observatory-ui imports from it in turn. Any
+- **Not independently buildable.** It imports from the host: `../../environments/environment` and `SharedModule`
+  from `src/app`, and observatory-ui imports from it in turn. Any
   host must provide equivalents at the same relative paths, or the imports need to be refactored.
-- Route components are mixed NgModule-declared and standalone; new code should prefer standalone components with
-  signals, as the recent changes do.
+- Route components are standalone; the catalogue-ui form components they import are still declared in NgModules.
+  New code should use standalone components with signals.
 - catalogue-ui is nested (`catalogue-ui/`) rather than a sibling, so the host's `angular.json` also lists
   `src/survey-tool/catalogue-ui/assets`.

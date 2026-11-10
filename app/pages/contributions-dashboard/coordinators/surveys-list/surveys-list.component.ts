@@ -8,12 +8,25 @@ import { Model } from '../../../../../catalogue-ui/domain/dynamic-form-model';
 import { filter, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Coordinator } from '../../../../domain/userInfo';
+import { PageContentComponent } from '../../../../shared/page-content/page-content.component';
+import { SidebarMobileToggleComponent } from '../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component';
+import { SurveyTemplateCardComponent } from '../../survey-template-card/survey-template-card.component';
+import { SurveyTemplateTableComponent } from '../../survey-template-table/survey-template-table.component';
+import { NotificationSettingsDrawerComponent } from '../../notification-settings-drawer/notification-settings-drawer.component';
+import { SurveyModalsComponent } from '../../survey-modals/survey-modals.component';
 
 @Component({
     selector: 'app-survey-lists',
     templateUrl: 'surveys-list.component.html',
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [
+        PageContentComponent,
+        SidebarMobileToggleComponent,
+        SurveyTemplateCardComponent,
+        SurveyTemplateTableComponent,
+        NotificationSettingsDrawerComponent,
+        SurveyModalsComponent
+    ]
 })
 export class SurveysListComponent implements OnInit {
   private readonly facade = inject(CoordinatorSurveysFacade);

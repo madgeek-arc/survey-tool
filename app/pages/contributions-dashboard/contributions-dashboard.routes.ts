@@ -1,5 +1,4 @@
-import { RouterModule, Routes } from '@angular/router';
-import { NgModule } from '@angular/core';
+import { Routes } from '@angular/router';
 import { SurveyFormComponent } from "./my-surveys/survey-form/survey-form.component";
 import { ContributionsHomeComponent } from "./home/contributions-home.component";
 import { MySurveysComponent } from "./my-surveys/my-surveys.component";
@@ -15,7 +14,7 @@ import {AdminStakeholderComponent} from "./administrators/stakeholders/admin-sta
 import {AdminSurveysListComponent} from "./administrators/admin-surveys-list/admin-surveys-list.component";
 import {SupportPageComponent} from "./support-page/support-page.component";
 
-const contributionsDashboardRoutes: Routes = [
+export const CONTRIBUTIONS_DASHBOARD_ROUTES: Routes = [
   {
     path: '',
     children: [
@@ -167,10 +166,3 @@ const contributionsDashboardRoutes: Routes = [
     ]
   }
 ];
-
-@NgModule ({
-  imports: [RouterModule.forChild(contributionsDashboardRoutes)],
-  exports: [RouterModule]
-})
-
-export class ContributionsDashboardRoutingModule {}

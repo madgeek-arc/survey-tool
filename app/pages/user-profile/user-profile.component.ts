@@ -4,6 +4,9 @@ import { UserService } from "../../services/user.service";
 import { CompressImageService } from "../../services/compress-image.service";
 import { take, takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
+import { FormsModule } from "@angular/forms";
+import { NgClass, UpperCasePipe } from "@angular/common";
+import { SafeUrlPipe } from "../../../catalogue-ui/shared/pipes/safeUrlPipe";
 
 @Component({
     selector: 'app-profile',
@@ -11,7 +14,7 @@ import { Subject } from "rxjs";
     styleUrls: ['user-profile.component.scss'],
     providers: [CompressImageService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [FormsModule, NgClass, UpperCasePipe, SafeUrlPipe]
 })
 
 export class UserProfileComponent implements OnInit, OnDestroy {

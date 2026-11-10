@@ -27,6 +27,7 @@ export type CookieLawTarget = '_blank' | '_self';
 
 @Component({
   selector: 'cookie-law',
+  providers: [CookieLawService],
   changeDetection: ChangeDetectionStrategy.Eager,
   // encapsulation: ViewEncapsulation.None,
   animations: [

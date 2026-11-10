@@ -3,11 +3,14 @@ import { Paging } from "../../../../../catalogue-ui/domain/paging";
 import { Coordinator, Stakeholder } from "../../../../domain/userInfo";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
 import { URLParameter } from "../../../../domain/url-parameter";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { fromEvent, Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, map, takeUntil } from "rxjs/operators";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { UserService } from "../../../../services/user.service";
+import { PageContentComponent } from "../../../../shared/page-content/page-content.component";
+import { SidebarMobileToggleComponent } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
+import { NgClass } from "@angular/common";
 
 declare var UIkit;
 
@@ -16,7 +19,7 @@ declare var UIkit;
     templateUrl: 'stakeholders.component.html',
     providers: [StakeholdersService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [PageContentComponent, SidebarMobileToggleComponent, FormsModule, NgClass, RouterLink, ReactiveFormsModule]
 })
 
 export class StakeholdersComponent implements OnInit, OnDestroy {

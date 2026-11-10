@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { UntypedFormGroup } from "@angular/forms";
 import { zip } from "rxjs/internal/observable/zip";
@@ -16,6 +16,9 @@ import { DashboardSideMenuService } from "../../../../shared/dashboard-side-menu
 import { MentionableUsersProvider } from "../../../../../catalogue-ui/domain/mentionable-user";
 import seedRandom from 'seedrandom';
 import * as UIkit from 'uikit';
+import { PageContentComponent } from "../../../../shared/page-content/page-content.component";
+import { SidebarMobileToggleComponent } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
+import { DynamicFormModule } from "../../../../../catalogue-ui/pages/dynamic-form/dynamic-form.module";
 
 // Parts below the element whose id is the focus position that draw the field's visible border: the element itself
 // (inputs, textarea, date wrapper), ng-select's container, the rich text editor's toolbar and surface, and the radios of a group.
@@ -26,7 +29,7 @@ const HIGHLIGHT_BORDER_TARGETS = ['', ' .ng-select-container', ' .rte__toolbar',
     templateUrl: 'survey-form.component.html',
     providers: [SurveyService, StakeholdersService, WebsocketService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [PageContentComponent, SidebarMobileToggleComponent, DynamicFormModule, RouterLink]
 })
 
 export class SurveyFormComponent implements OnInit, OnDestroy {

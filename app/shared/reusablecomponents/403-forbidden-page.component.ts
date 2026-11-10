@@ -6,8 +6,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 @Component({
     selector: 'forbidden-page',
     templateUrl: './403-forbidden-page.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    changeDetection: ChangeDetectionStrategy.Eager
 })
 export class ForbiddenPageComponent implements OnInit {
 

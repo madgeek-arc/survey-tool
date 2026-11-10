@@ -8,13 +8,17 @@ import {SurveyService} from "../../../services/survey.service";
 import {StakeholdersService} from "../../../services/stakeholders.service";
 import * as UIkit from 'uikit';
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import { PageContentComponent } from "../../../shared/page-content/page-content.component";
+import { SidebarMobileToggleComponent } from "../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
+import { FormsModule } from "@angular/forms";
+import { TitleCasePipe } from "@angular/common";
 
 @Component({
     selector: 'app-contributions-my-group',
     templateUrl: './my-group.component.html',
     providers: [SurveyService, StakeholdersService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [PageContentComponent, SidebarMobileToggleComponent, FormsModule, TitleCasePipe]
 })
 
 export class MyGroupComponent implements OnInit {

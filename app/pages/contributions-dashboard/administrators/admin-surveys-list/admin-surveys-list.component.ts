@@ -7,7 +7,6 @@ import { Model } from '../../../../../catalogue-ui/domain/dynamic-form-model';
 import { filter, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Administrator } from '../../../../domain/userInfo';
-import { SurveyToolModule } from '../../../../survey-tool.module';
 import { SidebarMobileToggleComponent } from '../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component';
 import { PageContentComponent } from '../../../../shared/page-content/page-content.component';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +21,6 @@ import { SurveyModalsComponent } from '../../survey-modals/survey-modals.compone
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    SurveyToolModule,
     SidebarMobileToggleComponent,
     PageContentComponent,
     FormsModule,

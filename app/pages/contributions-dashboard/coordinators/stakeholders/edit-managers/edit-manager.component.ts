@@ -7,13 +7,14 @@ import { StakeholdersService } from "../../../../../services/stakeholders.servic
 import { ActivatedRoute } from "@angular/router";
 import { takeUntil } from "rxjs/operators";
 import * as UIkit from 'uikit';
+import { FormsModule } from "@angular/forms";
 
 @Component({
     selector: 'app-edit-managers',
     templateUrl: 'edit-managers.component.html',
     providers: [SurveyService, StakeholdersService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [FormsModule]
 })
 
 export class EditManagerComponent implements OnInit, OnDestroy {

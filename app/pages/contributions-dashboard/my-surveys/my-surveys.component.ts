@@ -9,13 +9,18 @@ import {catchError, filter, map, take, takeUntil} from "rxjs/operators";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StakeholdersService} from "../../../services/stakeholders.service";
 import {Progress} from "../../../domain/survey";
+import { PageContentComponent } from "../../../shared/page-content/page-content.component";
+import { SidebarMobileToggleComponent } from "../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
+import { SurveyCardComponent } from "./survey-card/survey-card.component";
+import { FormsModule } from "@angular/forms";
+import { NgClass, AsyncPipe } from "@angular/common";
 
 @Component({
     selector: 'app-contributions-my-surveys',
     templateUrl: './my-surveys.component.html',
     providers: [SurveyService, StakeholdersService],
     changeDetection: ChangeDetectionStrategy.Eager,
-    standalone: false
+    imports: [PageContentComponent, SidebarMobileToggleComponent, SurveyCardComponent, FormsModule, NgClass, AsyncPipe]
 })
 
 export class MySurveysComponent implements OnInit, OnDestroy{
