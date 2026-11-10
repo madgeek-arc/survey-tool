@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { UserInfo } from '../../domain/userInfo';
@@ -25,11 +25,12 @@ describe('ContributionsDashboardComponent', () => {
   // Not rendered: the constructor is where the user info is subscribed.
   const create = () => {
     const component = TestBed.createComponent(ContributionsDashboardComponent).componentInstance;
-    spyOn(component, 'setGroup');
+    vi.spyOn(component, 'setGroup').mockReturnValue(undefined);
     return component;
   };
 
   beforeEach(() => {
+    vi.useFakeTimers();
     userInfo$ = new BehaviorSubject<UserInfo>(null);
     userService = {userId: null, getUserObservable: () => userInfo$};
     TestBed.configureTestingModule({
@@ -37,32 +38,34 @@ describe('ContributionsDashboardComponent', () => {
     });
   });
 
-  it('ignores the initial null and handles the user info that follows', fakeAsync(() => {
+  afterEach(() => vi.useRealTimers());
+
+  it('ignores the initial null and handles the user info that follows', () => {
     const component = create();
     // rxjs reports an error thrown by a subscriber on a timer, so the failure only shows up on tick
-    tick();
+    vi.advanceTimersByTime(0);
 
     expect(component.userInfo).toBeNull();
     expect(userService.userId).toBeNull();
     expect(component.setGroup).not.toHaveBeenCalled();
 
     userInfo$.next(userInfo('admin@example.org'));
-    tick();
+    vi.advanceTimersByTime(0);
 
     expect(component.userInfo.user.email).toBe('admin@example.org');
     expect(userService.userId).toBe('admin@example.org');
     expect(component.setGroup).toHaveBeenCalledTimes(1);
-  }));
+  });
 
-  it('copes with the user info being cleared', fakeAsync(() => {
+  it('copes with the user info being cleared', () => {
     const component = create();
     userInfo$.next(userInfo('admin@example.org'));
-    tick();
+    vi.advanceTimersByTime(0);
 
     userInfo$.next(null);
-    tick();
+    vi.advanceTimersByTime(0);
 
     expect(component.userInfo).toBeNull();
     expect(component.setGroup).toHaveBeenCalledTimes(1);
-  }));
+  });
 });
