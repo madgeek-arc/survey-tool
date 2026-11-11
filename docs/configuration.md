@@ -37,7 +37,7 @@ same `environment` object: `{ provide: APP_ENV, useValue: environment }`.
 | `provideHttpClient(withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }))` | XSRF header on state-changing requests |
 | `APP_ENV` | catalogue-ui configuration |
 | `UserService`, `MessagingSystemService` | `UserService` is provided in the host's `app.config.ts` so a single instance serves guards, menus and the dashboard |
-| Router | `provideRouter`. The unused `cookie-law` component is the only code here that needs `provideAnimations()` |
+| Router | `provideRouter`. Nothing here needs `provideAnimations()` |
 
 The host provides `AuthenticationService`, `SurveyService` and the `MentionableUsersProvider` implementation
 (`StakeholderMentionableUsersProvider`); observatory-ui does it in `app.config.ts`, because the routes do not.

@@ -27,7 +27,7 @@ permissions: the backend does.
 | Dashboard pages | same folder | `home`, `my-surveys` (cards and `survey-form`), `survey-history`, `my-group`, `coordinators` (members, surveys), `administrators` (surveys, stakeholders), `support-page`, `survey-template-card`/`-table`, `survey-modals`, `notification-settings-drawer` |
 | Invitations and profile | `app/pages/accept-invitation.component.ts`, `app/pages/user-profile` | |
 | Services | `app/services` | See below |
-| Layout components | `app/shared/dashboard-side-menu`, `page-content`, `icons`, `reusablecomponents` | Side menu with `DashboardSideMenuService` (route `data` flags `hasSidebar`, `hasHeader`, `showFooter`, `hasAdminMenu`), mobile toggle, 403 page. `reusablecomponents/cookie-law` is an older cookie banner no longer referenced; the host's cookie-consent component is used |
+| Layout components | `app/shared/dashboard-side-menu`, `page-content`, `icons` | Side menu with `DashboardSideMenuService` (route `data` flags `hasSidebar`, `hasHeader`, `showFooter`, `hasAdminMenu`), mobile toggle. The cookie banner belongs to the host (its cookie-consent component) |
 | Domain | `app/domain` | `userInfo.ts` (`UserInfo`, `Stakeholder`, `Coordinator`, `Administrator`, `User`, `Profile`, `Settings`), `survey.ts`, `analytics.ts`, `privacy-policy.ts`, `url-parameter.ts` |
 | Assets and styles | `assets/` (`images`, `js/sockjs.min.js`, `js/stomp.min.js`, `survey-tool-theme`), `styles/styles.less` | Added to the host build by `angular.json` |
 | Host bridge | `environments/environment.ts` | Re-exports the host's `environment` so catalogue-ui and local code share one object |
