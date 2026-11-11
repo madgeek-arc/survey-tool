@@ -29,7 +29,8 @@ e-mails) and an `admin` flag.
 | Permissions on resources | `SurveyService.getPermissions` → `GET /permissions` | Backend answers per resource; used to enable actions |
 
 Do not treat these as protection: hiding a menu item or guarding a route in the browser does not stop a direct API call.
-A `403` from the backend is handled by the host interceptor.
+This module installs no HTTP interceptor and observatory-ui registers none, so a `403` from the backend reaches the
+calling component as an `HttpErrorResponse`.
 
 ## Session and storage
 

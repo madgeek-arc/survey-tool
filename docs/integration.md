@@ -58,8 +58,8 @@ and caches the result for the session of the page.
 
 ## Failure behaviour
 
-- **No retries or timeouts** are applied in this module; calls fail through to the component. The host interceptor
-  turns `401` into a cleared user and `403` into a notification plus navigation to `/home`.
+- **No retries or timeouts** are applied in this module; calls fail through to the component as an `HttpErrorResponse`,
+  `401` and `403` included. observatory-ui registers no HTTP interceptor.
 - **`/user/info` failing** makes `AuthGuard` start the login redirect; the same call is repeated every 60 minutes and a
   failure clears the cached user.
 - **Invitation acceptance** shows the server's error message on the page and leaves the user there; on success the user info is
