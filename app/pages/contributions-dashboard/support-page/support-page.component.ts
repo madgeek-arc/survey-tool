@@ -25,7 +25,7 @@ export interface FaqCategory {
   selector: 'app-support-page',
   templateUrl: './support-page.component.html',
   imports: [PageContentComponent],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true
 })
 export class SupportPageComponent {
