@@ -56,26 +56,23 @@
 </div>
 @if (!hide) {
   <div class="history-content">
-    <div class="uk-section-default uk-section uk-section-small" style="min-height: 90vh;">
-      <div class="uk-container uk-container-expand">
-        <div class="uk-width-4-5">
-          <h5 class="uk-margin-medium-bottom uk-flex uk-flex-middle">
-            <!--          <a [routerLink]="['/contributions/'+ currentStakeholderId +'/mySurveys']" class="uk-margin-small-right" title="Back">-->
-            <a [routerLink]="['../../../']" class="uk-margin-small-right" title="Back">
-              <span class="material-icons">keyboard_backspace</span>
-            </a>
-            <span>{{$safeNavigationMigration(selectedVersion?.time) | date:'medium'}}</span>
-            @if (selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version) {
-              <button
-                class="uk-button uk-button-small uk-button-primary uk-margin-left" (click)="restoreVersion()">Restore this version
-              </button>
-            }
-          </h5>
-          <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="null" [tabsHeader]="tabsHeader"
-            [entryA]="selectedEntries[0]" [entryB]="null">
-          </app-compare-surveys>
+    <div style="min-height: 90vh;">
+      <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="null" [tabsHeader]="tabsHeader"
+        [entryA]="selectedEntries[0]" [entryB]="null">
+        <div class="form-top-section uk-flex uk-flex-middle">
+          <!--          <a [routerLink]="['/contributions/'+ currentStakeholderId +'/mySurveys']" class="uk-margin-small-right" title="Back">-->
+          <a [routerLink]="['../../../']" class="uk-margin-small-right" title="Back">
+            <span class="material-icons">keyboard_backspace</span>
+          </a>
+          <span class="survey-title-text">{{selectedVersion?.time | date:'medium'}}</span>
         </div>
-      </div>
+        @if (selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version) {
+          <div class="form-actions-section">
+            <button class="uk-button uk-button-small uk-button-primary" (click)="restoreVersion()">Restore this version
+            </button>
+          </div>
+        }
+      </app-compare-surveys>
     </div>
   </div>
 }
@@ -90,12 +87,10 @@
 
 <!--Compare Modal-->
 <div id="modal-full" class="uk-modal-full" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body" style="min-height: 100vh">
+  <div class="uk-modal-dialog" style="min-height: 100vh">
     <button class="uk-modal-close-full uk-close-large uk-padding-small" type="button" (click)="showHistoryContent()" uk-close></button>
-    <div class="uk-margin-top">
-      <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB" [tabsHeader]="tabsHeader"
-        [entryA]="selectedEntries[0]" [entryB]="selectedEntries[1]">
-      </app-compare-surveys>
-    </div>
+    <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB" [tabsHeader]="tabsHeader"
+      [entryA]="selectedEntries[0]" [entryB]="selectedEntries[1]">
+    </app-compare-surveys>
   </div>
 </div>
