@@ -3,197 +3,290 @@
     <sidebar-mobile-toggle class="uk-hidden@m uk-display-block uk-padding-small"></sidebar-mobile-toggle>
   </div>
   <div inner>
-    <div class="uk-section uk-section-default uk-section-small">
-      <div class="uk-container uk-container-expand">
-        <div class="uk-flex uk-flex-right">
-          <button class="uk-button uk-button-primary"
-            data-uk-toggle="target: #modal-center"
-            (click)="openForAdd()">
-            Add Stakeholder
-          </button>
+    <div class="uk-section uk-section-default uk-section-small" style="min-height: 90vh;">
+      <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
+
+        <!-- Page header -->
+        <div class="uk-flex uk-flex-between uk-flex-bottom uk-flex-wrap uk-margin-bottom" style="gap: 12px;">
+          <div>
+            <h3 class="uk-margin-remove">Stakeholders</h3>
+            <p class="uk-text-muted uk-margin-remove-top">Organisations that answer EOSC surveys, and the people who manage their responses.</p>
+          </div>
+          <div class="uk-flex uk-flex-middle uk-flex-wrap" style="gap: 10px;">
+            <div class="uk-button-group">
+              <button type="button"
+                [class]="selectedView() === 'card' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
+                (click)="selectedView.set('card')">
+                <span class="material-symbols-outlined">grid_view</span>Cards
+              </button>
+              <button type="button"
+                [class]="selectedView() === 'table' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
+                (click)="selectedView.set('table')">
+                <span class="material-symbols-outlined">table_view</span>Table
+              </button>
+            </div>
+            <button class="uk-button uk-button-secondary uk-button-small uk-flex uk-flex-middle" type="button" style="gap: 6px;" (click)="exportData()">
+              <span class="material-symbols-outlined">download</span>Export to CSV
+            </button>
+            <button class="uk-button uk-button-primary uk-button-small uk-flex uk-flex-middle" type="button" style="gap: 6px;"
+              data-uk-toggle="target: #modal-center" (click)="openForAdd()">
+              <span class="material-symbols-outlined">add</span>Add stakeholder
+            </button>
+          </div>
         </div>
-        <div class="uk-grid uk-margin-medium-bottom uk-margin-medium-top">
-          <div class="uk-width-1-1">
-            <div class="uk-flex uk-flex-center">
-              <div class="uk-inline">
-                <span class="uk-form-icon" data-uk-icon="icon: search"></span>
-                <input type="text" #searchInput class="uk-input menuSearch" placeholder="Search..."
-                  [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}"  style="border-radius: 20px;">
+
+        <!-- Filters -->
+        <div class="uk-card uk-card-default">
+          <div class="uk-card-body uk-padding-small">
+            <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-4@l" data-uk-grid>
+              <div>
+                <div class="uk-inline uk-width-1-1">
+                  <span class="uk-form-icon" data-uk-icon="icon: search"></span>
+                  <input type="text" #searchInput class="uk-input" placeholder="Search stakeholders"
+                    [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}">
+                </div>
+              </div>
+              <div>
+                <ng-select id="filterType" [items]="typeOptions" [(ngModel)]="selectedType"
+                  (change)="filterSelection('subType', selectedType)" placeholder="All types" clearAllText="Clear">
+                </ng-select>
+              </div>
+              <div>
+                <ng-select id="filterCountry" [items]="countryOptions" [(ngModel)]="selectedCountry"
+                  bindLabel="label" bindValue="value"
+                  (change)="filterSelection('country', selectedCountry)" placeholder="All countries" clearAllText="Clear">
+                </ng-select>
+              </div>
+              <div>
+                <ng-select id="order" [(ngModel)]="order" [clearable]="false" placeholder="Sort by name"
+                  (change)="updateURLParameters('sort', 'name'); filterSelection('order', order)">
+                  <ng-option [value]="'asc'">Name A–Z</ng-option>
+                  <ng-option [value]="'desc'">Name Z–A</ng-option>
+                </ng-select>
               </div>
             </div>
           </div>
+
+          @if (activeFilters.length > 0) {
+            <div class="uk-card-footer uk-flex uk-flex-middle uk-flex-wrap uk-padding-small" style="gap: 8px;">
+              <span class="uk-text-small uk-text-muted uk-text-bold">Filtered by</span>
+              @for (filter of activeFilters; track filter.key) {
+                <span class="uk-label uk-label-public">
+                  {{ filter.name }}: {{ filter.value }}
+                  <button type="button" class="uk-icon-link" data-uk-icon="icon: close; ratio: 0.7" title="Remove filter"
+                    (click)="filterSelection(filter.key, null)"></button>
+                </span>
+              }
+              <button type="button" class="uk-button uk-button-link uk-text-small uk-text-bold" (click)="clearFilters()">Clear all</button>
+            </div>
+          }
         </div>
 
         @if (ready) {
-          <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
-            <div class="uk-width-1-1">
-              <div class="uk-flex uk-flex-between uk-flex-middle">
-                <p class="big-text uk-margin-remove">
-                  <span class="uk-text-bold">{{stakeholders.total}}</span> Stakeholders, Page
-                  <span class="uk-text-bold">{{this.currentPage}}</span> of {{this.totalPages}}
-                </p>
-                <ul class="uk-pagination uk-visible@m">
-                  @if (currentPage > 2 && totalPages > 5) {
-                    <li>
-                      <a (click)="goToPage(0)"><span uk-pagination-previous></span><span uk-pagination-previous></span></a>
-                    </li>
-                  }
-                  @if (currentPage > 1) {
-                    <li>
-                      <a (click)="previousPage()"><span uk-pagination-previous></span></a>
-                    </li>
-                  }
-                  @for (i of pages; track i) {
-                    <li [ngClass]="i === currentPage ? 'uk-active uk-animation-fade': ''">
-                      <a (click)="goToPage(i - 1)">{{i}}</a>
-                    </li>
-                  }
-                  @if (currentPage !== totalPages) {
-                    <li>
-                      <a (click)="nextPage()"><span uk-pagination-next></span></a>
-                    </li>
-                  }
-                  @if (currentPage < totalPages && totalPages > 5) {
-                    <li>
-                      <a (click)="goToPage(totalPages-1)"><span uk-pagination-next></span><span uk-pagination-next></span></a>
-                    </li>
-                  }
-                </ul>
-              </div>
+          @if (rows.length === 0) {
+            <!-- Empty state -->
+            <div class="uk-card uk-card-default uk-card-body uk-text-center uk-padding-large">
+              <p class="uk-text-bold uk-text-emphasis uk-margin-small-bottom">No stakeholders match these filters</p>
+              @if (activeFilters.length > 0 || searchQuery) {
+                <button type="button" class="uk-button uk-button-secondary uk-button-small" (click)="clearFilters()">Clear filters</button>
+              }
             </div>
-          </div>
-        }
+          } @else if (selectedView() === 'card') {
 
-        <!--Tabs Buttons -->
-        <div class="uk-flex uk-flex-center uk-margin">
-          <ul data-uk-tab="connect: #my-switcher">
-            <li><a href="#">Card</a></li>
-            <li><a href="#">Table</a></li>
-          </ul>
-        </div>
-
-        <!--button for csv-->
-        <div class="uk-flex uk-flex-center">
-          <button class="uk-button uk-button-default uk-margin-small-right" type="button" (click)="exportData()">
-            Export to CSV
-          </button>
-        </div>
-
-        <!--Switcher Content-->
-        <div class="uk-flex uk-flex-center uk-margin">
-          <ul id="my-switcher" class="uk-switcher uk-margin">
-            <li>
-              <!--Card View-->
-              <div class="uk-child-width-1-4@l uk-child-width-1-3@m uk-child-width-1-1@s uk-grid-match" data-uk-grid>
-                @for (stakeholder of stakeholders?.results; track stakeholder) {
-                  <div
-                    [ngClass]="{'uk-width-1-1': stakeholders?.results?.length === 1}">
-                    <div class="uk-card uk-card-default uk-card-hover uk-margin-bottom">
-                      <div class="uk-card-body">
-                        <div>Name: {{stakeholder.name}}</div>
-                        <div>Id: {{stakeholder.id}}</div>
-                        <!--                      <div>Country: {{stakeholder.country}}</div>-->
+            <!-- Card view -->
+            <div class="uk-grid-small uk-child-width-1-2@m uk-child-width-1-3@l uk-child-width-1-4@xl uk-grid-match" data-uk-grid>
+              @for (row of rows; track row.stakeholder.id) {
+                <div>
+                  <div class="uk-card uk-card-default uk-card-small">
+                    <div class="uk-card-body">
+                      <div class="uk-flex uk-flex-top" style="gap: 12px;">
+                        @if (row.stakeholder.country) {
+                          <span class="uk-label uk-label-code">{{ row.stakeholder.country }}</span>
+                        }
+                        <div class="uk-width-expand">
+                          <div class="uk-text-bold uk-text-emphasis">{{ row.stakeholder.name }}</div>
+                          <div class="uk-flex uk-flex-middle uk-flex-wrap uk-margin-small-top" style="gap: 8px;">
+                            @if (row.stakeholder.subType) {
+                              <span class="uk-label uk-label-small uk-label-public">{{ row.stakeholder.subType }}</span>
+                            }
+                            <span class="uk-text-small uk-text-muted">{{ row.countryName }}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div class="uk-card-footer uk-flex uk-flex-right">
-                        <a class="uk-flex uk-flex-middle uk-margin-right" [routerLink]="[stakeholder.id]">
-                          <span class="material-icons md-18 uk-margin-small-right">update</span>Update Managers
-                        </a>
-                        <a class="uk-flex uk-flex-middle" uk-toggle="target: #modal-center" (click)="openForEdit(stakeholder)">
-                          <span class="material-icons md-18 uk-margin-small-right">mode_edit</span>Edit
-                        </a>
+                      <div class="uk-grid-small uk-child-width-1-2 uk-margin-top" data-uk-grid>
+                        <div>
+                          <div class="uk-background-default uk-border-rounded uk-padding-xsmall">
+                            <div class="uk-eyebrow uk-eyebrow-small uk-text-truncate">Managers</div>
+                            <div class="uk-text-bold uk-text-emphasis uk-margin-small-top">{{ row.managers }}</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="uk-background-default uk-border-rounded uk-padding-xsmall">
+                            <div class="uk-eyebrow uk-eyebrow-small uk-text-truncate">Contributors</div>
+                            <div class="uk-text-bold uk-text-emphasis uk-margin-small-top">{{ row.contributors }}</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <div class="uk-card-footer uk-flex uk-flex-between uk-flex-middle">
+                      <button type="button" class="uk-button eos-btn--ghost uk-button-small"
+                        data-uk-toggle="target: #modal-center" (click)="openForEdit(row.stakeholder)">
+                        <span class="material-symbols-outlined">edit</span>Edit details
+                      </button>
+                      <button type="button" class="uk-button uk-button-secondary uk-button-small uk-flex uk-flex-middle" style="gap: 6px;"
+                        (click)="openManagers(row.stakeholder)">
+                        <span class="material-symbols-outlined">group</span>Managers
+                      </button>
+                    </div>
                   </div>
-                }
-              </div>
-            </li>
-            <li>
-              <!--Table View-->
-              <table class="uk-table uk-table-striped">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Id</th>
-                    <th>Country</th>
-                    <th>Managers</th>
-                    <th>Contributors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (stakeholder of stakeholders?.results; track stakeholder) {
+                </div>
+              }
+            </div>
+
+          } @else {
+
+            <!-- Table view -->
+            <div class="uk-card uk-card-default">
+              <div class="uk-overflow-auto">
+                <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove">
+                  <thead>
                     <tr>
-                      <td>{{stakeholder.name}}</td>
-                      <td>{{stakeholder.id}}</td>
-                      <!--                  <td>{{stakeholder.country}}</td>-->
-                      <td>@for (admin of stakeholder.admins; track admin; let i = $index) {
-                        <span>{{(i === 0 ? '': ', ') + admin}} </span>
-                      }</td>
-                      <td>@for (member of stakeholder.members; track member; let i = $index) {
-                        <span>{{(i === 0 ? '': ', ') + member}}</span>
-                      }</td>
+                      <th>Stakeholder</th>
+                      <th>Type</th>
+                      <th>Country</th>
+                      <th>Managers</th>
+                      <th>Contributors</th>
+                      <th class="uk-table-shrink"></th>
                     </tr>
-                  }
-                </tbody>
-              </table>
-            </li>
-          </ul>
-        </div>
+                  </thead>
+                  <tbody>
+                    @for (row of rows; track row.stakeholder.id) {
+                      <tr>
+                        <td>
+                          <div class="uk-flex uk-flex-middle" style="gap: 12px;">
+                            @if (row.stakeholder.country) {
+                              <span class="uk-label uk-label-code">{{ row.stakeholder.country }}</span>
+                            }
+                            <span class="uk-text-bold uk-text-emphasis">{{ row.stakeholder.name }}</span>
+                          </div>
+                        </td>
+                        <td>
+                          @if (row.stakeholder.subType) {
+                            <span class="uk-label uk-label-small uk-label-public">{{ row.stakeholder.subType }}</span>
+                          } @else {
+                            <span class="uk-text-muted">—</span>
+                          }
+                        </td>
+                        <td>{{ row.countryName }}</td>
+                        <td class="uk-text-bold">{{ row.managers }}</td>
+                        <td>{{ row.contributors }}</td>
+                        <td>
+                          <div class="uk-inline">
+                            <button type="button" class="uk-button-icon" title="Actions">
+                              <span class="material-symbols-outlined">more_vert</span>
+                            </button>
+                            <div data-uk-dropdown="mode: click; pos: bottom-right; offset: 6">
+                              <ul class="uk-nav uk-dropdown-nav">
+                                <li>
+                                  <a class="uk-flex uk-flex-middle uk-drop-close" style="gap: 10px;"
+                                    data-uk-toggle="target: #modal-center" (click)="openForEdit(row.stakeholder)">
+                                    <span class="material-symbols-outlined">edit</span>Edit details
+                                  </a>
+                                </li>
+                                <li>
+                                  <a class="uk-flex uk-flex-middle uk-drop-close" style="gap: 10px;" (click)="openManagers(row.stakeholder)">
+                                    <span class="material-symbols-outlined">group</span>Manage managers
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          }
+
+          <!-- Range + pagination -->
+          @if (stakeholders.total > 0) {
+            <div class="uk-flex uk-flex-between uk-flex-middle uk-flex-wrap uk-margin-top" style="gap: 16px;">
+              <span class="uk-text-small uk-text-muted">
+                Showing {{ stakeholders.from + 1 }}–{{ stakeholders.from + stakeholders.results.length }} of {{ stakeholders.total }} stakeholders
+              </span>
+              <ul class="uk-pagination uk-margin-remove">
+                <li [class.uk-disabled]="currentPage <= 1">
+                  <a (click)="previousPage()"><span data-uk-pagination-previous></span></a>
+                </li>
+                @for (i of pages; track i) {
+                  <li [class.uk-active]="i === currentPage">
+                    <a (click)="goToPage(i - 1)">{{ i }}</a>
+                  </li>
+                }
+                <li [class.uk-disabled]="currentPage >= totalPages">
+                  <a (click)="nextPage()"><span data-uk-pagination-next></span></a>
+                </li>
+              </ul>
+            </div>
+          }
+        }
+
       </div>
     </div>
 
-    <!--    <pre>-->
-    <!--administrator:-->
-    <!--      {{ administrator | json }}-->
+    <!-- Add / edit modal -->
+    @if (ready) {
+      <div id="modal-center" class="uk-flex-top" data-uk-modal>
+        <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-border-rounded">
+          <button class="uk-modal-close-default" type="button" data-uk-close></button>
+          <h3 class="uk-margin-remove">{{ edit ? 'Edit stakeholder' : 'Add stakeholder' }}</h3>
+          <p class="uk-text-small uk-text-muted uk-margin-small-top">
+            {{ edit ? 'Update the stakeholder’s details. Managers are managed separately.' : 'You can add managers once the stakeholder is created.' }}
+          </p>
 
-    <!--      stakeholders:-->
-    <!--      {{ stakeholders | json }}-->
-  <!--</pre>-->
+          <form class="uk-form-stacked" [formGroup]="stakeholderForm">
+            <div class="uk-margin">
+              <label class="uk-text-small uk-text-muted uk-text-bold" for="name">Name <span class="uk-text-danger">*</span></label>
+              <div class="uk-form-controls uk-margin-small-top">
+                <input class="uk-input" formControlName="name" id="name" type="text" placeholder="e.g. EOSC SB (Italy)">
+              </div>
+            </div>
+            <div class="uk-margin">
+              <label class="uk-text-small uk-text-muted uk-text-bold" for="subtype">Type</label>
+              <div class="uk-form-controls uk-margin-small-top">
+                <input class="uk-input" id="subtype" formControlName="subType" type="text" placeholder="e.g. Country">
+              </div>
+            </div>
+            <div class="uk-margin">
+              <label class="uk-text-small uk-text-muted uk-text-bold" for="country">Country <span class="uk-text-danger">*</span></label>
+              <div class="uk-form-controls uk-margin-small-top">
+                <input class="uk-input" id="country" formControlName="country" type="text" placeholder="Alpha-2 code, e.g. IT">
+              </div>
+              <a class="uk-text-small uk-display-inline-block uk-margin-small-top" href="https://www.iso.org/obp/ui/#search/code/" target="_blank">Alpha-2 code list</a>
+            </div>
+          </form>
 
-  @if (ready) {
-    <div id="modal-center" class="uk-flex-top" data-uk-modal>
-      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-        <button class="uk-modal-close-default" type="button" data-uk-close></button>
-        <!--    <div class="uk-modal-header">-->
-        <div class="uk-text-center">
-          <h2 class="uk-modal-title">{{edit ? 'Edit' : 'Add'}} Stakeholder</h2>
+          <div class="uk-grid-small uk-child-width-1-2 uk-margin-medium-top" data-uk-grid>
+            <div>
+              <button class="uk-button uk-button-default uk-width-1-1 uk-modal-close" type="button">Cancel</button>
+            </div>
+            <div>
+              <button class="uk-button uk-button-primary uk-width-1-1" type="button" [disabled]="stakeholderForm.invalid"
+                (click)="edit ? updateStakeholderAdmin() : addStakeholderAdmin()">
+                {{ edit ? 'Save changes' : 'Add stakeholder' }}
+              </button>
+            </div>
+          </div>
         </div>
-      <!--    </div>-->
-      <div class="uk-modal-body">
-        <form class="uk-margin-large" [formGroup]="stakeholderForm">
-          <div class="uk-margin" uk-grid>
-            <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Name</label>
-            <div class="uk-form-controls uk-width-4-5">
-              <input class="uk-input" [formControlName]="'name'" id="name" type="text" placeholder="Stakeholder name">
-            </div>
-          </div>
-          <div class="uk-margin" uk-grid>
-            <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Country</label>
-            <div class="uk-form-controls uk-width-4-5">
-              <input class="uk-input" id="country" formControlName="country" type="text" placeholder="Use alpha-2 code">
-            </div>
-            <div class="uk-margin-small uk-width-1-1 uk-text-italic uk-flex uk-flex-right">
-              <a href="https://www.iso.org/obp/ui/#search/code/" target="_blank">Alpha-2 code list</a>
-            </div>
-          </div>
-          <div class="uk-margin" uk-grid>
-            <label class="uk-form-label uk-width-expand uk-flex uk-flex-middle" for="name">Type</label>
-            <div class="uk-form-controls uk-width-4-5">
-              <input class="uk-input" id="subtype" formControlName="subType" type="text" placeholder="">
-            </div>
-          </div>
-        </form>
-        <!--      <pre>{{stakeholderForm.value | json}}</pre>-->
       </div>
-      <div class="uk-text-right">
-        @if (!edit) {
-          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="addStakeholderAdmin()">Add</button>
-        }
-        @if (edit) {
-          <button class="uk-button uk-button-primary" type="button" [disabled]="stakeholderForm.invalid" (click)="updateStakeholderAdmin()">Update</button>
-        }
-      </div>
-    </div>
+    }
+
   </div>
-}
 </div>
-</div>
+
+<!-- Managers drawer: kept outside page-content, whose blurred (backdrop-filter) background would
+     otherwise trap the fixed offcanvas and its overlay inside the content area. -->
+<app-stakeholder-managers-drawer [stakeholder]="managersFor()" (changed)="getStakeholders()" />

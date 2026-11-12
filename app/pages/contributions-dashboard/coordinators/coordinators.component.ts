@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { SurveyService } from "../../../services/survey.service";
 import { UserService } from "../../../services/user.service";
@@ -13,7 +13,7 @@ import { PageContentComponent } from "../../../shared/page-content/page-content.
 import { SidebarMobileToggleComponent } from "../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
 import { NgSelectComponent, NgOptionComponent } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
-import { NgClass, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 
 @Component({
     selector: 'app-coordinator-dashboard',
@@ -25,7 +25,6 @@ import { NgClass, DatePipe } from "@angular/common";
         NgSelectComponent,
         FormsModule,
         NgOptionComponent,
-        NgClass,
         RouterLink,
         DatePipe
     ]
@@ -52,6 +51,10 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   validationStatus: string = '';
   publishedStatus: string = '';
   order: string = null;
+  activeFilters: ActiveFilter[] = [];
+
+  // Export
+  readonly exportSurvey = signal<string | null>(null);
 
   //Paging
   pageSize = 10;
@@ -80,7 +83,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
               this.surveyEntries = surveyEntries;
               this.surveyEntriesResults = this.surveyEntries.results;
               this.stakeholderList = this.getFacet('stakeholderId');
-              this.surveys = this.getFacet('surveyId')
+              this.surveys = this.getFacet('surveyId');
+              this.activeFilters = this.getActiveFilters();
             },
             error => {console.error(error)},
             () => {
@@ -213,6 +217,14 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     return this.navigateUsingParameters();
   }
 
+  clearFilters() {
+    for (const key of ['stakeholderId', 'surveyId', 'validated', 'published']) {
+      this.updateURLParameters(key, '');
+    }
+    this.updateURLParameters('from', '0');
+    return this.navigateUsingParameters();
+  }
+
   goToPage(page: number) {
     this.currentPage = page;
     let from: number = (this.currentPage - 1) * this.pageSize
@@ -221,6 +233,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   }
 
   previousPage() {
+    if (this.currentPage <= 1)
+      return Promise.resolve(false);
     // if (this.currentPage > 1) {
     this.currentPage--;
     let from: number = this.surveyEntries.from;
@@ -231,6 +245,8 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   }
 
   nextPage() {
+    if (this.currentPage >= this.totalPages)
+      return Promise.resolve(false);
     // if (this.currentPage < this.pageTotal) {
     this.currentPage++;
     let from: number = this.surveyEntries.from;
@@ -274,6 +290,10 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
 
   setFilters() {
     let ordered: boolean = false;
+    this.selectedStakeholder = null;
+    this.selectedSurvey = null;
+    this.validationStatus = null;
+    this.publishedStatus = null;
     for (let i = 0; i < this.urlParameters.length; i++) {
       if (this.urlParameters[i].key === 'stakeholderId') {
         this.selectedStakeholder = this.urlParameters[i].values[0];
@@ -298,6 +318,20 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     }
   }
 
+  getActiveFilters(): ActiveFilter[] {
+    const facetLabel = (facet: FacetValue[], value: string) => facet?.find(f => f.value === value)?.label ?? value;
+    const filters: ActiveFilter[] = [];
+    if (this.selectedStakeholder)
+      filters.push({key: 'stakeholderId', name: 'Stakeholder', value: facetLabel(this.stakeholderList, this.selectedStakeholder)});
+    if (this.selectedSurvey)
+      filters.push({key: 'surveyId', name: 'Survey', value: facetLabel(this.surveys, this.selectedSurvey)});
+    if (this.validationStatus)
+      filters.push({key: 'validated', name: 'Validation', value: this.validationStatus === 'true' ? 'Validated' : 'Not validated'});
+    if (this.publishedStatus)
+      filters.push({key: 'published', name: 'Publication', value: this.publishedStatus === 'true' ? 'Published' : 'Not published'});
+    return filters;
+  }
+
   getFacet(field: string) {
     for (let i = 0; i < this.surveyEntries.facets.length; i++) {
       if (this.surveyEntries.facets[i].field === field) {
@@ -307,4 +341,10 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     return null
   }
 
+}
+
+interface ActiveFilter {
+  key: string;
+  name: string;
+  value: string;
 }

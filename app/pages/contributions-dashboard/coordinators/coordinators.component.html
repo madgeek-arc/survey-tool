@@ -11,175 +11,207 @@
             <i class="loader-big" aria-hidden="true"></i>
           </ng-template>
         }
-        @if (surveyEntries) {
+
+        <!-- Page header -->
+        <div class="uk-flex uk-flex-between uk-flex-bottom uk-flex-wrap uk-margin-bottom" style="gap: 12px;">
           <div>
-            <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
-              <div class="uk-width-1-1 uk-flex uk-flex-right uk-margin-bottom">
-                @if (stakeholder?.country != 'CH') {
-                  <ng-container class="">
-                    <button class="uk-button uk-button-primary">Export to tsv</button>
-                    <div class="" data-uk-dropdown="mode: hover; animation: reveal-top; animate-out: true; pos: bottom; offset: 5; duration: 500">
-                      <ul class="uk-list uk-padding-small uk-margin-remove">
-                        @for (survey of surveys; track survey) {
-                          <li class="uk-margin-bottom">
-                            <a class="uk-flex uk-flex-middle uk-link-reset" (click)="exportToCsv(survey.value)">
-                              <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
-                            </a>
-                          </li>
-                        }
-                      </ul>
-                    </div>
-                  </ng-container>
-                }
+            <h3 class="uk-margin-remove">Survey responses</h3>
+            <p class="uk-text-muted uk-margin-remove-top">Responses submitted by each stakeholder, across all survey cycles.</p>
+          </div>
+
+          @if (surveyEntries && stakeholder?.country != 'CH') {
+            <div class="uk-inline">
+              <button class="uk-button uk-button-primary uk-flex uk-flex-middle" type="button" style="gap: 8px;">
+                <span class="material-symbols-outlined">download</span>Export to TSV
+                <span class="material-symbols-outlined">expand_more</span>
+              </button>
+              <div class="uk-dropdown uk-width-large" data-uk-dropdown="mode: click; pos: bottom-right; offset: 8">
+                <label class="uk-text-small uk-text-muted uk-text-bold" for="exportSurvey">Survey</label>
+                <ng-select id="exportSurvey" class="uk-margin-small-top"
+                  [items]="surveys" [ngModel]="exportSurvey()" (ngModelChange)="exportSurvey.set($event)"
+                  placeholder="Select survey" bindLabel="label" bindValue="value" [clearable]="false">
+                </ng-select>
+                <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-top uk-flex uk-flex-middle uk-flex-center"
+                  type="button" style="gap: 8px;" [disabled]="!exportSurvey()" (click)="exportToCsv(exportSurvey())">
+                  <span class="material-symbols-outlined">download</span>Download .tsv
+                </button>
               </div>
-              @if (surveyEntries?.facets) {
-                <div class="uk-width-1-1 uk-child-width-1-2" data-uk-grid>
-                  <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" data-uk-grid>
-                    <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
-                        [items]="surveys" [(ngModel)]="selectedSurvey"
-                        placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
-                      </ng-select>
-                    </div>
-                    <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
-                        [items]="stakeholderList" [(ngModel)]="selectedStakeholder"
-                        placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
-                      </ng-select>
-                    </div>
-                    <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
-                        placeholder="Validation Status" [(ngModel)]="validationStatus" clearAllText="Clear">
-                        <ng-option [value]="''">All validation statuses</ng-option>
-                        <ng-option [value]="'true'">Validated</ng-option>
-                        <ng-option [value]="'false'">Not validated</ng-option>
-                      </ng-select>
-                    </div>
-                    <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
-                        placeholder="Publication Status" [(ngModel)]="publishedStatus" clearAllText="Clear">
-                        <ng-option [value]="''">All published statuses</ng-option>
-                        <ng-option [value]="'true'">Published</ng-option>
-                        <ng-option [value]="'false'">Not published</ng-option>
-                      </ng-select>
-                    </div>
+            </div>
+          }
+        </div>
+
+        @if (surveyEntries) {
+          <div class="uk-card uk-card-default uk-margin-bottom">
+
+            <!-- Filters -->
+            @if (surveyEntries.facets) {
+              <div class="uk-card-header">
+                <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-5@l" data-uk-grid>
+                  <div>
+                    <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
+                      [items]="stakeholderList" [(ngModel)]="selectedStakeholder"
+                      placeholder="All stakeholders" bindLabel="label" bindValue="value" clearAllText="Clear">
+                    </ng-select>
                   </div>
-                  <div class="uk-margin-remove-top uk-flex uk-flex-middle" data-uk-grid>
-                    <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"
-                        (change)="this.updateURLParameters('sort', 'modificationDate'); filterSelection('order', order)">
-                        <ng-option [value]="'desc'">Most recently modified</ng-option>
-                        <ng-option [value]="'asc'">Least recently modified</ng-option>
-                      </ng-select>
-                    </div>
-                    <div class="uk-width-expand">
-                      <div class="uk-flex uk-flex-middle uk-flex-right">
-                        <p class="uk-margin-remove uk-padding-small">
-                          Results <span class="uk-text-bold">{{surveyEntries.from + 1}}-</span><span class="uk-text-bold">{{(currentPage-1) * pageSize + surveyEntries.results.length}}</span> of <span class="uk-text-bold">{{surveyEntries.total}}</span>
-                        </p>
-                        <ul class="uk-pagination uk-visible@m">
-                          @if (currentPage>2 && totalPages>5) {
-                            <li><a (click)="goToPage(1)"><span data-uk-pagination-previous></span><span data-uk-pagination-previous></span></a></li>
-                          }
-                          @if (currentPage!==1) {
-                            <li><a (click)="previousPage()"><span data-uk-pagination-previous></span></a></li>
-                          }
-                          @for (i of pages; track i) {
-                            <li [ngClass]="i === currentPage ? 'uk-active': ''">
-                              <a (click)="goToPage(i)">{{i}}</a>
-                            </li>
-                          }
-                          @if (currentPage!==totalPages) {
-                            <li><a (click)="nextPage()"><span data-uk-pagination-next></span></a></li>
-                          }
-                          @if (currentPage<totalPages-1 && totalPages>5) {
-                            <li><a (click)="goToPage(totalPages)"><span data-uk-pagination-next></span><span data-uk-pagination-next></span></a></li>
-                          }
-                        </ul>
-                      </div>
-                    </div>
+                  <div>
+                    <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
+                      [items]="surveys" [(ngModel)]="selectedSurvey"
+                      placeholder="All surveys" bindLabel="label" bindValue="value" clearAllText="Clear">
+                    </ng-select>
+                  </div>
+                  <div>
+                    <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
+                      placeholder="Any validation" [(ngModel)]="validationStatus" clearAllText="Clear">
+                      <ng-option [value]="'true'">Validated</ng-option>
+                      <ng-option [value]="'false'">Not validated</ng-option>
+                    </ng-select>
+                  </div>
+                  <div>
+                    <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
+                      placeholder="Any publication" [(ngModel)]="publishedStatus" clearAllText="Clear">
+                      <ng-option [value]="'true'">Published</ng-option>
+                      <ng-option [value]="'false'">Not published</ng-option>
+                    </ng-select>
+                  </div>
+                  <div>
+                    <ng-select id="order" [(ngModel)]="order" [clearable]="false" placeholder="Modification order"
+                      (change)="updateURLParameters('sort', 'modificationDate'); filterSelection('order', order)">
+                      <ng-option [value]="'desc'">Most recently modified</ng-option>
+                      <ng-option [value]="'asc'">Least recently modified</ng-option>
+                    </ng-select>
                   </div>
                 </div>
-              }
-            </div>
-            <div class="">
-              <div class="uk-overflow-auto uk-margin-bottom">
-                @if (surveyEntriesResults) {
-                  <table class="uk-table uk-table-striped uk-table-middle uk-table-divider">
-                    <thead>
+              </div>
+            }
+
+            <!-- Active filters -->
+            @if (activeFilters.length > 0) {
+              <div class="uk-card-header uk-flex uk-flex-middle uk-flex-wrap uk-padding-small" style="gap: 8px;">
+                <span class="uk-text-small uk-text-muted uk-text-bold">Filtered by</span>
+                @for (filter of activeFilters; track filter.key) {
+                  <span class="uk-label uk-label-public">
+                    {{ filter.name }}: {{ filter.value }}
+                    <button type="button" class="uk-icon-link" data-uk-icon="icon: close; ratio: 0.7" title="Remove filter"
+                      (click)="filterSelection(filter.key, '')"></button>
+                  </span>
+                }
+                <button type="button" class="uk-button uk-button-link uk-text-small uk-text-bold" (click)="clearFilters()">Clear all</button>
+              </div>
+            }
+
+            <!-- Table -->
+            @if (surveyEntriesResults?.length) {
+              <div class="uk-overflow-auto">
+                <table class="uk-table uk-table-divider uk-table-middle uk-margin-remove">
+                  <thead>
+                    <tr>
+                      <th>Stakeholder</th>
+                      <th>Survey</th>
+                      <th>Modified</th>
+                      <th>Validated</th>
+                      <th>Published</th>
+                      <th class="uk-width-small">Progress</th>
+                      <th class="uk-table-shrink"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (surveyEntry of surveyEntriesResults; track surveyEntry.surveyAnswerId) {
                       <tr>
-                        <!--              <th class="uk-table-shrink"><input class="uk-checkbox" type="checkbox"></th>-->
-                        <th class="">Stakeholder</th>
-                        <th class="">Survey</th>
-                        <th class="">Modified</th>
-                        <th class="">Validated</th>
-                        <th class="">Published</th>
-                        <th class="">Progress</th>
-                        <th class="">Actions</th>
+                        <td>
+                          <div class="uk-flex uk-flex-middle" style="gap: 12px;">
+                            @if (surveyEntry.stakeholder.country) {
+                              <span class="uk-label uk-label-code">{{ surveyEntry.stakeholder.country }}</span>
+                            }
+                            <span class="uk-text-bold uk-text-emphasis">{{ surveyEntry.stakeholder.name }}</span>
+                          </div>
+                        </td>
+                        <td>{{ surveyEntry.surveyName }}</td>
+                        <td class="uk-text-nowrap">{{ surveyEntry.lastUpdate | date: 'd MMM y' }}</td>
+                        <td>
+                          @if (surveyEntry.validated) {
+                            <span class="uk-label uk-label-validated">
+                              <span class="material-symbols-outlined" style="font-size: 13px">check</span>Validated
+                            </span>
+                          } @else {
+                            <span class="uk-label uk-label-closed">Pending</span>
+                          }
+                        </td>
+                        <td>
+                          @if (surveyEntry.published) {
+                            <span class="uk-label uk-label-public">Published</span>
+                          } @else {
+                            <span class="uk-text-small uk-text-muted uk-text-nowrap">Not published</span>
+                          }
+                        </td>
+                        <td>
+                          <div class="uk-flex uk-flex-middle" style="gap: 12px;">
+                            <progress class="uk-progress uk-margin-remove uk-flex-1"
+                              [value]="surveyEntry.progressTotal.current" [max]="surveyEntry.progressTotal.total">
+                            </progress>
+                            <span class="uk-text-small uk-text-bold uk-text-nowrap">
+                              {{ surveyEntry.progressTotal.current }} / {{ surveyEntry.progressTotal.total }}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="uk-inline">
+                            <button type="button" class="uk-button-icon" title="Actions">
+                              <span class="material-symbols-outlined">more_vert</span>
+                            </button>
+                            <div data-uk-dropdown="mode: click; pos: bottom-right; offset: 6">
+                              <ul class="uk-nav uk-dropdown-nav">
+                                <li>
+                                  <a class="uk-flex uk-flex-middle" style="gap: 10px;"
+                                    [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
+                                    <span class="material-symbols-outlined">visibility</span>View survey
+                                  </a>
+                                </li>
+                                <li>
+                                  <a class="uk-flex uk-flex-middle" style="gap: 10px;"
+                                    [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
+                                    <span class="material-symbols-outlined">manage_history</span>View survey history
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      @for (surveyEntry of surveyEntriesResults; track surveyEntry) {
-                        <tr>
-                          <!--              <td><input class="uk-checkbox" type="checkbox"></td>-->
-                          <td>{{surveyEntry.stakeholder.name}}</td>
-                          <td class="">
-                            {{surveyEntry.surveyName}}
-                          </td>
-                          <td>
-                            {{surveyEntry.lastUpdate | date}}
-                          </td>
-                          <td>
-                            <div class="uk-margin-left">
-                              @if (surveyEntry.validated) {
-                                <span class="material-icons">done</span>
-                              }
-                              @if (!surveyEntry.validated) {
-                                <span class="material-icons">remove</span>
-                              }
-                            </div>
-                          </td>
-                          <td class="">
-                            <div class="uk-margin-left">
-                              @if (surveyEntry.published) {
-                                <span class="material-icons">done</span>
-                              }
-                              @if (!surveyEntry.published) {
-                                <span class="material-icons">remove</span>
-                              }
-                            </div>
-                          </td>
-                          <td class="">
-                            <div class="percentageNumber" style="margin-left: 10%;">{{surveyEntry.progressTotal.current}} of {{surveyEntry.progressTotal.total}}</div>
-                          </td>
-                          <td class="">
-                            <div class="uk-inline uk-margin-left">
-                              <a><span class="material-icons">more_vert</span></a>
-                              <div class="uk-dropdown-nav" data-uk-dropdown="mode: hover; pos: bottom-center">
-                                <div class="uk-padding-small">
-                                  <ul class="uk-list">
-                                    <li class="uk-margin-small-bottom">
-                                      <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
-                                        <span class="material-icons uk-margin-right">visibility</span> View Survey
-                                      </a>
-                                    </li>
-                                    <li class="uk-margin-small-bottom">
-                                      <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
-                                        <span class="material-icons uk-margin-right">manage_history</span> View Survey History
-                                      </a>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            } @else {
+              <div class="uk-card-body uk-text-center uk-padding-large">
+                <p class="uk-text-bold uk-text-emphasis uk-margin-small-bottom">No responses match these filters</p>
+                @if (activeFilters.length > 0) {
+                  <button type="button" class="uk-button uk-button-secondary uk-button-small" (click)="clearFilters()">Clear filters</button>
                 }
               </div>
-            </div>
+            }
+
+            <!-- Footer: range + pagination -->
+            @if (surveyEntries.total > 0) {
+              <div class="uk-card-footer uk-flex uk-flex-between uk-flex-middle uk-flex-wrap" style="gap: 16px;">
+                <span class="uk-text-small uk-text-muted">
+                  Showing {{ surveyEntries.from + 1 }}–{{ surveyEntries.from + surveyEntries.results.length }} of {{ surveyEntries.total }} responses
+                </span>
+                <ul class="uk-pagination uk-margin-remove">
+                  <li [class.uk-disabled]="currentPage <= 1">
+                    <a (click)="previousPage()"><span data-uk-pagination-previous></span></a>
+                  </li>
+                  @for (i of pages; track i) {
+                    <li [class.uk-active]="i === currentPage">
+                      <a (click)="goToPage(i)">{{ i }}</a>
+                    </li>
+                  }
+                  <li [class.uk-disabled]="currentPage >= totalPages">
+                    <a (click)="nextPage()"><span data-uk-pagination-next></span></a>
+                  </li>
+                </ul>
+              </div>
+            }
+
           </div>
         }
 

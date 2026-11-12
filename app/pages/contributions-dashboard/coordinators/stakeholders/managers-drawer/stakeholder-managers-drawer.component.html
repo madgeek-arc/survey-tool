@@ -1,0 +1,141 @@
+<div [id]="drawerId" uk-offcanvas="mode: slide; flip: true; overlay: true">
+  <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+
+    <!-- Header -->
+    <div class="uk-flex uk-flex-middle uk-padding-small" style="gap: 14px; border-bottom: 1px solid #e5e5e5">
+      @if (stakeholder()?.country) {
+        <span class="uk-label uk-label-code">{{ stakeholder()?.country }}</span>
+      }
+      <div class="uk-width-expand">
+        <div class="uk-eyebrow">Managers &amp; contributors</div>
+        <h4 class="uk-margin-remove">{{ stakeholder()?.name }}</h4>
+      </div>
+      <button type="button" class="uk-close" (click)="close()" uk-close></button>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="uk-width-expand uk-overflow-auto uk-padding-small" style="flex: 1">
+
+      @if (loading() && !members()) {
+        <div class="uk-text-center uk-padding"><span data-uk-spinner></span></div>
+      } @else {
+
+        <!-- MANAGERS -->
+        <section class="uk-margin-bottom">
+          <div class="uk-flex uk-flex-middle uk-flex-wrap" style="gap: 10px">
+            <h5 class="uk-margin-remove uk-text-bold">Managers</h5>
+            <span class="uk-label uk-label-small uk-label-public">{{ members()?.admins?.length ?? 0 }}</span>
+            <span class="uk-width-expand"></span>
+            @if (!addOpen()) {
+              <button type="button" class="uk-button uk-button-secondary uk-button-small uk-flex uk-flex-middle" style="gap: 6px" (click)="openAdd()">
+                <span class="material-symbols-outlined">add</span>Add manager
+              </button>
+            }
+          </div>
+          <p class="uk-text-small uk-text-muted uk-margin-small-top">Can edit, validate and publish survey answers, and manage contributors.</p>
+
+          <!-- Add manager form -->
+          @if (addOpen()) {
+            <div class="uk-card uk-card-default uk-card-body uk-padding-small uk-margin-small-bottom">
+              <div class="uk-button-group uk-margin-small-bottom">
+                <button type="button"
+                  [class]="addMode() === 'existing' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
+                  (click)="setMode('existing')">Existing user</button>
+                <button type="button"
+                  [class]="addMode() === 'invite' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
+                  (click)="setMode('invite')">Invite by email</button>
+              </div>
+              <input class="uk-input" type="email" [formControl]="email" (keyup.enter)="submit()"
+                [placeholder]="addMode() === 'existing' ? 'Registered user’s email' : 'name@organisation.eu'">
+              <div class="uk-flex uk-flex-middle uk-margin-small-top" style="gap: 8px">
+                @if (errorMessage()) {
+                  <span class="uk-text-small uk-text-danger uk-width-expand">{{ errorMessage() }}</span>
+                } @else {
+                  <span class="uk-text-small uk-text-muted uk-width-expand">
+                    {{ addMode() === 'existing' ? 'They get access straight away.' : 'They’ll get an email with a link to join.' }}
+                  </span>
+                }
+                <button type="button" class="uk-button eos-btn--ghost uk-button-small" (click)="closeAdd()">Cancel</button>
+                <button type="button" class="uk-button uk-button-primary uk-button-small" [disabled]="submitting()" (click)="submit()">
+                  {{ addMode() === 'existing' ? 'Add' : 'Send invitation' }}
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Invitation result -->
+          @if (invitationLink()) {
+            <div class="eos-info-box uk-margin-small-bottom">
+              <span class="material-symbols-outlined">{{ invitationEmailSent() ? 'mark_email_read' : 'link' }}</span>
+              <div class="uk-width-expand">
+                <div>{{ invitationEmailSent() ? 'The invitation was emailed. You can also share this link:' : 'The email could not be sent. Share this link with the invitee:' }}</div>
+                <div class="uk-text-truncate uk-text-small">{{ invitationLink() }}</div>
+              </div>
+              <button type="button" class="uk-button-icon" [title]="copied() ? 'Copied' : 'Copy link'" (click)="copyInvitationLink()">
+                <span class="material-symbols-outlined">{{ copied() ? 'check' : 'content_copy' }}</span>
+              </button>
+            </div>
+          }
+
+          <div class="uk-card uk-card-default">
+            @if (members()?.admins?.length) {
+              <ul class="uk-list uk-list-divider uk-margin-remove">
+                @for (manager of members()!.admins; track manager.email) {
+                  <li class="uk-flex uk-flex-middle" style="gap: 12px; padding: 12px 14px">
+                    <span class="uk-label uk-label-code">{{ initials(manager) }}</span>
+                    <div class="uk-width-expand" style="min-width: 0">
+                      <div class="uk-text-bold uk-text-emphasis">{{ manager.fullname || manager.email }}</div>
+                      <div class="uk-text-small uk-text-muted uk-text-truncate">{{ manager.email }}</div>
+                    </div>
+                    @if (confirmRemove() === manager.email) {
+                      <button type="button" class="uk-button eos-btn--ghost uk-button-small" (click)="confirmRemove.set(null)">Cancel</button>
+                      <button type="button" class="uk-button uk-button-danger uk-button-small" [disabled]="submitting()"
+                        (click)="removeManager(manager.email)">Remove</button>
+                    } @else {
+                      <button type="button" class="uk-button-icon uk-button-icon--danger" title="Remove manager"
+                        (click)="confirmRemove.set(manager.email)">
+                        <span class="material-symbols-outlined">delete</span>
+                      </button>
+                    }
+                  </li>
+                }
+              </ul>
+            } @else {
+              <div class="uk-padding-small uk-text-small uk-text-danger uk-text-bold">
+                No managers. Nobody can edit or validate this group’s surveys.
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- CONTRIBUTORS -->
+        <section>
+          <div class="uk-flex uk-flex-middle" style="gap: 10px">
+            <h5 class="uk-margin-remove uk-text-bold">Contributors</h5>
+            <span class="uk-label uk-label-small uk-label-closed">{{ members()?.members?.length ?? 0 }}</span>
+          </div>
+          <p class="uk-text-small uk-text-muted uk-margin-small-top">Assigned by managers to help answer surveys.</p>
+
+          <div class="uk-card uk-card-default">
+            @if (members()?.members?.length) {
+              <ul class="uk-list uk-list-divider uk-margin-remove">
+                @for (contributor of members()!.members; track contributor.email) {
+                  <li class="uk-flex uk-flex-middle" style="gap: 12px; padding: 12px 14px">
+                    <span class="uk-label uk-label-code">{{ initials(contributor) }}</span>
+                    <div class="uk-width-expand" style="min-width: 0">
+                      <div class="uk-text-bold uk-text-emphasis">{{ contributor.fullname || contributor.email }}</div>
+                      <div class="uk-text-small uk-text-muted uk-text-truncate">{{ contributor.email }}</div>
+                    </div>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <div class="uk-padding-small uk-text-small uk-text-muted uk-text-bold">No contributors yet.</div>
+            }
+          </div>
+        </section>
+      }
+
+    </div>
+  </div>
+</div>

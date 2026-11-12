@@ -1,19 +1,26 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy} from "@angular/core";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy, signal} from "@angular/core";
 import {PageContentComponent} from "../../../../shared/page-content/page-content.component";
 import {
   SidebarMobileToggleComponent
 } from "../../../../shared/dashboard-side-menu/mobile-toggle/sidebar-mobile-toggle.component";
 import {FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
-import { JsonPipe, NgClass } from "@angular/common";
+import {NgSelectModule} from "@ng-select/ng-select";
 import {Paging} from "../../../../../catalogue-ui/domain/paging";
 import {Administrator, Coordinator, Stakeholder, UserGroup} from "../../../../domain/userInfo";
-import {ActivatedRoute, Router, RouterLink} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {URLParameter} from "../../../../domain/url-parameter";
 import {StakeholdersService} from "../../../../services/stakeholders.service";
 import UIkit from "uikit";
 import {debounceTime, distinctUntilChanged, map, takeUntil} from "rxjs/operators";
 import {fromEvent, Subject} from "rxjs";
 import {UserService} from "../../../../services/user.service";
+import {
+  STAKEHOLDER_MANAGERS_DRAWER_ID,
+  StakeholderManagersDrawerComponent
+} from "../../coordinators/stakeholders/managers-drawer/stakeholder-managers-drawer.component";
+import {
+  ActiveFilter, CountryOption, StakeholderRow, stakeholderActiveFilters, stakeholderFilterOptions, toStakeholderRows
+} from "../../coordinators/stakeholders/stakeholder-list.utils";
 
 @Component({
   selector: "admin-stakeholder",
@@ -23,9 +30,9 @@ import {UserService} from "../../../../services/user.service";
     PageContentComponent,
     SidebarMobileToggleComponent,
     FormsModule,
-    NgClass,
-    RouterLink,
-    ReactiveFormsModule
+    NgSelectModule,
+    ReactiveFormsModule,
+    StakeholderManagersDrawerComponent
 ],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [StakeholdersService],
@@ -43,6 +50,16 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
   edit: boolean = false;
   stakeholderForm: UntypedFormGroup = this.fb.group(new Stakeholder());
   private _destroyed: Subject<boolean> = new Subject();
+  rows: StakeholderRow[] = [];
+
+  // Filters
+  typeOptions: string[] = [];
+  countryOptions: CountryOption[] = [];
+  selectedType: string = null;
+  selectedCountry: string = null;
+  order: string = null;
+  activeFilters: ActiveFilter[] = [];
+  readonly selectedView = signal<'card' | 'table'>('card');
 
   // Paging
   pages: number[] = [];
@@ -58,6 +75,10 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
 
     this.route.queryParams.subscribe(params => {
       this.urlParameters.splice(0, this.urlParameters.length);
+      this.searchQuery = null;
+      this.selectedType = null;
+      this.selectedCountry = null;
+      this.order = null;
       for (const obj in params) {
         if (params.hasOwnProperty(obj)) {
           const urlParameter: URLParameter = {
@@ -66,6 +87,15 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
           };
           if (urlParameter.key === 'keyword') {
             this.searchQuery = urlParameter.values[0];
+          }
+          if (urlParameter.key === 'subType') {
+            this.selectedType = urlParameter.values[0];
+          }
+          if (urlParameter.key === 'country') {
+            this.selectedCountry = urlParameter.values[0];
+          }
+          if (urlParameter.key === 'order') {
+            this.order = urlParameter.values[0];
           }
           this.urlParameters.push(urlParameter);
         }
@@ -126,13 +156,35 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
   getStakeholders() {
     this.stakeholderService.getStakeholdersByType(this.administrator.type, this.urlParameters)
       .pipe(takeUntil(this._destroyed)).subscribe(
-      res => {this.stakeholders = res;},
+      res => {this.setStakeholders(res);},
       error => {console.error(error)},
       () => {
         this.paginationInit();
         this.ready = true;
       }
     );
+  }
+
+  setStakeholders(res: Paging<Stakeholder>) {
+    this.stakeholders = res;
+    this.rows = toStakeholderRows(res);
+    ({typeOptions: this.typeOptions, countryOptions: this.countryOptions} =
+      stakeholderFilterOptions(res, this.typeOptions, this.countryOptions));
+    this.activeFilters = stakeholderActiveFilters(this.selectedType, this.selectedCountry);
+  }
+
+  filterSelection(key: string, value: string) {
+    this.updateURLParameters(key, value);
+    this.updateURLParameters('from', 0);
+    return this.navigateUsingParameters();
+  }
+
+  clearFilters() {
+    for (const key of ['subType', 'country', 'keyword']) {
+      this.updateURLParameters(key, null);
+    }
+    this.updateURLParameters('from', 0);
+    return this.navigateUsingParameters();
   }
 
   addStakeholderAdmin(){
@@ -142,7 +194,7 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
       () => {
         UIkit.modal('#modal-center').hide()
         this.stakeholderService.getStakeholdersByType(this.administrator.type, this.urlParameters).subscribe(
-          res => {this.stakeholders = res;},
+          res => {this.setStakeholders(res);},
           error => {console.error(error)},
         )
       }
@@ -157,7 +209,7 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
       () => {
         UIkit.modal('#modal-center').hide();
         this.stakeholderService.getStakeholdersByType(this.administrator.type, this.urlParameters).subscribe(
-          res => {this.stakeholders = res;},
+          res => {this.setStakeholders(res);},
           error => {console.error(error)},
         );
       }
@@ -165,6 +217,13 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
   }
 
   /** Modal ---------------------------------------------------------------------------------> **/
+  readonly managersFor = signal<Stakeholder | null>(null);
+
+  openManagers(stakeholder: Stakeholder) {
+    this.managersFor.set(stakeholder);
+    UIkit.offcanvas('#' + STAKEHOLDER_MANAGERS_DRAWER_ID).show();
+  }
+
   openForEdit(stakeholder: Stakeholder) {
     this.edit = true;
     this.stakeholderForm.patchValue(stakeholder);
@@ -212,7 +271,7 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
   }
 
   previousPage() {
-    if (this.currentPage > 0) {
+    if (this.currentPage > 1) {
       this.currentPage--;
       this.updateURLParameters('from', (this.currentPage-1)*this.pageSize);
       this.navigateUsingParameters();
@@ -229,14 +288,17 @@ export class AdminStakeholderComponent implements OnInit, OnDestroy {
   /** <--------------------------------------------------------------------------------- Paging **/
 
   /** Manipulate url params -----------------------------------------------------------------> **/
-  updateURLParameters(key, value) {
-    for (const urlParameter of this.urlParameters) {
-      if (urlParameter.key === key) {
-        urlParameter.values = [value];
-        return;
-      }
+  updateURLParameters(key: string, value: string | number | null) {
+    const index = this.urlParameters.findIndex(param => param.key === key);
+    if (value === null || value === undefined || value === '') {
+      if (index > -1)
+        this.urlParameters.splice(index, 1);
+      return;
     }
-    this.urlParameters.push({key: key, values: [value]});
+    if (index > -1)
+      this.urlParameters[index].values = [String(value)];
+    else
+      this.urlParameters.push({key: key, values: [String(value)]});
   }
 
   /** Manipulate url params -----------------------------------------------------------------> **/
