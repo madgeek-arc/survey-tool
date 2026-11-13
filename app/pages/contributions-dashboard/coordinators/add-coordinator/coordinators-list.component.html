@@ -9,7 +9,7 @@
       <div class="uk-flex uk-flex-between uk-flex-middle uk-margin-bottom">
         <h3 class="uk-margin-remove">Coordinators</h3>
 
-        @if (coordinators.length === 0) {
+        @if (coordinators().length === 0) {
           <button
             class="uk-button uk-button-primary"
             type="button"
@@ -19,11 +19,11 @@
         }
       </div>
 
-      @if (errorMessage) {
-        <div class="uk-alert uk-alert-danger">{{ errorMessage }}</div>
+      @if (errorMessage()) {
+        <div class="uk-alert uk-alert-danger">{{ errorMessage() }}</div>
       }
 
-      @if (isLoading) {
+      @if (isLoading()) {
 
         <div class="uk-flex uk-flex-center uk-margin-large-top">
           <div uk-spinner="ratio: 2"></div>
@@ -31,7 +31,7 @@
 
       } @else {
 
-        @for (coord of coordinators; track coord.id) {
+        @for (coord of coordinators(); track coord.id) {
 
           <div class="uk-card uk-card-default uk-card-body uk-margin-medium-bottom">
             <span class="material-symbols-outlined uk-position-top-right uk-position-small delete-icon uk-text-danger"
@@ -58,7 +58,7 @@
               </div>
             </div>
 
-            @let group = users.get(coord.id);
+            @let group = users().get(coord.id);
 
             @if (group.length > 0) {
               <div class="uk-overflow-auto uk-margin-medium-top">
@@ -163,7 +163,7 @@
     <div class="uk-flex uk-flex-right uk-margin-top">
       <button class="uk-button uk-button-secondary uk-modal-close" type="button" (click)="resetModal()">Cancel</button>
       <button class="uk-button uk-button-primary uk-margin-left" type="button" (click)="updateCoordinatorGroup()"
-              [disabled]="isSaving">Save
+              [disabled]="isSaving()">Save
       </button>
     </div>
   </div>
@@ -176,20 +176,20 @@
     <div class="uk-alert uk-alert-warning">
       <div class="uk-flex uk-flex-middle">
         <span class="material-icons uk-margin-small-right">warning</span>
-        <span>Are you sure you want to delete the group <b>{{ coordinatorToDeleteId }}</b>?</span>
+        <span>Are you sure you want to delete the group <b>{{ coordinatorToDeleteId() }}</b>?</span>
       </div>
       <p class="uk-text-small uk-margin-remove-bottom">This action cannot be undone. All members and data associated
         with this group will be removed.</p>
     </div>
 
     <div class="uk-flex uk-flex-right uk-margin-top">
-      <button class="uk-button uk-button-secondary uk-modal-close" type="button" [disabled]="isSaving">Cancel</button>
+      <button class="uk-button uk-button-secondary uk-modal-close" type="button" [disabled]="isSaving()">Cancel</button>
       <button
         class="uk-button uk-button-danger uk-margin-left"
         type="button"
         (click)="deleteCoordinatorGroup()"
-        [disabled]="isSaving">
-        @if (isSaving) {
+        [disabled]="isSaving()">
+        @if (isSaving()) {
           <div uk-spinner="ratio: 0.5"></div>
         }
         Delete Group

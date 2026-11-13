@@ -6,7 +6,7 @@ import { SurveyModalsService } from '../../../services/survey-modals.service';
   selector: 'app-survey-modals',
   templateUrl: './survey-modals.component.html',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule]
 })
 export class SurveyModalsComponent {

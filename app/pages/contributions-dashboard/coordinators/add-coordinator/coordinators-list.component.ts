@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute } from "@angular/router";
 import { FormsModule } from "@angular/forms";
@@ -20,7 +20,7 @@ import UIkit from "uikit";
     SidebarMobileToggleComponent,
     FormsModule
   ],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [StakeholdersService]
 })
 export class NewCoordinatorComponent implements OnInit {
@@ -33,26 +33,26 @@ export class NewCoordinatorComponent implements OnInit {
   administrator: Administrator = null;
   members: GroupMembers = null;
 
-  selectedMemberEmail: string;
+  selectedMemberEmail = signal<string>(undefined);
   selectedMemberId: string;
-  errorMessage: string;
+  errorMessage = signal<string>(undefined);
 
   private administratorId: string;
   coordinatorType: string;
   coordinatorId: string;
 
   newCoordinatorId: string = '';
-  newCoordinatorName: string = '';
+  newCoordinatorName = signal('');
 
   editingCoordinatorName: string = '';
   private errorTimeout: any;
-  isSaving: boolean = false;
+  isSaving = signal(false);
 
-  coordinators: Coordinator[] = [];
-  users: Map<string, User[]> = new Map();
+  coordinators = signal<Coordinator[]>([]);
+  users = signal<Map<string, User[]>>(new Map());
 
-  isLoading: boolean = true;
-  coordinatorToDeleteId: string | null = null;
+  isLoading = signal(true);
+  coordinatorToDeleteId = signal<string | null>(null);
 
   ngOnInit() {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
@@ -79,7 +79,7 @@ export class NewCoordinatorComponent implements OnInit {
               this.coordinatorType = admin.type;
               this.loadCoordinatorMembers();
             },
-            error: () => this.errorMessage = 'Failed to load administrator'
+            error: () => this.errorMessage.set('Failed to load administrator')
           });
       });
   }
@@ -95,7 +95,7 @@ export class NewCoordinatorComponent implements OnInit {
           next: (res) => {
             this.updateSidebarAndLoadData(res);
           },
-          error: () => this.errorMessage = 'Failed to load administrator'
+          error: () => this.errorMessage.set('Failed to load administrator')
         });
     }
   }
@@ -108,39 +108,40 @@ export class NewCoordinatorComponent implements OnInit {
   }
 
   loadCoordinatorMembers() {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     this.stakeholdersService
       .getCoordinators(this.coordinatorType)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: res => {
-          this.coordinators = res.results || [];
-          this.coordinators.sort((a, b) => {
+          const coordinators = [...(res.results || [])];
+          coordinators.sort((a, b) => {
             return a.name.localeCompare(b.name);
           })
-          if (this.coordinators.length === 0) {
-            this.isLoading = false;
+          this.coordinators.set(coordinators);
+          if (coordinators.length === 0) {
+            this.isLoading.set(false);
             return;
           }
 
           let loadedCount = 0;
 
-          this.coordinators.forEach(coord => {
+          coordinators.forEach(coord => {
             this.stakeholdersService.getCoordinatorUsers(coord.id)
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
                 next: value => {
-                  this.users.set(coord.id, value.members);
+                  this.users.update(users => new Map(users).set(coord.id, value.members));
                   loadedCount++;
-                  if (loadedCount === this.coordinators.length) {
-                    this.isLoading = false;
+                  if (loadedCount === coordinators.length) {
+                    this.isLoading.set(false);
                   }
                 },
                 error: () => {
                   loadedCount++;
-                  if (loadedCount === this.coordinators.length) {
-                    this.isLoading = false;
+                  if (loadedCount === coordinators.length) {
+                    this.isLoading.set(false);
                   }
                 }
               });
@@ -148,46 +149,46 @@ export class NewCoordinatorComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.errorMessage = 'Failed to load coordinators';
-          this.isLoading = false;
+          this.errorMessage.set('Failed to load coordinators');
+          this.isLoading.set(false);
         }
       });
   }
 
   resetModal(): void {
-    this.selectedMemberEmail = null;
-    this.errorMessage = null;
-    this.newCoordinatorName = '';
+    this.selectedMemberEmail.set(null);
+    this.errorMessage.set(null);
+    this.newCoordinatorName.set('');
     this.newCoordinatorId = '';
 
   }
 
   showError(message: string): void {
-    this.errorMessage = message;
+    this.errorMessage.set(message);
 
     if (this.errorTimeout) {
       clearTimeout(this.errorTimeout);
     }
     this.errorTimeout = setTimeout(() => {
-      this.errorMessage = null;
+      this.errorMessage.set(null);
     }, 3000);
   }
 
   openAddMemberModal(coordId: string) {
     this.coordinatorId = coordId;
-    this.selectedMemberEmail = null;
-    this.errorMessage = null;
+    this.selectedMemberEmail.set(null);
+    this.errorMessage.set(null);
     UIkit.modal('#add-coordinator-modal').show();
   }
 
   addCoordinatorMember(): void {
-    if (!this.selectedMemberEmail || !this.coordinatorId) {
-      this.errorMessage = 'Invalid email or coordinator';
+    if (!this.selectedMemberEmail() || !this.coordinatorId) {
+      this.errorMessage.set('Invalid email or coordinator');
       return;
     }
 
     this.stakeholdersService
-      .addCoordinatorMember(this.coordinatorId, this.selectedMemberEmail)
+      .addCoordinatorMember(this.coordinatorId, this.selectedMemberEmail())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -196,7 +197,7 @@ export class NewCoordinatorComponent implements OnInit {
           this.loadCoordinatorMembers();
           this.userService.updateUserInfo();
         },
-        error: () => this.errorMessage = 'Failed to add coordinator'
+        error: () => this.errorMessage.set('Failed to add coordinator')
       });
   }
 
@@ -211,7 +212,7 @@ export class NewCoordinatorComponent implements OnInit {
           UIkit.modal('#remove-coordinator-modal').hide();
           this.loadCoordinatorMembers();
         },
-        error: () => this.errorMessage = 'Failed to delete coordinator'
+        error: () => this.errorMessage.set('Failed to delete coordinator')
       });
   }
 
@@ -222,14 +223,14 @@ export class NewCoordinatorComponent implements OnInit {
   }
 
   createCoordinatorGroup(): void {
-    if (!this.newCoordinatorName) {
-      this.errorMessage = 'Please provide Name';
+    if (!this.newCoordinatorName()) {
+      this.errorMessage.set('Please provide Name');
       return;
     }
 
     const newCoord: Coordinator = {
       id: this.newCoordinatorId,
-      name: this.newCoordinatorName,
+      name: this.newCoordinatorName(),
       type: this.coordinatorType,
       admins: [],
       members: []
@@ -239,7 +240,7 @@ export class NewCoordinatorComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          this.coordinators.push(res);
+          this.coordinators.update(coordinators => [...coordinators, res]);
           const modalElement = document.getElementById('create-coordinator-modal');
           if (modalElement) {
             UIkit.modal(modalElement).hide();
@@ -250,7 +251,7 @@ export class NewCoordinatorComponent implements OnInit {
         },
         error: (error) => {
           console.error(error);
-          this.errorMessage = 'Failed to create coordinator'
+          this.errorMessage.set('Failed to create coordinator')
         }
       });
   }
@@ -262,7 +263,7 @@ export class NewCoordinatorComponent implements OnInit {
   }
 
   updateCoordinatorGroup(): void {
-    if (this.isSaving) {
+    if (this.isSaving()) {
       return;
     }
     if (!this.editingCoordinatorName || this.editingCoordinatorName.trim() === '') {
@@ -270,9 +271,9 @@ export class NewCoordinatorComponent implements OnInit {
       return;
     }
 
-    this.isSaving = true;
+    this.isSaving.set(true);
 
-    const existingCoord = this.coordinators.find(c => c.id ===  this.coordinatorId);
+    const existingCoord = this.coordinators().find(c => c.id ===  this.coordinatorId);
 
     const updatedCoord = {
       id: this.coordinatorId,
@@ -286,56 +287,62 @@ export class NewCoordinatorComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          const index = this.coordinators.findIndex(c => c.id === updatedCoord.id);
+          const index = this.coordinators().findIndex(c => c.id === updatedCoord.id);
 
           if (index !== -1) {
-            this.coordinators[index].name = res.name;
-            this.coordinators.sort((a, b) => a.name.localeCompare(b.name));
+            const coordinators = this.coordinators().map((c, i) => i === index ? { ...c, name: res.name } : c);
+            coordinators.sort((a, b) => a.name.localeCompare(b.name));
+            this.coordinators.set(coordinators);
           }
           const modalElement = document.getElementById('edit-coordinator-modal');
           if (modalElement) {
             UIkit.modal(modalElement).hide();
           }
           this.resetModal();
-          this.isSaving = false;
+          this.isSaving.set(false);
           this.userService.updateUserInfo();
         },
         error: (err) => {
           console.error(err);
           this.showError('Failed to update coordinator');
-          this.isSaving = false;
+          this.isSaving.set(false);
         }
       });
   }
 
   openDeleteCoordinatorModal(coord: Coordinator): void {
-    this.coordinatorToDeleteId = coord.id;
+    this.coordinatorToDeleteId.set(coord.id);
     UIkit.modal('#delete-coordinator-group-modal').show();
   }
 
   deleteCoordinatorGroup(): void {
-    if (!this.coordinatorToDeleteId || this.isSaving) return;
-    this.isSaving = true;
+    if (!this.coordinatorToDeleteId() || this.isSaving()) return;
+    this.isSaving.set(true);
 
-    this.stakeholdersService.deleteCoordinator(this.coordinatorToDeleteId)
+    this.stakeholdersService.deleteCoordinator(this.coordinatorToDeleteId())
      .pipe(takeUntilDestroyed(this.destroyRef))
      .subscribe({
        next: () => {
-         this.coordinators = this.coordinators.filter(c => c.id !== this.coordinatorId);
-         this.users.delete(this.coordinatorToDeleteId);
+         this.coordinators.set(this.coordinators().filter(c => c.id !== this.coordinatorId));
+         const deletedId = this.coordinatorToDeleteId();
+         this.users.update(users => {
+           const next = new Map(users);
+           next.delete(deletedId);
+           return next;
+         });
 
          const modalElement = document.getElementById('delete-coordinator-group-modal');
          if (modalElement) {
            UIkit.modal(modalElement).hide();
          }
-         this.coordinatorToDeleteId = null;
-         this.isSaving = false;
+         this.coordinatorToDeleteId.set(null);
+         this.isSaving.set(false);
          this.userService.updateUserInfo();
        },
        error: (err) => {
          console.error(err);
          this.showError('Failed to delete coordinator');
-         this.isSaving = false;
+         this.isSaving.set(false);
        }
      });
   }

@@ -12,7 +12,7 @@ export type ResponseCounts = { responded: number; total: number };
   selector: 'app-survey-template-card',
   templateUrl: './survey-template-card.component.html',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, DatePipe, ReadMoreTextComponent]
 })
 export class SurveyTemplateCardComponent {

@@ -6,12 +6,12 @@
     <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
       <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
 
-        @if (currentSurveys.length > 0) {
+        @if (currentSurveys().length > 0) {
           <h3>Current survey(s)</h3>
         }
-        @if (currentSurveys.length > 0) {
+        @if (currentSurveys().length > 0) {
           <div class="uk-grid uk-grid-small uk-child-width-1-1" uk-grid>
-            @for (survey of currentSurveys; track survey) {
+            @for (survey of currentSurveys(); track survey) {
               <div>
                 @if (survey.locked && survey.active) {
                   <app-survey-card [survey]="survey" (selectedSurvey)="getSurveysForImport($event)"></app-survey-card>
@@ -21,12 +21,12 @@
           </div>
         }
 
-        @if (previousSurveys.length > 0) {
+        @if (previousSurveys().length > 0) {
           <h3>Previous survey(s)</h3>
         }
-        @if (previousSurveys.length > 0) {
+        @if (previousSurveys().length > 0) {
           <div class="uk-grid uk-child-width-1-2 uk-margin-bottom" uk-grid>
-            @for (survey of previousSurveys; track survey) {
+            @for (survey of previousSurveys(); track survey) {
               <div>
                 @if (survey.locked && !survey.active) {
                   <app-survey-card class="uk-display-block uk-height-1-1" [survey]="survey"></app-survey-card>
@@ -51,21 +51,21 @@
             current survey.</span>
         </div>
 
-        @if (showAlert) {
+        @if (showAlert()) {
           <div class="uk-alert-warning" uk-alert>
             <a href class="uk-alert-close" uk-close (click)="clearError()"></a>
             <p>Please select one before importing</p>
           </div>
         }
 
-        @if (importFromData) {
+        @if (importFromData()) {
           @let progressBySurvey = importProgress$ | async;
           <div>
-            @for (modelId of importFromData.importFrom; track modelId; let i = $index) {
+            @for (modelId of importFromData().importFrom; track modelId; let i = $index) {
               <label class="eos-option uk-display-block uk-position-relative uk-padding-small uk-border-rounded uk-margin-small-bottom"
-                     [for]="modelId" [class.eos-option--selected]="importSelection === modelId">
+                     [for]="modelId" [class.eos-option--selected]="importSelection() === modelId">
                 <input type="radio" [id]="modelId" name="surveyToImport" class="visually-hidden" [value]="modelId" [(ngModel)]="importSelection">
-                <span class="uk-display-block uk-text-emphasis">{{ importFromData.importFromNames[i] }}</span>
+                <span class="uk-display-block uk-text-emphasis">{{ importFromData().importFromNames[i] }}</span>
                 @if (progressBySurvey?.[modelId]; as progress) {
                   <span class="uk-flex uk-flex-middle uk-margin-small-top uk-text-meta">
                     <progress class="uk-progress uk-width-expand uk-margin-remove-bottom" [value]="progress.current" [max]="progress.total"></progress>
@@ -79,8 +79,8 @@
 
         <p class="uk-text-right">
           <button class="uk-button uk-button-default uk-modal-close" type="button" (click)="clearModal()">Cancel</button>
-          <button class="uk-button uk-button-primary uk-margin-small-left" [ngClass]="{'uk-modal-close': !!importSelection}"
-            type="button" [title]="!importSelection ? 'Select survey to import from' : 'Click to import'"
+          <button class="uk-button uk-button-primary uk-margin-small-left" [ngClass]="{'uk-modal-close': !!importSelection()}"
+            type="button" [title]="!importSelection() ? 'Select survey to import from' : 'Click to import'"
           (click)="importSurveyAnswer()">Import</button>
         </p>
       </div>

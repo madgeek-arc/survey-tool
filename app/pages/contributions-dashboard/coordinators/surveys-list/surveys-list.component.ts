@@ -18,7 +18,7 @@ import { SurveyModalsComponent } from '../../survey-modals/survey-modals.compone
 @Component({
     selector: 'app-survey-lists',
     templateUrl: 'surveys-list.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         PageContentComponent,
         SidebarMobileToggleComponent,

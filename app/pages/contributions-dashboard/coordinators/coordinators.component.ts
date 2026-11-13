@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnDestroy, OnInit, ChangeDetectionStrategy, inject, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { SurveyService } from "../../../services/survey.service";
 import { UserService } from "../../../services/user.service";
@@ -18,7 +18,7 @@ import { NgClass, DatePipe } from "@angular/common";
 @Component({
     selector: 'app-coordinator-dashboard',
     templateUrl: './coordinators.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         PageContentComponent,
         SidebarMobileToggleComponent,
@@ -36,56 +36,57 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   private _destroyed: Subject<boolean> = new Subject();
   urlParameters: URLParameter[] = [];
   userInfo: UserInfo = null;
-  stakeholder: Stakeholder = null;
+  stakeholder = signal<Stakeholder>(null);
   coordinator: Coordinator = null;
 
-  surveyEntries: Paging<SurveyInfo>;
-  surveyEntriesResults: SurveyInfo[];
-  id: string = null;
-  loading = false;
+  surveyEntries = signal<Paging<SurveyInfo>>(undefined);
+  surveyEntriesResults = signal<SurveyInfo[]>(undefined);
+  id = signal<string>(null);
+  loading = signal(false);
 
   // Filters
-  stakeholderList: FacetValue[] = [];
-  surveys: FacetValue[] = [];
-  selectedStakeholder: string = null;
-  selectedSurvey: string = null;
-  validationStatus: string = '';
-  publishedStatus: string = '';
-  order: string = null;
+  stakeholderList = signal<FacetValue[]>([]);
+  surveys = signal<FacetValue[]>([]);
+  selectedStakeholder = signal<string>(null);
+  selectedSurvey = signal<string>(null);
+  validationStatus = signal('');
+  publishedStatus = signal('');
+  order = signal<string>(null);
 
   //Paging
   pageSize = 10;
   total: number;
-  currentPage = 1;
-  totalPages: number = 0;
-  pages: number[] = [];
+  currentPage = signal(1);
+  totalPages = signal(0);
+  pages = signal<number[]>([]);
   offset = 2;
 
-  constructor(private userService: UserService, private surveyService: SurveyService, public route: ActivatedRoute,
-              public router: Router) {
-  }
+  private userService = inject(UserService);
+  private surveyService = inject(SurveyService);
+  public route = inject(ActivatedRoute);
+  public router = inject(Router);
 
   ngOnInit() {
-    this.loading = true;
+    this.loading.set(true);
 
     this.route.params.pipe(takeUntil(this._destroyed)).subscribe(params => {
       this.route.queryParams.pipe(takeUntil(this._destroyed)).subscribe(
         qParams => {
-          this.id = params['id'];
+          this.id.set(params['id']);
           this.setUrlParams(qParams);
           // this.updateCoordinatorStakeholderParameter(this.id);
-          this.updateURLParameters('groupId', this.id);
+          this.updateURLParameters('groupId', this.id());
           this.setFilters();
           this.surveyService.getSurveyEntries(this.urlParameters).pipe(takeUntil(this._destroyed)).subscribe(surveyEntries => {
-              this.surveyEntries = surveyEntries;
-              this.surveyEntriesResults = this.surveyEntries.results;
-              this.stakeholderList = this.getFacet('stakeholderId');
-              this.surveys = this.getFacet('surveyId')
+              this.surveyEntries.set(surveyEntries);
+              this.surveyEntriesResults.set(surveyEntries.results);
+              this.stakeholderList.set(this.getFacet('stakeholderId'));
+              this.surveys.set(this.getFacet('surveyId'))
             },
             error => {console.error(error)},
             () => {
               this.paginationInit();
-              this.loading = false;
+              this.loading.set(false);
             }
           );
 
@@ -94,16 +95,16 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
               this.userInfo = next;
               if (this.userInfo) {
                 this.userInfo.stakeholders.every(sh => {
-                  if (sh.id === this.id) {
-                    this.stakeholder = sh;
-                    this.userService.changeCurrentStakeholder(this.stakeholder);
+                  if (sh.id === this.id()) {
+                    this.stakeholder.set(sh);
+                    this.userService.changeCurrentStakeholder(this.stakeholder());
                     return false;
                   }
                   return true;
                 });
 
                 this.userInfo.coordinators.every(co => {
-                  if (co.id === this.id) {
+                  if (co.id === this.id()) {
                     this.coordinator = co;
                     this.userService.changeCurrentCoordinator(this.coordinator);
                     return false;
@@ -185,26 +186,29 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   paginationInit() {
     let addToEndCounter = 0;
     let addToStartCounter = 0;
-    this.pages = [];
-    this.currentPage = (this.surveyEntries.from / this.pageSize) + 1;
-    this.totalPages = Math.ceil(this.surveyEntries.total / this.pageSize);
-    for ( let i = (+this.currentPage - this.offset); i < (+this.currentPage + 1 + this.offset); ++i ) {
+    const pages: number[] = [];
+    const currentPage = (this.surveyEntries().from / this.pageSize) + 1;
+    const totalPages = Math.ceil(this.surveyEntries().total / this.pageSize);
+    for ( let i = (+currentPage - this.offset); i < (+currentPage + 1 + this.offset); ++i ) {
       if ( i < 1 ) { addToEndCounter++; }
-      if ( i > this.totalPages ) { addToStartCounter++; }
-      if ((i >= 1) && (i <= this.totalPages)) {
-        this.pages.push(i);
+      if ( i > totalPages ) { addToStartCounter++; }
+      if ((i >= 1) && (i <= totalPages)) {
+        pages.push(i);
       }
     }
     for ( let i = 0; i < addToEndCounter; ++i ) {
-      if (this.pages.length < this.totalPages) {
-        this.pages.push(this.pages.length + 1);
+      if (pages.length < totalPages) {
+        pages.push(pages.length + 1);
       }
     }
     for ( let i = 0; i < addToStartCounter; ++i ) {
-      if (this.pages[0] > 1) {
-        this.pages.unshift(this.pages[0] - 1 );
+      if (pages[0] > 1) {
+        pages.unshift(pages[0] - 1 );
       }
     }
+    this.currentPage.set(currentPage);
+    this.totalPages.set(totalPages);
+    this.pages.set(pages);
   }
 
   filterSelection(key: string, value: string | string[]) {
@@ -214,16 +218,16 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   }
 
   goToPage(page: number) {
-    this.currentPage = page;
-    let from: number = (this.currentPage - 1) * this.pageSize
+    this.currentPage.set(page);
+    let from: number = (this.currentPage() - 1) * this.pageSize
     this.updateURLParameters('from', from.toString());
     return this.navigateUsingParameters();
   }
 
   previousPage() {
-    // if (this.currentPage > 1) {
-    this.currentPage--;
-    let from: number = this.surveyEntries.from;
+    // if (this.currentPage() > 1) {
+    this.currentPage.update(page => page - 1);
+    let from: number = this.surveyEntries().from;
     from -= this.pageSize;
     this.updateURLParameters('from', from.toString());
     return this.navigateUsingParameters();
@@ -231,9 +235,9 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
   }
 
   nextPage() {
-    // if (this.currentPage < this.pageTotal) {
-    this.currentPage++;
-    let from: number = this.surveyEntries.from;
+    // if (this.currentPage() < this.pageTotal) {
+    this.currentPage.update(page => page + 1);
+    let from: number = this.surveyEntries().from;
     from += this.pageSize;
     this.updateURLParameters('from', from.toString());
     return this.navigateUsingParameters();
@@ -246,7 +250,7 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
       map[urlParameter.key] = urlParameter.values.join(',');
     }
     // console.log(map);
-    return this.router.navigate([`/contributions/${this.id}/surveys`], {queryParams: map});
+    return this.router.navigate([`/contributions/${this.id()}/surveys`], {queryParams: map});
   }
 
   setUrlParams(params) {
@@ -276,32 +280,32 @@ export class CoordinatorsComponent implements OnInit, OnDestroy{
     let ordered: boolean = false;
     for (let i = 0; i < this.urlParameters.length; i++) {
       if (this.urlParameters[i].key === 'stakeholderId') {
-        this.selectedStakeholder = this.urlParameters[i].values[0];
+        this.selectedStakeholder.set(this.urlParameters[i].values[0]);
         continue;
       }
       if (this.urlParameters[i].key === 'surveyId') {
-        this.selectedSurvey = this.urlParameters[i].values[0];
+        this.selectedSurvey.set(this.urlParameters[i].values[0]);
         continue;
       }
       if (this.urlParameters[i].key === 'validated') {
-        this.validationStatus = this.urlParameters[i].values[0];
+        this.validationStatus.set(this.urlParameters[i].values[0]);
         continue;
       }
       if (this.urlParameters[i].key === 'published') {
-        this.publishedStatus = this.urlParameters[i].values[0];
+        this.publishedStatus.set(this.urlParameters[i].values[0]);
         continue;
       }
       if (this.urlParameters[i].key === 'order') {
         ordered = true;
-        this.order = this.urlParameters[i].values[0];
+        this.order.set(this.urlParameters[i].values[0]);
       }
     }
   }
 
   getFacet(field: string) {
-    for (let i = 0; i < this.surveyEntries.facets.length; i++) {
-      if (this.surveyEntries.facets[i].field === field) {
-        return this.surveyEntries.facets[i].values;
+    for (let i = 0; i < this.surveyEntries().facets.length; i++) {
+      if (this.surveyEntries().facets[i].field === field) {
+        return this.surveyEntries().facets[i].values;
       }
     }
     return null

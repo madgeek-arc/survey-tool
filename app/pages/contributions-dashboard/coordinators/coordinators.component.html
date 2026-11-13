@@ -6,21 +6,21 @@
     <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
       <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
 
-        @if (loading) {
+        @if (loading()) {
           <ng-template class="whiteFilm">
             <i class="loader-big" aria-hidden="true"></i>
           </ng-template>
         }
-        @if (surveyEntries) {
+        @if (surveyEntries()) {
           <div>
             <div class="uk-grid uk-row-first uk-margin-bottom uk-margin-top">
               <div class="uk-width-1-1 uk-flex uk-flex-right uk-margin-bottom">
-                @if (stakeholder?.country != 'CH') {
+                @if (stakeholder()?.country != 'CH') {
                   <ng-container class="">
                     <button class="uk-button uk-button-primary">Export to tsv</button>
                     <div class="" data-uk-dropdown="mode: hover; animation: reveal-top; animate-out: true; pos: bottom; offset: 5; duration: 500">
                       <ul class="uk-list uk-padding-small uk-margin-remove">
-                        @for (survey of surveys; track survey) {
+                        @for (survey of surveys(); track survey) {
                           <li class="uk-margin-bottom">
                             <a class="uk-flex uk-flex-middle uk-link-reset" (click)="exportToCsv(survey.value)">
                               <span class="material-icons uk-margin-right">file_download</span>{{survey.label}}
@@ -32,23 +32,23 @@
                   </ng-container>
                 }
               </div>
-              @if (surveyEntries?.facets) {
+              @if (surveyEntries()?.facets) {
                 <div class="uk-width-1-1 uk-child-width-1-2" data-uk-grid>
                   <div class="uk-margin-medium-left uk-padding-remove uk-flex uk-flex-middle" data-uk-grid>
                     <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
-                        [items]="surveys" [(ngModel)]="selectedSurvey"
+                      <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey())"
+                        [items]="surveys()" [(ngModel)]="selectedSurvey"
                         placeholder="Select Survey" bindLabel="label" bindValue="value" clearAllText="Clear">
                       </ng-select>
                     </div>
                     <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder)"
-                        [items]="stakeholderList" [(ngModel)]="selectedStakeholder"
+                      <ng-select id="selectStakeholder" (change)="filterSelection('stakeholderId', selectedStakeholder())"
+                        [items]="stakeholderList()" [(ngModel)]="selectedStakeholder"
                         placeholder="Select stakeholder" bindLabel="label" bindValue="value" clearAllText="Clear">
                       </ng-select>
                     </div>
                     <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus)"
+                      <ng-select id="validationStatus" (change)="filterSelection('validated', validationStatus())"
                         placeholder="Validation Status" [(ngModel)]="validationStatus" clearAllText="Clear">
                         <ng-option [value]="''">All validation statuses</ng-option>
                         <ng-option [value]="'true'">Validated</ng-option>
@@ -56,7 +56,7 @@
                       </ng-select>
                     </div>
                     <div class="uk-width-1-4 uk-padding-remove">
-                      <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus)"
+                      <ng-select id="publishedStatus" (change)="filterSelection('published', publishedStatus())"
                         placeholder="Publication Status" [(ngModel)]="publishedStatus" clearAllText="Clear">
                         <ng-option [value]="''">All published statuses</ng-option>
                         <ng-option [value]="'true'">Published</ng-option>
@@ -67,7 +67,7 @@
                   <div class="uk-margin-remove-top uk-flex uk-flex-middle" data-uk-grid>
                     <div class="uk-width-1-4 uk-padding-remove">
                       <ng-select id="order" [(ngModel)]="order" clearAllText="Clear" placeholder="Modification Order"
-                        (change)="this.updateURLParameters('sort', 'modificationDate'); filterSelection('order', order)">
+                        (change)="this.updateURLParameters('sort', 'modificationDate'); filterSelection('order', order())">
                         <ng-option [value]="'desc'">Most recently modified</ng-option>
                         <ng-option [value]="'asc'">Least recently modified</ng-option>
                       </ng-select>
@@ -75,25 +75,25 @@
                     <div class="uk-width-expand">
                       <div class="uk-flex uk-flex-middle uk-flex-right">
                         <p class="uk-margin-remove uk-padding-small">
-                          Results <span class="uk-text-bold">{{surveyEntries.from + 1}}-</span><span class="uk-text-bold">{{(currentPage-1) * pageSize + surveyEntries.results.length}}</span> of <span class="uk-text-bold">{{surveyEntries.total}}</span>
+                          Results <span class="uk-text-bold">{{surveyEntries().from + 1}}-</span><span class="uk-text-bold">{{(currentPage()-1) * pageSize + surveyEntries().results.length}}</span> of <span class="uk-text-bold">{{surveyEntries().total}}</span>
                         </p>
                         <ul class="uk-pagination uk-visible@m">
-                          @if (currentPage>2 && totalPages>5) {
+                          @if (currentPage()>2 && totalPages()>5) {
                             <li><a (click)="goToPage(1)"><span data-uk-pagination-previous></span><span data-uk-pagination-previous></span></a></li>
                           }
-                          @if (currentPage!==1) {
+                          @if (currentPage()!==1) {
                             <li><a (click)="previousPage()"><span data-uk-pagination-previous></span></a></li>
                           }
-                          @for (i of pages; track i) {
-                            <li [ngClass]="i === currentPage ? 'uk-active': ''">
+                          @for (i of pages(); track i) {
+                            <li [ngClass]="i === currentPage() ? 'uk-active': ''">
                               <a (click)="goToPage(i)">{{i}}</a>
                             </li>
                           }
-                          @if (currentPage!==totalPages) {
+                          @if (currentPage()!==totalPages()) {
                             <li><a (click)="nextPage()"><span data-uk-pagination-next></span></a></li>
                           }
-                          @if (currentPage<totalPages-1 && totalPages>5) {
-                            <li><a (click)="goToPage(totalPages)"><span data-uk-pagination-next></span><span data-uk-pagination-next></span></a></li>
+                          @if (currentPage()<totalPages()-1 && totalPages()>5) {
+                            <li><a (click)="goToPage(totalPages())"><span data-uk-pagination-next></span><span data-uk-pagination-next></span></a></li>
                           }
                         </ul>
                       </div>
@@ -104,7 +104,7 @@
             </div>
             <div class="">
               <div class="uk-overflow-auto uk-margin-bottom">
-                @if (surveyEntriesResults) {
+                @if (surveyEntriesResults()) {
                   <table class="uk-table uk-table-striped uk-table-middle uk-table-divider">
                     <thead>
                       <tr>
@@ -119,7 +119,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @for (surveyEntry of surveyEntriesResults; track surveyEntry) {
+                      @for (surveyEntry of surveyEntriesResults(); track surveyEntry) {
                         <tr>
                           <!--              <td><input class="uk-checkbox" type="checkbox"></td>-->
                           <td>{{surveyEntry.stakeholder.name}}</td>
@@ -159,7 +159,7 @@
                                 <div class="uk-padding-small">
                                   <ul class="uk-list">
                                     <li class="uk-margin-small-bottom">
-                                      <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
+                                      <a class="uk-flex uk-flex-middle uk-link-reset" [routerLink]="['/contributions', id(), 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
                                         <span class="material-icons uk-margin-right">visibility</span> View Survey
                                       </a>
                                     </li>

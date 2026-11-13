@@ -7,7 +7,7 @@ import { NotificationSettingsService } from '../../../services/notification-sett
   selector: 'app-notification-settings-drawer',
   templateUrl: './notification-settings-drawer.component.html',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, DatePipe]
 })
 export class NotificationSettingsDrawerComponent {
