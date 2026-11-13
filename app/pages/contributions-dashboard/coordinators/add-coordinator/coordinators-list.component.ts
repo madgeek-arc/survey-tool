@@ -323,8 +323,8 @@ export class NewCoordinatorComponent implements OnInit {
      .pipe(takeUntilDestroyed(this.destroyRef))
      .subscribe({
        next: () => {
-         this.coordinators.set(this.coordinators().filter(c => c.id !== this.coordinatorId));
          const deletedId = this.coordinatorToDeleteId();
+         this.coordinators.set(this.coordinators().filter(c => c.id !== deletedId));
          this.users.update(users => {
            const next = new Map(users);
            next.delete(deletedId);
