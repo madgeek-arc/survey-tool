@@ -2,7 +2,7 @@
   <div id="">
     <div class="uk-padding-small uk-margin-top">Version History</div>
     <div class="uk-padding-small">
-      <button class="uk-button uk-button-small uk-button-primary" [disabled]="selectedEntries.length !== 2"
+      <button class="uk-button uk-button-small uk-button-primary" [disabled]="selectedEntries().length !== 2"
         (click)="showComparison()" title="Two versions must be selected">Compare versions
       </button>
     </div>
@@ -11,15 +11,15 @@
         <!--      <thead>-->
       <!--      </thead>-->
       <tbody>
-        @for (entry of surveyAnswerHistory?.entries; track entry; let i = $index) {
+        @for (entry of surveyAnswerHistory()?.entries; track entry; let i = $index) {
           <tr
-            [ngClass]="{'uk-active': selectedVersion === entry}">
+            [ngClass]="{'uk-active': selectedVersion() === entry}">
             <div class="uk-flex uk-flex-between">
               <div (click)="selectVersionToShow(entry)" style="cursor: pointer">
-                <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
+                <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion() === entry}">
                   {{entry.action.type | titlecase}} on
                 </div>
-                <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion === entry}">
+                <div class="uk-text-emphasis" [ngClass]="{'uk-text-primary': selectedVersion() === entry}">
                   {{entry.time | date:'medium'}}
                 </div>
                 @if (i==0) {
@@ -39,7 +39,7 @@
               </div>
               <div class="">
                 <input type="checkbox" class="uk-checkbox" (change)="selectVersionsToCompare($event, entry)"
-                  [ngClass]="{'uk-disabled': (selectedEntries.length === 2 && !selectedEntries.includes(entry))}">
+                  [ngClass]="{'uk-disabled': (selectedEntries().length === 2 && !selectedEntries().includes(entry))}">
               </div>
             </div>
             @if (entry.comment) {
@@ -54,7 +54,7 @@
   </div>
 
 </div>
-@if (!hide) {
+@if (!hide()) {
   <div class="history-content">
     <div class="uk-section-default uk-section uk-section-small" style="min-height: 90vh;">
       <div class="uk-container uk-container-expand">
@@ -64,15 +64,15 @@
             <a [routerLink]="['../../../']" class="uk-margin-small-right" title="Back">
               <span class="material-icons">keyboard_backspace</span>
             </a>
-            <span>{{$safeNavigationMigration(selectedVersion?.time) | date:'medium'}}</span>
-            @if (selectedVersion?.version != surveyAnswerHistory?.entries[0]?.version) {
+            <span>{{$safeNavigationMigration(selectedVersion()?.time) | date:'medium'}}</span>
+            @if (selectedVersion()?.version != surveyAnswerHistory()?.entries[0]?.version) {
               <button
                 class="uk-button uk-button-small uk-button-primary uk-margin-left" (click)="restoreVersion()">Restore this version
               </button>
             }
           </h5>
-          <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="null" [tabsHeader]="tabsHeader"
-            [entryA]="selectedEntries[0]" [entryB]="null">
+          <app-compare-surveys [model]="model()" [payloadA]="surveyAnswerA()" [payloadB]="null" [tabsHeader]="tabsHeader"
+            [entryA]="selectedEntries()[0]" [entryB]="null">
           </app-compare-surveys>
         </div>
       </div>
@@ -82,7 +82,7 @@
 
 <a class="uk-hidden" id="scrollTop" href="#title" uk-scroll></a>
 
-@if (loading) {
+@if (loading()) {
   <div class="whiteFilm">
     <i class="loader-big" aria-hidden="true"></i>
   </div>
@@ -93,8 +93,8 @@
   <div class="uk-modal-dialog uk-modal-body" style="min-height: 100vh">
     <button class="uk-modal-close-full uk-close-large uk-padding-small" type="button" (click)="showHistoryContent()" uk-close></button>
     <div class="uk-margin-top">
-      <app-compare-surveys [model]="model" [payloadA]="surveyAnswerA" [payloadB]="surveyAnswerB" [tabsHeader]="tabsHeader"
-        [entryA]="selectedEntries[0]" [entryB]="selectedEntries[1]">
+      <app-compare-surveys [model]="model()" [payloadA]="surveyAnswerA()" [payloadB]="surveyAnswerB()" [tabsHeader]="tabsHeader"
+        [entryA]="selectedEntries()[0]" [entryB]="selectedEntries()[1]">
       </app-compare-surveys>
     </div>
   </div>

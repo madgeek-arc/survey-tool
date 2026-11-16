@@ -1,20 +1,20 @@
 <!--<app-top-menu-dashboard></app-top-menu-dashboard>-->
 
 <div id="sidebar_main_content" class="sidebar_main_swipe sidebar_main_active"
-     [class.sidebar_main_active]="open && (hasSidebar || hasAdminMenu)"
-     [class.sidebar_mini]="!open && (hasSidebar || hasAdminMenu)"
+     [class.sidebar_main_active]="open() && (hasSidebar() || hasAdminMenu)"
+     [class.sidebar_mini]="!open() && (hasSidebar() || hasAdminMenu)"
      [class.sidebar_hover]="hover">
   <!--  <app-side-menu-dashboard *ngIf="openSideBar"></app-side-menu-dashboard>-->
-  @if (hasSidebar) {
-    <dashboard-sidebar [menuSections]="menuSections"></dashboard-sidebar>
+  @if (hasSidebar()) {
+    <dashboard-sidebar [menuSections]="menuSections()"></dashboard-sidebar>
   }
 
   <main class="uk-width-1-1">
     <router-outlet></router-outlet>
   </main>
 
-  @if (showFooter) {
-    <div [ngStyle]="{'margin-left': open ? '280px' : '100px'}">
+  @if (showFooter()) {
+    <div [ngStyle]="{'margin-left': open() ? '280px' : '100px'}">
       <app-footer></app-footer>
     </div>
   }

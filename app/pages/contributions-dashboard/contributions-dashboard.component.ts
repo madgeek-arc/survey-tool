@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit, ChangeDetectionStrategy, signal } from "@angular/core";
 import { UserService } from "../../services/user.service";
 import { Administrator, Coordinator, Stakeholder, UserInfo } from "../../domain/userInfo";
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from "@angular/router";
@@ -9,7 +9,7 @@ import {
 } from "../../shared/dashboard-side-menu/dashboard-side-menu.component";
 
 import { FooterComponent } from "src/app/shared/footer/footer.component";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { DashboardSideMenuService } from "../../shared/dashboard-side-menu/dashboard-side-menu.service";
 import { NgStyle } from "@angular/common";
 
@@ -17,7 +17,7 @@ import { NgStyle } from "@angular/common";
 @Component({
   selector: 'app-contributions-dashboard',
   templateUrl: 'contributions-dashboard.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterOutlet,
     DashboardSideMenuComponent,
@@ -28,9 +28,13 @@ import { NgStyle } from "@angular/common";
 
 export class ContributionsDashboardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
+  public userService = inject(UserService);
+  public router = inject(Router);
+  public route = inject(ActivatedRoute);
+  private layoutService = inject(DashboardSideMenuService);
 
   // subscriptions = [];
-  showFooter: boolean = true;
+  showFooter = signal(true);
 
   userInfo: UserInfo;
   currentStakeholder: Stakeholder = null;
@@ -39,13 +43,15 @@ export class ContributionsDashboardComponent implements OnInit {
   // isManager = false;
 
   menuItems: MenuItem[] = [];
-  menuSections: MenuSection[] = [];
-  hasSidebar = true;
+  menuSections = signal<MenuSection[]>([]);
+  hasSidebar = signal(true);
   hasAdminMenu = false;
 
 
-  constructor(public userService: UserService, public router: Router, public route: ActivatedRoute,
-              private layoutService: DashboardSideMenuService) {
+  // Pages such as the survey form close the sidebar while they initialise, so follow the service, not a getter.
+  open = toSignal(this.layoutService.isOpen, {initialValue: this.layoutService.open});
+
+  constructor() {
     this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       res => {
         this.userInfo = res;
@@ -77,7 +83,7 @@ export class ContributionsDashboardComponent implements OnInit {
       this.currentStakeholder = next ?? JSON.parse(sessionStorage.getItem('currentStakeholder'));
       if (this.currentStakeholder !== null) {
         // console.log('Current stakeholder change: ', this.currentStakeholder);
-        if (stakeholderChange || this.menuSections.length === 0) {
+        if (stakeholderChange || this.menuSections().length === 0) {
           this.createMenuItems();
         }
       }
@@ -87,7 +93,7 @@ export class ContributionsDashboardComponent implements OnInit {
       this.currentCoordinator = next ?? JSON.parse(sessionStorage.getItem('currentCoordinator'));
       if (this.currentCoordinator !== null) {
         // console.log('Current coordinator change: ', this.currentCoordinator);
-        if (coordinatorChange || this.menuSections.length === 0) {
+        if (coordinatorChange || this.menuSections().length === 0) {
           this.createMenuItems();
         }
       }
@@ -97,14 +103,14 @@ export class ContributionsDashboardComponent implements OnInit {
       this.currentAdministrator = next ?? JSON.parse(sessionStorage.getItem('currentAdministrator'));
       if (this.currentAdministrator !== null) {
         // console.log('Current Administrator change: ', this.currentAdministrator);
-        if (adminChange || this.menuSections.length === 0) {
+        if (adminChange || this.menuSections().length === 0) {
           this.createMenuItems();
         }
       }
     });
 
     this.layoutService.hasSidebar.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(hasSidebar => {
-      this.hasSidebar = hasSidebar;
+      this.hasSidebar.set(hasSidebar);
     });
 
     this.layoutService.setOpen(true);
@@ -145,7 +151,7 @@ export class ContributionsDashboardComponent implements OnInit {
 
   findChildRouteData() {
 
-    this.showFooter = true;
+    this.showFooter.set(true);
 
     let child = this.route.firstChild;
     while (child) {
@@ -153,7 +159,7 @@ export class ContributionsDashboardComponent implements OnInit {
         child = child.firstChild;
       } else if (child.snapshot && child.snapshot.data) {
         if (child.snapshot.data['showFooter'] !== undefined)
-          this.showFooter = child.snapshot.data['showFooter'];
+          this.showFooter.set(child.snapshot.data['showFooter']);
         return null;
       } else {
         return null;
@@ -168,12 +174,12 @@ export class ContributionsDashboardComponent implements OnInit {
     // console.log('Coordinator object', this.currentCoordinator);
 
     setTimeout(() => {
-      this.menuSections = [];
+      const menuSections: MenuSection[] = [];
       this.menuItems = [];
 
 
       if (this.currentStakeholder) {
-        this.menuSections.push({
+        menuSections.push({
           items: [
             new MenuItem('0', 'Home', null, '/contributions/' + this.currentStakeholder.id + '/stakeholder', '/contributions/' + this.currentStakeholder.id + '/stakeholder', {name: 'home'}),
             new MenuItem('1', 'My Surveys', null, '/contributions/' + this.currentStakeholder?.id + '/mySurveys', null, {name: 'assignment'}),
@@ -185,7 +191,7 @@ export class ContributionsDashboardComponent implements OnInit {
         });
       }
       if (this.currentCoordinator) {
-        this.menuSections.push({
+        menuSections.push({
           items: [
             new MenuItem('0', 'Home', null, '/contributions/' + this.currentCoordinator.id + '/coordinator', '/contributions/' + this.currentCoordinator.id + '/coordinator', {name: 'home'}),
             new MenuItem('14', 'My Group', null, '/contributions/' + this.currentCoordinator?.id + '/my-group/coordinator', null, {name: 'group'}),
@@ -236,12 +242,12 @@ export class ContributionsDashboardComponent implements OnInit {
           );
         }
 
-        this.menuSections.push({ items: this.menuItems });
+        menuSections.push({ items: this.menuItems });
       }
 
 
       this.menuItems = [];
-      this.menuSections.push({
+      menuSections.push({
         items: [
           new MenuItem('8', 'Support', null, '/contributions/' + (this.currentStakeholder?.id ?? this.currentCoordinator?.id ?? this.currentAdministrator?.id) + '/support', null, {name:
               'help'}),
@@ -249,6 +255,7 @@ export class ContributionsDashboardComponent implements OnInit {
           new MenuItem('10', 'Use Policy', '../assets/pdf/EOSC%20Observatory%20Acceptable%20Use%20Policy%20V2.pdf', null, null, {name: 'policy'})
         ]
       });
+      this.menuSections.set(menuSections);
 
     }, 0);
 
@@ -257,10 +264,6 @@ export class ContributionsDashboardComponent implements OnInit {
 
   get isStakeholderManager(): boolean {
     return this.currentStakeholder?.admins?.includes(this.userInfo?.user?.email) ?? false;
-  }
-
-  public get open() {
-    return this.layoutService.open;
   }
 
   public get hover() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { SurveyService } from "../../../services/survey.service";
 import { DisplayEntries, DisplayHistory, Editor, SurveyAnswer } from "../../../domain/survey";
@@ -14,34 +14,33 @@ import { UniquePipe } from "../../../../catalogue-ui/shared/pipes/uniquePipe.pip
     selector: 'app-survey-history',
     templateUrl: 'history.component.html',
     styleUrls: ['./history.component.css'],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgClass, RouterLink, CompareSurveysComponent, TitleCasePipe, DatePipe, UniquePipe]
 })
 
 export class HistoryComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private surveyService = inject(SurveyService);
 
   surveyAnswerId: string = null;
   surveyId: string = null;
-  surveyAnswerHistory: DisplayHistory = null;
-  selectedEntries: DisplayEntries[] = [];
-  selectedVersion: DisplayEntries = null;
+  surveyAnswerHistory = signal<DisplayHistory>(null);
+  selectedEntries = signal<DisplayEntries[]>([]);
+  selectedVersion = signal<DisplayEntries>(null);
   editorsSet: Set<Editor> = new Set<Editor>();
 
-  model: Model = null;
-  surveyAnswerA: SurveyAnswer = null;
-  surveyAnswerB: SurveyAnswer = null;
+  model = signal<Model>(null);
+  surveyAnswerA = signal<SurveyAnswer>(null);
+  surveyAnswerB = signal<SurveyAnswer>(null);
   tabsHeader = 'Sections';
 
   currentStakeholderId = null;
 
-  loading: boolean = false;
-  hide = false;
-
-  constructor(private route: ActivatedRoute, private surveyService: SurveyService) {
-  }
+  loading = signal(false);
+  hide = signal(false);
 
   ngOnInit() {
-    this.loading = true;
+    this.loading.set(true);
     this.route.params.subscribe(params => {
       this.surveyAnswerId = params['answerId'];
       this.surveyId = params['surveyId'];
@@ -54,40 +53,40 @@ export class HistoryComponent implements OnInit {
   getSurveyAnswerHistory() {
     this.surveyService.getAnswerHistory(this.surveyAnswerId).subscribe(
       res => {
-        this.surveyAnswerHistory = res;
-        this.surveyAnswerHistory.entries.sort((a, b) => b.time - a.time);
+        res.entries.sort((a, b) => b.time - a.time);
+        this.surveyAnswerHistory.set(res);
         // this.loading = false;
       },
       error => {console.error(error)},
       () => {
-        this.surveyAnswerA = null;
+        this.surveyAnswerA.set(null);
         zip(
           this.surveyService.getSurvey(this.surveyId),
-          this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.surveyAnswerHistory.entries[0].version),
+          this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.surveyAnswerHistory().entries[0].version),
         ).subscribe(
           next => {
-            this.model = next[0];
-            this.surveyAnswerA = next[1];
-            this.loading = false;
+            this.model.set(next[0]);
+            this.surveyAnswerA.set(next[1]);
+            this.loading.set(false);
           },
           error => {console.log(error)},
-          () => {this.selectedVersion = this.surveyAnswerHistory.entries[0];}
+          () => {this.selectedVersion.set(this.surveyAnswerHistory().entries[0]);}
         );
       }
     )
   }
 
   selectVersionToShow(versionEntry: DisplayEntries) {
-    this.loading = true;
-    let tmpModel: Model = this.model;
-    this.model = null
+    this.loading.set(true);
+    let tmpModel: Model = this.model();
+    this.model.set(null);
     this.surveyService.getAnswerWithVersion(this.surveyAnswerId, versionEntry.version).subscribe(
-      next => {this.surveyAnswerA = next;},
+      next => {this.surveyAnswerA.set(next);},
       error => {console.log(error)},
       () => {
-        this.selectedVersion = versionEntry;
-        this.model = tmpModel;
-        this.loading = false;
+        this.selectedVersion.set(versionEntry);
+        this.model.set(tmpModel);
+        this.loading.set(false);
         // UIkit.scroll('#scrollTop').scrollTo('#title');
         window.scroll(0,0)
       }
@@ -97,29 +96,30 @@ export class HistoryComponent implements OnInit {
 
   selectVersionsToCompare(event, version) {
     if (event.target.checked) {
-      this.selectedEntries.push(version);
+      this.selectedEntries.update(entries => [...entries, version]);
     } else {
-      this.selectedEntries.splice(this.selectedEntries.indexOf(version), 1);
+      const index = this.selectedEntries().indexOf(version);
+      this.selectedEntries.update(entries => entries.filter((entry, i) => i !== index));
     }
   }
 
   showComparison() {
-    this.loading = true;
-    this.surveyAnswerA = null;
-    this.surveyAnswerB = null;
-    this.selectedEntries.sort((a, b) => a.time - b.time);
+    this.loading.set(true);
+    this.surveyAnswerA.set(null);
+    this.surveyAnswerB.set(null);
+    this.selectedEntries.update(entries => [...entries].sort((a, b) => a.time - b.time));
     zip(
-      this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.selectedEntries[0].version),
-      this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.selectedEntries[1].version),
+      this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.selectedEntries()[0].version),
+      this.surveyService.getAnswerWithVersion(this.surveyAnswerId, this.selectedEntries()[1].version),
       // this.surveyService.getSurvey(this.surveyId)
     ).subscribe(
       next => {
-        this.surveyAnswerA = next[0];
-        this.surveyAnswerB = next[1];
+        this.surveyAnswerA.set(next[0]);
+        this.surveyAnswerB.set(next[1]);
 
         UIkit.modal('#modal-full').show();
-        this.hide = true;
-        this.loading = false;
+        this.hide.set(true);
+        this.loading.set(false);
       },
       error => {console.log(error)},
       () => {}
@@ -127,9 +127,9 @@ export class HistoryComponent implements OnInit {
   }
 
   restoreVersion() {
-    this.surveyService.restoreToVersion(this.surveyAnswerId, this.selectedVersion.version).subscribe(
+    this.surveyService.restoreToVersion(this.surveyAnswerId, this.selectedVersion().version).subscribe(
       res => {
-        this.selectedEntries = [];
+        this.selectedEntries.set([]);
         this.getSurveyAnswerHistory();
       },
       error => {console.log(error)}
@@ -137,6 +137,6 @@ export class HistoryComponent implements OnInit {
   }
 
   showHistoryContent() {
-    this.hide = false;
+    this.hide.set(false);
   }
 }

@@ -3,35 +3,35 @@
     <sidebar-mobile-toggle class="uk-hidden@m uk-display-block uk-padding-small"></sidebar-mobile-toggle>
   </div>
   <div inner>
-    @if (ready) {
+    @if (ready()) {
       <div class="uk-section-default" style="min-height: 90vh;">
         <div>
-          <app-survey [payload]="surveyAnswer" [model]="survey" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"
-                      [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType" [enableWebsocket]="true"
-                      [enableCommenting]="true" [userId]="userInfo.user.email"
-                      [successMessage]="successMessage" [errorMessage]="errorMessage"
+          <app-survey [payload]="surveyAnswer()" [model]="survey()" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"
+                      [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType()" [enableWebsocket]="true"
+                      [enableCommenting]="true" [userId]="userInfo().user.email"
+                      [successMessage]="successMessage()" [errorMessage]="errorMessage()"
                       (submitForm)="submitForm($event)" (valid)="validateSurveyAnswer($event)">
 
-            @if (survey) {
+            @if (survey()) {
               <div class="form-top-section uk-flex uk-flex-middle">
-                @if (!hasHeader) {
-                  <a [routerLink]="backRoute" class="uk-margin-small-right" title="Back">
+                @if (!hasHeader()) {
+                  <a [routerLink]="backRoute()" class="uk-margin-small-right" title="Back">
                     <span class="material-icons">keyboard_backspace</span>
                   </a>
                 }
-                <span class="survey-title-text" [title]="survey.name">{{ survey.name }}</span>
+                <span class="survey-title-text" [title]="survey().name">{{ survey().name }}</span>
               </div>
             }
-            @if (survey) {
+            @if (survey()) {
               <div class="form-actions-section uk-flex uk-flex-middle">
-                @if (!freeView) {
-                  @if (activeUsers === null) {
+                @if (!freeView()) {
+                  @if (activeUsers() === null) {
                     <div class="uk-margin-small-right">
                       <div data-uk-spinner></div>
                     </div>
                   } @else {
                     <div id="concurrentEdit" class="uk-margin-small-right">
-                      @for (user of activeUsers; track user) {
+                      @for (user of activeUsers(); track user) {
                         <a [id]="user.sessionId" class="uk-icon" aria-expanded="false">
                           <svg height="42" width="42">
                             <circle cx="21" cy="21" r="18" stroke-width="1" [attr.fill]="user.color"></circle>
@@ -48,21 +48,21 @@
                     </div>
                   }
                 }
-                @if (validate) {
+                @if (validate()) {
                   <button class="uk-button uk-button-primary" (click)="child.validateForm()">
                     Validate
                   </button>
                 }
               </div>
             }
-            @if (survey) {
+            @if (survey()) {
               <div class="form-notice-section">
-                <p class="uk-margin-bottom" [innerHTML]="survey.notice"></p>
+                <p class="uk-margin-bottom" [innerHTML]="survey().notice"></p>
               </div>
             }
             <div class="form-action-bar titleAndActionsBar uk-flex uk-flex-right">
               <div>
-                @if (!readonly) {
+                @if (!readonly()) {
                   <button class="uk-button uk-button-secondary uk-margin-left" (click)="child.parentSubmit()">
                     Save
                   </button>
