@@ -1,4 +1,4 @@
-import {Component, computed, OnDestroy, OnInit, signal, ChangeDetectionStrategy} from "@angular/core";
+import {Component, computed, OnDestroy, OnInit, signal, ChangeDetectionStrategy, inject} from "@angular/core";
 import { Profile, UserInfo } from "../../domain/userInfo";
 import { UserService } from "../../services/user.service";
 import { CompressImageService } from "../../services/compress-image.service";
@@ -13,7 +13,7 @@ import { SafeUrlPipe } from "../../../catalogue-ui/shared/pipes/safeUrlPipe";
     templateUrl: 'user-profile.component.html',
     styleUrls: ['user-profile.component.scss'],
     providers: [CompressImageService],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule, NgClass, UpperCasePipe, SafeUrlPipe]
 })
 
@@ -21,29 +21,30 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   private _destroyed: Subject<boolean> = new Subject();
 
-  userInfo: UserInfo = null;
-  edit: boolean = false;
-  image: File = null;
-  activeTab: 'profile' | 'notifications' = 'profile';
-  newForwardEmail: string = '';
+  userInfo = signal<UserInfo | null>(null);
+  edit = signal(false);
+  image = signal<File | null>(null);
+  activeTab = signal<'profile' | 'notifications'>('profile');
+  newForwardEmail = signal('');
 
   contactFormMessages = signal(false);
   surveyMentions = signal(false);
   surveyUpdates = signal(false);
   forwardEmails = signal<string[]>([]);
 
-  constructor(private userService: UserService, private compressImage: CompressImageService) {}
+  private userService = inject(UserService);
+  private compressImage = inject(CompressImageService);
 
   ngOnInit() {
     this.userService.getUserObservable().pipe(takeUntil(this._destroyed)).subscribe({
       next: value => {
-        const isFirstLoad = !this.userInfo;
-        this.userInfo = value;
-        if (this.userInfo?.user.profile === null)
-          this.userInfo.user.profile = new Profile();
+        const isFirstLoad = !this.userInfo();
+        if (value?.user.profile === null)
+          value.user.profile = new Profile();
+        this.userInfo.set(value);
 
         if (isFirstLoad) {
-          const prefs = this.userInfo?.user?.settings?.notificationPreferences;
+          const prefs = value?.user?.settings?.notificationPreferences;
           if (prefs) {
             this.emailNotifications.set(prefs.emailNotifications ?? true);
             this.contactFormMessages.set(prefs.contactFormEmailNotifications ?? false);
@@ -65,16 +66,18 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     let event = e.target as HTMLInputElement;
     const reader = new FileReader();
     if(event.files && event.files.length) {
-      this.image = event.files[0];
+      this.image.set(event.files[0]);
 
-      this.compressImage.compress(this.image).pipe(take(1)).subscribe(
+      this.compressImage.compress(this.image()).pipe(take(1)).subscribe(
         compressedImage => {
-          this.image = compressedImage;
+          this.image.set(compressedImage);
 
-          reader.readAsDataURL(this.image);
+          reader.readAsDataURL(compressedImage);
           reader.onload = () => {
             // this.imageSrc = reader.result as string;
-            this.userInfo.user.profile.picture = (reader.result as string).split('base64,')[1];
+            // A new profile object, so the avatar re-renders; the inputs keep editing the new one.
+            const picture = (reader.result as string).split('base64,')[1];
+            this.userInfo.update(info => ({...info, user: {...info.user, profile: {...info.user.profile, picture}}}));
           };
         }
       );
@@ -82,11 +85,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   updateProfile() {
-    this.userService.updateProfile(this.userInfo.user.profile, this.userInfo.user.id).subscribe(
+    this.userService.updateProfile(this.userInfo().user.profile, this.userInfo().user.id).subscribe(
       res => {
-        this.userInfo.user = res;
-        this.userService.setUserInfo(this.userInfo);
-        this.edit = false;
+        this.userService.setUserInfo({...this.userInfo(), user: res});
+        this.edit.set(false);
       }
     );
   }
@@ -100,12 +102,12 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
 
   addForwardEmail() {
-    const email = this.newForwardEmail.trim();
-    if (!email || this.forwardEmails().includes(email) || email === this.userInfo?.user?.email) {
+    const email = this.newForwardEmail().trim();
+    if (!email || this.forwardEmails().includes(email) || email === this.userInfo()?.user?.email) {
       return;
     }
     this.forwardEmails.update(list => [...list, email]);
-    this.newForwardEmail = '';
+    this.newForwardEmail.set('');
     this.saveNotificationPreferences();
   }
 
@@ -123,12 +125,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         surveyEmailNotifications: this.surveyUpdates(),
         forwardEmails: this.forwardEmails()
       }
-    }, this.userInfo.user.id)
+    }, this.userInfo().user.id)
     .pipe(take(1))
     .subscribe({
       next: updatedUser => {
-        this.userInfo.user = updatedUser;
-        this.userService.setUserInfo(this.userInfo);
+        this.userService.setUserInfo({...this.userInfo(), user: updatedUser});
       }
     });
   }

@@ -1,12 +1,12 @@
 <div class="uk-container">
-  <h5 class="uk-margin-medium-top uk-text-center">{{ message }}</h5>
-  @if (error) {
-    <pre>{{ error }}</pre>
+  <h5 class="uk-margin-medium-top uk-text-center">{{ message() }}</h5>
+  @if (error()) {
+    <pre>{{ error() }}</pre>
   }
 </div>
 
 
-@if (loading) {
+@if (loading()) {
   <div class="whiteFilm">
     <i class="loader-big" aria-hidden="true"></i>
   </div>

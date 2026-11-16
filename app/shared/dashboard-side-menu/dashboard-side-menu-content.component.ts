@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, input } from "@angular/core";
 import { DashboardSideMenuService } from "./dashboard-side-menu.service";
 
 
@@ -6,9 +6,9 @@ import { DashboardSideMenuService } from "./dashboard-side-menu.service";
   selector: '[sidebar-content]',
   imports: [],
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (collapsible) {
+    @if (collapsible()) {
       <div id="sidebar_toggle" (click)="toggleOpen()"></div>
     }
     <div id="sidebar_content" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
@@ -18,10 +18,9 @@ import { DashboardSideMenuService } from "./dashboard-side-menu.service";
 })
 export class DashboardSideMenuContentComponent {
 
-  @Input() collapsible = true;
+  collapsible = input(true);
 
-  constructor(private layoutService: DashboardSideMenuService) {
-  }
+  private layoutService = inject(DashboardSideMenuService);
 
   onMouseEnter() {
     this.layoutService.setHover(true);

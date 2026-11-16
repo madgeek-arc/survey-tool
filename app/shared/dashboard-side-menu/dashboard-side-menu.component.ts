@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component, ContentChild,
   ElementRef, EventEmitter,
-  Inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -11,7 +10,8 @@ import {
   PLATFORM_ID, QueryList,
   SimpleChanges, TemplateRef,
   ViewChild, ViewChildren,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  inject
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, QueryParamsHandling, Router, RouterLink } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -107,7 +107,7 @@ export interface MenuSection {
   selector: 'dashboard-sidebar',
   templateUrl: 'dashboard-side-menu.component.html',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     RouterLink,
@@ -141,8 +141,13 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
   private subscriptions: any[] = [];
   private init: boolean = false;
 
-  constructor(private route: ActivatedRoute, private router: Router, private layoutService: DashboardSideMenuService,
-              private cdr: ChangeDetectorRef, @Inject(PLATFORM_ID) private platformId) {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private layoutService = inject(DashboardSideMenuService);
+  private cdr = inject(ChangeDetectorRef);
+  private platformId = inject(PLATFORM_ID);
+
+  constructor() {
     this.subscriptions.push(this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd && (!this.activeItem && !this.activeSubItem)) {
         this.setActiveMenuItem();
@@ -170,6 +175,9 @@ export class DashboardSideMenuComponent implements OnInit, AfterViewInit, OnDest
         this.toggle();
       }
     }
+    // setActiveMenuItem() calls detectChanges(), which clears the dirty flag the new inputs set; keep the view
+    // marked so the check that follows still runs.
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy() {
