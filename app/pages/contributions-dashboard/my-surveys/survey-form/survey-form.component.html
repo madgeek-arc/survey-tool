@@ -8,7 +8,7 @@
         <div>
           <app-survey [payload]="surveyAnswer()" [model]="survey()" [tabsHeader]="tabsHeader" [downloadPDF]="downloadPDF"
                       [mandatoryFieldsText]="mandatoryFieldsText" [subType]="subType()" [enableWebsocket]="true"
-                      [enableCommenting]="true" [userId]="userInfo().user.email"
+                      [enableCommenting]="true" [userId]="userInfo()?.user?.email"
                       [successMessage]="successMessage()" [errorMessage]="errorMessage()"
                       (submitForm)="submitForm($event)" (valid)="validateSurveyAnswer($event)">
 
