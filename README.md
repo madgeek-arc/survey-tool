@@ -26,8 +26,9 @@ observatory-ui  (host application, routing shell, public dashboards)
 ```
 
 survey-tool has no `package.json`, build or Dockerfile: its sources are compiled as part of
-[observatory-ui](https://github.com/madgeek-arc/observatory-ui). It depends on the host for the `environment` object, a
-home page component and the shared header/footer module (see [docs/architecture.md](docs/architecture.md)).
+[observatory-ui](https://github.com/madgeek-arc/observatory-ui). It depends on the host for the `environment` object, the
+footer component in `src/app/shared` and a `/home` route that its guards redirect to (see
+[docs/architecture.md](docs/architecture.md)).
 
 ## Dependencies on other Observatory components
 
