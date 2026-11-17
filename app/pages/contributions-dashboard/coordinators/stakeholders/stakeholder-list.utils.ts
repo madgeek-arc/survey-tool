@@ -8,6 +8,9 @@ export interface StakeholderRow {
   countryName: string;
   managers: number;
   contributors: number;
+  /** Manager and contributor emails as comma-separated lists, for the table view. */
+  managerEmails: string;
+  contributorEmails: string;
 }
 
 export interface ActiveFilter {
@@ -39,6 +42,8 @@ export function toStakeholderRows(res: Paging<Stakeholder>): StakeholderRow[] {
     countryName: countryName(stakeholder.country),
     managers: stakeholder.admins?.length ?? 0,
     contributors: stakeholder.members?.length ?? 0,
+    managerEmails: (stakeholder.admins ?? []).join(', '),
+    contributorEmails: (stakeholder.members ?? []).join(', '),
   }));
 }
 

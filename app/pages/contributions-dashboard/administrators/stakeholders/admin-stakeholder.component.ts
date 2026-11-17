@@ -18,6 +18,7 @@ import {
   STAKEHOLDER_MANAGERS_DRAWER_ID,
   StakeholderManagersDrawerComponent
 } from "../../coordinators/stakeholders/managers-drawer/stakeholder-managers-drawer.component";
+import { AvatarStackComponent } from "../../coordinators/stakeholders/avatar-stack/avatar-stack.component";
 import {
   ActiveFilter, CountryOption, StakeholderRow, stakeholderActiveFilters, stakeholderFilterOptions, toStakeholderRows
 } from "../../coordinators/stakeholders/stakeholder-list.utils";
@@ -32,7 +33,8 @@ import {
     FormsModule,
     NgSelectModule,
     ReactiveFormsModule,
-    StakeholderManagersDrawerComponent
+    StakeholderManagersDrawerComponent,
+    AvatarStackComponent
 ],
   changeDetection: ChangeDetectionStrategy.Eager,
   providers: [StakeholdersService],

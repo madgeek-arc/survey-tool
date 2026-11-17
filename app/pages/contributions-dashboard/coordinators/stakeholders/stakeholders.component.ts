@@ -15,6 +15,7 @@ import {
   STAKEHOLDER_MANAGERS_DRAWER_ID,
   StakeholderManagersDrawerComponent
 } from "./managers-drawer/stakeholder-managers-drawer.component";
+import { AvatarStackComponent } from "./avatar-stack/avatar-stack.component";
 import {
   ActiveFilter, CountryOption, StakeholderRow, stakeholderActiveFilters, stakeholderFilterOptions, toStakeholderRows
 } from "./stakeholder-list.utils";
@@ -33,7 +34,8 @@ declare var UIkit;
         ReactiveFormsModule,
         NgSelectComponent,
         NgOptionComponent,
-        StakeholderManagersDrawerComponent
+        StakeholderManagersDrawerComponent,
+        AvatarStackComponent
     ]
 })
 

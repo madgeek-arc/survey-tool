@@ -13,14 +13,14 @@
             <p class="uk-text-muted uk-margin-remove-top">Organisations that answer EOSC surveys, and the people who manage their responses.</p>
           </div>
           <div class="uk-flex uk-flex-middle uk-flex-wrap" style="gap: 10px;">
-            <div class="uk-button-group">
-              <button type="button"
-                [class]="selectedView() === 'card' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
+            <div class="uk-button-group" role="group" aria-label="View">
+              <button type="button" [attr.aria-pressed]="selectedView() === 'card'"
+                [class]="selectedView() === 'card' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button uk-button-secondary uk-button-small'"
                 (click)="selectedView.set('card')">
                 <span class="material-symbols-outlined">grid_view</span>Cards
               </button>
-              <button type="button"
-                [class]="selectedView() === 'table' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button eos-btn--ghost uk-button-small'"
+              <button type="button" [attr.aria-pressed]="selectedView() === 'table'"
+                [class]="selectedView() === 'table' ? 'uk-button uk-button-primary uk-button-small' : 'uk-button uk-button-secondary uk-button-small'"
                 (click)="selectedView.set('table')">
                 <span class="material-symbols-outlined">table_view</span>Table
               </button>
@@ -38,7 +38,7 @@
         <!-- Filters -->
         <div class="uk-card uk-card-default">
           <div class="uk-card-body uk-padding-small">
-            <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-4@l" data-uk-grid>
+            <div class="uk-grid-small uk-child-width-1-2@s uk-child-width-1-3@l" data-uk-grid>
               <div>
                 <div class="uk-inline uk-width-1-1">
                   <span class="uk-form-icon" data-uk-icon="icon: search"></span>
@@ -46,11 +46,13 @@
                     [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}">
                 </div>
               </div>
+              <!-- Type filter hidden for now; to bring it back, uncomment it and set the grid above back to uk-child-width-1-4@l.
               <div>
                 <ng-select id="filterType" [items]="typeOptions" [(ngModel)]="selectedType"
                   (change)="filterSelection('subType', selectedType)" placeholder="All types" clearAllText="Clear">
                 </ng-select>
               </div>
+              -->
               <div>
                 <ng-select id="filterCountry" [items]="countryOptions" [(ngModel)]="selectedCountry"
                   bindLabel="label" bindValue="value"
@@ -117,13 +119,19 @@
                         <div>
                           <div class="uk-background-default uk-border-rounded uk-padding-xsmall">
                             <div class="uk-eyebrow uk-eyebrow-small uk-text-truncate">Managers</div>
-                            <div class="uk-text-bold uk-text-emphasis uk-margin-small-top">{{ row.managers }}</div>
+                            <div class="uk-flex uk-flex-middle uk-flex-between uk-margin-small-top" style="gap: 6px;">
+                              <span class="uk-text-bold uk-text-emphasis">{{ row.managers }}</span>
+                              <app-avatar-stack [emails]="row.stakeholder.admins" />
+                            </div>
                           </div>
                         </div>
                         <div>
                           <div class="uk-background-default uk-border-rounded uk-padding-xsmall">
                             <div class="uk-eyebrow uk-eyebrow-small uk-text-truncate">Contributors</div>
-                            <div class="uk-text-bold uk-text-emphasis uk-margin-small-top">{{ row.contributors }}</div>
+                            <div class="uk-flex uk-flex-middle uk-flex-between uk-margin-small-top" style="gap: 6px;">
+                              <span class="uk-text-bold uk-text-emphasis">{{ row.contributors }}</span>
+                              <app-avatar-stack [emails]="row.stakeholder.members" />
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -131,7 +139,7 @@
                     <div class="uk-card-footer uk-flex uk-flex-between uk-flex-middle">
                       <button type="button" class="uk-button eos-btn--ghost uk-button-small"
                         data-uk-toggle="target: #modal-center" (click)="openForEdit(row.stakeholder)">
-                        <span class="material-symbols-outlined">edit</span>Edit details
+                        <span class="material-symbols-outlined">edit_line</span>Edit details
                       </button>
                       <button type="button" class="uk-button uk-button-secondary uk-button-small uk-flex uk-flex-middle" style="gap: 6px;"
                         (click)="openManagers(row.stakeholder)">
@@ -178,8 +186,20 @@
                           }
                         </td>
                         <td>{{ row.countryName }}</td>
-                        <td class="uk-text-bold">{{ row.managers }}</td>
-                        <td>{{ row.contributors }}</td>
+                        <td class="uk-text-small uk-text-break">
+                          @if (row.managerEmails) {
+                            {{ row.managerEmails }}
+                          } @else {
+                            <span class="uk-text-muted">—</span>
+                          }
+                        </td>
+                        <td class="uk-text-small uk-text-break">
+                          @if (row.contributorEmails) {
+                            {{ row.contributorEmails }}
+                          } @else {
+                            <span class="uk-text-muted">—</span>
+                          }
+                        </td>
                         <td>
                           <div class="uk-inline">
                             <button type="button" class="uk-button-icon" title="Actions">
@@ -188,14 +208,14 @@
                             <div data-uk-dropdown="mode: click; pos: bottom-right; offset: 6">
                               <ul class="uk-nav uk-dropdown-nav">
                                 <li>
-                                  <a class="uk-flex uk-flex-middle uk-drop-close" style="gap: 10px;"
+                                  <a class="uk-drop-close"
                                     data-uk-toggle="target: #modal-center" (click)="openForEdit(row.stakeholder)">
-                                    <span class="material-symbols-outlined">edit</span>Edit details
+                                    <span class="uk-flex uk-flex-middle" style="gap: 10px;"><span class="material-symbols-outlined">edit_line</span>Edit details</span>
                                   </a>
                                 </li>
                                 <li>
-                                  <a class="uk-flex uk-flex-middle uk-drop-close" style="gap: 10px;" (click)="openManagers(row.stakeholder)">
-                                    <span class="material-symbols-outlined">group</span>Manage managers
+                                  <a class="uk-drop-close" (click)="openManagers(row.stakeholder)">
+                                    <span class="uk-flex uk-flex-middle" style="gap: 10px;"><span class="material-symbols-outlined">group</span>Manage managers</span>
                                   </a>
                                 </li>
                               </ul>

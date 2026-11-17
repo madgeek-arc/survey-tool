@@ -54,7 +54,7 @@
                     </ng-select>
                   </div>
                   <div>
-                    <ng-select id="selectSurvey" (change)="filterSelection('surveyId', selectedSurvey)"
+                    <ng-select id="selectSurvey" panelClass="ng-select-fit-content" (change)="filterSelection('surveyId', selectedSurvey)"
                       [items]="surveys" [(ngModel)]="selectedSurvey"
                       placeholder="All surveys" bindLabel="label" bindValue="value" clearAllText="Clear">
                     </ng-select>
@@ -161,15 +161,15 @@
                             <div data-uk-dropdown="mode: click; pos: bottom-right; offset: 6">
                               <ul class="uk-nav uk-dropdown-nav">
                                 <li>
-                                  <a class="uk-flex uk-flex-middle" style="gap: 10px;"
+                                  <a
                                     [routerLink]="['/contributions', id, 'stakeholder', surveyEntry.stakeholder.id, 'survey', surveyEntry.surveyId, 'view']">
-                                    <span class="material-symbols-outlined">visibility</span>View survey
+                                    <span class="uk-flex uk-flex-middle" style="gap: 10px;"><span class="material-symbols-outlined">visibility</span>View survey</span>
                                   </a>
                                 </li>
                                 <li>
-                                  <a class="uk-flex uk-flex-middle" style="gap: 10px;"
+                                  <a
                                     [routerLink]="['./', surveyEntry.surveyId, surveyEntry.surveyAnswerId, 'history']">
-                                    <span class="material-symbols-outlined">manage_history</span>View survey history
+                                    <span class="uk-flex uk-flex-middle" style="gap: 10px;"><span class="material-symbols-outlined">manage_history</span>View survey history</span>
                                   </a>
                                 </li>
                               </ul>

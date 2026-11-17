@@ -46,7 +46,7 @@
                   (click)="setMode('invite')">Invite by email</button>
               </div>
               <input class="uk-input" type="email" [formControl]="email" (keyup.enter)="submit()"
-                [placeholder]="addMode() === 'existing' ? 'Registered user’s email' : 'name@organisation.eu'">
+                [placeholder]="addMode() === 'existing' ? 'Registered user’s email' : 'john.doe@example.org'">
               <div class="uk-flex uk-flex-middle uk-margin-small-top" style="gap: 8px">
                 @if (errorMessage()) {
                   <span class="uk-text-small uk-text-danger uk-width-expand">{{ errorMessage() }}</span>
