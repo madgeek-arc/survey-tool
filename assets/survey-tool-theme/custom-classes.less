@@ -37,3 +37,16 @@
   padding-left: 16px;
 }
 
+
+// UIkit override attempted: ng-select isn't a UIkit component, and its overlay sizes the panel to the select's width
+// (the global `.ng-dropdown-panel { width: auto }` can't beat that), so long options were cut with "…".
+// Pass panelClass="ng-select-fit-content" to an <ng-select> to size its panel to the longest option (wrapping past the cap).
+.ng-dropdown-panel.ng-select-fit-content {
+  flex: none; // the overlay pane is a flex box sized to the select; don't let it shrink the panel back
+  width: max-content !important;
+  max-width: min(640px, 90vw);
+
+  .ng-dropdown-panel-items .ng-option {
+    white-space: normal;
+  }
+}

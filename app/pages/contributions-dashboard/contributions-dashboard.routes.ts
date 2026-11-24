@@ -8,7 +8,6 @@ import { CoordinatorsComponent } from "./coordinators/coordinators.component";
 import { SurveysListComponent } from "./coordinators/surveys-list/surveys-list.component";
 import { HistoryComponent } from "./survey-history/history.component";
 import { StakeholdersComponent } from "./coordinators/stakeholders/stakeholders.component";
-import { EditManagerComponent } from "./coordinators/stakeholders/edit-managers/edit-manager.component";
 import { NewCoordinatorComponent} from "./coordinators/add-coordinator/coordinators-list.component";
 import {AdminStakeholderComponent} from "./administrators/stakeholders/admin-stakeholder.component";
 import {AdminSurveysListComponent} from "./administrators/admin-surveys-list/admin-surveys-list.component";
@@ -139,11 +138,6 @@ export const CONTRIBUTIONS_DASHBOARD_ROUTES: Routes = [
         canActivate: [AuthGuard]
       },
       {
-        path: 'stakeholders/:id',
-        component: EditManagerComponent,
-        canActivate: [AuthGuard]
-      },
-      {
         path: 'coordinators',
         component: NewCoordinatorComponent,
         canActivate: [AuthGuard]
@@ -151,11 +145,6 @@ export const CONTRIBUTIONS_DASHBOARD_ROUTES: Routes = [
       {
         path: 'stakeholders-admin',
         component: AdminStakeholderComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'stakeholders-admin/:id',
-        component: EditManagerComponent,
         canActivate: [AuthGuard]
       },
       {

@@ -17,6 +17,10 @@
   padding-bottom: 75px;
 }
 
+.history-content {
+  margin-right: var(--sidebar-width);
+}
+
 .history-table tr > div {
   padding: 20px;
 }
