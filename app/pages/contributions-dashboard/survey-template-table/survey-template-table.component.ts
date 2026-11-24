@@ -9,7 +9,7 @@ import { getStatusBadge, getDaysLeft, getResponsePercent } from '../survey-templ
   selector: 'app-survey-template-table',
   templateUrl: './survey-template-table.component.html',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, DatePipe]
 })
 export class SurveyTemplateTableComponent {

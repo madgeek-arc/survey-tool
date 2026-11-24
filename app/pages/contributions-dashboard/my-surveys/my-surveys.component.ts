@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, viewChild, ChangeDetectionStrategy} from "@angular/core";
+import {Component, ElementRef, OnDestroy, OnInit, viewChild, ChangeDetectionStrategy, inject, signal} from "@angular/core";
 import {Stakeholder} from "../../../domain/userInfo";
 import {UserService} from "../../../services/user.service";
 import {Paging} from "../../../../catalogue-ui/domain/paging";
@@ -19,7 +19,7 @@ import { NgClass, AsyncPipe } from "@angular/common";
     selector: 'app-contributions-my-surveys',
     templateUrl: './my-surveys.component.html',
     providers: [SurveyService, StakeholdersService],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [PageContentComponent, SidebarMobileToggleComponent, SurveyCardComponent, FormsModule, NgClass, AsyncPipe]
 })
 
@@ -29,17 +29,19 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   id: string = null;
   stakeholder: Stakeholder = null;
   surveys: Paging<Model>;
-  importFromData: ImportSurveyData = null;
-  importSelection: string = '';
+  importFromData = signal<ImportSurveyData>(null);
+  importSelection = signal('');
   importProgress$: Observable<Record<string, Progress>> = null;
-  showAlert= false;
-  currentSurveys: Model[] = [];
-  previousSurveys: Model[] = [];
+  showAlert = signal(false);
+  currentSurveys = signal<Model[]>([]);
+  previousSurveys = signal<Model[]>([]);
   importModal = viewChild<ElementRef<HTMLElement>>('importModal');
 
-  constructor(private userService: UserService, private surveyService: SurveyService, private router: Router,
-              private route: ActivatedRoute, private stakeholdersService: StakeholdersService) {
-  }
+  private userService = inject(UserService);
+  private surveyService = inject(SurveyService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private stakeholdersService = inject(StakeholdersService);
 
   ngOnInit() {
     this.route.params.pipe(takeUntil(this._destroyed)).subscribe(
@@ -74,36 +76,36 @@ export class MySurveysComponent implements OnInit, OnDestroy{
     this.surveyService.getSurveys('stakeholderId', this.stakeholder.id).pipe(takeUntil(this._destroyed))
       .subscribe(next => {
         this.surveys = next;
-        this.currentSurveys = next.results.filter(model => model.locked && model.active);
-        this.previousSurveys = next.results.filter(model => model.locked && !model.active);
+        this.currentSurveys.set(next.results.filter(model => model.locked && model.active));
+        this.previousSurveys.set(next.results.filter(model => model.locked && !model.active));
       });
   }
 
   importSurveyAnswer() {
-    if (this.importFromData && this.importSelection) {
-      this.surveyService.importSurveyAnswer(this.importFromData.surveyAnswerId,this.importSelection)
+    if (this.importFromData() && this.importSelection()) {
+      this.surveyService.importSurveyAnswer(this.importFromData().surveyAnswerId,this.importSelection())
         .pipe(takeUntil(this._destroyed)).subscribe(
         res => {
-          this.router.navigate([this.importFromData.surveyId+'/answer'], {relativeTo: this.route});
+          this.router.navigate([this.importFromData().surveyId+'/answer'], {relativeTo: this.route});
         }, error => {console.error(error)},
         () => { this.clearModal() }
       );
     } else {
-      this.showAlert = true;
+      this.showAlert.set(true);
     }
 
   }
 
   getSurveysForImport(survey: ImportSurveyData) {
-    this.importFromData = survey;
-    for (let i = 0; i < this.importFromData.importFrom.length; i++) {
+    for (let i = 0; i < survey.importFrom.length; i++) {
       this.surveys.results.forEach(model => {
-        if (model.id === this.importFromData.importFrom[i]) {
-          this.importFromData.importFromNames[i] = model.name;
+        if (model.id === survey.importFrom[i]) {
+          survey.importFromNames[i] = model.name;
           return;
         }
       });
     }
+    this.importFromData.set(survey);
 
     this.importProgress$ = this.surveyService.getSurveyInfoByGroup(this.stakeholder.id).pipe(
       map(info => Object.fromEntries(info.results.map(result => [result.surveyId, result.progressTotal]))),
@@ -115,14 +117,14 @@ export class MySurveysComponent implements OnInit, OnDestroy{
   }
 
   clearModal() {
-    this.importFromData = null;
-    this.importSelection = '';
+    this.importFromData.set(null);
+    this.importSelection.set('');
     this.importProgress$ = null;
   }
 
   clearError() {
     setTimeout(()=> {
-      this.showAlert = false;
+      this.showAlert.set(false);
     }, 600);
   }
 

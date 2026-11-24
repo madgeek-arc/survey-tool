@@ -19,7 +19,7 @@ import { SurveyModalsComponent } from '../../survey-modals/survey-modals.compone
   selector: 'app-admin-surveys-list',
   templateUrl: 'admin-surveys-list.component.html',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     SidebarMobileToggleComponent,
     PageContentComponent,

@@ -5,12 +5,12 @@
   <div inner>
     <div class="uk-section-default uk-section uk-section-small uk-padding-remove-bottom" style="min-height: 90vh;">
       <div class="uk-container uk-container-expand uk-margin-left uk-margin-right uk-margin-top">
-        @if (members) {
+        @if (members()) {
           <div class="uk-card uk-card-default uk-card-body">
-            @if (isManager) {
+            @if (isManager()) {
               <div class="uk-flex uk-flex-right">
-                <button class="uk-button uk-button-default uk-margin-small-right" type="button" uk-toggle="target: #add-member-modal">Add {{memberLabel}}</button>
-                <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #add-contributor-modal">Invite new {{memberLabel}}</button>
+                <button class="uk-button uk-button-default uk-margin-small-right" type="button" uk-toggle="target: #add-member-modal">Add {{memberLabel()}}</button>
+                <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #add-contributor-modal">Invite new {{memberLabel()}}</button>
               </div>
             }
             <div class="uk-overflow-auto uk-margin-medium-top">
@@ -20,13 +20,13 @@
                     <th class="">Name</th>
                     <th class="">Email</th>
                     <th class="">Role</th>
-                    @if (isManager) {
+                    @if (isManager()) {
                       <th class="">Actions</th>
                     }
                   </tr>
                 </thead>
                 <tbody>
-                  @for (member of members.admins; track member) {
+                  @for (member of members().admins; track member) {
                     <tr>
                       <td>
                         {{member.fullname}}
@@ -35,14 +35,14 @@
                         {{member.email}}
                       </td>
                       <td class="">
-                        {{adminLabel}}
+                        {{adminLabel()}}
                       </td>
                       <td class="uk-text-nowrap">
                         <!--<span class="material-icons">delete</span>-->
                       </td>
                     </tr>
                   }
-                  @for (member of members.members; track member) {
+                  @for (member of members().members; track member) {
                     <tr>
                       <td>
                         {{member.fullname}}
@@ -51,11 +51,11 @@
                         {{member.email}}
                       </td>
                       <td class="">
-                        {{memberLabel | titlecase}}
+                        {{memberLabel() | titlecase}}
                       </td>
-                      @if (members) {
+                      @if (members()) {
                         <td class="uk-text-nowrap">
-                          @if (isManager) {
+                          @if (isManager()) {
                             <a (click)="showRemoveModal(member.email)"><span class="material-icons">delete</span></a>
                           }
                         </td>
@@ -74,25 +74,25 @@
     <!-- add contributor modal -->
     <div id="add-contributor-modal" uk-modal="esc-close: false; bg-close: false">
       <div class="uk-modal-dialog uk-modal-body">
-        <h4 class="uk-modal-title">Invite {{memberLabel}}</h4>
+        <h4 class="uk-modal-title">Invite {{memberLabel()}}</h4>
         <p>By giving the email you consent for storing the data</p>
-        @if (errorMessage) {
-          <p class="uk-text-warning">{{errorMessage}}</p>
+        @if (errorMessage()) {
+          <p class="uk-text-warning">{{errorMessage()}}</p>
         }
-        @if (!invitationToken) {
-          <input [(ngModel)]="contributorEmail" class="uk-input" type="email" [placeholder]="'New ' + memberLabel + ' email'">
+        @if (!invitationToken()) {
+          <input [(ngModel)]="contributorEmail" class="uk-input" type="email" [placeholder]="'New ' + memberLabel() + ' email'">
         } @else {
-          <p [class]="emailSent ? 'uk-text-success' : 'uk-text-warning'">
-          {{ emailSent ? 'The invitation was emailed to the invitee. You can also share the link below.' : 'The invitation email could not be sent. Please share the link below with the invitee.' }}
+          <p [class]="emailSent() ? 'uk-text-success' : 'uk-text-warning'">
+          {{ emailSent() ? 'The invitation was emailed to the invitee. You can also share the link below.' : 'The invitation email could not be sent. Please share the link below with the invitee.' }}
         </p>
         <textarea class="uk-form-controls uk-textarea" type="textarea" [(ngModel)]="invitationToken" disabled></textarea>
         }
         <div class="uk-flex uk-flex-right uk-flex-middle uk-margin-top">
           <button class="uk-button uk-button-secondary uk-modal-close" (click)="closeModal()" type="button">Close</button>
-          @if (!invitationToken) {
+          @if (!invitationToken()) {
             <button class="uk-button uk-button-primary" (click)="addContributor()" type="button">Send invitation</button>
           } @else {
-            <a class="uk-margin-left" (click)="copyToClipboard()" [title]="title" type="button">
+            <a class="uk-margin-left" (click)="copyToClipboard()" [title]="title()" type="button">
               <span class="material-icons">content_copy</span>
             </a>
           }
@@ -103,12 +103,12 @@
     <!-- add member modal -->
     <div id="add-member-modal" uk-modal="esc-close: false; bg-close: false">
       <div class="uk-modal-dialog uk-modal-body">
-        <h4 class="uk-modal-title">Add {{memberLabel}}</h4>
+        <h4 class="uk-modal-title">Add {{memberLabel()}}</h4>
         <p>The user is added immediately, without an invitation email.</p>
-        @if (errorMessage) {
-          <p class="uk-text-warning">{{errorMessage}}</p>
+        @if (errorMessage()) {
+          <p class="uk-text-warning">{{errorMessage()}}</p>
         }
-        <input [(ngModel)]="contributorEmail" class="uk-input" type="email" [placeholder]="'Existing ' + memberLabel + ' email'">
+        <input [(ngModel)]="contributorEmail" class="uk-input" type="email" [placeholder]="'Existing ' + memberLabel() + ' email'">
         <div class="uk-flex uk-flex-right uk-flex-middle uk-margin-top">
           <button class="uk-button uk-button-secondary uk-modal-close" (click)="closeModal()" type="button">Close</button>
           <button class="uk-button uk-button-primary uk-margin-left" (click)="addMember()" type="button">Add</button>
@@ -119,10 +119,10 @@
     <!-- remove contributor modal -->
     <div id="remove-contributor-modal" uk-modal="esc-close: false; bg-close: false">
       <div class="uk-modal-dialog uk-modal-body">
-        <h4 class="uk-modal-title">Remove {{memberLabel}}</h4>
-        <p>The {{memberLabel}} with email {{contributorEmail}} will be removed.</p>
-        @if (errorMessage) {
-          <p class="uk-text-warning">{{errorMessage}}</p>
+        <h4 class="uk-modal-title">Remove {{memberLabel()}}</h4>
+        <p>The {{memberLabel()}} with email {{contributorEmail()}} will be removed.</p>
+        @if (errorMessage()) {
+          <p class="uk-text-warning">{{errorMessage()}}</p>
         }
         <p class="uk-text-right">
           <button class="uk-button uk-button-primary uk-modal-close" (click)="closeModal()" type="button">Cancel</button>

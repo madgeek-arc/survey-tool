@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy, signal} from "@angular/core";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy, inject, signal } from "@angular/core";
 import { Paging } from "../../../../../catalogue-ui/domain/paging";
 import { Coordinator, Stakeholder } from "../../../../domain/userInfo";
 import { StakeholdersService } from "../../../../services/stakeholders.service";
@@ -26,7 +26,7 @@ declare var UIkit;
     selector: 'app-stakeholders',
     templateUrl: 'stakeholders.component.html',
     providers: [StakeholdersService],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         PageContentComponent,
         SidebarMobileToggleComponent,
@@ -43,35 +43,37 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
 
   @ViewChild('searchInput', { static: true }) searchInput: ElementRef;
 
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private fb = inject(UntypedFormBuilder);
+  private stakeholdersService = inject(StakeholdersService);
+  private userService = inject(UserService);
+
   private _destroyed: Subject<boolean> = new Subject();
   coordinator: Coordinator = null;
-  stakeholders: Paging<Stakeholder> = null;
+  stakeholders = signal<Paging<Stakeholder>>(null);
   urlParameters: URLParameter[] = [];
-  searchQuery: string = null;
-  ready: boolean = false;
-  edit: boolean = false;
+  searchQuery = signal<string>(null);
+  ready = signal(false);
+  edit = signal(false);
   stakeholderForm: UntypedFormGroup = this.fb.group(new Stakeholder());
   allStakeholders: any[] = [];
-  rows: StakeholderRow[] = [];
+  rows = signal<StakeholderRow[]>([]);
 
   // Filters
-  typeOptions: string[] = [];
-  countryOptions: CountryOption[] = [];
-  selectedType: string = null;
-  selectedCountry: string = null;
-  order: string = null;
-  activeFilters: ActiveFilter[] = [];
+  typeOptions = signal<string[]>([]);
+  countryOptions = signal<CountryOption[]>([]);
+  selectedType = signal<string>(null);
+  selectedCountry = signal<string>(null);
+  order = signal<string>(null);
+  activeFilters = signal<ActiveFilter[]>([]);
 
   // Paging
-  pages: number[] = [];
+  pages = signal<number[]>([]);
   offset = 2;
   pageSize = 12;
-  totalPages = 0;
-  currentPage = 0;
-
-  constructor(private router: Router, private route: ActivatedRoute, private fb: UntypedFormBuilder,
-              private stakeholdersService: StakeholdersService, private userService: UserService) {
-  }
+  totalPages = signal(0);
+  currentPage = signal(0);
 
   readonly selectedView = signal<'card' | 'table'>('card');
   readonly managersFor = signal<Stakeholder | null>(null);
@@ -81,10 +83,10 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
 
     this.route.queryParams.subscribe(params => {
       this.urlParameters.splice(0, this.urlParameters.length);
-      this.searchQuery = null;
-      this.selectedType = null;
-      this.selectedCountry = null;
-      this.order = null;
+      this.searchQuery.set(null);
+      this.selectedType.set(null);
+      this.selectedCountry.set(null);
+      this.order.set(null);
       for (const obj in params) {
         if (params.hasOwnProperty(obj)) {
           const urlParameter: URLParameter = {
@@ -92,16 +94,16 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
             values: params[obj].split(',')
           };
           if (urlParameter.key === 'keyword') {
-            this.searchQuery = urlParameter.values[0];
+            this.searchQuery.set(urlParameter.values[0]);
           }
           if (urlParameter.key === 'subType') {
-            this.selectedType = urlParameter.values[0];
+            this.selectedType.set(urlParameter.values[0]);
           }
           if (urlParameter.key === 'country') {
-            this.selectedCountry = urlParameter.values[0];
+            this.selectedCountry.set(urlParameter.values[0]);
           }
           if (urlParameter.key === 'order') {
-            this.order = urlParameter.values[0];
+            this.order.set(urlParameter.values[0]);
           }
           this.urlParameters.push(urlParameter);
         }
@@ -167,17 +169,18 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
       error => {console.error(error)},
       () => {
         this.paginationInit();
-        this.ready = true;
+        this.ready.set(true);
       }
     );
   }
 
   setStakeholders(res: Paging<Stakeholder>) {
-    this.stakeholders = res;
-    this.rows = toStakeholderRows(res);
-    ({typeOptions: this.typeOptions, countryOptions: this.countryOptions} =
-      stakeholderFilterOptions(res, this.typeOptions, this.countryOptions));
-    this.activeFilters = stakeholderActiveFilters(this.selectedType, this.selectedCountry);
+    this.stakeholders.set(res);
+    this.rows.set(toStakeholderRows(res));
+    const {typeOptions, countryOptions} = stakeholderFilterOptions(res, this.typeOptions(), this.countryOptions());
+    this.typeOptions.set(typeOptions);
+    this.countryOptions.set(countryOptions);
+    this.activeFilters.set(stakeholderActiveFilters(this.selectedType(), this.selectedCountry()));
   }
 
   filterSelection(key: string, value: string) {
@@ -230,12 +233,12 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
 
   /** Modal ---------------------------------------------------------------------------------> **/
   openForEdit(stakeholder: Stakeholder) {
-    this.edit = true;
+    this.edit.set(true);
     this.stakeholderForm.patchValue(stakeholder);
   }
 
   openForAdd() {
-    this.edit = false;
+    this.edit.set(false);
     this.stakeholderForm.reset();
     this.stakeholderForm.get('type').setValue(this.coordinator.type);
 
@@ -247,26 +250,29 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   paginationInit() {
     let addToEndCounter = 0;
     let addToStartCounter = 0;
-    this.totalPages = Math.ceil(this.stakeholders.total/this.pageSize);
-    this.currentPage = Math.ceil(this.stakeholders.from/this.pageSize) + 1;
-    this.pages = [];
-    for (let i = (+this.currentPage - this.offset); i < (+this.currentPage + 1 + this.offset); ++i ) {
+    const totalPages = Math.ceil(this.stakeholders().total/this.pageSize);
+    const currentPage = Math.ceil(this.stakeholders().from/this.pageSize) + 1;
+    const pages: number[] = [];
+    for (let i = (+currentPage - this.offset); i < (+currentPage + 1 + this.offset); ++i ) {
       if ( i < 1 ) { addToEndCounter++; }
-      if ( i > this.totalPages ) { addToStartCounter++; }
-      if ((i >= 1) && (i <= this.totalPages)) {
-        this.pages.push(i);
+      if ( i > totalPages ) { addToStartCounter++; }
+      if ((i >= 1) && (i <= totalPages)) {
+        pages.push(i);
       }
     }
     for ( let i = 0; i < addToEndCounter; ++i ) {
-      if (this.pages.length < this.totalPages) {
-        this.pages.push(this.pages.length + 1);
+      if (pages.length < totalPages) {
+        pages.push(pages.length + 1);
       }
     }
     for ( let i = 0; i < addToStartCounter; ++i ) {
-      if (this.pages[0] > 1) {
-        this.pages.unshift(this.pages[0] - 1 );
+      if (pages[0] > 1) {
+        pages.unshift(pages[0] - 1 );
       }
     }
+    this.totalPages.set(totalPages);
+    this.currentPage.set(currentPage);
+    this.pages.set(pages);
   }
 
   goToPage(page: number) {
@@ -275,17 +281,17 @@ export class StakeholdersComponent implements OnInit, OnDestroy {
   }
 
   previousPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.updateURLParameters('from', (this.currentPage-1)*this.pageSize);
+    if (this.currentPage() > 1) {
+      this.currentPage.update(page => page - 1);
+      this.updateURLParameters('from', (this.currentPage()-1)*this.pageSize);
       this.navigateUsingParameters();
     }
   }
 
   nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.updateURLParameters('from', (this.currentPage-1)*this.pageSize);
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update(page => page + 1);
+      this.updateURLParameters('from', (this.currentPage()-1)*this.pageSize);
       this.navigateUsingParameters();
     }
   }

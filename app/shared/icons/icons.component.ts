@@ -7,7 +7,9 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  inject,
+  signal
 } from "@angular/core";
 import { IconsService } from "./icons.service";
 import { Icon } from "./icons";
@@ -54,18 +56,18 @@ export interface StopRule {
     SafeUrlPipe
   ],
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (icon) {
       @if (icon.data) {
         <span #svgIcon class="uk-icon" [class.uk-preserve]="gradient || icon.preserveColor"
-          [class.uk-flex]="flex" [ngClass]="customClass" [ngStyle]="style"
+          [class.uk-flex]="flex" [ngClass]="customClass" [ngStyle]="style()"
         [innerHTML]="icon.data | safeUrl: 'html'"></span>
       }
       @if (!icon.data && icon.name) {
         <span [class.uk-flex]="flex" [ngClass]="customClass"
           [class.uk-display-inline-block]="!flex">
-          <span class="material-icons" [ngClass]="type?type:icon.type" [ngStyle]="style">{{ icon.name }}</span>
+          <span class="material-icons" [ngClass]="type?type:icon.type" [ngStyle]="style()">{{ icon.name }}</span>
         </span>
       }
       @if (visuallyHidden) {
@@ -78,7 +80,7 @@ export class IconsComponent implements AfterViewInit, OnChanges {
   private static DEFAULT_ICON_SIZE  = 20;
   @Input()
   public icon: Icon;
-  public style: any;
+  public style = signal<any>(null);
   /**
    * Custom icon as SVG
    */
@@ -157,8 +159,8 @@ export class IconsComponent implements AfterViewInit, OnChanges {
   @ViewChild("svgIcon")
   public svgIcon: ElementRef;
 
-  constructor(private iconsService: IconsService,
-              private cdr: ChangeDetectorRef) {}
+  private iconsService = inject(IconsService);
+  private cdr = inject(ChangeDetectorRef);
 
   ngAfterViewInit() {
     this.initIcon();
@@ -179,15 +181,15 @@ export class IconsComponent implements AfterViewInit, OnChanges {
       if(this.gradient && svg) {
         this.addGradient(svg);
       } else {
-        this.style = {
+        this.style.set({
           fill: this.fill,
           stroke: this.stroke
-        };
+        });
       }
     } else {
-      this.style = {
+      this.style.set({
         "font-size.px": this.ratio*IconsComponent.DEFAULT_ICON_SIZE
-      };
+      });
     }
     this.cdr.detectChanges();
   }

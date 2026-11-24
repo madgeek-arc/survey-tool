@@ -1,5 +1,5 @@
 <div class="uk-section-default uk-section uk-section-small" style="min-height: calc(100svh - var(--header-height));">
-  @if (userInfo) {
+  @if (userInfo()) {
     <div class="uk-container uk-container-small">
       <div class="uk-card uk-card-default profile-card">
 
@@ -11,55 +11,55 @@
 
           <!-- Avatar -->
           <div class="profile-avatar-wrapper">
-            @if (userInfo.user?.profile?.picture) {
+            @if (userInfo().user?.profile?.picture) {
               <img class="profile-avatar"
-                   [src]="'data:image;base64,' + userInfo.user.profile.picture | safeUrl: 'resourceUrl'"
+                   [src]="'data:image;base64,' + userInfo().user.profile.picture | safeUrl: 'resourceUrl'"
                    alt="Profile picture">
             }
-            @if (!userInfo.user?.profile?.picture) {
+            @if (!userInfo().user?.profile?.picture) {
               <div class="profile-avatar-initials">
-                {{ userInfo.user.name[0] | uppercase }}{{ userInfo.user.surname[0] | uppercase }}
+                {{ userInfo().user.name[0] | uppercase }}{{ userInfo().user.surname[0] | uppercase }}
               </div>
             }
-            @if (edit) {
+            @if (edit()) {
               <span class="camera-overlay material-symbols-outlined" (click)="fileSelect.click()">photo_camera</span>
             }
           </div>
 
           <!-- Name + Email + selected file name -->
           <div class="profile-info">
-            <div class="profile-name">{{ userInfo.user.surname + ' ' + userInfo.user.name }}</div>
-            @if (edit) {
+            <div class="profile-name">{{ userInfo().user.surname + ' ' + userInfo().user.name }}</div>
+            @if (edit()) {
               <div class="profile-name-locked">
                 <span class="material-icons">lock</span>
                 <span class="uk-text-small">Name can't be changed</span>
               </div>
             }
-            @if (!edit) {
-              <div class="uk-text-muted uk-text-small">{{ userInfo.user.email }}</div>
+            @if (!edit()) {
+              <div class="uk-text-muted uk-text-small">{{ userInfo().user.email }}</div>
             }
-            @if (edit) {
+            @if (edit()) {
               <div class="profile-email-locked">
                 <span class="material-icons">lock</span>
-                <span class="uk-text-small">{{ userInfo.user.email }} — sign-in email can't be changed</span>
+                <span class="uk-text-small">{{ userInfo().user.email }} — sign-in email can't be changed</span>
               </div>
-              @if (image) {
-                <div class="uk-text-small uk-text-muted uk-margin-small-top">{{ image.name }}</div>
+              @if (image()) {
+                <div class="uk-text-small uk-text-muted uk-margin-small-top">{{ image()!.name }}</div>
               }
             }
           </div>
 
           <!-- Edit / Save / Cancel -->
-          @if (activeTab === 'profile') {
+          @if (activeTab() === 'profile') {
             <div class="profile-actions">
-              @if (!edit) {
-                <button class="btn-edit-profile" (click)="edit = true">
+              @if (!edit()) {
+                <button class="btn-edit-profile" (click)="edit.set(true)">
                   <span class="material-icons">edit</span>
                   Edit profile
                 </button>
               }
-              @if (edit) {
-                <button class="btn-profile-cancel" (click)="edit = false">Cancel</button>
+              @if (edit()) {
+                <button class="btn-profile-cancel" (click)="edit.set(false)">Cancel</button>
                 <button class="btn-banner-save" (click)="updateProfile()">Save changes</button>
               }
             </div>
@@ -74,12 +74,12 @@
         <div class="profile-content">
           <ul class="profile-tabs">
             <li>
-              <a class="tab-item" [class.active]="activeTab === 'profile'"
-                 (click)="activeTab = 'profile'">Profile details</a>
+              <a class="tab-item" [class.active]="activeTab() === 'profile'"
+                 (click)="activeTab.set('profile')">Profile details</a>
             </li>
             <li>
-              <a class="tab-item" [class.active]="activeTab === 'notifications'"
-                 (click)="activeTab = 'notifications'">Notifications
+              <a class="tab-item" [class.active]="activeTab() === 'notifications'"
+                 (click)="activeTab.set('notifications')">Notifications
                   @if (activeNotificationsCount() > 0) {
                     <span class="tab-badge">{{ activeNotificationsCount() }} on</span>
                 }
@@ -88,53 +88,53 @@
           </ul>
 
           <!-- 4. PROFILE DETAILS CONTENT -->
-          @if (activeTab === 'profile') {
+          @if (activeTab() === 'profile') {
             <div class="profile-fields">
               <div uk-grid>
 
                 <!-- Affiliation -->
                 <div class="uk-width-1-2@s">
                   <div class="field-label">Affiliation</div>
-                  @if (!edit) {
-                    <div>{{ userInfo.user?.profile?.affiliation || '—' }}</div>
+                  @if (!edit()) {
+                    <div>{{ userInfo().user?.profile?.affiliation || '—' }}</div>
                   }
-                  @if (edit) {
+                  @if (edit()) {
                     <input class="uk-input field-input"
                            name="affiliation" id="affiliation" type="text"
                            placeholder="e.g. Athena Research Center"
-                           [(ngModel)]="userInfo.user.profile.affiliation">
+                           [(ngModel)]="userInfo().user.profile.affiliation">
                   }
                 </div>
 
                 <!-- Position -->
                 <div class="uk-width-1-2@s">
                   <div class="field-label">Position</div>
-                  @if (!edit) {
-                    <div>{{ userInfo.user?.profile?.position || '—' }}</div>
+                  @if (!edit()) {
+                    <div>{{ userInfo().user?.profile?.position || '—' }}</div>
                   }
-                  @if (edit) {
+                  @if (edit()) {
                     <input class="uk-input field-input"
                            name="position" id="position" type="text"
                            placeholder="e.g. Research Engineer"
-                           [(ngModel)]="userInfo.user.profile.position">
+                           [(ngModel)]="userInfo().user.profile.position">
                   }
                 </div>
 
                 <!-- Webpage -->
                 <div class="uk-width-1-1">
                   <div class="field-label">Webpage</div>
-                  @if (!edit) {
-                    <a [href]="$safeNavigationMigration(userInfo.user?.profile?.webpage)"
-                       [ngClass]="{'uk-disabled': !userInfo.user?.profile?.webpage}"
+                  @if (!edit()) {
+                    <a [href]="$safeNavigationMigration(userInfo().user?.profile?.webpage)"
+                       [ngClass]="{'uk-disabled': !userInfo().user?.profile?.webpage}"
                        target="_blank">
-                      {{ userInfo.user?.profile?.webpage || '—' }}
+                      {{ userInfo().user?.profile?.webpage || '—' }}
                     </a>
                   }
-                  @if (edit) {
+                  @if (edit()) {
                     <input class="uk-input field-input"
                            name="webpage" id="webpage" type="text"
                            placeholder="https://"
-                           [(ngModel)]="userInfo.user.profile.webpage">
+                           [(ngModel)]="userInfo().user.profile.webpage">
                   }
                 </div>
 
@@ -143,7 +143,7 @@
           }
 
           <!-- Notifications tab content -->
-          @if (activeTab === 'notifications') {
+          @if (activeTab() === 'notifications') {
             <div class="notifications-content">
 
               <!-- Section 1: Email notifications -->
@@ -151,7 +151,7 @@
                 <div class="notif-section-header">
                   <div>
                     <div class="uk-text-bold">Email notifications</div>
-                    <div class="uk-text-muted uk-text-small">Choose which emails land in your inbox at {{ userInfo.user.email }}.</div>
+                    <div class="uk-text-muted uk-text-small">Choose which emails land in your inbox at {{ userInfo().user.email }}.</div>
                     <div class="uk-text-muted uk-text-small">You can change these anytime.</div>
                   </div>
                   <div class="notif-all-pill">
@@ -239,7 +239,7 @@
                   <div class="notif-row">
                     <span class="material-symbols-outlined">mail</span>
                     <div class="notif-row-text">
-                      <div class="notif-row-title">{{ userInfo.user.email }}</div>
+                      <div class="notif-row-title">{{ userInfo().user.email }}</div>
                     </div>
                     <span class="forward-primary-badge">PRIMARY</span>
                   </div>

@@ -5,7 +5,7 @@ import { SidebarMobileToggleComponent } from "../../../shared/dashboard-side-men
 @Component({
     selector: 'app-contributions-home',
     templateUrl: './contributions-home.component.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [PageContentComponent, SidebarMobileToggleComponent]
 })
 

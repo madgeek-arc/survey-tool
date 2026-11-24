@@ -1,4 +1,4 @@
-import {Component, DestroyRef, inject, OnDestroy, OnInit, ChangeDetectionStrategy} from "@angular/core";
+import {Component, DestroyRef, inject, OnDestroy, OnInit, ChangeDetectionStrategy, computed, signal} from "@angular/core";
 import {ActivatedRoute} from "@angular/router";
 import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
@@ -17,7 +17,7 @@ import { TitleCasePipe } from "@angular/common";
     selector: 'app-contributions-my-group',
     templateUrl: './my-group.component.html',
     providers: [SurveyService, StakeholdersService],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [PageContentComponent, SidebarMobileToggleComponent, FormsModule, TitleCasePipe]
 })
 
@@ -25,23 +25,19 @@ export class MyGroupComponent implements OnInit {
 
   private destroyRef = inject(DestroyRef);
   currentGroup: UserGroup = null;
-  members: GroupMembers = null
-  contributorEmail: string = null;
+  members = signal<GroupMembers>(null);
+  contributorEmail = signal<string>(null);
   userEmail: string = null;
-  invitationToken: string = null;
-  emailSent = false;
-  isManager: boolean = null;
-  errorMessage: string = null;
-  title = 'copy to clipboard';
+  invitationToken = signal<string>(null);
+  emailSent = signal(false);
+  isManager = signal<boolean>(null);
+  errorMessage = signal<string>(null);
+  title = signal('copy to clipboard');
 
-  get memberLabel(): string {
-    return this.groupType === 'stakeholder' ? 'contributor' : 'member';
-  }
+  readonly memberLabel = computed(() => this.groupType() === 'stakeholder' ? 'contributor' : 'member');
 
-  get adminLabel(): string {
-    return this.groupType === 'stakeholder' ? 'Manager' : 'Admin';
-  }
-  groupType: string | null = null;
+  readonly adminLabel = computed(() => this.groupType() === 'stakeholder' ? 'Manager' : 'Admin');
+  groupType = signal<string | null>(null);
 
   private userService = inject(UserService);
   private surveyService = inject(SurveyService);
@@ -54,7 +50,7 @@ export class MyGroupComponent implements OnInit {
   ngOnInit() {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: params => {
-        this.groupType = params['group'];
+        this.groupType.set(params['group']);
         switch (params['group']) {
           case 'stakeholder':
             this.userService.currentStakeholder.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
@@ -125,12 +121,12 @@ export class MyGroupComponent implements OnInit {
       case 'stakeholder':
         this.userService.getStakeholdersMembers(this.currentGroup.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
           next => {
-            this.members = next;
+            this.members.set(next);
           }, error => {
             console.error(error);
           }, () => {
             this.userEmail = this.userService.userId;
-            this.isManager = this.checkIfManager(this.userEmail);
+            this.isManager.set(this.checkIfManager(this.userEmail));
           }
         );
         break;
@@ -138,12 +134,12 @@ export class MyGroupComponent implements OnInit {
       case 'administration':
         this.userService.getAdministratorUsers(this.currentGroup.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
           next => {
-            this.members = next;
+            this.members.set(next);
           }, error => {
             console.error(error);
           }, () => {
             this.userEmail = this.userService.userId;
-            this.isManager = this.checkIfManager(this.userEmail);
+            this.isManager.set(this.checkIfManager(this.userEmail));
           }
         );
 
@@ -152,12 +148,12 @@ export class MyGroupComponent implements OnInit {
       case 'coordinator':
         this.userService.getCoordinatorUsers(this.currentGroup.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
           next => {
-            this.members = next;
+            this.members.set(next);
           }, error => {
             console.error(error);
           }, () => {
             this.userEmail = this.userService.userId;
-            this.isManager = this.checkIfManager(this.userEmail);
+            this.isManager.set(this.checkIfManager(this.userEmail));
           }
         )
         break
@@ -171,69 +167,69 @@ export class MyGroupComponent implements OnInit {
   }
 
   addContributor(contributor: string = 'contributor') {
-    if (this.validateEmail(this.contributorEmail)) {
+    if (this.validateEmail(this.contributorEmail())) {
 
-      const isStakeholder = this.groupType === 'stakeholder';
-      const apiGroup = this.groupType === 'administration' ? 'administrator' : this.groupType;
-      this.surveyService.getInvitationToken(this.contributorEmail, isStakeholder ? contributor : 'member', this.currentGroup.id, apiGroup)
+      const isStakeholder = this.groupType() === 'stakeholder';
+      const apiGroup = this.groupType() === 'administration' ? 'administrator' : this.groupType();
+      this.surveyService.getInvitationToken(this.contributorEmail(), isStakeholder ? contributor : 'member', this.currentGroup.id, apiGroup)
         .pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
         next => {
-          this.invitationToken = location.origin + '/invitation/accept/' + next.token;
-              this.emailSent = next.emailSent;
-          this.errorMessage = null;
-          this.contributorEmail = null;
+          this.invitationToken.set(location.origin + '/invitation/accept/' + next.token);
+              this.emailSent.set(next.emailSent);
+          this.errorMessage.set(null);
+          this.contributorEmail.set(null);
           // UIkit.modal('#add-contributor-modal').hide();
         },
         error => {
           console.error(error);
-          this.errorMessage = error.error.error;
+          this.errorMessage.set(error.error.error);
         },
         () => {
-          this.errorMessage = null;
-          this.contributorEmail = null;
+          this.errorMessage.set(null);
+          this.contributorEmail.set(null);
           // UIkit.modal('#add-contributor-modal').hide();
         }
       );
     } else {
-      this.errorMessage = 'Please give a valid email address.'
+      this.errorMessage.set('Please give a valid email address.')
     }
   }
 
   addMember() {
-    if (!this.validateEmail(this.contributorEmail)) {
-      this.errorMessage = 'Please give a valid email address.';
+    if (!this.validateEmail(this.contributorEmail())) {
+      this.errorMessage.set('Please give a valid email address.');
       return;
     }
-    this.surveyService.addGroupMember(this.groupType, this.currentGroup.id, this.contributorEmail)
+    this.surveyService.addGroupMember(this.groupType(), this.currentGroup.id, this.contributorEmail())
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.getMembers(this.groupType);
+        this.getMembers(this.groupType());
         this.closeModal();
         UIkit.modal('#add-member-modal').hide();
       },
       error: error => {
         console.error(error);
-        this.errorMessage = error.error?.error ?? error.message;
+        this.errorMessage.set(error.error?.error ?? error.message);
       }
     });
   }
 
   removeContributor() {
-    this.surveyService.removeGroupMember(this.groupType, this.currentGroup.id, this.contributorEmail).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+    this.surveyService.removeGroupMember(this.groupType(), this.currentGroup.id, this.contributorEmail()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       next => {
         // this.members = next;
-        this.getMembers(this.groupType);
-        this.errorMessage = null;
-        this.contributorEmail = null;
+        this.getMembers(this.groupType());
+        this.errorMessage.set(null);
+        this.contributorEmail.set(null);
         UIkit.modal('#remove-contributor-modal').hide();
       },
       error => {
         console.error(error)
-        this.errorMessage = error.message;
+        this.errorMessage.set(error.message);
       },
       () => {
-        this.errorMessage = null;
-        this.contributorEmail = null;
+        this.errorMessage.set(null);
+        this.contributorEmail.set(null);
         UIkit.modal('#remove-contributor-modal').hide();
       }
     );
@@ -242,11 +238,11 @@ export class MyGroupComponent implements OnInit {
   copyToClipboard() {
     // navigator clipboard api needs a secure context (https)
     if (!navigator.clipboard) {
-      this.fallbackCopyTextToClipboard(this.invitationToken);
+      this.fallbackCopyTextToClipboard(this.invitationToken());
       return;
     }
-    navigator.clipboard.writeText(this.invitationToken).then( ()=> {
-      this.title = 'copied to clipboard';
+    navigator.clipboard.writeText(this.invitationToken()).then( ()=> {
+      this.title.set('copied to clipboard');
       // console.log('Async: Copying to clipboard was successful!');
     }).catch((err)=> {
       console.error('Async: Could not copy text: ', err);
@@ -269,7 +265,7 @@ export class MyGroupComponent implements OnInit {
     try {
       const successful = document.execCommand('copy');
       if (successful)
-        this.title = 'copied to clipboard';
+        this.title.set('copied to clipboard');
       // const msg = successful ? 'successful' : 'unsuccessful';
       // console.log('Fallback: Copying text command was ' + msg);
     } catch (err) {
@@ -280,21 +276,21 @@ export class MyGroupComponent implements OnInit {
   }
 
   showRemoveModal(email: string) {
-    this.contributorEmail = email
+    this.contributorEmail.set(email)
     UIkit.modal('#remove-contributor-modal').show();
   }
 
   checkIfManager(email: string): boolean {
-    const managers = this.groupType === 'administration'
-      ? [...this.members.admins, ...this.members.members]
-      : this.members.admins;
+    const managers = this.groupType() === 'administration'
+      ? [...this.members().admins, ...this.members().members]
+      : this.members().admins;
     return managers.some(member => member.email === email);
   }
 
   closeModal() {
-    this.contributorEmail = null;
-    this.invitationToken = null;
-    this.errorMessage = null;
+    this.contributorEmail.set(null);
+    this.invitationToken.set(null);
+    this.errorMessage.set(null);
   }
 
   validateEmail = (email) => {

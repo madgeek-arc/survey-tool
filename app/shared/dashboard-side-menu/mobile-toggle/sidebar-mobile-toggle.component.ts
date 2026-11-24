@@ -1,16 +1,16 @@
-import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 
-import { DashboardSideMenuService, SidebarItem } from "../dashboard-side-menu.service";
-import { Subscription } from "rxjs";
+import { DashboardSideMenuService } from "../dashboard-side-menu.service";
 import { IconsComponent } from "../../icons/icons.component";
 
 @Component({
   imports: [IconsComponent],
   selector: 'sidebar-mobile-toggle',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (activeSidebarItem) {
+    @if (activeSidebarItem(); as activeSidebarItem) {
       <a href="#sidebar_offcanvas"
         class="sidebar_mobile_toggle uk-link-reset uk-width-3-5 uk-flex uk-flex-middle" uk-toggle>
         @if (activeSidebarItem.icon && (activeSidebarItem.icon.svg || activeSidebarItem.icon.name)) {
@@ -34,28 +34,10 @@ import { IconsComponent } from "../../icons/icons.component";
     }
     `
 })
-export class SidebarMobileToggleComponent implements OnInit, OnDestroy {
+export class SidebarMobileToggleComponent {
+  private layoutService = inject(DashboardSideMenuService);
 
-  public activeSidebarItem: SidebarItem;
-  private subscriptions: any[] = [];
-
-  constructor(private layoutService: DashboardSideMenuService) {
-  }
-
-  ngOnInit() {
-    this.subscriptions.push(this.layoutService.activeSidebarItem.subscribe(activeSidebarItem => {
-      // console.log('activeSidebarItem', activeSidebarItem);
-      this.activeSidebarItem = activeSidebarItem;
-    }));
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.forEach(subscription => {
-      if(subscription instanceof Subscription) {
-        subscription.unsubscribe();
-      }
-    });
-  }
+  public activeSidebarItem = toSignal(this.layoutService.activeSidebarItem, { initialValue: null });
 
 }
 

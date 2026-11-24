@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy } from "@angular/core";
+import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild, ChangeDetectionStrategy, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { UntypedFormGroup } from "@angular/forms";
@@ -27,7 +27,7 @@ const HIGHLIGHT_BORDER_TARGETS = ['', ' .ng-select-container', ' .rte__toolbar',
     selector: 'app-survey-form',
     templateUrl: 'survey-form.component.html',
     providers: [SurveyService, StakeholdersService, WebsocketService],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [PageContentComponent, SidebarMobileToggleComponent, SurveyComponent, RouterLink]
 })
 
@@ -43,25 +43,25 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
   @ViewChild(SurveyComponent) child: SurveyComponent
 
-  survey: Model = null;
-  subType: string;
-  surveyAnswer: SurveyAnswer = null;
-  activeUsers: UserActivity[] = [];
-  userInfo: UserInfo = null;
+  survey = signal<Model>(null);
+  subType = signal<string>(undefined);
+  surveyAnswer = signal<SurveyAnswer>(null);
+  activeUsers = signal<UserActivity[]>([]);
+  userInfo = signal<UserInfo>(null);
   tabsHeader: string = null;
   mandatoryFieldsText: string = 'Fields with (*) are mandatory and must be completed in order for the survey to be validated.';
   downloadPDF: boolean = true;
   surveyId: string = null;
   stakeholderId: string = null;
-  freeView = false;
-  readonly = false;
-  validate = false;
-  ready = false;
+  freeView = signal(false);
+  readonly = signal(false);
+  validate = signal(false);
+  ready = signal(false);
   action: string = null;
-  successMessage = '';
-  errorMessage = '';
-  hasHeader = true;
-  backRoute: any[] = null;
+  successMessage = signal('');
+  errorMessage = signal('');
+  hasHeader = signal(true);
+  backRoute = signal<any[]>(null);
 
   // Holds the per-user `.user-<sessionId>` border rules. Adopted sheets sort after every <link>/<style>
   // sheet, so these rules win over the global `.uk-input { border: ... !important }` regardless of build output order.
@@ -69,16 +69,16 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   private highlightedSessions = new Set<string>();
 
   ngOnInit() {
-    this.ready = false;
+    this.ready.set(false);
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, this.userHighlightSheet];
     this.tabsHeader = 'Sections';
     this.layoutService.setOpen(false);
 
     this.route.url.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
     next => {
-      this.validate = (next[next.length - 1].path === 'validate');
-      this.freeView = (next[next.length - 1].path === 'freeView');
-      this.readonly = (next[next.length - 1].path === 'view');
+      this.validate.set((next[next.length - 1].path === 'validate'));
+      this.freeView.set((next[next.length - 1].path === 'freeView'));
+      this.readonly.set((next[next.length - 1].path === 'view'));
       // First segment of this route's own path, e.g. 'mySurveys', 'surveyTemplates', 'admin-surveyTemplates', 'stakeholder'.
       const routeRoot = next[0]?.path;
 
@@ -87,15 +87,15 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
         if (params['stakeholderId']) {
           this.stakeholderId = params['stakeholderId'];
           // Coordinator/admin viewing a specific stakeholder's survey answer -> back to the coordinator's surveys list.
-          this.backRoute = ['/contributions', params['id'], 'surveys'];
+          this.backRoute.set(['/contributions', params['id'], 'surveys']);
         } else {
           this.stakeholderId = params['id'];
-          this.backRoute = ['/contributions', this.stakeholderId, routeRoot];
+          this.backRoute.set(['/contributions', this.stakeholderId, routeRoot]);
         }
         this.mentionableUsersProvider.contextId = this.stakeholderId;
         this.updateUserInfo();
 
-        if (!this.freeView) {
+        if (!this.freeView()) {
           // Shared so the websocket connect below and the zip() further down both trigger off
           // the same HTTP response instead of firing getLatestAnswer twice.
           const latestAnswer$ = this.surveyService.getLatestAnswer(this.stakeholderId, this.surveyId).pipe(
@@ -125,21 +125,21 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
             this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef))
           ).subscribe(
             next => {
-              this.surveyAnswer = next[0];
-              this.survey = next[1];
+              this.surveyAnswer.set(next[0]);
+              this.survey.set(next[1]);
             },
             error => {console.log(error)},
             () => {
-              this.ready = true;
+              this.ready.set(true);
             }
           );
         } else {
 
-          this.activeUsers = [];
+          this.activeUsers.set([]);
           this.surveyService.getSurvey(this.surveyId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
-            next => {this.survey = next;},
+            next => {this.survey.set(next);},
             error => {console.log(error)},
-            () => { this.ready = true; }
+            () => { this.ready.set(true); }
           );
         }
       });
@@ -147,14 +147,13 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
 
     this.layoutService.hasHeader.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(hasHeader => {
-      this.hasHeader = hasHeader;
+      this.hasHeader.set(hasHeader);
     });
 
     this.wsService.activeUsers.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       next => {
-        this.removeClass(this.activeUsers);
-        this.activeUsers = next;
-        this.activeUsers?.forEach( user => {
+        this.removeClass(this.activeUsers());
+        next?.forEach( user => {
           user.color = this.getRandomDarkColor(user.sessionId);
           if (user.position && !this.isCurrentUser(user) && !this.highlightedSessions.has(user.sessionId)) {
             // UIkit override attempted: UIkit has no per-session dynamic colour utility, and the global
@@ -170,7 +169,8 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
           });
 
         });
-        this.addClass(this.activeUsers);
+        this.activeUsers.set(next);
+        this.addClass(next);
       }
     );
   }
@@ -178,7 +178,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     document.adoptedStyleSheets = document.adoptedStyleSheets.filter(sheet => sheet !== this.userHighlightSheet);
     this.layoutService.setOpen(true);
-    if (this.surveyAnswer?.id) {
+    if (this.surveyAnswer()?.id) {
       this.wsService.WsLeave(this.action);
     }
     this.wsService.closeWs();
@@ -195,7 +195,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
   validateSurveyAnswer(valid: boolean) {
     console.log('Is valid: ', valid);
-    this.surveyService.changeAnswerValidStatus(this.surveyAnswer.id, !this.surveyAnswer.validated).subscribe({
+    this.surveyService.changeAnswerValidStatus(this.surveyAnswer().id, !this.surveyAnswer().validated).subscribe({
       next: () => {
         UIkit.modal('#validation-modal').hide();
         this.router.navigate([`/contributions/${this.stakeholderId}/mySurveys`]).then();
@@ -206,18 +206,18 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
   }
 
   submitForm(form: UntypedFormGroup) {
-    if (this.freeView) {
+    if (this.freeView()) {
       return;
     } else {
-      this.surveyService.putAnswer(form.value, this.surveyAnswer.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+      this.surveyService.putAnswer(form.value, this.surveyAnswer().id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
         res => {
-          this.successMessage = 'Updated successfully!';
+          this.successMessage.set('Updated successfully!');
           this.child.clearChapterChangesMap();
           UIkit.modal('#unsaved-changes-modal').hide();
-          this.surveyAnswer.answer = res;
+          this.surveyAnswer().answer = res;
         },
         error => {
-          this.errorMessage = 'Something went bad, server responded: ' + JSON.stringify(error?.error?.message);
+          this.errorMessage.set('Something went bad, server responded: ' + JSON.stringify(error?.error?.message));
           UIkit.modal('#unsaved-changes-modal').hide();
           // this.showLoader = false;
           // console.log(error);
@@ -232,11 +232,11 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
 
   updateUserInfo() {
     this.userService.getUserObservable().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(next => {
-      this.userInfo = next;
-      if (this.userInfo) {
-        this.subType = this.findSubType(this.userInfo.stakeholders, this.stakeholderId);
+      this.userInfo.set(next);
+      if (this.userInfo()) {
+        this.subType.set(this.findSubType(this.userInfo().stakeholders, this.stakeholderId));
 
-        this.userInfo.stakeholders.every(sh => {
+        this.userInfo().stakeholders.every(sh => {
           if (sh.id === this.stakeholderId) {
             this.userService.changeCurrentStakeholder(sh);
             return false;
@@ -244,7 +244,7 @@ export class SurveyFormComponent implements OnInit, OnDestroy {
           return true;
         });
 
-        this.userInfo.coordinators.every(co => {
+        this.userInfo().coordinators.every(co => {
           if (co.id === this.stakeholderId) {
             this.userService.changeCurrentCoordinator(co);
             return false;
